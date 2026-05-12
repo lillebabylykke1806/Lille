@@ -28,22 +28,21 @@ const farger = {
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
-const formatertDato = (datoStr) => {
+const formatertDato = (datoStr: string) => {
   const dato = new Date(datoStr);
   const iGår = new Date();
   iGår.setDate(iGår.getDate() - 1);
   if (datoStr === dagensdato()) return 'I dag';
   if (datoStr === iGår.toISOString().split('T')[0]) return 'I går';
-  const diffDager = Math.floor((new Date() - dato) / (1000 * 60 * 60 * 24));
-  if (diffDager < 7) return dato.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long' });
+  const diffDager = Math.floor((new Date().getTime() - dato.getTime()) / (1000 * 60 * 60 * 24));  if (diffDager < 7) return dato.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long' });
   if (diffDager < 30) return 'Forrige uke — ' + dato.toLocaleDateString('no-NO', { day: 'numeric', month: 'long' });
   return dato.toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
-const beregnAlder = (fødselsdato) => {
+const beregnAlder = (fødselsdato: string) => {
   if (!fødselsdato) return null;
   const født = new Date(fødselsdato);
-  const diffMs = new Date() - født;
+  const diffMs = new Date().getTime() - født.getTime();
   const uker = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 7));
   const måneder = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.5));
   if (uker < 12) return `${uker} uker`;
@@ -53,7 +52,7 @@ const beregnAlder = (fødselsdato) => {
 
 const anbefalingSøvn = (fødselsdato) => {
   if (!fødselsdato) return null;
-  const måneder = Math.floor((new Date() - new Date(fødselsdato)) / (1000 * 60 * 60 * 24 * 30.5));
+  const måneder = Math.floor((new Date().getTime() - new Date(fødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 30));
   if (måneder < 3) return { min: 14, max: 17, lurer: '4–5 lurer per dag' };
   if (måneder < 6) return { min: 12, max: 15, lurer: '3–4 lurer per dag' };
   if (måneder < 12) return { min: 12, max: 14, lurer: '2–3 lurer per dag' };
@@ -63,23 +62,28 @@ const anbefalingSøvn = (fødselsdato) => {
 const beregnKolikkNedtelling = (fødselsdato) => {
   if (!fødselsdato) return null;
   const født = new Date(fødselsdato);
-  const ukerGammel = Math.floor((new Date() - født) / (1000 * 60 * 60 * 24 * 7));
+  const ukerGammel = Math.floor((new Date().getTime() - født.getTime()) / (1000 * 60 * 60 * 24 * 7));
   const slutterVedUke = 16;
   const ukerIgjen = slutterVedUke - ukerGammel;
   if (ukerGammel >= slutterVedUke) return { ferdig: true, ukerGammel };
   return { ferdig: false, ukerIgjen, ukerGammel };
 };
 
-const beregnKolikkMønster = (kolikkLogger) => {
+type KolikkLogRad = { time: number; nivå: number };
+
+const beregnKolikkMønster = (kolikkLogger: KolikkLogRad[] | undefined) => {
   if (!kolikkLogger || kolikkLogger.length < 3) return null;
-  const timeCount = {};
+  const timeCount: Record<string, number> = {};
   kolikkLogger.forEach(log => {
-    if (log.nivå >= 4) timeCount[log.time] = (timeCount[log.time] || 0) + 1;
+    if (log.nivå >= 4) {
+      const key = String(log.time);
+      timeCount[key] = (timeCount[key] || 0) + 1;
+    }
   });
   if (Object.keys(timeCount).length === 0) return null;
   const toppTime = Object.entries(timeCount).sort((a, b) => b[1] - a[1])[0];
   if (toppTime[1] < 2) return null;
-  return parseInt(toppTime[0]);
+  return parseInt(toppTime[0], 10);
 };
 
 const sjekkKolikkVarsel = (kolikkMønster) => {
@@ -270,15 +274,17 @@ export default function Home() {
   useEffect(() => { localStorage.setItem('lille_lurer', JSON.stringify(lurer)); beregnNesteLur(); }, [lurer]);
 
   useEffect(() => {
-    let interval;
-    if (sover) {
+    let interval: ReturnType<typeof setInterval> | undefined;
+    if (sover && startTid) {
       interval = setInterval(() => {
-        const diff = Math.floor((new Date() - startTid) / 1000);
+        const diff = Math.floor((Date.now() - startTid.getTime()) / 1000);
         setMinutter(Math.floor(diff / 60));
         setSekunder(diff % 60);
       }, 1000);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [sover, startTid]);
 
   const beregnNesteLur = () => {
@@ -326,8 +332,9 @@ export default function Home() {
   };
 
   const stoppLur = async () => {
+    if (!startTid || !søvnType) return;
     const slutt = new Date();
-    const diff = Math.floor((slutt - startTid) / 1000);
+    const diff = Math.floor((slutt.getTime() - startTid.getTime()) / 1000);
     const nyLur = {
       id: Date.now(), dato: dagensdato(), type: søvnType,
       start: startTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
