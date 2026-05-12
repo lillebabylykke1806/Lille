@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F5EFE6;
+  --foreground: #3D2B1F;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #F5EFE6;
+  color: #3D2B1F;
+  font-family: Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
