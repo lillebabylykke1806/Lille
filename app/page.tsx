@@ -306,8 +306,19 @@ export default function Home() {
   const registrer = async () => {
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
-    if (error) { setInnloggingFeil('Noe gikk galt. Prøv igjen.'); }
-    else { setBruker(data.user); }
+    if (error) { 
+      setInnloggingFeil('Noe gikk galt. Prøv igjen.'); 
+    } else {
+      // Send til Stripe Checkout med 7 dagers gratis prøveperiode
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: epost }),
+      });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+      else setBruker(data.user);
+    }
   };
 
   const loggUt = async () => {
