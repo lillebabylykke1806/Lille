@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer_email: email,
-      line_items: [{ price: "price_1TXQz9ECtaFxdrAsMOWd1w8m", quantity: 1 }],
+      line_items: [{ price: "price_1TYWt8CjOZUfHkd4gsvnkpov", quantity: 1 }],
       subscription_data: { trial_period_days: 7 },
       success_url: "https://www.lilleapp.no/bekreftelse",
       cancel_url: "https://www.lilleapp.no/abonnement",
