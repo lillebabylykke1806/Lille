@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       mode: "subscription",
       customer_email: email,
       line_items: [{ price: "price_1TYWt8CjOZUfHkd4gsvnkpov", quantity: 1 }],
-      subscription_data: { trial_period_days: 7 },
+      allow_promotion_codes: true,`n      subscription_data: { trial_period_days: 7 },
       success_url: "https://www.lilleapp.no/bekreftelse",
       cancel_url: "https://www.lilleapp.no/abonnement",
     })
