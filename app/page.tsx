@@ -34,7 +34,8 @@ const formatertDato = (datoStr: string) => {
   iGår.setDate(iGår.getDate() - 1);
   if (datoStr === dagensdato()) return 'I dag';
   if (datoStr === iGår.toISOString().split('T')[0]) return 'I går';
-  const diffDager = Math.floor((new Date().getTime() - dato.getTime()) / (1000 * 60 * 60 * 24));  if (diffDager < 7) return dato.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long' });
+  const diffDager = Math.floor((new Date().getTime() - dato.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDager < 7) return dato.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long' });
   if (diffDager < 30) return 'Forrige uke — ' + dato.toLocaleDateString('no-NO', { day: 'numeric', month: 'long' });
   return dato.toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' });
 };
@@ -199,6 +200,11 @@ export default function Home() {
   const [passord, setPassord] = useState('');
   const [erNyBruker, setErNyBruker] = useState(false);
   const [innloggingFeil, setInnloggingFeil] = useState('');
+  const [visEtterregistrer, setVisEtterregistrer] = useState(false);
+  const [nyLurType, setNyLurType] = useState('lur');
+  const [nyLurDato, setNyLurDato] = useState(dagensdato());
+  const [nyLurStart, setNyLurStart] = useState('');
+  const [nyLurSlutt, setNyLurSlutt] = useState('');
 
   const nattModus = sover && søvnType === 'natt';
   const dagensLurer = lurer.filter(l => l.dato === dagensdato());
@@ -220,51 +226,24 @@ export default function Home() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setBruker(session.user);
-
-        const { data: profil } = await supabase
-          .from('profiler')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-
+        const { data: profil } = await supabase.from('profiler').select('*').eq('id', session.user.id).single();
         if (profil) {
           if (profil.baby_navn) setBabyNavn(profil.baby_navn);
           if (profil.fødselsdato) setBabyFødselsdato(profil.fødselsdato);
         }
-
-        const { data: supaLurer } = await supabase
-          .from('lurer')
-          .select('*')
-          .eq('profil_id', session.user.id)
-          .order('opprettet', { ascending: false });
-
+        const { data: supaLurer } = await supabase.from('lurer').select('*').eq('profil_id', session.user.id).order('opprettet', { ascending: false });
         if (supaLurer && supaLurer.length > 0) {
-          setLurer(supaLurer.map(l => ({
-            id: l.id, dato: l.dato, type: l.type,
-            start: l.start, slutt: l.slutt, varighet: l.varighet,
-            signaler: l.signaler ? l.signaler.split(',').filter(s => s) : [],
-          })));
+          setLurer(supaLurer.map(l => ({ id: l.id, dato: l.dato, type: l.type, start: l.start, slutt: l.slutt, varighet: l.varighet, signaler: l.signaler ? l.signaler.split(',').filter(s => s) : [] })));
         }
-
-        const { data: supaKolikk } = await supabase
-          .from('kolikk_logger')
-          .select('*')
-          .eq('profil_id', session.user.id)
-          .order('opprettet', { ascending: false });
-
+        const { data: supaKolikk } = await supabase.from('kolikk_logger').select('*').eq('profil_id', session.user.id).order('opprettet', { ascending: false });
         if (supaKolikk && supaKolikk.length > 0) {
-          setKolikkLogger(supaKolikk.map(k => ({
-            id: k.id, dato: k.dato, time: k.time, minutt: k.minutt, nivå: k.nivå,
-          })));
+          setKolikkLogger(supaKolikk.map(k => ({ id: k.id, dato: k.dato, time: k.time, minutt: k.minutt, nivå: k.nivå })));
         }
       }
-
       const lagretBilde = localStorage.getItem('lille_babybilde');
       if (lagretBilde) setBabyBilde(lagretBilde);
-
       setLaster(false);
     };
-
     setTimeout(() => setLaster(false), 5000);
     lastData();
   }, []);
@@ -282,9 +261,7 @@ export default function Home() {
         setSekunder(diff % 60);
       }, 1000);
     }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
+    return () => { if (interval) clearInterval(interval); };
   }, [sover, startTid]);
 
   const beregnNesteLur = () => {
@@ -294,6 +271,26 @@ export default function Home() {
     const [h, m] = sisteLur.slutt.split(':').map(Number);
     const nesteStart = h * 60 + m + 90;
     setNesteLur(`${Math.floor(nesteStart / 60) % 24}:${nesteStart % 60 < 10 ? '0' : ''}${nesteStart % 60}`);
+  };
+
+  const justerStartTid = (min: number) => {
+    if (!startTid) return;
+    setStartTid(new Date(startTid.getTime() - min * 60 * 1000));
+  };
+
+  const lagreEtterregistrertLur = async () => {
+    if (!nyLurStart || !nyLurSlutt) return;
+    const [sh, sm] = nyLurStart.split(':').map(Number);
+    const [eh, em] = nyLurSlutt.split(':').map(Number);
+    const varighet = (eh * 60 + em) - (sh * 60 + sm);
+    if (varighet <= 0) return;
+    const nyLur = { id: Date.now(), dato: nyLurDato, type: nyLurType, start: nyLurStart, slutt: nyLurSlutt, varighet, signaler: [] };
+    setLurer(prev => [nyLur, ...prev]);
+    setVisEtterregistrer(false);
+    setNyLurStart('');
+    setNyLurSlutt('');
+    const { data } = await supabase.from('lurer').insert({ profil_id: bruker?.id, dato: nyLurDato, type: nyLurType, start: nyLurStart, slutt: nyLurSlutt, varighet, signaler: '' }).select();
+    if (data && data[0]) setLurer(prev => prev.map(l => l.id === nyLur.id ? { ...l, id: data[0].id } : l));
   };
 
   const loggInn = async () => {
@@ -306,15 +303,10 @@ export default function Home() {
   const registrer = async () => {
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
-    if (error) { 
-      setInnloggingFeil('Noe gikk galt. Prøv igjen.'); 
+    if (error) {
+      setInnloggingFeil('Noe gikk galt. Prøv igjen.');
     } else {
-      // Send til Stripe Checkout med 7 dagers gratis prøveperiode
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: epost }),
-      });
+      const res = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: epost }) });
       const { url } = await res.json();
       if (url) window.location.href = url;
       else setBruker(data.user);
@@ -323,51 +315,25 @@ export default function Home() {
 
   const loggUt = async () => {
     await supabase.auth.signOut();
-    setBruker(null);
-    setBabyNavn('');
-    setBabyFødselsdato('');
-    setBabyBilde(null);
-    setLurer([]);
-    setKolikkLogger([]);
+    setBruker(null); setBabyNavn(''); setBabyFødselsdato(''); setBabyBilde(null); setLurer([]); setKolikkLogger([]);
     localStorage.clear();
   };
 
   const velgType = (type) => {
-    setSøvnType(type); setVisTypeValg(false);
-    setStartTid(new Date()); setSover(true);
-    setMinutter(0); setSekunder(0);
-    if (type === 'natt') {
-      setVisGlitter(true);
-      setTimeout(() => setVisGlitter(false), 3500);
-    }
+    setSøvnType(type); setVisTypeValg(false); setStartTid(new Date()); setSover(true); setMinutter(0); setSekunder(0);
+    if (type === 'natt') { setVisGlitter(true); setTimeout(() => setVisGlitter(false), 3500); }
   };
 
   const stoppLur = async () => {
     if (!startTid || !søvnType) return;
     const slutt = new Date();
     const diff = Math.floor((slutt.getTime() - startTid.getTime()) / 1000);
-    const nyLur = {
-      id: Date.now(), dato: dagensdato(), type: søvnType,
-      start: startTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      slutt: slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      varighet: Math.floor(diff / 60), signaler: [],
-    };
+    const nyLur = { id: Date.now(), dato: dagensdato(), type: søvnType, start: startTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }), slutt: slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }), varighet: Math.floor(diff / 60), signaler: [] };
     setLurer(prev => [nyLur, ...prev]);
     if (søvnType === 'lur') setVisSignaler(nyLur.id);
     setValgteSignaler([]); setSover(false); setSøvnType(null);
-
-    const { data } = await supabase.from('lurer').insert({
-      profil_id: bruker?.id,
-      dato: dagensdato(), type: søvnType,
-      start: startTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      slutt: slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      varighet: Math.floor(diff / 60), signaler: '',
-    }).select();
-
-    if (data && data[0]) {
-      setLurer(prev => prev.map(l => l.id === nyLur.id ? { ...l, id: data[0].id } : l));
-      setVisSignaler(data[0].id);
-    }
+    const { data } = await supabase.from('lurer').insert({ profil_id: bruker?.id, dato: dagensdato(), type: søvnType, start: startTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }), slutt: slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }), varighet: Math.floor(diff / 60), signaler: '' }).select();
+    if (data && data[0]) { setLurer(prev => prev.map(l => l.id === nyLur.id ? { ...l, id: data[0].id } : l)); setVisSignaler(data[0].id); }
   };
 
   const toggleSignal = (signal) => setValgteSignaler(prev => prev.includes(signal) ? prev.filter(s => s !== signal) : [...prev, signal]);
@@ -375,8 +341,7 @@ export default function Home() {
   const lagreSignaler = async () => {
     setLurer(lurer.map(lur => lur.id === visSignaler ? { ...lur, signaler: valgteSignaler } : lur));
     await supabase.from('lurer').update({ signaler: valgteSignaler.join(',') }).eq('id', visSignaler);
-    setVisSignaler(null);
-    setValgteSignaler([]);
+    setVisSignaler(null); setValgteSignaler([]);
   };
 
   const lagreProfil = async () => {
@@ -428,24 +393,17 @@ export default function Home() {
   const etikett = (farge = farger.tekstLys) => ({ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'sans-serif', color: farge, marginBottom: '8px' });
   const tittel = (farge = farger.terrakotta) => ({ fontSize: '18px', fontStyle: 'italic', color: farge, margin: '0 0 6px' });
 
-  // LASTESKJERM
   if (laster) {
     return (
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
-        <style>{`
-          @keyframes spin { to { transform: rotate(360deg); } }
-          @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
-        `}</style>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } } @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }`}</style>
         <img src="/leep.png" alt="Lille" style={{ width: '180px', height: 'auto', mixBlendMode: 'multiply', animation: 'fadeIn 0.8s ease forwards' }} />
         <div style={{ width: '28px', height: '28px', border: `2px solid ${farger.grønn}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <div style={{ fontSize: '13px', fontFamily: 'sans-serif', color: farger.tekstLys, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-          Laster inn...
-        </div>
+        <div style={{ fontSize: '13px', fontFamily: 'sans-serif', color: farger.tekstLys, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Laster inn...</div>
       </div>
     );
   }
 
-  // INNLOGGINGSSIDE
   if (!bruker) {
     return (
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'Georgia, serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
@@ -501,7 +459,6 @@ export default function Home() {
     <>
       {visGlitter && <GlitterOvergang />}
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'Georgia, serif', position: 'relative', paddingBottom: '90px' }}>
-
         <div style={{ backgroundColor: farger.hvit, padding: '20px 24px 16px', borderBottom: `1px solid ${farger.kremMørk}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <img src="/leep.png" alt="Lille" style={{ height: '60px', width: 'auto', mixBlendMode: 'multiply' }} />
@@ -515,7 +472,6 @@ export default function Home() {
         </div>
 
         <div style={{ padding: '20px 24px' }}>
-
           {aktivSide === 'hjem' && (
             <div>
               {!babyNavn && (
@@ -563,9 +519,21 @@ export default function Home() {
                   <div style={{ fontSize: '26px', fontStyle: 'italic', color: sover && søvnType === 'lur' ? '#FDFAF6' : farger.terrakotta, marginBottom: '6px', lineHeight: 1.2 }}>
                     {sover && søvnType === 'lur' ? `${minutter} min ${sekunder < 10 ? '0' : ''}${sekunder} sek` : `Sover ${babyNavn || 'babyen'} nå?`}
                   </div>
-                  <div style={{ fontSize: '13px', fontFamily: 'sans-serif', color: sover && søvnType === 'lur' ? '#9FD4B8' : farger.tekstLys, marginBottom: '18px' }}>
+                  <div style={{ fontSize: '13px', fontFamily: 'sans-serif', color: sover && søvnType === 'lur' ? '#9FD4B8' : farger.tekstLys, marginBottom: '12px' }}>
                     {sover && søvnType === 'lur' ? `Startet kl. ${startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}` : 'Trykk for å registrere søvn'}
                   </div>
+                  {sover && søvnType === 'lur' && (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', fontFamily: 'sans-serif', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>Juster starttid</div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        {[5, 10, 15, 30].map(min => (
+                          <button key={min} onClick={() => justerStartTid(min)} style={{ flex: 1, padding: '8px 0', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.25)', backgroundColor: 'rgba(255,255,255,0.1)', color: '#FDFAF6', fontSize: '11px', fontFamily: 'sans-serif', cursor: 'pointer' }}>
+                            -{min}m
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <button onClick={sover && søvnType === 'lur' ? stoppLur : () => setVisTypeValg(!visTypeValg)} style={{ width: '100%', padding: '13px', backgroundColor: sover && søvnType === 'lur' ? 'rgba(255,255,255,0.15)' : farger.grønn, border: sover && søvnType === 'lur' ? '1px solid rgba(255,255,255,0.3)' : 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'sans-serif', color: '#FDFAF6', cursor: 'pointer' }}>
                     {sover && søvnType === 'lur' ? 'Avslutt lur' : 'Registrer søvn'}
                   </button>
@@ -662,7 +630,41 @@ export default function Home() {
 
           {aktivSide === 'logg' && (
             <div>
-              <div style={etikett()}>Søvnlogg</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={etikett()}>Søvnlogg</div>
+                <button onClick={() => setVisEtterregistrer(!visEtterregistrer)} style={{ padding: '8px 14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '20px', fontSize: '11px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'sans-serif', letterSpacing: '0.06em' }}>+ Legg til</button>
+              </div>
+
+              {visEtterregistrer && (
+                <div style={kort()}>
+                  <div style={etikett(farger.grønn)}>Etterregistrer søvn</div>
+                  <p style={tittel()}>Legg til tidligere lur</p>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+                    {['lur', 'natt'].map(t => (
+                      <button key={t} onClick={() => setNyLurType(t)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: nyLurType === t ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: nyLurType === t ? farger.grønnLys : farger.bakgrunn, color: nyLurType === t ? farger.grønn : farger.tekstLys, fontSize: '13px', fontFamily: 'sans-serif', cursor: 'pointer', fontWeight: nyLurType === t ? '600' : '400' }}>
+                        {t === 'lur' ? 'Lur' : 'Nattesøvn'}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={etikett()}>Dato</div>
+                  <input type="date" value={nyLurDato} onChange={e => setNyLurDato(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'sans-serif', boxSizing: 'border-box' }} />
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={etikett()}>Starttid</div>
+                      <input type="time" value={nyLurStart} onChange={e => setNyLurStart(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'sans-serif', boxSizing: 'border-box' }} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={etikett()}>Sluttid</div>
+                      <input type="time" value={nyLurSlutt} onChange={e => setNyLurSlutt(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'sans-serif', boxSizing: 'border-box' }} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button onClick={() => setVisEtterregistrer(false)} style={{ flex: 1, padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'sans-serif' }}>Avbryt</button>
+                    <button onClick={lagreEtterregistrertLur} style={{ flex: 1, padding: '12px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'sans-serif' }}>Lagre</button>
+                  </div>
+                </div>
+              )}
+
               {lurer.length === 0 ? (
                 <div style={{ ...kort(), textAlign: 'center', padding: '40px 20px' }}>
                   <p style={tittel()}>Ingen registreringer ennå</p>
