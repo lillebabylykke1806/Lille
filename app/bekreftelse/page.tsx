@@ -1,6 +1,6 @@
 'use client';
-import { supabase } from './lib/supabase';
-import { farger } from './lib/farger';
+import { supabase } from '../lib/supabase';
+import { farger } from '../lib/farger';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
