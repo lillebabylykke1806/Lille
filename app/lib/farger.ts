@@ -1,0 +1,17 @@
+export const farger = {
+    bakgrunn: '#F5EFE6',
+    krem: '#EDE5D8',
+    kremMørk: '#E0D5C5',
+    grønn: '#2D5C45',
+    grønnLys: '#D6E5DF',
+    terrakotta: '#B05A2F',
+    terrakottaLys: '#F2E4D8',
+    tekst: '#3D2B1F',
+    tekstLys: '#8A7060',
+    hvit: '#FDFAF6',
+    nattBakgrunn: '#1A1F2E',
+    nattKortKant: '#2D3446',
+    nattTekst: '#E8DDD0',
+    nattTekstLys: '#8A8FA8',
+    nattAksent: '#C4A882',
+  };
