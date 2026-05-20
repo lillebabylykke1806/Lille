@@ -56,9 +56,11 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       label: 'Amming', side: 'amming',
       svg: (
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="13" y="6" width="8" height="13" rx="4" stroke={farger.grønn} strokeWidth="1.8" fill="none" transform="rotate(25 17 12)"/>
-          <ellipse cx="17" cy="22" rx="5" ry="4" stroke={farger.grønn} strokeWidth="1.8" fill="none"/>
-          <circle cx="17" cy="25.5" r="1.5" fill={farger.grønn} opacity="0.6"/>
+          <rect x="11" y="4" width="10" height="16" rx="5" fill="none" stroke={farger.grønn} strokeWidth="1.8"/>
+          <rect x="14" y="2" width="4" height="4" rx="1" fill={farger.grønn} opacity="0.5"/>
+          <path d="M11 20H21" stroke={farger.grønn} strokeWidth="1.8" strokeLinecap="round"/>
+          <ellipse cx="16" cy="26" rx="6" ry="4" fill="none" stroke={farger.grønn} strokeWidth="1.8"/>
+          <circle cx="16" cy="29.5" r="1.5" fill={farger.grønn} opacity="0.6"/>
         </svg>
       ),
     },
@@ -66,8 +68,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       label: 'Signal & uro', side: 'kolikk',
       svg: (
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M16 8C12.5 8 9.5 10.5 9.5 14C9.5 17 11 19 13.5 20.5L13 24H19L18.5 20.5C21 19 22.5 17 22.5 14C22.5 10.5 19.5 8 16 8Z" fill={farger.hvit} stroke={farger.kremMørk} strokeWidth="1.5"/>
-          <path d="M13.5 14.5C13.5 14.5 14.5 16 16 16C17.5 16 18.5 14.5 18.5 14.5" stroke={farger.tekstLys} strokeWidth="1.3" strokeLinecap="round"/>
+          <path d="M16 6C11.5 6 8 9.5 8 14C8 17.5 10 20.5 13 22L12.5 26H19.5L19 22C22 20.5 24 17.5 24 14C24 9.5 20.5 6 16 6Z" fill={farger.hvit} stroke={farger.tekstLys} strokeWidth="1.5"/>
+          <circle cx="13" cy="13" r="1.2" fill={farger.tekstLys}/>
+          <circle cx="19" cy="13" r="1.2" fill={farger.tekstLys}/>
+          <path d="M13 17C13 17 14.5 19 16 19C17.5 19 19 17 19 17" stroke={farger.tekstLys} strokeWidth="1.3" strokeLinecap="round"/>
         </svg>
       ),
     },
