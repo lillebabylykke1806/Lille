@@ -97,29 +97,43 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       </div>
 
       {/* Boble */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 24px' }}>
-        <div style={{ position: 'relative', width: '220px', height: '220px' }}>
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: `radial-gradient(circle at 40% 40%, ${valgtTilstand.farge1}, ${valgtTilstand.farge2})`,
-            borderRadius: '60% 40% 55% 45% / 50% 60% 40% 50%',
-            filter: 'blur(2px)',
-            opacity: 0.9,
-          }} />
-          <div style={{
-            position: 'absolute', inset: '15px',
-            background: `radial-gradient(circle at 35% 35%, ${valgtTilstand.farge2}99, ${valgtTilstand.farge1}66)`,
-            borderRadius: '55% 45% 60% 40% / 45% 55% 45% 55%',
-          }} />
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
-              <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
-            </div>
-          </div>
-        </div>
+<div style={{ display: 'flex', justifyContent: 'center', padding: '10px 24px' }}>
+  <div style={{ position: 'relative', width: '240px', height: '240px' }}>
+    {/* Flere fargeflekker */}
+    <div style={{
+      position: 'absolute', width: '160px', height: '160px',
+      left: '20px', top: '40px',
+      background: `radial-gradient(circle, ${valgtTilstand.farge1}CC, transparent 70%)`,
+      borderRadius: '50%', filter: 'blur(20px)',
+    }} />
+    <div style={{
+      position: 'absolute', width: '140px', height: '140px',
+      left: '60px', top: '20px',
+      background: `radial-gradient(circle, ${valgtTilstand.farge2}BB, transparent 70%)`,
+      borderRadius: '50%', filter: 'blur(18px)',
+    }} />
+    <div style={{
+      position: 'absolute', width: '120px', height: '120px',
+      left: '10px', top: '60px',
+      background: `radial-gradient(circle, #F5C4A888, transparent 70%)`,
+      borderRadius: '50%', filter: 'blur(15px)',
+    }} />
+    <div style={{
+      position: 'absolute', width: '130px', height: '130px',
+      left: '80px', top: '70px',
+      background: `radial-gradient(circle, ${valgtTilstand.farge1}99, transparent 70%)`,
+      borderRadius: '50%', filter: 'blur(18px)',
+    }} />
+    {/* Innhold */}
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+      <img src="/baby-ansikt.png" alt="baby" style={{ width: '70px', height: '70px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
+        <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
       </div>
+    </div>
+  </div>
+</div>
 
       {/* Tilstandsvelger */}
       <div style={{ display: 'flex', gap: '8px', padding: '0 24px', marginBottom: '24px', overflowX: 'auto' }}>
