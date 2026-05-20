@@ -56,13 +56,12 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       label: 'Amming', side: 'amming',
       svg: (
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-25, 16, 16)">
-            <rect x="11" y="13" width="10" height="14" rx="5" stroke={farger.grønn} strokeWidth="1.6" fill="none"/>
-            <rect x="13" y="9" width="6" height="5" rx="2" stroke={farger.grønn} strokeWidth="1.4" fill="none"/>
-            <path d="M15 6C15 7 15.5 8 16 9C16.5 8 17 7 17 6" stroke={farger.grønn} strokeWidth="1.4" strokeLinecap="round"/>
-            <line x1="13" y1="17" x2="13" y2="19" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
-            <line x1="13" y1="20.5" x2="13" y2="22.5" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
-            <line x1="13" y1="24" x2="13" y2="26" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
+          <g transform="rotate(-30, 16, 16)">
+            <rect x="12" y="14" width="8" height="12" rx="4" stroke={farger.grønn} strokeWidth="1.6" fill="none"/>
+            <path d="M13 14V11C13 9.9 13.9 9 15 9H17C18.1 9 19 9.9 19 11V14" stroke={farger.grønn} strokeWidth="1.4" fill="none"/>
+            <path d="M15.5 7C15.5 7 15.5 8.5 16 9C16.5 8.5 16.5 7 16.5 7" stroke={farger.grønn} strokeWidth="1.3" strokeLinecap="round"/>
+            <line x1="13.5" y1="18" x2="13.5" y2="20" stroke={farger.grønn} strokeWidth="0.9" opacity="0.5"/>
+            <line x1="13.5" y1="21.5" x2="13.5" y2="23.5" stroke={farger.grønn} strokeWidth="0.9" opacity="0.5"/>
           </g>
         </svg>
       ),
@@ -71,7 +70,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       label: 'Signal & uro', side: 'kolikk',
       svg: (
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M16 26C16 26 5 19 5 12C5 8.7 7.7 6 11 6C13 6 14.8 7 16 8.5C17.2 7 19 6 21 6C24.3 6 27 8.7 27 12C27 19 16 26 16 26Z" fill="none" stroke={farger.tekstLys} strokeWidth="1.8" strokeLinejoin="round"/>
+          <path d="M16 26C16 26 5 19 5 12C5 8.7 7.7 6 11 6C13 6 14.8 7 16 8.5C17.2 7 19 6 21 6C24.3 6 27 8.7 27 12C27 19 16 26 16 26Z" fill="none" stroke={farger.grønn} strokeWidth="1.8" strokeLinejoin="round"/>
         </svg>
       ),
     },
