@@ -98,11 +98,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
      {/* Boble */}
 <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 24px' }}>
-  <div style={{ position: 'relative', width: '260px', height: '260px' }}>
-    <div style={{ position: 'absolute', width: '200px', height: '200px', left: '0px', top: '30px', background: '#C8DDD6', borderRadius: '50%', opacity: 0.7 }} />
-    <div style={{ position: 'absolute', width: '180px', height: '180px', left: '70px', top: '10px', background: '#F2C4A8', borderRadius: '50%', opacity: 0.6 }} />
-    <div style={{ position: 'absolute', width: '160px', height: '160px', left: '20px', top: '90px', background: '#E8C4A0', borderRadius: '50%', opacity: 0.5 }} />
-    <div style={{ position: 'absolute', width: '170px', height: '170px', left: '80px', top: '70px', background: '#B8D4CC', borderRadius: '50%', opacity: 0.6 }} />
+  <div style={{ position: 'relative', width: '240px', height: '240px' }}>
+    <div style={{ position: 'absolute', width: '160px', height: '160px', left: '10px', top: '40px', background: '#C8DDD6', borderRadius: '50%', opacity: 0.8, filter: 'blur(25px)' }} />
+    <div style={{ position: 'absolute', width: '150px', height: '150px', left: '75px', top: '20px', background: '#F2C4A8', borderRadius: '50%', opacity: 0.8, filter: 'blur(25px)' }} />
+    <div style={{ position: 'absolute', width: '140px', height: '140px', left: '40px', top: '85px', background: '#E8C4A0', borderRadius: '50%', opacity: 0.7, filter: 'blur(20px)' }} />
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
       <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
       <div style={{ textAlign: 'center' }}>
