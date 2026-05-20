@@ -1,171 +1,24 @@
-'use client';
-import { supabase } from '../lib/supabase';
-import { farger } from '../lib/farger';
-import { useState, useEffect } from 'react';
+﻿"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
-  const [aktivSide, setAktivSide] = useState('hjem');
-  const [bruker, setBruker] = useState(null);
-  const [laster, setLaster] = useState(true);
-  const [epost, setEpost] = useState('');
-  const [passord, setPassord] = useState('');
-  const [erNyBruker, setErNyBruker] = useState(false);
-  const [innloggingFeil, setInnloggingFeil] = useState('');
-  const [visRegistrer, setVisRegistrer] = useState(false);
+export default function Bekreftelse() {
+  const router = useRouter();
 
   useEffect(() => {
-    const lastData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) setBruker(session.user);
-      setLaster(false);
-    };
-    setTimeout(() => setLaster(false), 5000);
-    lastData();
-  }, []);
-
-  const loggInn = async () => {
-    setInnloggingFeil('');
-    const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
-    if (error) setInnloggingFeil('Feil e-post eller passord. Prøv igjen.');
-    else setBruker(data.user);
-  };
-
-  const registrer = async () => {
-    setInnloggingFeil('');
-    const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
-    if (error) {
-      setInnloggingFeil('Noe gikk galt. Prøv igjen.');
-    } else {
-      const res = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: epost }) });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-      else setBruker(data.user);
-    }
-  };
-
-  const loggUt = async () => {
-    await supabase.auth.signOut();
-    setBruker(null);
-  };
-
-  if (laster) {
-    return (
-      <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        <img src="/leep.png" alt="Lille" style={{ width: '180px', height: 'auto', mixBlendMode: 'multiply' }} />
-        <div style={{ width: '28px', height: '28px', border: `2px solid ${farger.grønn}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-      </div>
-    );
-  }
-
-  if (!bruker) {
-    return (
-      <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'Georgia, serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
-        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-          <img src="/leep.png" alt="Lille" style={{ width: '140px', height: 'auto', marginBottom: '16px', mixBlendMode: 'multiply' }} />
-          <div style={{ fontSize: '13px', color: farger.tekstLys, fontFamily: 'sans-serif' }}>Din babys språk, i dine hender</div>
-        </div>
-        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px', width: '100%' }}>
-          <p style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, margin: '0 0 20px' }}>{erNyBruker ? 'Velkommen til Lille' : 'Hei igjen!'}</p>
-          <input type="email" value={epost} onChange={(e) => setEpost(e.target.value)} placeholder="din@epost.no" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'sans-serif', boxSizing: 'border-box' }} />
-          <input type="password" value={passord} onChange={(e) => setPassord(e.target.value)} placeholder="Minst 6 tegn" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '20px', outline: 'none', fontFamily: 'sans-serif', boxSizing: 'border-box' }} />
-          {innloggingFeil && <p style={{ fontSize: '13px', color: '#C0392B', fontFamily: 'sans-serif', margin: '0 0 14px', textAlign: 'center' }}>{innloggingFeil}</p>}
-          <button onClick={erNyBruker ? registrer : loggInn} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'sans-serif', marginBottom: '12px' }}>
-            {erNyBruker ? 'Opprett konto' : 'Logg inn'}
-          </button>
-          <button onClick={() => { setErNyBruker(!erNyBruker); setInnloggingFeil(''); }} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'sans-serif' }}>
-            {erNyBruker ? 'Har allerede konto? Logg inn' : 'Ny bruker? Opprett konto'}
-          </button>
-        </div>
-      </div>
-    );
-  }
+    const timer = setTimeout(() => {
+      router.push("/");
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
-    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'Georgia, serif', position: 'relative', paddingBottom: '90px' }}>
-      
-      {/* Innhold */}
-      <div style={{ padding: '20px 24px' }}>
-        {aktivSide === 'hjem' && <div><p style={{ color: farger.tekst }}>Hjemskjerm kommer her</p></div>}
-        {aktivSide === 'sovn' && <div><p style={{ color: farger.tekst }}>Søvn kommer her</p></div>}
-        {aktivSide === 'kolikk' && <div><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
-        {aktivSide === 'innsikt' && <div><p style={{ color: farger.tekst }}>Innsikt kommer her</p></div>}
-        {aktivSide === 'profil' && (
-          <div>
-            <p style={{ color: farger.tekst, fontFamily: 'sans-serif' }}>Innlogget som {bruker?.email}</p>
-            <button onClick={loggUt} style={{ padding: '12px 20px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', color: '#fff', cursor: 'pointer', fontFamily: 'sans-serif' }}>Logg ut</button>
-          </div>
-        )}
-      </div>
-
-      {/* Ny navigasjon med ikoner */}
-      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', backgroundColor: farger.hvit, borderTop: `1px solid ${farger.kremMørk}`, display: 'flex', alignItems: 'center', padding: '8px 0 24px' }}>
-        
-        {/* Hjem */}
-        <button onClick={() => setAktivSide('hjem')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill={aktivSide === 'hjem' ? farger.grønn : farger.kremMørk} />
-          </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'sans-serif', color: aktivSide === 'hjem' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'hjem' ? '600' : '400' }}>Hjem</span>
-        </button>
-
-        {/* Søvn */}
-        <button onClick={() => setAktivSide('sovn')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C14.5 21 16.76 20.01 18.43 18.4C14.1 18.17 10.5 14.43 10.5 9.9C10.5 7.3 11.72 4.98 13.62 3.45C13.09 3.16 12.56 3 12 3Z" fill={aktivSide === 'sovn' ? farger.grønn : farger.kremMørk} />
-          </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'sans-serif', color: aktivSide === 'sovn' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'sovn' ? '600' : '400' }}>Søvn</span>
-        </button>
-
-        {/* + knapp i midten */}
-        <button onClick={() => setVisRegistrer(true)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0' }}>
-          <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønn, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-20px', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 5V19M5 12H19" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round" />
-            </svg>
-          </div>
-        </button>
-
-        {/* Innsikt */}
-        <button onClick={() => setAktivSide('innsikt')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="12" width="4" height="9" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk} />
-            <rect x="10" y="7" width="4" height="14" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk} />
-            <rect x="17" y="3" width="4" height="18" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk} />
-          </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'sans-serif', color: aktivSide === 'innsikt' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'innsikt' ? '600' : '400' }}>Innsikt</span>
-        </button>
-
-        {/* Profil */}
-        <button onClick={() => setAktivSide('profil')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="8" r="4" fill={aktivSide === 'profil' ? farger.grønn : farger.kremMørk} />
-            <path d="M4 20C4 16.69 7.58 14 12 14C16.42 14 20 16.69 20 20" stroke={aktivSide === 'profil' ? farger.grønn : farger.kremMørk} strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'sans-serif', color: aktivSide === 'profil' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'profil' ? '600' : '400' }}>Profil</span>
-        </button>
-      </div>
-
-      {/* + meny som kommer opp */}
-      {visRegistrer && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisRegistrer(false)}>
-          <div style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }} onClick={e => e.stopPropagation()}>
-            <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 24px' }} />
-            <p style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, margin: '0 0 20px', textAlign: 'center' }}>Hva vil du registrere?</p>
-            {[
-              { id: 'sovn', label: 'Søvn', ikon: '🌙' },
-              { id: 'kolikk', label: 'Uro / kolikk', ikon: '💛' },
-              { id: 'amming', label: 'Amming', ikon: '🤱' },
-              { id: 'vaksiner', label: 'Vaksine / medisin', ikon: '💉' },
-            ].map(item => (
-              <button key={item.id} onClick={() => { setAktivSide(item.id); setVisRegistrer(false); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.bakgrunn, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', fontFamily: 'sans-serif', fontSize: '15px', color: farger.tekst }}>
-                <span style={{ fontSize: '22px' }}>{item.ikon}</span>
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+    <div style={{ backgroundColor: "#F5EFE6", minHeight: "100vh", maxWidth: "430px", margin: "0 auto", fontFamily: "Georgia, serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", textAlign: "center", gap: "20px" }}>
+      <div style={{ fontSize: "48px" }}>🌿</div>
+      <h1 style={{ fontSize: "26px", fontStyle: "italic", color: "#B05A2F", margin: 0 }}>Velkommen til Lille!</h1>
+      <p style={{ fontSize: "15px", color: "#8A7060", fontFamily: "sans-serif", lineHeight: 1.7, margin: 0 }}>Din 7 dagers gratis prøveperiode er nå aktivert.</p>
+      <div style={{ width: "28px", height: "28px", border: "2px solid #2D5C45", borderTop: "2px solid transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+      <style>{String.raw`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
