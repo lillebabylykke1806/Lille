@@ -98,10 +98,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
      {/* Boble */}
 <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 24px' }}>
-  <div style={{ position: 'relative', width: '240px', height: '240px' }}>
-    <div style={{ position: 'absolute', width: '160px', height: '160px', left: '10px', top: '40px', background: '#C8DDD6', borderRadius: '50%', opacity: 0.8, filter: 'blur(25px)' }} />
-    <div style={{ position: 'absolute', width: '150px', height: '150px', left: '75px', top: '20px', background: '#F2C4A8', borderRadius: '50%', opacity: 0.8, filter: 'blur(25px)' }} />
-    <div style={{ position: 'absolute', width: '140px', height: '140px', left: '40px', top: '85px', background: '#E8C4A0', borderRadius: '50%', opacity: 0.7, filter: 'blur(20px)' }} />
+  <div style={{ position: 'relative', width: '220px', height: '220px' }}>
+    <div style={{ position: 'absolute', width: '120px', height: '120px', left: '20px', top: '50px', background: '#C8DDD6', borderRadius: '50%', opacity: 0.9, filter: 'blur(18px)' }} />
+    <div style={{ position: 'absolute', width: '110px', height: '110px', left: '85px', top: '30px', background: '#F2C4A8', borderRadius: '50%', opacity: 0.9, filter: 'blur(18px)' }} />
+    <div style={{ position: 'absolute', width: '100px', height: '100px', left: '50px', top: '90px', background: '#D4B483', borderRadius: '50%', opacity: 0.7, filter: 'blur(15px)' }} />
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
       <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
       <div style={{ textAlign: 'center' }}>
