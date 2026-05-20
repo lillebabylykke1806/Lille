@@ -98,10 +98,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
     {/* Boble */}
 <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 24px' }}>
-  <div style={{ position: 'relative', width: '340px', height: '340px' }}>
+<div style={{ position: 'relative', width: '680px', height: '680px' }}>
     <img src="/boble.png" alt="boble" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }} />
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-      <img src="/baby-ansikt.png" alt="baby" style={{ width: '100px', height: '100px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+    <img src="/baby-ansikt.png" alt="baby" style={{ width: '160px', height: '160px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
         <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
