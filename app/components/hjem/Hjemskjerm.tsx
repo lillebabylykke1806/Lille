@@ -41,6 +41,38 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
   const valgtTilstand = tilstandConfig[babyTilstand] || tilstandConfig.rolig;
 
+  const snarveier = [
+    {
+      label: 'Søvn', side: 'sovn',
+      svg: (
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M26 17C25.1 21.6 21 25 16 25C10.5 25 6 20.5 6 15C6 10 9.4 5.9 14 5C11 8 11 13.5 14.5 17C18 20.5 23 20.5 26 17Z" fill={farger.grønn} opacity="0.8"/>
+          <circle cx="22" cy="8" r="1.5" fill={farger.grønn} opacity="0.4"/>
+          <circle cx="26" cy="12" r="1" fill={farger.grønn} opacity="0.3"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Amming', side: 'amming',
+      svg: (
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="13" y="6" width="8" height="13" rx="4" stroke={farger.grønn} strokeWidth="1.8" fill="none" transform="rotate(25 17 12)"/>
+          <ellipse cx="17" cy="22" rx="5" ry="4" stroke={farger.grønn} strokeWidth="1.8" fill="none"/>
+          <circle cx="17" cy="25.5" r="1.5" fill={farger.grønn} opacity="0.6"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Signal & uro', side: 'kolikk',
+      svg: (
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M16 8C12.5 8 9.5 10.5 9.5 14C9.5 17 11 19 13.5 20.5L13 24H19L18.5 20.5C21 19 22.5 17 22.5 14C22.5 10.5 19.5 8 16 8Z" fill={farger.hvit} stroke={farger.kremMørk} strokeWidth="1.5"/>
+          <path d="M13.5 14.5C13.5 14.5 14.5 16 16 16C17.5 16 18.5 14.5 18.5 14.5" stroke={farger.tekstLys} strokeWidth="1.3" strokeLinecap="round"/>
+        </svg>
+      ),
+    },
+  ];
+
   return (
     <div>
       {/* Header */}
@@ -66,7 +98,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       {/* Boble */}
       <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 24px' }}>
         <div style={{ position: 'relative', width: '220px', height: '220px' }}>
-          {/* Bakgrunnsboble */}
           <div style={{
             position: 'absolute', inset: 0,
             background: `radial-gradient(circle at 40% 40%, ${valgtTilstand.farge1}, ${valgtTilstand.farge2})`,
@@ -74,20 +105,19 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
             filter: 'blur(2px)',
             opacity: 0.9,
           }} />
-          {/* Indre boble */}
           <div style={{
             position: 'absolute', inset: '15px',
             background: `radial-gradient(circle at 35% 35%, ${valgtTilstand.farge2}99, ${valgtTilstand.farge1}66)`,
             borderRadius: '55% 45% 60% 40% / 45% 55% 45% 55%',
           }} />
-          {/* Innhold */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <circle cx="18" cy="14" r="9" fill={farger.grønn} opacity="0.7" />
-              <circle cx="14" cy="12" r="1.5" fill={farger.hvit} />
-              <circle cx="22" cy="12" r="1.5" fill={farger.hvit} />
-              <path d="M14 17C14 17 15.5 19 18 19C20.5 19 22 17 22 17" stroke={farger.hvit} strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M10 22C10 22 12 26 18 26C24 26 26 22 26 22" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+              <circle cx="30" cy="25" r="14" fill={farger.grønn} opacity="0.6"/>
+              <circle cx="25" cy="22" r="2" fill={farger.hvit}/>
+              <circle cx="35" cy="22" r="2" fill={farger.hvit}/>
+              <path d="M24 28C24 28 26 31 30 31C34 31 36 28 36 28" stroke={farger.hvit} strokeWidth="2" strokeLinecap="round"/>
+              <path d="M20 38C20 38 23 44 30 44C37 44 40 38 40 38" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
+              <circle cx="30" cy="14" r="4" fill={farger.kremMørk} opacity="0.5"/>
             </svg>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
@@ -99,7 +129,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
       {/* Tilstandsvelger */}
       <div style={{ display: 'flex', gap: '8px', padding: '0 24px', marginBottom: '24px', overflowX: 'auto' }}>
-        {Object.entries(tilstandConfig).map(([key, val]) => (
+        {Object.entries(tilstandConfig).map(([key]) => (
           <button key={key} onClick={() => setBabyTilstand(key)} style={{ flexShrink: 0, padding: '8px 14px', borderRadius: '20px', border: babyTilstand === key ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: babyTilstand === key ? farger.grønnLys : farger.hvit, color: babyTilstand === key ? farger.grønn : farger.tekstLys, fontSize: '12px', fontFamily: 'sans-serif', cursor: 'pointer', fontWeight: babyTilstand === key ? '600' : '400' }}>
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </button>
@@ -108,13 +138,9 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
       {/* Snarveier */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '24px' }}>
-        {[
-          { label: 'Søvn', ikon: '🌙', side: 'sovn' },
-          { label: 'Amming', ikon: '🤱', side: 'amming' },
-          { label: 'Signal & uro', ikon: '💛', side: 'kolikk' },
-        ].map(item => (
+        {snarveier.map(item => (
           <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '16px 8px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-            <span style={{ fontSize: '24px' }}>{item.ikon}</span>
+            {item.svg}
             <span style={{ fontSize: '11px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{item.label}</span>
           </button>
         ))}
