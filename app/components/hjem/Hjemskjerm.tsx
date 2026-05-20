@@ -53,19 +53,17 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       ),
     },
     {
-      label: 'Amming', side: 'amming',
-      svg: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <g transform="rotate(-30, 16, 16)">
-            <rect x="12" y="14" width="8" height="12" rx="4" stroke={farger.grønn} strokeWidth="1.6" fill="none"/>
-            <path d="M13 14V11C13 9.9 13.9 9 15 9H17C18.1 9 19 9.9 19 11V14" stroke={farger.grønn} strokeWidth="1.4" fill="none"/>
-            <path d="M15.5 7C15.5 7 15.5 8.5 16 9C16.5 8.5 16.5 7 16.5 7" stroke={farger.grønn} strokeWidth="1.3" strokeLinecap="round"/>
-            <line x1="13.5" y1="18" x2="13.5" y2="20" stroke={farger.grønn} strokeWidth="0.9" opacity="0.5"/>
-            <line x1="13.5" y1="21.5" x2="13.5" y2="23.5" stroke={farger.grønn} strokeWidth="0.9" opacity="0.5"/>
-          </g>
-        </svg>
-      ),
-    },
+        label: 'Amming', side: 'amming',
+        svg: (
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="10" y="15" width="12" height="13" rx="3" stroke={farger.grønn} strokeWidth="1.6" fill="none"/>
+            <path d="M12 15V13C12 11 13 10 14 10H18C19 10 20 11 20 13V15" stroke={farger.grønn} strokeWidth="1.4" strokeLinecap="round" fill="none"/>
+            <path d="M15 10C15 10 15 8.5 16 7.5C17 8.5 17 10 17 10" stroke={farger.grønn} strokeWidth="1.3" strokeLinecap="round"/>
+            <line x1="12.5" y1="19" x2="12.5" y2="21" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
+            <line x1="12.5" y1="22.5" x2="12.5" y2="24.5" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
+          </svg>
+        ),
+      },
     {
       label: 'Signal & uro', side: 'kolikk',
       svg: (
