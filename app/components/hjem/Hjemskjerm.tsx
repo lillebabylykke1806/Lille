@@ -112,14 +112,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
             borderRadius: '55% 45% 60% 40% / 45% 55% 45% 55%',
           }} />
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-              <circle cx="30" cy="25" r="14" fill={farger.grønn} opacity="0.6"/>
-              <circle cx="25" cy="22" r="2" fill={farger.hvit}/>
-              <circle cx="35" cy="22" r="2" fill={farger.hvit}/>
-              <path d="M24 28C24 28 26 31 30 31C34 31 36 28 36 28" stroke={farger.hvit} strokeWidth="2" strokeLinecap="round"/>
-              <path d="M20 38C20 38 23 44 30 44C37 44 40 38 40 38" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
-              <circle cx="30" cy="14" r="4" fill={farger.kremMørk} opacity="0.5"/>
-            </svg>
+          <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
               <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
