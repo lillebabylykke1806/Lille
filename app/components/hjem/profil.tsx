@@ -65,16 +65,21 @@ export default function Profil({ bruker, onLoggUt }: Props) {
       {/* Babybilde */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <label style={{ cursor: 'pointer' }}>
-          <div style={{ width: '110px', height: '110px', borderRadius: '50%', backgroundColor: farger.krem, border: `2px solid ${farger.kremMørk}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
-            {babyBilde ? (
-              <img src={babyBilde} alt="Baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              <img src="/baby-ansikt.png" alt="Baby" style={{ width: '70px', height: '70px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
-            )}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.3)', padding: '6px', textAlign: 'center' }}>
-              <span style={{ fontSize: '10px', color: '#fff', fontFamily: 'sans-serif' }}>Endre</span>
-            </div>
-          </div>
+        <div style={{ position: 'relative' }}>
+  <div style={{ width: '110px', height: '110px', borderRadius: '50%', backgroundColor: farger.krem, border: `2px solid ${farger.kremMørk}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+    {babyBilde ? (
+      <img src={babyBilde} alt="Baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+    ) : (
+      <img src="/baby-ansikt.png" alt="Baby" style={{ width: '70px', height: '70px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+    )}
+  </div>
+  <div style={{ position: 'absolute', bottom: '4px', right: '4px', width: '28px', height: '28px', borderRadius: '50%', backgroundColor: farger.grønn, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 3H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="13" r="4" stroke="white" strokeWidth="2"/>
+    </svg>
+  </div>
+</div>
           <input type="file" accept="image/*" onChange={håndterBilde} style={{ display: 'none' }} />
         </label>
       </div>
