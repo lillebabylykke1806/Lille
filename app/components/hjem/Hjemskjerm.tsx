@@ -18,6 +18,7 @@ const tidspunkt = () => {
 export default function Hjemskjerm({ bruker, onNavigate }: Props) {
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
+  const [babyBilde, setBabyBilde] = useState(null);
   const [dagensFlyt, setDagensFlyt] = useState([]);
 
   useEffect(() => {
@@ -28,15 +29,17 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         .eq('id', bruker.id)
         .single();
       if (profil?.baby_navn) setBabyNavn(profil.baby_navn);
+      const lagretBilde = localStorage.getItem('lille_babybilde');
+      if (lagretBilde) setBabyBilde(lagretBilde);
     };
     lastProfil();
   }, [bruker]);
 
   const tilstandConfig = {
-    rolig: { farge1: '#D6E5DF', farge2: '#F2E4D8', tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill' },
-    trøtt: { farge1: '#E8DDD0', farge2: '#D6E5DF', tekst: 'Virker trøtt', undertekst: 'Kanskje tid for en lur snart?' },
-    urolig: { farge1: '#F2E4D8', farge2: '#F5C4A8', tekst: 'Litt urolig', undertekst: 'Trenger ro og regulering' },
-    sover: { farge1: '#D6E5DF', farge2: '#B8CFC8', tekst: 'Sover nå', undertekst: 'Hvil deg du også 🌙' },
+    rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill' },
+    trøtt: { tekst: 'Virker trøtt', undertekst: 'Kanskje tid for en lur snart?' },
+    urolig: { tekst: 'Litt urolig', undertekst: 'Trenger ro og regulering' },
+    sover: { tekst: 'Sover nå', undertekst: 'Hvil deg du også 🌙' },
   };
 
   const valgtTilstand = tilstandConfig[babyTilstand] || tilstandConfig.rolig;
@@ -53,17 +56,17 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       ),
     },
     {
-        label: 'Amming', side: 'amming',
-        svg: (
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <rect x="10" y="15" width="12" height="13" rx="3" stroke={farger.grønn} strokeWidth="1.6" fill="none"/>
-            <path d="M12 15V13C12 11 13 10 14 10H18C19 10 20 11 20 13V15" stroke={farger.grønn} strokeWidth="1.4" strokeLinecap="round" fill="none"/>
-            <path d="M15 10C15 10 15 8.5 16 7.5C17 8.5 17 10 17 10" stroke={farger.grønn} strokeWidth="1.3" strokeLinecap="round"/>
-            <line x1="12.5" y1="19" x2="12.5" y2="21" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
-            <line x1="12.5" y1="22.5" x2="12.5" y2="24.5" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
-          </svg>
-        ),
-      },
+      label: 'Amming', side: 'amming',
+      svg: (
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="10" y="15" width="12" height="13" rx="3" stroke={farger.grønn} strokeWidth="1.6" fill="none"/>
+          <path d="M12 15V13C12 11 13 10 14 10H18C19 10 20 11 20 13V15" stroke={farger.grønn} strokeWidth="1.4" strokeLinecap="round" fill="none"/>
+          <path d="M15 10C15 10 15 8.5 16 7.5C17 8.5 17 10 17 10" stroke={farger.grønn} strokeWidth="1.3" strokeLinecap="round"/>
+          <line x1="12.5" y1="19" x2="12.5" y2="21" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
+          <line x1="12.5" y1="22.5" x2="12.5" y2="24.5" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
+        </svg>
+      ),
+    },
     {
       label: 'Signal & uro', side: 'kolikk',
       svg: (
@@ -96,22 +99,26 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         </div>
       </div>
 
-    {/* Boble */}
-<div style={{ display: 'flex', justifyContent: 'center', padding: '0 0' }}>
-  <div style={{ position: 'relative', width: '100%', height: '320px' }}>
-    <img src="/boble.png" alt="boble" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-      <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
-        <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
+      {/* Boble */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '0 0' }}>
+        <div style={{ position: 'relative', width: '100%', height: '320px' }}>
+          <img src="/boble.png" alt="boble" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            {babyBilde ? (
+              <img src={babyBilde} alt="baby" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${farger.hvit}` }} />
+            ) : (
+              <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+            )}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
+              <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
       {/* Tilstandsvelger */}
-      <div style={{ display: 'flex', gap: '8px', padding: '0 24px', marginBottom: '24px', overflowX: 'auto' }}>
+      <div style={{ display: 'flex', gap: '8px', padding: '16px 24px', overflowX: 'auto' }}>
         {Object.entries(tilstandConfig).map(([key]) => (
           <button key={key} onClick={() => setBabyTilstand(key)} style={{ flexShrink: 0, padding: '8px 14px', borderRadius: '20px', border: babyTilstand === key ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: babyTilstand === key ? farger.grønnLys : farger.hvit, color: babyTilstand === key ? farger.grønn : farger.tekstLys, fontSize: '12px', fontFamily: 'sans-serif', cursor: 'pointer', fontWeight: babyTilstand === key ? '600' : '400' }}>
             {key.charAt(0).toUpperCase() + key.slice(1)}
