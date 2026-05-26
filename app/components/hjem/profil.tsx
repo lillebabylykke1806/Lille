@@ -116,6 +116,28 @@ export default function Profil({ bruker, onLoggUt }: Props) {
       >
         Logg ut
       </button>
+      {babyFødselsdato && (
+  <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '20px', marginTop: '16px' }}>
+    <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'sans-serif', color: farger.tekstLys, marginBottom: '12px' }}>Basert på alder</div>
+    {(() => {
+      const måneder = Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 30.5));
+      const uker = Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 7));
+      const alder = uker < 12 ? `${uker} uker` : måneder < 24 ? `${måneder} måneder` : `${Math.floor(måneder / 12)} år`;
+      const søvn = måneder < 3 ? { min: 14, max: 17, lurer: '4–5 lurer per dag' } :
+        måneder < 6 ? { min: 12, max: 15, lurer: '3–4 lurer per dag' } :
+        måneder < 12 ? { min: 12, max: 14, lurer: '2–3 lurer per dag' } :
+        { min: 11, max: 14, lurer: '1–2 lurer per dag' };
+      return (
+        <>
+          <div style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, fontFamily: 'Georgia, serif', marginBottom: '8px' }}>{babyNavn || 'Babyen'} er {alder} gammel</div>
+          <div style={{ fontSize: '13px', fontFamily: 'sans-serif', color: farger.tekstLys, lineHeight: 1.6 }}>
+            Anbefalt søvn: {søvn.min}–{søvn.max} timer per døgn<br />{søvn.lurer}
+          </div>
+        </>
+      );
+    })()}
+  </div>
+)}
     </div>
   );
 }
