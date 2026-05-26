@@ -4,6 +4,7 @@ import { farger } from './lib/farger';
 import { useState, useEffect } from 'react';
 import Hjemskjerm from './components/hjem/Hjemskjerm';
 import Profil from './components/hjem/profil';
+import Sovn from './components/sovn/Sovn';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -87,7 +88,7 @@ export default function Home() {
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
       <div style={{ overflowY: 'auto' }}>
         {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} onNavigate={setAktivSide} />}
-        {aktivSide === 'sovn' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Søvn kommer her</p></div>}
+        {aktivSide === 'sovn' && <Sovn bruker={bruker} />}
         {aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
         {aktivSide === 'amming' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Amming kommer her</p></div>}
         {aktivSide === 'innsikt' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Innsikt kommer her</p></div>}
