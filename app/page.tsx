@@ -4,7 +4,7 @@ import { farger } from './lib/farger';
 import { useState, useEffect } from 'react';
 import Hjemskjerm from './components/hjem/Hjemskjerm';
 import Profil from './components/hjem/profil';
-import Sovn from './components/sovn/Sovn';
+import Sovn from './components/sovn/sovn';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
