@@ -1,8 +1,9 @@
-'use client';
+﻿'use client';
 import { supabase } from './lib/supabase';
 import { farger } from './lib/farger';
 import { useState, useEffect } from 'react';
 import Hjemskjerm from './components/hjem/Hjemskjerm';
+import Profil from './components/hjem/profil';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -90,12 +91,7 @@ export default function Home() {
         {aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
         {aktivSide === 'amming' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Amming kommer her</p></div>}
         {aktivSide === 'innsikt' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Innsikt kommer her</p></div>}
-        {aktivSide === 'profil' && (
-          <div style={{ padding: '20px 24px' }}>
-            <p style={{ color: farger.tekst, fontFamily: 'sans-serif', marginBottom: '16px' }}>Innlogget som {bruker?.email}</p>
-            <button onClick={loggUt} style={{ padding: '12px 20px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', color: '#fff', cursor: 'pointer', fontFamily: 'sans-serif' }}>Logg ut</button>
-          </div>
-        )}
+        {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 
       <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', backgroundColor: farger.hvit, borderTop: `1px solid ${farger.kremMørk}`, display: 'flex', alignItems: 'center', padding: '8px 0 24px' }}>
