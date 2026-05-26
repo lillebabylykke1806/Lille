@@ -18,7 +18,7 @@ export default function Bekreftelse() {
       minHeight: '100vh',
       maxWidth: '430px',
       margin: '0 auto',
-      fontFamily: 'Georgia, serif',
+      fontFamily: 'var(--font-plus-jakarta), sans-serif',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -31,7 +31,7 @@ export default function Bekreftelse() {
       <h1 style={{ fontSize: '26px', fontStyle: 'italic', color: '#B05A2F', margin: 0 }}>
         Velkommen til Lille!
       </h1>
-      <p style={{ fontSize: '15px', color: '#8A7060', fontFamily: 'sans-serif', lineHeight: 1.7, margin: 0 }}>
+      <p style={{ fontSize: '15px', color: '#8A7060', fontFamily: 'var(--font-inter), sans-serif', lineHeight: 1.7, margin: 0 }}>
         Din 7 dagers gratis prøveperiode er nå aktivert.<br />
         Du sendes til appen om et øyeblikk...
       </p>

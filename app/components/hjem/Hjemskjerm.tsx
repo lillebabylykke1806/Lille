@@ -83,10 +83,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       <div style={{ padding: '20px 24px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <div style={{ fontSize: '22px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>
+            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', color: farger.tekst, marginBottom: '4px' }}>
               {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
             </div>
-            <div style={{ fontSize: '13px', fontFamily: 'sans-serif', color: farger.tekstLys }}>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>
               {valgtTilstand.tekst}
             </div>
           </div>
@@ -110,8 +110,8 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
               <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
             )}
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
-              <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       {/* Tilstandsvelger */}
       <div style={{ display: 'flex', gap: '8px', padding: '16px 24px', overflowX: 'auto' }}>
         {Object.entries(tilstandConfig).map(([key]) => (
-          <button key={key} onClick={() => setBabyTilstand(key)} style={{ flexShrink: 0, padding: '8px 14px', borderRadius: '20px', border: babyTilstand === key ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: babyTilstand === key ? farger.grønnLys : farger.hvit, color: babyTilstand === key ? farger.grønn : farger.tekstLys, fontSize: '12px', fontFamily: 'sans-serif', cursor: 'pointer', fontWeight: babyTilstand === key ? '600' : '400' }}>
+          <button key={key} onClick={() => setBabyTilstand(key)} style={{ flexShrink: 0, padding: '8px 14px', borderRadius: '20px', border: babyTilstand === key ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: babyTilstand === key ? farger.grønnLys : farger.hvit, color: babyTilstand === key ? farger.grønn : farger.tekstLys, fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', cursor: 'pointer', fontWeight: babyTilstand === key ? '600' : '400' }}>
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </button>
         ))}
@@ -131,7 +131,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         {snarveier.map(item => (
           <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '16px 8px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
             {item.svg}
-            <span style={{ fontSize: '11px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{item.label}</span>
+            <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>{item.label}</span>
           </button>
         ))}
       </div>
@@ -139,13 +139,13 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       {/* Dagens flyt */}
       <div style={{ padding: '0 24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <div style={{ fontSize: '16px', fontFamily: 'Georgia, serif', color: farger.tekst }}>Dagens flyt</div>
-          <button style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.grønn, background: 'none', border: `1px solid ${farger.grønnLys}`, padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
+          <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', color: farger.tekst }}>Dagens flyt</div>
+          <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.grønn, background: 'none', border: `1px solid ${farger.grønnLys}`, padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
         </div>
         {dagensFlyt.length === 0 ? (
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
-            <div style={{ fontSize: '14px', fontStyle: 'italic', color: farger.tekstLys, fontFamily: 'Georgia, serif' }}>Ingen registreringer ennå i dag</div>
-            <div style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys, marginTop: '6px' }}>Trykk + for å begynne</div>
+            <div style={{ fontSize: '14px', fontStyle: 'italic', color: farger.tekstLys, fontFamily: 'var(--font-plus-jakarta), sans-serif' }}>Ingen registreringer ennå i dag</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginTop: '6px' }}>Trykk + for å begynne</div>
           </div>
         ) : (
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
@@ -153,10 +153,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
               <div key={i} style={{ padding: '12px 16px', borderBottom: i < dagensFlyt.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: farger.grønn, flexShrink: 0 }} />
                 <div style={{ flex: 1 }}>
-                  <span style={{ fontSize: '13px', fontFamily: 'sans-serif', color: farger.tekstLys, marginRight: '8px' }}>{item.tid}</span>
-                  <span style={{ fontSize: '14px', fontFamily: 'sans-serif', color: farger.tekst }}>{item.tekst}</span>
+                  <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginRight: '8px' }}>{item.tid}</span>
+                  <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekst }}>{item.tekst}</span>
                 </div>
-                {item.varighet && <span style={{ fontSize: '12px', fontFamily: 'sans-serif', color: farger.tekstLys }}>{item.varighet}</span>}
+                {item.varighet && <span style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>{item.varighet}</span>}
               </div>
             ))}
           </div>

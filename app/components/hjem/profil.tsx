@@ -60,7 +60,7 @@ export default function Profil({ bruker, onLoggUt }: Props) {
 
   return (
     <div style={{ padding: '24px' }}>
-      <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'sans-serif', color: farger.tekstLys, marginBottom: '20px' }}>Profil</div>
+      <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '20px' }}>Profil</div>
 
       {/* Babybilde */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
@@ -86,24 +86,24 @@ export default function Profil({ bruker, onLoggUt }: Props) {
 
       {/* Skjema */}
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
-        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>Babyens navn</div>
+        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>Babyens navn</div>
         <input
           type="text"
           value={babyNavn}
           onChange={(e) => setBabyNavn(e.target.value)}
           placeholder="Skriv navn her..."
-          style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '16px', outline: 'none', fontFamily: 'Georgia, serif', boxSizing: 'border-box' }}
+          style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '16px', outline: 'none', fontFamily: 'var(--font-plus-jakarta), sans-serif', boxSizing: 'border-box' }}
         />
-        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>Fødselsdato</div>
+        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>Fødselsdato</div>
         <input
           type="date"
           value={babyFødselsdato}
           onChange={(e) => setBabyFødselsdato(e.target.value)}
-          style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '16px', outline: 'none', fontFamily: 'sans-serif', boxSizing: 'border-box' }}
+          style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '16px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }}
         />
         <button
           onClick={lagreProfil}
-          style={{ width: '100%', padding: '14px', backgroundColor: lagret ? farger.grønnLys : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: lagret ? farger.grønn : '#FDFAF6', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'sans-serif', transition: 'all 0.3s' }}
+          style={{ width: '100%', padding: '14px', backgroundColor: lagret ? farger.grønnLys : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: lagret ? farger.grønn : '#FDFAF6', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', transition: 'all 0.3s' }}
         >
           {lagret ? '✓ Lagret!' : 'Lagre profil'}
         </button>
@@ -112,13 +112,13 @@ export default function Profil({ bruker, onLoggUt }: Props) {
       {/* Logg ut */}
       <button
         onClick={onLoggUt}
-        style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'sans-serif' }}
+        style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}
       >
         Logg ut
       </button>
       {babyFødselsdato && (
   <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '20px', marginTop: '16px' }}>
-    <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'sans-serif', color: farger.tekstLys, marginBottom: '12px' }}>Basert på alder</div>
+    <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '12px' }}>Basert på alder</div>
     {(() => {
       const måneder = Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 30.5));
       const uker = Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 7));
@@ -129,8 +129,8 @@ export default function Profil({ bruker, onLoggUt }: Props) {
         { min: 11, max: 14, lurer: '1–2 lurer per dag' };
       return (
         <>
-          <div style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, fontFamily: 'Georgia, serif', marginBottom: '8px' }}>{babyNavn || 'Babyen'} er {alder} gammel</div>
-          <div style={{ fontSize: '13px', fontFamily: 'sans-serif', color: farger.tekstLys, lineHeight: 1.6 }}>
+          <div style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '8px' }}>{babyNavn || 'Babyen'} er {alder} gammel</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, lineHeight: 1.6 }}>
             Anbefalt søvn: {søvn.min}–{søvn.max} timer per døgn<br />{søvn.lurer}
           </div>
         </>
