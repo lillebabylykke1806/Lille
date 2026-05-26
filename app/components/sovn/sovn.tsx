@@ -1,54 +1,90 @@
 'use client';
 import { farger } from '../../lib/farger';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 
-type Props = {
-  bruker: any;
-};
+type Props = { bruker: any; };
+type TidslinjeItem = { tid: string; tekst: string; type: string; };
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
+const SIGNALER = [
+  { id: 'gned', label: 'Gned øynene', emoji: '👀' },
+  { id: 'stirret', label: 'Stirret tomt', emoji: '😶' },
+  { id: 'gjesping', label: 'Gjesping', emoji: '🥱' },
+  { id: 'hodet', label: 'Vendte hodet bort', emoji: '↩️' },
+  { id: 'kranglete', label: 'Ble kranglete', emoji: '😣' },
+  { id: 'interesse', label: 'Mistet interesse', emoji: '😴' },
+  { id: 'ben', label: 'Trakk ben opp', emoji: '🦵' },
+  { id: 'rygg', label: 'Bøyde ryggen', emoji: '🫸' },
+  { id: 'luft', label: 'Mye luft', emoji: '💨' },
+  { id: 'mat', label: 'Knotete etter mat', emoji: '🍼' },
+];
+
+const TIPS_NATT = [
+  'En rolig legging og mørkt rom kan bidra til dypere og lengre søvn.',
+  'Hvit støy kan hjelpe babyen å sove lenger mellom oppvåkningene.',
+  'En fast kveldsrutine gir babyen trygghet og lettere innsovning.',
+  'Kjølig romtemperatur (18–20°C) gir ofte bedre søvnkvalitet.',
+];
+
 const GlitterOvergang = ({ onDone }: { onDone: () => void }) => {
   const partikler = Array.from({ length: 80 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    størrelse: Math.random() * 4 + 1,
-    forsinkelse: Math.random() * 1.5,
+    id: i, x: Math.random() * 100, y: Math.random() * 100,
+    størrelse: Math.random() * 4 + 1, forsinkelse: Math.random() * 1.5,
     farge: ['#C4A882', '#E8DDD0', '#F5E6C8', '#9FD4B8', '#FDFAF6'][Math.floor(Math.random() * 5)],
   }));
-
-  useEffect(() => {
-    const timer = setTimeout(onDone, 2500);
-    return () => clearTimeout(timer);
-  }, [onDone]);
-
+  useEffect(() => { const t = setTimeout(onDone, 2500); return () => clearTimeout(t); }, [onDone]);
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none', overflow: 'hidden' }}>
       <style>{`
-        @keyframes glitterFall {
-          0% { transform: translateY(-20px) scale(0); opacity: 0; }
-          20% { opacity: 1; transform: translateY(0) scale(1); }
-          100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-        }
-        @keyframes bgDark {
-          0% { background: rgba(26,31,46,0); }
-          100% { background: rgba(26,31,46,0.95); }
-        }
+        @keyframes glitterFall { 0%{transform:translateY(-20px) scale(0);opacity:0} 20%{opacity:1;transform:translateY(0) scale(1)} 100%{transform:translateY(110vh) rotate(360deg);opacity:0} }
+        @keyframes bgDark { 0%{background:rgba(26,31,46,0)} 100%{background:rgba(26,31,46,0.97)} }
       `}</style>
       <div style={{ position: 'absolute', inset: 0, animation: 'bgDark 1.5s ease forwards' }} />
       {partikler.map(p => (
-        <div key={p.id} style={{
-          position: 'absolute',
-          left: `${p.x}%`, top: `${p.y}%`,
-          width: `${p.størrelse}px`, height: `${p.størrelse}px`,
-          borderRadius: '50%',
-          backgroundColor: p.farge,
-          boxShadow: `0 0 ${p.størrelse * 2}px ${p.farge}`,
-          animation: `glitterFall 2s ${p.forsinkelse}s ease-in forwards`,
-        }} />
+        <div key={p.id} style={{ position: 'absolute', left: `${p.x}%`, top: `${p.y}%`, width: `${p.størrelse}px`, height: `${p.størrelse}px`, borderRadius: '50%', backgroundColor: p.farge, boxShadow: `0 0 ${p.størrelse * 2}px ${p.farge}`, animation: `glitterFall 2s ${p.forsinkelse}s ease-in forwards` }} />
       ))}
+    </div>
+  );
+};
+
+const Bølger = () => (
+  <svg viewBox="0 0 430 180" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '180px' }} preserveAspectRatio="none">
+    <path d="M0 120 C60 80 120 140 180 100 C240 60 300 130 360 90 C400 65 430 80 430 80 L430 180 L0 180 Z" fill="#D6E5DF" opacity="0.5"/>
+    <path d="M0 140 C80 100 160 160 240 120 C300 90 370 140 430 110 L430 180 L0 180 Z" fill="#D6E5DF" opacity="0.7"/>
+    <path d="M0 160 C100 130 200 170 300 145 C370 128 430 150 430 150 L430 180 L0 180 Z" fill="#C8D8D0" opacity="0.6"/>
+  </svg>
+);
+
+const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean }) => {
+  const bg = mørk ? 'rgba(255,255,255,0.1)' : farger.kremMørk;
+  const size = 36;
+  if (type === 'lur' || type === 'natt') return (
+    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3D4F7C' : '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11.5 12.5 14C15.5 16.5 19.5 15.5 21 12.5Z" fill={mørk ? '#7C8FD4' : farger.grønn}/>
+      </svg>
+    </div>
+  );
+  if (type === 'amming') return (
+    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#4A3D5C' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontSize: '14px' }}>🍼</span>
+    </div>
+  );
+  if (type === 'oppvåkning') return (
+    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3D4A5C' : '#E8F0EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontSize: '14px' }}>😴</span>
+    </div>
+  );
+  if (type === 'uro') return (
+    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#5C3D3D' : '#F5E6E6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontSize: '14px' }}>💛</span>
+    </div>
+  );
+  return (
+    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontSize: '14px' }}>⭐</span>
     </div>
   );
 };
@@ -56,16 +92,44 @@ const GlitterOvergang = ({ onDone }: { onDone: () => void }) => {
 export default function Sovn({ bruker }: Props) {
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
+  const [lurId, setLurId] = useState<number | null>(null);
   const [minutter, setMinutter] = useState(0);
-  const [sekunder, setSekunder] = useState(0);
   const [søvnType, setSøvnType] = useState<'lur' | 'natt' | null>(null);
   const [visGlitter, setVisGlitter] = useState(false);
   const [visJusterTid, setVisJusterTid] = useState(false);
   const [nyTidStr, setNyTidStr] = useState('');
+  const [valgteSignaler, setValgteSignaler] = useState<string[]>([]);
+  const [tidslinje, setTidslinje] = useState<TidslinjeItem[]>([]);
+  const [søvnkvalitet, setSøvnkvalitet] = useState('God');
+  const [tipIndex] = useState(Math.floor(Math.random() * TIPS_NATT.length));
   const [nyDato, setNyDato] = useState(dagensdato());
   const [nyType, setNyType] = useState<'lur' | 'natt'>('lur');
   const [nyStart, setNyStart] = useState('');
   const [nySlutt, setNySlutt] = useState('');
+
+  const lastTidslinje = useCallback(async () => {
+    const { data } = await supabase
+      .from('lurer')
+      .select('*')
+      .eq('profil_id', bruker?.id)
+      .eq('dato', dagensdato())
+      .order('start', { ascending: true });
+    if (!data) return;
+    const items: TidslinjeItem[] = data.map((l: any) => ({
+      tid: l.start,
+      tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet kort' : l.type === 'amming' ? 'Amming' : l.tekst || l.type,
+      type: l.type,
+    }));
+    setTidslinje(items);
+
+    // Beregn søvnkvalitet
+    const oppvåkninger = data.filter((l: any) => l.type === 'oppvåkning').length;
+    const totalMinutter = data.filter((l: any) => l.type === 'natt' || l.type === 'lur').reduce((sum: number, l: any) => sum + (l.varighet || 0), 0);
+    if (oppvåkninger === 0 && totalMinutter > 120) setSøvnkvalitet('Utmerket');
+    else if (oppvåkninger <= 2) setSøvnkvalitet('God');
+    else if (oppvåkninger <= 4) setSøvnkvalitet('Ok');
+    else setSøvnkvalitet('Urolig');
+  }, [bruker?.id]);
 
   useEffect(() => {
     const lagretStartTid = localStorage.getItem('lille_starttid');
@@ -75,7 +139,8 @@ export default function Sovn({ bruker }: Props) {
       setSøvnType(lagretType as 'lur' | 'natt');
       setVisning(lagretType === 'natt' ? 'nattAktiv' : 'lurAktiv');
     }
-  }, []);
+    lastTidslinje();
+  }, [lastTidslinje]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -83,27 +148,49 @@ export default function Sovn({ bruker }: Props) {
       interval = setInterval(() => {
         const diff = Math.floor((Date.now() - startTid.getTime()) / 1000);
         setMinutter(Math.floor(diff / 60));
-        setSekunder(diff % 60);
       }, 1000);
     }
     return () => { if (interval) clearInterval(interval); };
   }, [startTid, visning]);
 
-  const startSøvn = (type: 'lur' | 'natt') => {
+  const startSøvn = async (type: 'lur' | 'natt') => {
     const nå = new Date();
     setStartTid(nå);
     setSøvnType(type);
+    setValgteSignaler([]);
     localStorage.setItem('lille_starttid', nå.toISOString());
     localStorage.setItem('lille_sovtype', type);
+    const { data } = await supabase.from('lurer').insert({
+      profil_id: bruker?.id, dato: dagensdato(), type,
+      start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      slutt: null, varighet: 0, signaler: '',
+    }).select();
+    if (data?.[0]) setLurId(data[0].id);
     if (type === 'natt') {
       setVisGlitter(true);
-      setTimeout(() => {
-        setVisGlitter(false);
-        setVisning('nattAktiv');
-      }, 2500);
+      setTimeout(() => { setVisGlitter(false); setVisning('nattAktiv'); lastTidslinje(); }, 2500);
     } else {
       setVisning('lurAktiv');
+      lastTidslinje();
     }
+  };
+
+  const registrerOppvåkning = async () => {
+    const nå = new Date();
+    await supabase.from('lurer').insert({
+      profil_id: bruker?.id, dato: dagensdato(), type: 'oppvåkning',
+      start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      slutt: null, varighet: 0, signaler: '',
+    });
+    lastTidslinje();
+  };
+
+  const toggleSignal = async (signalId: string) => {
+    const nyeSignaler = valgteSignaler.includes(signalId)
+      ? valgteSignaler.filter(s => s !== signalId)
+      : [...valgteSignaler, signalId];
+    setValgteSignaler(nyeSignaler);
+    if (lurId) await supabase.from('lurer').update({ signaler: nyeSignaler.join(',') }).eq('id', lurId);
   };
 
   const justerStartTidManuelt = () => {
@@ -121,20 +208,17 @@ export default function Sovn({ bruker }: Props) {
     if (!startTid || !søvnType) return;
     const slutt = new Date();
     const diff = Math.floor((slutt.getTime() - startTid.getTime()) / 1000);
-    await supabase.from('lurer').insert({
-      profil_id: bruker?.id,
-      dato: dagensdato(),
-      type: søvnType,
-      start: startTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      slutt: slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      varighet: Math.floor(diff / 60),
-      signaler: '',
-    });
+    if (lurId) {
+      await supabase.from('lurer').update({
+        slutt: slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+        varighet: Math.floor(diff / 60),
+      }).eq('id', lurId);
+    }
     localStorage.removeItem('lille_starttid');
     localStorage.removeItem('lille_sovtype');
-    setStartTid(null);
-    setSøvnType(null);
+    setStartTid(null); setSøvnType(null); setLurId(null);
     setVisning('velg');
+    lastTidslinje();
   };
 
   const lagreEtterregistrert = async () => {
@@ -144,57 +228,25 @@ export default function Sovn({ bruker }: Props) {
     const varighet = (eh * 60 + em) - (sh * 60 + sm);
     if (varighet <= 0) return;
     await supabase.from('lurer').insert({
-      profil_id: bruker?.id,
-      dato: nyDato,
-      type: nyType,
-      start: nyStart,
-      slutt: nySlutt,
-      varighet,
-      signaler: '',
+      profil_id: bruker?.id, dato: nyDato, type: nyType,
+      start: nyStart, slutt: nySlutt, varighet, signaler: '',
     });
-    setNyStart('');
-    setNySlutt('');
-    setVisning('velg');
+    setNyStart(''); setNySlutt('');
+    setVisning('velg'); lastTidslinje();
   };
 
-  // Sirkulær timer SVG
-  const CircularTimer = ({ dark = false }: { dark?: boolean }) => {
-    const radius = 100;
-    const circumference = 2 * Math.PI * radius;
-    const progress = Math.min((minutter % 60) / 60, 1);
-    const strokeDashoffset = circumference - progress * circumference;
-    return (
-      <div style={{ position: 'relative', width: '240px', height: '240px', margin: '0 auto 24px' }}>
-        <svg width="240" height="240" viewBox="0 0 240 240">
-          <circle cx="120" cy="120" r="100" fill="none" stroke={dark ? 'rgba(255,255,255,0.1)' : farger.kremMørk} strokeWidth="8"/>
-          <circle cx="120" cy="120" r="100" fill="none"
-            stroke={dark ? '#7C8FD4' : farger.grønn}
-            strokeWidth="8"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            transform="rotate(-90 120 120)"
-            style={{ transition: 'stroke-dashoffset 1s linear' }}
-          />
-        </svg>
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: dark ? '#8A8FA8' : farger.tekstLys, marginBottom: '8px' }}>
-            {dark ? 'Natta pågår' : 'Luren pågår'}
-          </div>
-          <div style={{ fontSize: '48px', fontFamily: 'var(--font-plus-jakarta)', color: dark ? '#FDFAF6' : farger.tekst, fontWeight: '700', lineHeight: 1 }}>
-            {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
-          </div>
-          <div style={{ fontSize: '16px', fontFamily: 'var(--font-inter)', color: dark ? '#8A8FA8' : farger.tekstLys, marginTop: '4px' }}>
-            {String(sekunder).padStart(2, '0')} sek
-          </div>
-        </div>
-      </div>
-    );
+  const søvnmelding = () => {
+    if (søvnkvalitet === 'Utmerket') return 'Fantastisk natt! ✨ Baby har sovet godt og sammenhengende.';
+    if (søvnkvalitet === 'God') return 'Nydelig start på natta ✨ Baby har sovet godt og hatt få oppvåkninger.';
+    if (søvnkvalitet === 'Ok') return 'En grei natt 🌙 Litt uro, men baby sover.';
+    return 'Urolig natt 💛 Baby trenger ekstra ro og nærhet nå.';
   };
 
-  if (visGlitter) {
-    return <GlitterOvergang onDone={() => {}} />;
-  }
+  const circumference = 2 * Math.PI * 85;
+  const progress = Math.min((minutter % 60) / 60, 1);
+  const strokeDashoffset = circumference - progress * circumference;
+
+  if (visGlitter) return <GlitterOvergang onDone={() => {}} />;
 
   if (visning === 'velg') {
     return (
@@ -209,11 +261,8 @@ export default function Sovn({ bruker }: Props) {
             <path d="M35 44 Q38 47 41 44" stroke="#D4A843" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.7"/>
           </svg>
         </div>
-
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>Hva slags søvn<br/>skal du registrere?</div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>Velg type for best mulig innsikt</div>
-
-        {/* Lur */}
         <div style={{ marginBottom: '10px' }}>
           <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -233,13 +282,10 @@ export default function Sovn({ bruker }: Props) {
             </div>
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '20px' }}>›</div>
           </button>
-          {/* Etterregistrer lur */}
           <button onClick={() => { setNyType('lur'); setVisning('etterregistrer'); }} style={{ marginTop: '6px', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: farger.tekstLys, fontSize: '12px', fontFamily: 'var(--font-inter)', padding: '4px 8px' }}>
             <span style={{ fontSize: '16px' }}>+</span> Legg til tidligere lur
           </button>
         </div>
-
-        {/* Natt */}
         <div style={{ marginBottom: '20px' }}>
           <button onClick={() => startSøvn('natt')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -257,8 +303,6 @@ export default function Sovn({ bruker }: Props) {
             <span style={{ fontSize: '16px' }}>+</span> Legg til tidligere natt
           </button>
         </div>
-
-        {/* Tips */}
         <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start', textAlign: 'left' }}>
           <span style={{ fontSize: '18px' }}>💡</span>
           <div>
@@ -306,47 +350,144 @@ export default function Sovn({ bruker }: Props) {
 
   if (visning === 'lurAktiv') {
     return (
-      <div style={{ padding: '24px', backgroundColor: farger.bakgrunn, minHeight: '100vh' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: farger.tekstLys, cursor: 'pointer', fontSize: '24px' }}>‹</button>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', letterSpacing: '0.05em' }}>LUR</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Dagtidssøvn</div>
+      <div style={{ backgroundColor: '#F8F3EE', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+        <Bølger />
+        <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 120px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: farger.tekstLys, cursor: 'pointer', fontSize: '24px' }}>‹</button>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '0.08em' }}>LUR</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Dagtidssøvn</div>
+            </div>
+            <div style={{ width: '32px' }} />
           </div>
-          <div style={{ width: '32px' }} />
-        </div>
 
-        <CircularTimer />
+          {/* Sirkulær timer lur */}
+          <div style={{ position: 'relative', width: '220px', height: '220px', margin: '0 auto 8px' }}>
+            <div style={{ position: 'absolute', top: '-15px', left: '-5px', opacity: 0.5 }}>
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <circle cx="20" cy="20" r="8" fill="#F4A853" opacity="0.5"/>
+                <line x1="20" y1="4" x2="20" y2="10" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="20" y1="30" x2="20" y2="36" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="4" y1="20" x2="10" y2="20" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="30" y1="20" x2="36" y2="20" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8" y1="8" x2="13" y2="13" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="27" y1="27" x2="32" y2="32" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="32" y1="8" x2="27" y2="13" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="13" y1="27" x2="8" y2="32" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <svg width="220" height="220" viewBox="0 0 220 220">
+              <defs>
+                <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#D6E5DF"/>
+                  <stop offset="100%" stopColor="#2D5C45"/>
+                </linearGradient>
+                <linearGradient id="lurBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#F5EFE6"/>
+                  <stop offset="100%" stopColor="#EDE5D8"/>
+                </linearGradient>
+              </defs>
+              <circle cx="110" cy="110" r="85" fill="url(#lurBg)" stroke={farger.kremMørk} strokeWidth="1"/>
+              <circle cx="110" cy="110" r="85" fill="none" stroke="#F0E8E0" strokeWidth="10"/>
+              <circle cx="110" cy="110" r="85" fill="none" stroke="url(#lurGrad)" strokeWidth="10" strokeLinecap="round"
+                strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
+                transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
+              <circle cx="110" cy="110" r="85" fill="none" stroke="#E8C4B0" strokeWidth="10" strokeLinecap="round"
+                strokeDasharray={`${circumference * 0.12} ${circumference * 0.88}`}
+                strokeDashoffset={circumference * 0.22} transform="rotate(-90 110 110)" opacity="0.35"/>
+            </svg>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginBottom: '4px' }}>
+                <circle cx="12" cy="12" r="4" fill="#F4A853" opacity="0.8"/>
+                <line x1="12" y1="2" x2="12" y2="6" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+                <line x1="12" y1="18" x2="12" y2="22" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+                <line x1="2" y1="12" x2="6" y2="12" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+                <line x1="18" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+                <line x1="4.9" y1="4.9" x2="7.8" y2="7.8" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="16.2" y1="16.2" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="19.1" y1="4.9" x2="16.2" y2="7.8" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="7.8" y1="16.2" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Luren pågår</div>
+              <div style={{ fontSize: '38px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
+                {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
+              </div>
+              <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+                  Est. start {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </button>
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style={{ marginTop: '4px' }}>
+                <path d="M9 15C9 15 2 10.5 2 6C2 4 3.5 2.5 5.5 2.5C7 2.5 8.2 3.3 9 4.5C9.8 3.3 11 2.5 12.5 2.5C14.5 2.5 16 4 16 6C16 10.5 9 15 9 15Z" fill="none" stroke={farger.terrakotta} strokeWidth="1.3"/>
+              </svg>
+            </div>
+          </div>
 
-        {/* Juster starttid */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', textDecoration: 'underline' }}>
-            Startet kl. {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })} – endre
-          </button>
           {visJusterTid && (
-            <div style={{ marginTop: '10px', display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
-              <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '8px 12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.hvit, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)' }} />
-              <button onClick={justerStartTidManuelt} style={{ padding: '8px 16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
+            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Sett starttid:</div>
+              <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '6px 10px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '8px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)' }} />
+              <button onClick={justerStartTidManuelt} style={{ padding: '6px 14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
             </div>
           )}
-        </div>
 
-        {/* Avslutt */}
-        <button onClick={stoppSøvn} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', marginBottom: '12px' }}>
-          Avslutt lur
-        </button>
+          {/* Knapper lur */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <button onClick={stoppSøvn} style={{ flex: 2, padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '24px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              Avslutt lur
+              <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.5)', borderRadius: '3px' }} />
+            </button>
+            <button style={{ flex: 1, padding: '14px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              Pauser <span style={{ letterSpacing: '2px' }}>||</span>
+            </button>
+          </div>
 
-        {/* Oppsummering */}
-        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px' }}>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '12px' }}>Lur oppsummert så langt</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            <div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>Startet</div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst }}>{startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
+          {/* Signaler */}
+          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+              {SIGNALER.map(signal => (
+                <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '8px 4px', borderRadius: '10px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
+                  <div style={{ fontSize: '18px' }}>{signal.emoji}</div>
+                  <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? farger.grønn : farger.tekstLys, textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
+                </button>
+              ))}
             </div>
-            <div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>Sovet</div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst }}>{String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}</div>
+          </div>
+
+          {/* Tidslinje I dag */}
+          {tidslinje.length > 0 && (
+            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst }}>I dag</div>
+                <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, background: 'none', border: `1px solid ${farger.grønnLys}`, padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0', minWidth: `${tidslinje.length * 80}px` }}>
+                  {tidslinje.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys, fontWeight: i === tidslinje.length - 1 ? '600' : '400', marginBottom: '4px' }}>{item.tid}</div>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys, fontWeight: i === tidslinje.length - 1 ? '600' : '400', marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
+                        <TidslinjeIkon type={item.type} />
+                        {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
+                        {i === tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', borderTop: `1px dashed ${farger.kremMørk}` }} />}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tips lur */}
+          <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>💡 TIPS</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>En god våkentid før lur gir ofte en lengre og roligere søvn.</div>
             </div>
           </div>
         </div>
@@ -356,94 +497,224 @@ export default function Sovn({ bruker }: Props) {
 
   if (visning === 'nattAktiv') {
     return (
-      <div style={{ backgroundColor: '#1A1F2E', minHeight: '100vh', display: 'flex', flexDirection: 'column', padding: '24px', position: 'fixed', inset: 0, zIndex: 50, overflowY: 'auto' }}>
+      <div style={{ backgroundColor: '#1A1F2E', minHeight: '100vh', position: 'fixed', inset: 0, zIndex: 50, overflowY: 'auto' }}>
         <style>{`
-          @keyframes twinkle { 0%,100%{opacity:0.2} 50%{opacity:1} }
-          @keyframes glitterFall {
-            0% { transform: translateY(-20px) scale(0); opacity: 0; }
-            20% { opacity: 1; }
-            100% { transform: translateY(110vh); opacity: 0; }
-          }
+          @keyframes twinkle { 0%,100%{opacity:0.15;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+          @keyframes twinkleSlow { 0%,100%{opacity:0.1} 50%{opacity:0.7} }
+          @keyframes glitterDrift { 0%{transform:translateX(0) translateY(0);opacity:0.8} 50%{transform:translateX(30px) translateY(-20px);opacity:0.3} 100%{transform:translateX(60px) translateY(0);opacity:0} }
         `}</style>
 
-        {/* Stjerner */}
-        {[...Array(30)].map((_, i) => (
-          <div key={i} style={{ position: 'fixed', width: `${Math.random() * 2 + 1}px`, height: `${Math.random() * 2 + 1}px`, borderRadius: '50%', backgroundColor: '#C4A882', left: `${Math.random() * 100}%`, top: `${Math.random() * 70}%`, animation: `twinkle ${1 + Math.random() * 3}s ${Math.random() * 2}s infinite` }} />
+        {/* Stjerner - akkurat som inspirasjonsbilde */}
+        {[
+          {x:15,y:8,s:2.5,d:0}, {x:45,y:5,s:1.5,d:0.5}, {x:75,y:10,s:2,d:1},
+          {x:88,y:6,s:1,d:0.3}, {x:25,y:15,s:1.5,d:0.8}, {x:60,y:8,s:1,d:1.2},
+          {x:92,y:18,s:2,d:0.6}, {x:10,y:25,s:1,d:1.5}, {x:35,y:20,s:1.5,d:0.2},
+          {x:80,y:22,s:1,d:1.8}, {x:50,y:30,s:1,d:0.9}, {x:70,y:15,s:2.5,d:0.4},
+          {x:5,y:40,s:1.5,d:1.1}, {x:95,y:35,s:1,d:0.7}, {x:20,y:50,s:1,d:2},
+          {x:65,y:45,s:2,d:0.3}, {x:85,y:55,s:1.5,d:1.3}, {x:40,y:60,s:1,d:0.6},
+          {x:55,y:55,s:1,d:1.7}, {x:30,y:65,s:2,d:0.1},
+        ].map((stjerne, i) => (
+          <div key={i} style={{
+            position: 'fixed', borderRadius: '50%',
+            width: `${stjerne.s}px`, height: `${stjerne.s}px`,
+            backgroundColor: i % 5 === 0 ? '#E8C87A' : '#C4A882',
+            left: `${stjerne.x}%`, top: `${stjerne.y}%`,
+            boxShadow: stjerne.s > 2 ? `0 0 ${stjerne.s * 2}px #C4A882` : 'none',
+            animation: `twinkle ${2 + stjerne.d}s ${stjerne.d}s infinite ease-in-out`,
+          }} />
         ))}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>‹</button>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', letterSpacing: '0.05em' }}>NATTA</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Nattesøvn</div>
+        {/* Glitter stjernestøv */}
+        {[...Array(15)].map((_, i) => (
+          <div key={`g${i}`} style={{
+            position: 'fixed', width: '1px', height: '1px', borderRadius: '50%',
+            backgroundColor: '#E8C87A', opacity: 0.6,
+            left: `${40 + Math.random() * 40}%`, top: `${5 + Math.random() * 30}%`,
+            animation: `glitterDrift ${3 + Math.random() * 4}s ${Math.random() * 3}s infinite`,
+          }} />
+        ))}
+
+        <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 120px' }}>
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+            <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>‹</button>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '700', letterSpacing: '0.08em' }}>NATTA</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Nattesøvn</div>
+            </div>
+            <div style={{ width: '32px' }} />
           </div>
-          <div style={{ width: '32px' }} />
-        </div>
 
-        {/* Stor søt måne */}
-        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-          <svg width="120" height="120" viewBox="0 0 120 120" style={{ filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.4))' }}>
-            <path d="M 75 18 C 50 18 32 36 32 60 C 32 84 50 102 75 102 C 60 94 50 78 50 60 C 50 42 60 26 75 18 Z" fill="#E8C87A"/>
-            <circle cx="48" cy="55" r="4" fill="#D4A843" opacity="0.5"/>
-            <circle cx="55" cy="70" r="2.5" fill="#D4A843" opacity="0.3"/>
-            <path d="M44 57 Q48 61 52 57" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.6"/>
-            <circle cx="80" cy="25" r="3" fill="#E8C87A" opacity="0.3"/>
-            <circle cx="90" cy="45" r="2" fill="#E8C87A" opacity="0.2"/>
-          </svg>
-        </div>
+          {/* Stor søt måne med ansikt */}
+          <div style={{ position: 'relative', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', left: '10px', top: '10px' }}>
+              <svg width="120" height="120" viewBox="0 0 120 120" style={{ filter: 'drop-shadow(0 0 25px rgba(232,200,122,0.6))' }}>
+                <path d="M 75 15 C 50 15 32 33 32 58 C 32 83 50 101 75 101 C 60 93 51 77 51 58 C 51 39 60 23 75 15 Z" fill="#E8C87A"/>
+                {/* Ansikt */}
+                <ellipse cx="56" cy="52" rx="4" ry="5" fill="#D4A843" opacity="0.7"/>
+                <ellipse cx="63" cy="68" rx="3" ry="3.5" fill="#D4A843" opacity="0.5"/>
+                <path d="M52 55 Q56 60 60 55" stroke="#C49030" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
+                <circle cx="55" cy="50" r="1.5" fill="#FFF8E0" opacity="0.6"/>
+                {/* Ekstra glans */}
+                <circle cx="72" cy="22" r="4" fill="#F5E6C8" opacity="0.25"/>
+                <circle cx="82" cy="40" r="2.5" fill="#F5E6C8" opacity="0.15"/>
+              </svg>
+            </div>
 
-        {/* Sirkulær timer - mørk versjon */}
-        <div style={{ position: 'relative', width: '200px', height: '200px', margin: '0 auto 16px' }}>
-          <svg width="200" height="200" viewBox="0 0 200 200">
-            <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6"/>
-            <circle cx="100" cy="100" r="85" fill="none" stroke="#7C8FD4" strokeWidth="6" strokeLinecap="round"
-              strokeDasharray={2 * Math.PI * 85}
-              strokeDashoffset={2 * Math.PI * 85 - (Math.min((minutter % 60) / 60, 1)) * 2 * Math.PI * 85}
-              transform="rotate(-90 100 100)" style={{ transition: 'stroke-dashoffset 1s linear' }}
-            />
-          </svg>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '6px' }}>Natta pågår</div>
-            <div style={{ fontSize: '40px', fontFamily: 'var(--font-plus-jakarta)', color: '#FDFAF6', fontWeight: '700', lineHeight: 1 }}>
-              {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
+            {/* Sirkulær timer natt */}
+            <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
+              <svg width="200" height="200" viewBox="0 0 200 200">
+                <defs>
+                  <linearGradient id="nattGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#4A5580"/>
+                    <stop offset="100%" stopColor="#8B9FD4"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="82" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+                <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8"/>
+                <circle cx="100" cy="100" r="82" fill="none" stroke="url(#nattGrad)" strokeWidth="8" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 82}
+                  strokeDashoffset={2 * Math.PI * 82 - progress * 2 * Math.PI * 82}
+                  transform="rotate(-90 100 100)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                {/* Liten måne outline */}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginBottom: '6px' }}>
+                  <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="none" stroke="#7C8FD4" strokeWidth="1.5"/>
+                </svg>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '4px' }}>Natta pågår</div>
+                <div style={{ fontSize: '36px', fontFamily: 'var(--font-plus-jakarta)', color: '#FDFAF6', fontWeight: '700', lineHeight: 1 }}>
+                  {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
+                </div>
+                <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
+                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>
+                    Sovnet {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </button>
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style={{ marginTop: '6px' }}>
+                  <path d="M9 15C9 15 2 10.5 2 6C2 4 3.5 2.5 5.5 2.5C7 2.5 8.2 3.3 9 4.5C9.8 3.3 11 2.5 12.5 2.5C14.5 2.5 16 4 16 6C16 10.5 9 15 9 15Z" fill="none" stroke="#7C8FD4" strokeWidth="1.3"/>
+                </svg>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Juster starttid */}
-        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-          <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8A8FA8', fontSize: '13px', fontFamily: 'var(--font-inter)', textDecoration: 'underline' }}>
-            Sovnet kl. {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })} – endre
-          </button>
+          {/* Juster tid */}
           {visJusterTid && (
-            <div style={{ marginTop: '10px', display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
-              <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '8px 12px', fontSize: '16px', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.08)', color: '#FDFAF6', outline: 'none', fontFamily: 'var(--font-inter)' }} />
-              <button onClick={justerStartTidManuelt} style={{ padding: '8px 16px', backgroundColor: '#7C8FD4', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sett sovnetid:</div>
+              <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '6px 10px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.06)', color: '#FDFAF6', outline: 'none', fontFamily: 'var(--font-inter)' }} />
+              <button onClick={justerStartTidManuelt} style={{ padding: '6px 14px', backgroundColor: '#7C8FD4', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
             </div>
           )}
-        </div>
 
-        {/* Avslutt */}
-        <button onClick={stoppSøvn} style={{ width: '100%', padding: '16px', backgroundColor: '#7C8FD4', border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', marginBottom: '12px' }}>
-          ☀️ Baby våknet
-        </button>
+          {/* 2 knapper */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+            <button onClick={stoppSøvn} style={{ flex: 2, padding: '14px', backgroundColor: '#7C8FD4', border: 'none', borderRadius: '24px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              Avslutt natta
+              <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.4)', borderRadius: '3px' }} />
+            </button>
+            <button onClick={registrerOppvåkning} style={{ flex: 1, padding: '14px', backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '24px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#C4A882', cursor: 'pointer', textAlign: 'center' }}>
+              Nattlig<br/>oppvåkning
+            </button>
+          </div>
 
-        {/* Oppsummering */}
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '16px' }}>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', marginBottom: '12px' }}>Natta oppsummert så langt</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            <div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '2px' }}>Sovnet</div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0' }}>{startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
+          {/* Natta oppsummert */}
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', marginBottom: '14px' }}>Natta oppsummert så langt</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#7C8FD4"/>
+                  </svg>
+                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sovnet</div>
+                </div>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" stroke="#8A8FA8" strokeWidth="1.5" fill="none"/>
+                    <line x1="12" y1="7" x2="12" y2="12" stroke="#8A8FA8" strokeWidth="1.5" strokeLinecap="round"/>
+                    <line x1="12" y1="12" x2="15" y2="14" stroke="#8A8FA8" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sovet</div>
+                </div>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}</div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '12px' }}>✦</span>
+                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Søvnkvalitet</div>
+                </div>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: søvnkvalitet === 'God' || søvnkvalitet === 'Utmerket' ? '#9FD4B8' : '#E8C87A', fontWeight: '600' }}>{søvnkvalitet}</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '2px' }}>Sovet</div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0' }}>{String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}</div>
+            {/* Melding */}
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '12px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(124,143,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: '14px' }}>✦</span>
+              </div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.5 }}>{søvnmelding()}</div>
             </div>
           </div>
-        </div>
 
-        <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', fontStyle: 'italic' }}>Sov godt, lille stjerne ✨</div>
+          {/* Tidslinje I natt */}
+          {tidslinje.length > 0 && (
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0' }}>I natt</div>
+                <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7C8FD4', background: 'none', border: '1px solid rgba(124,143,212,0.3)', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', minWidth: `${tidslinje.length * 80}px` }}>
+                  {tidslinje.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? '#C4A882' : '#8A8FA8', fontWeight: i === tidslinje.length - 1 ? '600' : '400', marginBottom: '2px' }}>{item.tid}</div>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? '#C4A882' : '#8A8FA8', marginBottom: '8px', textAlign: 'center', lineHeight: 1.2 }}>{item.tekst}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />}
+                        <TidslinjeIkon type={item.type} mørk={true} />
+                        {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />}
+                        {i === tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', borderTop: '1px dashed rgba(255,255,255,0.1)' }} />}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tips natt med sovende baby */}
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="#8A8FA8" strokeWidth="1.5" fill="none"/>
+                  <line x1="12" y1="8" x2="12" y2="8" stroke="#8A8FA8" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="12" y1="12" x2="12" y2="16" stroke="#8A8FA8" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>TIPS</div>
+              </div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{TIPS_NATT[tipIndex]}</div>
+            </div>
+            {/* Sovende baby illustrasjon */}
+            <svg width="70" height="70" viewBox="0 0 70 70" fill="none" style={{ flexShrink: 0 }}>
+              <ellipse cx="35" cy="42" rx="20" ry="14" fill="#2D3A56"/>
+              <ellipse cx="35" cy="40" rx="17" ry="11" fill="#3D4F6C"/>
+              <circle cx="35" cy="28" r="14" fill="#4A5F80"/>
+              <circle cx="35" cy="28" r="12" fill="#C4A882" opacity="0.2"/>
+              <ellipse cx="29" cy="26" rx="2" ry="1" fill="#8A8FA8" opacity="0.6"/>
+              <ellipse cx="41" cy="26" rx="2" ry="1" fill="#8A8FA8" opacity="0.6"/>
+              <path d="M30 31 Q35 34 40 31" stroke="#8A8FA8" strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.6"/>
+              <circle cx="28" cy="30" r="3" fill="#4A5F80"/>
+              <circle cx="42" cy="30" r="3" fill="#4A5F80"/>
+              <path d="M35 16C35 16 33 14 35 12C37 14 35 16 35 16Z" fill="#E8C87A" opacity="0.4"/>
+              <circle cx="45" cy="20" r="1.5" fill="#E8C87A" opacity="0.3"/>
+              <circle cx="25" cy="35" r="1" fill="#E8C87A" opacity="0.2"/>
+            </svg>
+          </div>
+        </div>
       </div>
     );
   }
