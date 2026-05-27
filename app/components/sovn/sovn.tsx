@@ -121,8 +121,6 @@ export default function Sovn({ bruker }: Props) {
       type: l.type,
     }));
     setTidslinje(items);
-
-    // Beregn søvnkvalitet
     const oppvåkninger = data.filter((l: any) => l.type === 'oppvåkning').length;
     const totalMinutter = data.filter((l: any) => l.type === 'natt' || l.type === 'lur').reduce((sum: number, l: any) => sum + (l.varighet || 0), 0);
     if (oppvåkninger === 0 && totalMinutter > 120) setSøvnkvalitet('Utmerket');
@@ -253,38 +251,36 @@ export default function Sovn({ bruker }: Props) {
       <div style={{ padding: '24px', textAlign: 'center' }}>
 
         {/* Måne med stjerner */}
-<div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
-  {/* Stjerner rundt */}
-  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-14px', left: '-5px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.5"/>
-  </svg>
-  <svg width="8" height="8" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-5px', right: '-20px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.35"/>
-  </svg>
-  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '30px', right: '-28px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.4"/>
-  </svg>
-  <svg width="6" height="6" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '10px', left: '-18px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.3"/>
-  </svg>
-  <svg width="9" height="9" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '-8px', right: '-12px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.38"/>
-  </svg>
-  <svg width="7" height="7" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '60px', left: '-22px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.28"/>
-  </svg>
-
-  <img
-    src="/mane.png"
-    alt="måne"
-    style={{
-      width: '150px',
-      height: 'auto',
-      maskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)',
-      WebkitMaskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)',
-    }}
-  />
-</div>
+        <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
+          <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-14px', left: '-5px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.5"/>
+          </svg>
+          <svg width="8" height="8" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-5px', right: '-20px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.35"/>
+          </svg>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '30px', right: '-28px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.4"/>
+          </svg>
+          <svg width="6" height="6" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '10px', left: '-18px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.3"/>
+          </svg>
+          <svg width="9" height="9" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '-8px', right: '-12px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.38"/>
+          </svg>
+          <svg width="7" height="7" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '60px', left: '-22px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.28"/>
+          </svg>
+          <img
+            src="/mane.png"
+            alt="måne"
+            style={{
+              width: '150px',
+              height: 'auto',
+              maskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)',
+            }}
+          />
+        </div>
 
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>
           Hva slags søvn<br/>skal du registrere?
@@ -296,42 +292,36 @@ export default function Sovn({ bruker }: Props) {
         {/* Lur-knapp */}
         <div style={{ marginBottom: '10px' }}>
           <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
-          <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
-  <circle cx="18" cy="18" r="6" fill="none" stroke="#F4A853" strokeWidth="1.8"/>
-  <line x1="18" y1="4" x2="18" y2="9" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-  <line x1="18" y1="27" x2="18" y2="32" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-  <line x1="4" y1="18" x2="9" y2="18" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-  <line x1="27" y1="18" x2="32" y2="18" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-  <line x1="8" y1="8" x2="11.5" y2="11.5" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-  <line x1="24.5" y1="24.5" x2="28" y2="28" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-  <line x1="28" y1="8" x2="24.5" y2="11.5" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-  <line x1="11.5" y1="24.5" x2="8" y2="28" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-</svg>
+            <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+              <circle cx="18" cy="18" r="6" fill="none" stroke="#F4A853" strokeWidth="1.8"/>
+              <line x1="18" y1="4" x2="18" y2="9" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+              <line x1="18" y1="27" x2="18" y2="32" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+              <line x1="4" y1="18" x2="9" y2="18" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+              <line x1="27" y1="18" x2="32" y2="18" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+              <line x1="8" y1="8" x2="11.5" y2="11.5" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+              <line x1="24.5" y1="24.5" x2="28" y2="28" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+              <line x1="28" y1="8" x2="24.5" y2="11.5" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+              <line x1="11.5" y1="24.5" x2="8" y2="28" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
             <div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px' }}>Lur</div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Lur</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Dagtidssøvn</div>
             </div>
-            <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '20px' }}>›</div>
-          </button>
-          <button onClick={() => { setNyType('lur'); setVisning('etterregistrer'); }} style={{ marginTop: '6px', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: farger.tekstLys, fontSize: '12px', fontFamily: 'var(--font-inter)', padding: '4px 8px' }}>
-            <span style={{ fontSize: '16px' }}>+</span> Legg til tidligere lur
+            <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
         </div>
 
         {/* Natt-knapp */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '28px' }}>
           <button onClick={() => startSøvn('natt')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
-          <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-  <path d="M26 20C25.2 24 21.5 27 17 27C11.5 27 7 22.5 7 17C7 12 10.4 7.9 15 7C12 10 12 15.5 15.5 19C19 22.5 23.5 22 26 20Z" fill="#8B9FD4"/>
-</svg>
+            <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+              <path d="M26 20C25.2 24 21.5 27 17 27C11.5 27 7 22.5 7 17C7 12 10.4 7.9 15 7C12 10 12 15.5 15.5 19C19 22.5 23.5 22 26 20Z" fill="#8B9FD4"/>
+            </svg>
             <div>
-            <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Lur</div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Natta</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Nattesøvn</div>
             </div>
-            <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '20px' }}>›</div>
-          </button>
-          <button onClick={() => { setNyType('natt'); setVisning('etterregistrer'); }} style={{ marginTop: '6px', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: farger.tekstLys, fontSize: '12px', fontFamily: 'var(--font-inter)', padding: '4px 8px' }}>
-            <span style={{ fontSize: '16px' }}>+</span> Legg til tidligere natt
+            <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
         </div>
 
@@ -347,7 +337,7 @@ export default function Sovn({ bruker }: Props) {
       </div>
     );
   }
-  
+
   if (visning === 'etterregistrer') {
     return (
       <div style={{ padding: '24px' }}>
@@ -396,7 +386,6 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ width: '32px' }} />
           </div>
 
-          {/* Sirkulær timer lur */}
           <div style={{ position: 'relative', width: '220px', height: '220px', margin: '0 auto 8px' }}>
             <div style={{ position: 'absolute', top: '-15px', left: '-5px', opacity: 0.5 }}>
               <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
@@ -427,22 +416,8 @@ export default function Sovn({ bruker }: Props) {
               <circle cx="110" cy="110" r="85" fill="none" stroke="url(#lurGrad)" strokeWidth="10" strokeLinecap="round"
                 strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
                 transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
-              <circle cx="110" cy="110" r="85" fill="none" stroke="#E8C4B0" strokeWidth="10" strokeLinecap="round"
-                strokeDasharray={`${circumference * 0.12} ${circumference * 0.88}`}
-                strokeDashoffset={circumference * 0.22} transform="rotate(-90 110 110)" opacity="0.35"/>
             </svg>
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginBottom: '4px' }}>
-                <circle cx="12" cy="12" r="4" fill="#F4A853" opacity="0.8"/>
-                <line x1="12" y1="2" x2="12" y2="6" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-                <line x1="12" y1="18" x2="12" y2="22" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-                <line x1="2" y1="12" x2="6" y2="12" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-                <line x1="18" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
-                <line x1="4.9" y1="4.9" x2="7.8" y2="7.8" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="16.2" y1="16.2" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="19.1" y1="4.9" x2="16.2" y2="7.8" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="7.8" y1="16.2" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Luren pågår</div>
               <div style={{ fontSize: '38px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
                 {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
@@ -452,9 +427,6 @@ export default function Sovn({ bruker }: Props) {
                   Est. start {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
                 </div>
               </button>
-              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style={{ marginTop: '4px' }}>
-                <path d="M9 15C9 15 2 10.5 2 6C2 4 3.5 2.5 5.5 2.5C7 2.5 8.2 3.3 9 4.5C9.8 3.3 11 2.5 12.5 2.5C14.5 2.5 16 4 16 6C16 10.5 9 15 9 15Z" fill="none" stroke={farger.terrakotta} strokeWidth="1.3"/>
-              </svg>
             </div>
           </div>
 
@@ -466,7 +438,6 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-          {/* Knapper lur */}
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             <button onClick={stoppSøvn} style={{ flex: 2, padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '24px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               Avslutt lur
@@ -477,7 +448,6 @@ export default function Sovn({ bruker }: Props) {
             </button>
           </div>
 
-          {/* Signaler */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
@@ -491,7 +461,6 @@ export default function Sovn({ bruker }: Props) {
             </div>
           </div>
 
-          {/* Tidslinje I dag */}
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -517,7 +486,6 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-          {/* Tips lur */}
           <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>💡 TIPS</div>
@@ -534,11 +502,9 @@ export default function Sovn({ bruker }: Props) {
       <div style={{ backgroundColor: '#1A1F2E', minHeight: '100vh', position: 'fixed', inset: 0, zIndex: 50, overflowY: 'auto' }}>
         <style>{`
           @keyframes twinkle { 0%,100%{opacity:0.15;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
-          @keyframes twinkleSlow { 0%,100%{opacity:0.1} 50%{opacity:0.7} }
           @keyframes glitterDrift { 0%{transform:translateX(0) translateY(0);opacity:0.8} 50%{transform:translateX(30px) translateY(-20px);opacity:0.3} 100%{transform:translateX(60px) translateY(0);opacity:0} }
         `}</style>
 
-        {/* Stjerner - akkurat som inspirasjonsbilde */}
         {[
           {x:15,y:8,s:2.5,d:0}, {x:45,y:5,s:1.5,d:0.5}, {x:75,y:10,s:2,d:1},
           {x:88,y:6,s:1,d:0.3}, {x:25,y:15,s:1.5,d:0.8}, {x:60,y:8,s:1,d:1.2},
@@ -558,18 +524,7 @@ export default function Sovn({ bruker }: Props) {
           }} />
         ))}
 
-        {/* Glitter stjernestøv */}
-        {[...Array(15)].map((_, i) => (
-          <div key={`g${i}`} style={{
-            position: 'fixed', width: '1px', height: '1px', borderRadius: '50%',
-            backgroundColor: '#E8C87A', opacity: 0.6,
-            left: `${40 + Math.random() * 40}%`, top: `${5 + Math.random() * 30}%`,
-            animation: `glitterDrift ${3 + Math.random() * 4}s ${Math.random() * 3}s infinite`,
-          }} />
-        ))}
-
         <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 120px' }}>
-          {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
             <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>‹</button>
             <div style={{ textAlign: 'center' }}>
@@ -579,23 +534,17 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ width: '32px' }} />
           </div>
 
-          {/* Stor søt måne med ansikt */}
           <div style={{ position: 'relative', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', left: '10px', top: '10px' }}>
               <svg width="120" height="120" viewBox="0 0 120 120" style={{ filter: 'drop-shadow(0 0 25px rgba(232,200,122,0.6))' }}>
                 <path d="M 75 15 C 50 15 32 33 32 58 C 32 83 50 101 75 101 C 60 93 51 77 51 58 C 51 39 60 23 75 15 Z" fill="#E8C87A"/>
-                {/* Ansikt */}
                 <ellipse cx="56" cy="52" rx="4" ry="5" fill="#D4A843" opacity="0.7"/>
                 <ellipse cx="63" cy="68" rx="3" ry="3.5" fill="#D4A843" opacity="0.5"/>
                 <path d="M52 55 Q56 60 60 55" stroke="#C49030" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
                 <circle cx="55" cy="50" r="1.5" fill="#FFF8E0" opacity="0.6"/>
-                {/* Ekstra glans */}
                 <circle cx="72" cy="22" r="4" fill="#F5E6C8" opacity="0.25"/>
-                <circle cx="82" cy="40" r="2.5" fill="#F5E6C8" opacity="0.15"/>
               </svg>
             </div>
-
-            {/* Sirkulær timer natt */}
             <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
               <svg width="200" height="200" viewBox="0 0 200 200">
                 <defs>
@@ -612,7 +561,6 @@ export default function Sovn({ bruker }: Props) {
                   transform="rotate(-90 100 100)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                {/* Liten måne outline */}
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginBottom: '6px' }}>
                   <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="none" stroke="#7C8FD4" strokeWidth="1.5"/>
                 </svg>
@@ -625,14 +573,10 @@ export default function Sovn({ bruker }: Props) {
                     Sovnet {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </button>
-                <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style={{ marginTop: '6px' }}>
-                  <path d="M9 15C9 15 2 10.5 2 6C2 4 3.5 2.5 5.5 2.5C7 2.5 8.2 3.3 9 4.5C9.8 3.3 11 2.5 12.5 2.5C14.5 2.5 16 4 16 6C16 10.5 9 15 9 15Z" fill="none" stroke="#7C8FD4" strokeWidth="1.3"/>
-                </svg>
               </div>
             </div>
           </div>
 
-          {/* Juster tid */}
           {visJusterTid && (
             <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sett sovnetid:</div>
@@ -641,7 +585,6 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-          {/* 2 knapper */}
           <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
             <button onClick={stoppSøvn} style={{ flex: 2, padding: '14px', backgroundColor: '#7C8FD4', border: 'none', borderRadius: '24px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               Avslutt natta
@@ -652,39 +595,24 @@ export default function Sovn({ bruker }: Props) {
             </button>
           </div>
 
-          {/* Natta oppsummert */}
           <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', marginBottom: '14px' }}>Natta oppsummert så langt</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#7C8FD4"/>
-                  </svg>
                   <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sovnet</div>
                 </div>
                 <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
               </div>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="9" stroke="#8A8FA8" strokeWidth="1.5" fill="none"/>
-                    <line x1="12" y1="7" x2="12" y2="12" stroke="#8A8FA8" strokeWidth="1.5" strokeLinecap="round"/>
-                    <line x1="12" y1="12" x2="15" y2="14" stroke="#8A8FA8" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sovet</div>
-                </div>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '4px' }}>Sovet</div>
                 <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}</div>
               </div>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '12px' }}>✦</span>
-                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Søvnkvalitet</div>
-                </div>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '4px' }}>Søvnkvalitet</div>
                 <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: søvnkvalitet === 'God' || søvnkvalitet === 'Utmerket' ? '#9FD4B8' : '#E8C87A', fontWeight: '600' }}>{søvnkvalitet}</div>
               </div>
             </div>
-            {/* Melding */}
             <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '12px', display: 'flex', gap: '10px', alignItems: 'center' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(124,143,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <span style={{ fontSize: '14px' }}>✦</span>
@@ -693,13 +621,9 @@ export default function Sovn({ bruker }: Props) {
             </div>
           </div>
 
-          {/* Tidslinje I natt */}
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0' }}>I natt</div>
-                <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7C8FD4', background: 'none', border: '1px solid rgba(124,143,212,0.3)', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
-              </div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', marginBottom: '16px' }}>I natt</div>
               <div style={{ overflowX: 'auto' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', minWidth: `${tidslinje.length * 80}px` }}>
                   {tidslinje.map((item, i) => (
@@ -719,34 +643,11 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-          {/* Tips natt med sovende baby */}
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="9" stroke="#8A8FA8" strokeWidth="1.5" fill="none"/>
-                  <line x1="12" y1="8" x2="12" y2="8" stroke="#8A8FA8" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="12" y1="12" x2="12" y2="16" stroke="#8A8FA8" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>TIPS</div>
-              </div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '8px' }}>TIPS</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{TIPS_NATT[tipIndex]}</div>
             </div>
-            {/* Sovende baby illustrasjon */}
-            <svg width="70" height="70" viewBox="0 0 70 70" fill="none" style={{ flexShrink: 0 }}>
-              <ellipse cx="35" cy="42" rx="20" ry="14" fill="#2D3A56"/>
-              <ellipse cx="35" cy="40" rx="17" ry="11" fill="#3D4F6C"/>
-              <circle cx="35" cy="28" r="14" fill="#4A5F80"/>
-              <circle cx="35" cy="28" r="12" fill="#C4A882" opacity="0.2"/>
-              <ellipse cx="29" cy="26" rx="2" ry="1" fill="#8A8FA8" opacity="0.6"/>
-              <ellipse cx="41" cy="26" rx="2" ry="1" fill="#8A8FA8" opacity="0.6"/>
-              <path d="M30 31 Q35 34 40 31" stroke="#8A8FA8" strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.6"/>
-              <circle cx="28" cy="30" r="3" fill="#4A5F80"/>
-              <circle cx="42" cy="30" r="3" fill="#4A5F80"/>
-              <path d="M35 16C35 16 33 14 35 12C37 14 35 16 35 16Z" fill="#E8C87A" opacity="0.4"/>
-              <circle cx="45" cy="20" r="1.5" fill="#E8C87A" opacity="0.3"/>
-              <circle cx="25" cy="35" r="1" fill="#E8C87A" opacity="0.2"/>
-            </svg>
           </div>
         </div>
       </div>
