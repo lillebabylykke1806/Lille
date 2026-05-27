@@ -223,7 +223,19 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       </div>
 
     {/* Stor blob med babybilde */}
-<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '500px', marginTop: '-20px' }}>
+<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '500px' }}>
+  
+  {/* CSS blob under for å forsterke fargen */}
+  <div style={{
+    position: 'absolute',
+    width: '340px',
+    height: '340px',
+    background: 'radial-gradient(ellipse at 45% 45%, #C8D8C8 0%, #EBC8B4 55%, transparent 80%)',
+    borderRadius: '62% 38% 46% 54% / 60% 44% 56% 40%',
+    opacity: 0.7,
+  }} />
+
+  {/* boble.png over */}
   <img
     src="/boble.png"
     alt="boble"
@@ -234,8 +246,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       objectFit: 'contain',
       left: '-30%',
       mixBlendMode: 'multiply',
+      opacity: 0.9,
     }}
   />
+
   <div style={{
     position: 'relative',
     zIndex: 2,
@@ -243,7 +257,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
     flexDirection: 'column',
     alignItems: 'center',
     gap: '12px',
-    marginTop: '-40px',
   }}>
     {babyBilde ? (
       <div style={{
@@ -277,7 +290,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         fontWeight: 600,
         color: '#3F3A37',
         marginBottom: '4px',
-        letterSpacing: '-0.2px',
       }}>
         {valgtTilstand.tekst}
       </div>
