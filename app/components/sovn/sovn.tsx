@@ -654,7 +654,7 @@ export default function Sovn({ bruker }: Props) {
             {/* Stor måne til venstre */}
             <div style={{ position: 'absolute', left: '-10px', top: '0px', animation: 'moonFloat 4s ease-in-out infinite' }}>
               <img
-                src="/mane-natt.png"
+                src="/mane-natt.jpg"
                 alt="måne"
                 style={{
                   width: '130px',
