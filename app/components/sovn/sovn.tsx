@@ -292,17 +292,17 @@ export default function Sovn({ bruker }: Props) {
         {/* Lur-knapp */}
         <div style={{ marginBottom: '10px' }}>
           <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-  <circle cx="18" cy="18" r="7" fill="#F4A853"/>
-  <line x1="18" y1="3" x2="18" y2="8" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="18" y1="28" x2="18" y2="33" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="3" y1="18" x2="8" y2="18" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="28" y1="18" x2="33" y2="18" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="7" y1="7" x2="11" y2="11" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="25" y1="25" x2="29" y2="29" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="29" y1="7" x2="25" y2="11" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="11" y1="25" x2="7" y2="29" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-</svg>
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <circle cx="18" cy="18" r="7" fill="#F4A853"/>
+              <line x1="18" y1="3" x2="18" y2="8" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="18" y1="28" x2="18" y2="33" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="3" y1="18" x2="8" y2="18" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="28" y1="18" x2="33" y2="18" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="7" y1="7" x2="11" y2="11" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="25" y1="25" x2="29" y2="29" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="29" y1="7" x2="25" y2="11" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="11" y1="25" x2="7" y2="29" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
             <div>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Lur</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Dagtidssøvn</div>
@@ -312,11 +312,13 @@ export default function Sovn({ bruker }: Props) {
         </div>
 
         {/* Natt-knapp */}
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-  <path d="M28 20C27.1 24.6 23 28 18 28C12.5 28 8 23.5 8 18C8 13 11.4 8.9 16 8C13 11 13 16.5 16.5 20C20 23.5 25 23.5 28 20Z" fill="#6B7FC4"/>
-  <ellipse cx="17" cy="17" rx="1.5" ry="1" fill="#4A5A9A" opacity="0.7"/>
-  <path d="M15 20 Q17 22 19 20" stroke="#4A5A9A" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.7"/>
-</svg>
+        <div style={{ marginBottom: '28px' }}>
+          <button onClick={() => startSøvn('natt')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <path d="M28 20C27.1 24.6 23 28 18 28C12.5 28 8 23.5 8 18C8 13 11.4 8.9 16 8C13 11 13 16.5 16.5 20C20 23.5 25 23.5 28 20Z" fill="#6B7FC4"/>
+              <ellipse cx="17" cy="17" rx="1.5" ry="1" fill="#4A5A9A" opacity="0.7"/>
+              <path d="M15 20 Q17 22 19 20" stroke="#4A5A9A" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.7"/>
+            </svg>
             <div>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Natta</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Nattesøvn</div>
@@ -387,19 +389,6 @@ export default function Sovn({ bruker }: Props) {
           </div>
 
           <div style={{ position: 'relative', width: '220px', height: '220px', margin: '0 auto 8px' }}>
-            <div style={{ position: 'absolute', top: '-15px', left: '-5px', opacity: 0.5 }}>
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                <circle cx="20" cy="20" r="8" fill="#F4A853" opacity="0.5"/>
-                <line x1="20" y1="4" x2="20" y2="10" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="20" y1="30" x2="20" y2="36" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="4" y1="20" x2="10" y2="20" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="30" y1="20" x2="36" y2="20" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="8" y1="8" x2="13" y2="13" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="27" y1="27" x2="32" y2="32" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="32" y1="8" x2="27" y2="13" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="13" y1="27" x2="8" y2="32" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </div>
             <svg width="220" height="220" viewBox="0 0 220 220">
               <defs>
                 <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -463,16 +452,13 @@ export default function Sovn({ bruker }: Props) {
 
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst }}>I dag</div>
-                <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, background: 'none', border: `1px solid ${farger.grønnLys}`, padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
-              </div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '16px' }}>I dag</div>
               <div style={{ overflowX: 'auto' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0', minWidth: `${tidslinje.length * 80}px` }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', minWidth: `${tidslinje.length * 80}px` }}>
                   {tidslinje.map((item, i) => (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
                       <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys, fontWeight: i === tidslinje.length - 1 ? '600' : '400', marginBottom: '4px' }}>{item.tid}</div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys, fontWeight: i === tidslinje.length - 1 ? '600' : '400', marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys, marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
                       <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
                         <TidslinjeIkon type={item.type} />
@@ -486,11 +472,9 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-          <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>💡 TIPS</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>En god våkentid før lur gir ofte en lengre og roligere søvn.</div>
-            </div>
+          <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px' }}>
+            <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>💡 TIPS</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>En god våkentid før lur gir ofte en lengre og roligere søvn.</div>
           </div>
         </div>
       </div>
@@ -506,13 +490,13 @@ export default function Sovn({ bruker }: Props) {
         `}</style>
 
         {[
-          {x:15,y:8,s:2.5,d:0}, {x:45,y:5,s:1.5,d:0.5}, {x:75,y:10,s:2,d:1},
-          {x:88,y:6,s:1,d:0.3}, {x:25,y:15,s:1.5,d:0.8}, {x:60,y:8,s:1,d:1.2},
-          {x:92,y:18,s:2,d:0.6}, {x:10,y:25,s:1,d:1.5}, {x:35,y:20,s:1.5,d:0.2},
-          {x:80,y:22,s:1,d:1.8}, {x:50,y:30,s:1,d:0.9}, {x:70,y:15,s:2.5,d:0.4},
-          {x:5,y:40,s:1.5,d:1.1}, {x:95,y:35,s:1,d:0.7}, {x:20,y:50,s:1,d:2},
-          {x:65,y:45,s:2,d:0.3}, {x:85,y:55,s:1.5,d:1.3}, {x:40,y:60,s:1,d:0.6},
-          {x:55,y:55,s:1,d:1.7}, {x:30,y:65,s:2,d:0.1},
+          {x:15,y:8,s:2.5,d:0},{x:45,y:5,s:1.5,d:0.5},{x:75,y:10,s:2,d:1},
+          {x:88,y:6,s:1,d:0.3},{x:25,y:15,s:1.5,d:0.8},{x:60,y:8,s:1,d:1.2},
+          {x:92,y:18,s:2,d:0.6},{x:10,y:25,s:1,d:1.5},{x:35,y:20,s:1.5,d:0.2},
+          {x:80,y:22,s:1,d:1.8},{x:50,y:30,s:1,d:0.9},{x:70,y:15,s:2.5,d:0.4},
+          {x:5,y:40,s:1.5,d:1.1},{x:95,y:35,s:1,d:0.7},{x:20,y:50,s:1,d:2},
+          {x:65,y:45,s:2,d:0.3},{x:85,y:55,s:1.5,d:1.3},{x:40,y:60,s:1,d:0.6},
+          {x:55,y:55,s:1,d:1.7},{x:30,y:65,s:2,d:0.1},
         ].map((stjerne, i) => (
           <div key={i} style={{
             position: 'fixed', borderRadius: '50%',
@@ -599,9 +583,7 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', marginBottom: '14px' }}>Natta oppsummert så langt</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sovnet</div>
-                </div>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '4px' }}>Sovnet</div>
                 <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
               </div>
               <div>
@@ -643,11 +625,9 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '8px' }}>TIPS</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{TIPS_NATT[tipIndex]}</div>
-            </div>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px' }}>
+            <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '8px' }}>TIPS</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{TIPS_NATT[tipIndex]}</div>
           </div>
         </div>
       </div>
