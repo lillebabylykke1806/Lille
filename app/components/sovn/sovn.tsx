@@ -554,16 +554,32 @@ export default function Sovn({ bruker }: Props) {
             </svg>
           </button>
 
-          {/* Tidslinje */}
-          {tidslinje.length > 0 && (
+         {/* Tidslinje */}
+         {tidslinje.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '16px' }}>I dag</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>I dag</div>
+                <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, background: 'none', border: `1px solid ${farger.kremMørk}`, padding: '4px 12px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
+              </div>
               <div style={{ overflowX: 'auto' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', minWidth: `${tidslinje.length * 80}px` }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 80}px`, paddingBottom: '8px' }}>
                   {tidslinje.map((item, i) => (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys, fontWeight: i === tidslinje.length - 1 ? '600' : '400', marginBottom: '4px' }}>{item.tid}</div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys, marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
+                      <div style={{
+                        fontSize: '10px',
+                        fontFamily: 'var(--font-inter)',
+                        color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys,
+                        fontWeight: i === tidslinje.length - 1 ? '700' : '400',
+                        marginBottom: '2px',
+                      }}>{item.tid}</div>
+                      <div style={{
+                        fontSize: '10px',
+                        fontFamily: 'var(--font-inter)',
+                        color: i === tidslinje.length - 1 ? farger.grønn : farger.tekstLys,
+                        fontWeight: i === tidslinje.length - 1 ? '700' : '400',
+                        marginBottom: '8px',
+                        textAlign: 'center',
+                      }}>{item.tekst}</div>
                       <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
                         <TidslinjeIkon type={item.type} />
@@ -576,6 +592,7 @@ export default function Sovn({ bruker }: Props) {
               </div>
             </div>
           )}
+        
 
           {/* Tips */}
           <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px' }}>
