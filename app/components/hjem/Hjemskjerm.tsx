@@ -223,51 +223,52 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       </div>
 
    {/* Stor blob med babybilde */}
-<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '480px' }}>
+<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '520px' }}>
 
-{/* Lag 1 - ytterst, fersken */}
+{/* Lag 1 - fersken, høyre */}
 <div style={{
   position: 'absolute',
-  width: '320px',
-  height: '300px',
+  width: '380px',
+  height: '360px',
   background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)',
   borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%',
-  opacity: 0.5,
-  filter: 'blur(18px)',
-  transform: 'translate(30px, -20px)',
+  opacity: 0.55,
+  filter: 'blur(22px)',
+  transform: 'translate(50px, -30px)',
 }} />
 
-{/* Lag 2 - grønn, litt rotert */}
+{/* Lag 2 - lilla, venstre */}
 <div style={{
   position: 'absolute',
-  width: '300px',
-  height: '290px',
-  background: 'radial-gradient(ellipse, #A8B5A2 0%, transparent 70%)',
+  width: '360px',
+  height: '340px',
+  background: 'radial-gradient(ellipse, #C7BDD8 0%, transparent 70%)',
   borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%',
+  opacity: 0.4,
+  filter: 'blur(20px)',
+  transform: 'translate(-50px, 20px)',
+}} />
+
+{/* Lag 3 - grønn, kjerne */}
+<div style={{
+  position: 'absolute',
+  width: '340px',
+  height: '340px',
+  background: 'radial-gradient(ellipse at 50% 50%, #A8B5A2 0%, transparent 70%)',
+  borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%',
   opacity: 0.45,
   filter: 'blur(16px)',
-  transform: 'translate(-25px, 15px)',
+  transform: 'translate(0px, 10px)',
 }} />
 
-{/* Lag 3 - kjerne, varmere */}
+{/* Lag 4 - hvit glow i midten */}
 <div style={{
   position: 'absolute',
-  width: '260px',
-  height: '260px',
-  background: 'radial-gradient(ellipse at 50% 50%, #DCCFC0 0%, #C8D5C2 40%, transparent 75%)',
-  borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%',
-  opacity: 0.7,
-  filter: 'blur(8px)',
-}} />
-
-{/* Lag 4 - glitter/stjerner */}
-<div style={{
-  position: 'absolute',
-  width: '220px',
-  height: '220px',
-  background: 'radial-gradient(ellipse at 40% 60%, rgba(255,255,255,0.4) 0%, transparent 60%)',
+  width: '240px',
+  height: '240px',
+  background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 70%)',
   borderRadius: '50%',
-  filter: 'blur(4px)',
+  filter: 'blur(6px)',
 }} />
 
 {/* Innhold */}
@@ -281,8 +282,8 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 }}>
   {babyBilde ? (
     <div style={{
-      width: '130px',
-      height: '130px',
+      width: '140px',
+      height: '140px',
       borderRadius: '50%',
       overflow: 'hidden',
       border: '3px solid rgba(255,255,255,0.9)',
