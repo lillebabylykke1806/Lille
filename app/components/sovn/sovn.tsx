@@ -9,46 +9,16 @@ type TidslinjeItem = { tid: string; tekst: string; type: string; };
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
 const SIGNALER = [
-    {
-      id: 'gned', label: 'Gned øynene',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="12" r="3" stroke="#8A7060" strokeWidth="1.5"/><circle cx="16" cy="12" r="3" stroke="#8A7060" strokeWidth="1.5"/><path d="M5 12C5 12 4 10 5 8" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><path d="M19 12C19 12 20 10 19 8" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/></svg>
-    },
-    {
-      id: 'stirret', label: 'Stirret tomt',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#8A7060" strokeWidth="1.5"/><circle cx="12" cy="12" r="2" fill="#8A7060" opacity="0.5"/><line x1="12" y1="4" x2="12" y2="6" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><line x1="12" y1="18" x2="12" y2="20" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><line x1="4" y1="12" x2="6" y2="12" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><line x1="18" y1="12" x2="20" y2="12" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/></svg>
-    },
-    {
-      id: 'gjesping', label: 'Gjesping',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 8 Q12 6 16 8" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><path d="M7 13 Q12 18 17 13" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><circle cx="12" cy="12" r="7" stroke="#8A7060" strokeWidth="1.5"/></svg>
-    },
-    {
-      id: 'hodet', label: 'Vendte hodet bort',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#8A7060" strokeWidth="1.5"/><path d="M17 12 L21 12" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><path d="M19 10 L21 12 L19 14" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-    },
-    {
-      id: 'kranglete', label: 'Ble kranglete',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="6" stroke="#8A7060" strokeWidth="1.5"/><path d="M9 10 Q10 8 11 10" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><path d="M13 10 Q14 8 15 10" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><path d="M9 15 Q12 13 15 15" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/></svg>
-    },
-    {
-      id: 'interesse', label: 'Mistet interesse',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="6" stroke="#8A7060" strokeWidth="1.5"/><line x1="9" y1="10" x2="11" y2="10" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><line x1="13" y1="10" x2="15" y2="10" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><line x1="9" y1="15" x2="15" y2="15" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/></svg>
-    },
-    {
-      id: 'ben', label: 'Trakk ben opp',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 18 L8 12 Q8 8 12 8 Q16 8 16 12 L16 14" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 16 Q16 14 18 16" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/></svg>
-    },
-    {
-      id: 'rygg', label: 'Bøyde ryggen',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 16 Q8 8 12 10 Q16 12 19 8" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><circle cx="19" cy="8" r="1.5" fill="#8A7060" opacity="0.5"/></svg>
-    },
-    {
-      id: 'luft', label: 'Mye luft',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 12 Q10 8 14 12 Q18 16 22 12" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><path d="M4 16 Q8 12 12 16" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/></svg>
-    },
-    {
-      id: 'mat', label: 'Knotete etter mat',
-      svg: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 5 L10 10 Q10 14 14 14 L14 19" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/><path d="M14 5 L14 8 Q14 10 12 10" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round"/></svg>
-    },
+    { id: 'gned', label: 'Gned øynene' },
+    { id: 'stirret', label: 'Stirret tomt' },
+    { id: 'gjesping', label: 'Gjesping' },
+    { id: 'hodet', label: 'Vendte hodet bort' },
+    { id: 'kranglete', label: 'Ble kranglete' },
+    { id: 'interesse', label: 'Mistet interesse' },
+    { id: 'ben', label: 'Trakk ben opp' },
+    { id: 'rygg', label: 'Bøyde ryggen' },
+    { id: 'luft', label: 'Mye luft' },
+    { id: 'mat', label: 'Knotete etter mat' },
   ];
 
 const TIPS_NATT = [
@@ -505,12 +475,14 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
-              {SIGNALER.map(signal => (
-                <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '8px 4px', borderRadius: '10px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
-                 {signal.svg}
-                  <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? farger.grønn : farger.tekstLys, textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
-                </button>
-              ))}
+            {SIGNALER.map(signal => (
+  <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? farger.grønn : 'none'} stroke={valgteSignaler.includes(signal.id) ? farger.grønn : '#8A7060'} strokeWidth="1.3"/>
+    </svg>
+    <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? farger.grønn : farger.tekstLys, textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
+  </button>
+))}
             </div>
           </div>
 
