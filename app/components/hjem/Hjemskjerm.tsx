@@ -222,86 +222,107 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         </div>
       </div>
 
-    {/* Stor blob med babybilde */}
-<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '500px' }}>
-  
-  {/* CSS blob under for å forsterke fargen */}
-  <div style={{
-    position: 'absolute',
-    width: '340px',
-    height: '340px',
-    background: 'radial-gradient(ellipse at 45% 45%, #C8D8C8 0%, #EBC8B4 55%, transparent 80%)',
-    borderRadius: '62% 38% 46% 54% / 60% 44% 56% 40%',
-    opacity: 0.7,
-  }} />
+   {/* Stor blob med babybilde */}
+<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '480px' }}>
 
-  {/* boble.png over */}
-  <img
-    src="/boble.png"
-    alt="boble"
-    style={{
-      position: 'absolute',
-      width: '160%',
-      height: '520px',
-      objectFit: 'contain',
-      left: '-30%',
-      mixBlendMode: 'multiply',
-      opacity: 0.9,
-    }}
-  />
+{/* Lag 1 - ytterst, fersken */}
+<div style={{
+  position: 'absolute',
+  width: '320px',
+  height: '300px',
+  background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)',
+  borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%',
+  opacity: 0.5,
+  filter: 'blur(18px)',
+  transform: 'translate(30px, -20px)',
+}} />
 
-  <div style={{
-    position: 'relative',
-    zIndex: 2,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '12px',
-  }}>
-    {babyBilde ? (
-      <div style={{
-        width: '130px',
-        height: '130px',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        border: '3px solid rgba(255,255,255,0.9)',
-        boxShadow: '0 8px 30px rgba(0,0,0,0.10)',
-      }}>
-        <img src={babyBilde} alt="baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      </div>
-    ) : (
-      <div style={{
-        width: '90px',
-        height: '90px',
-        borderRadius: '50%',
-        background: 'rgba(255,255,255,0.6)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: '2px solid rgba(255,255,255,0.8)',
-      }}>
-        <img src="/baby-ansikt.png" alt="baby" style={{ width: '64px', height: '64px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
-      </div>
-    )}
-    <div style={{ textAlign: 'center' }}>
-      <div style={{
-        fontSize: '17px',
-        fontFamily: 'var(--font-plus-jakarta), sans-serif',
-        fontWeight: 600,
-        color: '#3F3A37',
-        marginBottom: '4px',
-      }}>
-        {valgtTilstand.tekst}
-      </div>
-      <div style={{
-        fontSize: '12.5px',
-        fontFamily: 'var(--font-inter), sans-serif',
-        color: '#7B746D',
-      }}>
-        {valgtTilstand.undertekst}
-      </div>
+{/* Lag 2 - grønn, litt rotert */}
+<div style={{
+  position: 'absolute',
+  width: '300px',
+  height: '290px',
+  background: 'radial-gradient(ellipse, #A8B5A2 0%, transparent 70%)',
+  borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%',
+  opacity: 0.45,
+  filter: 'blur(16px)',
+  transform: 'translate(-25px, 15px)',
+}} />
+
+{/* Lag 3 - kjerne, varmere */}
+<div style={{
+  position: 'absolute',
+  width: '260px',
+  height: '260px',
+  background: 'radial-gradient(ellipse at 50% 50%, #DCCFC0 0%, #C8D5C2 40%, transparent 75%)',
+  borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%',
+  opacity: 0.7,
+  filter: 'blur(8px)',
+}} />
+
+{/* Lag 4 - glitter/stjerner */}
+<div style={{
+  position: 'absolute',
+  width: '220px',
+  height: '220px',
+  background: 'radial-gradient(ellipse at 40% 60%, rgba(255,255,255,0.4) 0%, transparent 60%)',
+  borderRadius: '50%',
+  filter: 'blur(4px)',
+}} />
+
+{/* Innhold */}
+<div style={{
+  position: 'relative',
+  zIndex: 2,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '12px',
+}}>
+  {babyBilde ? (
+    <div style={{
+      width: '130px',
+      height: '130px',
+      borderRadius: '50%',
+      overflow: 'hidden',
+      border: '3px solid rgba(255,255,255,0.9)',
+      boxShadow: '0 8px 30px rgba(0,0,0,0.10)',
+    }}>
+      <img src={babyBilde} alt="baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+    </div>
+  ) : (
+    <div style={{
+      width: '90px',
+      height: '90px',
+      borderRadius: '50%',
+      background: 'rgba(255,255,255,0.6)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '2px solid rgba(255,255,255,0.8)',
+    }}>
+      <img src="/baby-ansikt.png" alt="baby" style={{ width: '64px', height: '64px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+    </div>
+  )}
+  <div style={{ textAlign: 'center' }}>
+    <div style={{
+      fontSize: '17px',
+      fontFamily: 'var(--font-plus-jakarta), sans-serif',
+      fontWeight: 600,
+      color: '#3F3A37',
+      marginBottom: '4px',
+    }}>
+      {valgtTilstand.tekst}
+    </div>
+    <div style={{
+      fontSize: '12.5px',
+      fontFamily: 'var(--font-inter), sans-serif',
+      color: '#7B746D',
+    }}>
+      {valgtTilstand.undertekst}
     </div>
   </div>
+</div>
 </div>
 
       {/* Tilstandsvelger */}
