@@ -296,16 +296,16 @@ export default function Sovn({ bruker }: Props) {
         {/* Lur-knapp */}
         <div style={{ marginBottom: '10px' }}>
           <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-  <circle cx="18" cy="18" r="7" fill="none" stroke="#F4A853" strokeWidth="2"/>
-  <line x1="18" y1="3" x2="18" y2="8" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="18" y1="28" x2="18" y2="33" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="3" y1="18" x2="8" y2="18" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="28" y1="18" x2="33" y2="18" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="7" y1="7" x2="11" y2="11" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="25" y1="25" x2="29" y2="29" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="29" y1="7" x2="25" y2="11" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="11" y1="25" x2="7" y2="29" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+  <circle cx="18" cy="18" r="6" fill="none" stroke="#F4A853" strokeWidth="1.8"/>
+  <line x1="18" y1="4" x2="18" y2="9" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+  <line x1="18" y1="27" x2="18" y2="32" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+  <line x1="4" y1="18" x2="9" y2="18" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+  <line x1="27" y1="18" x2="32" y2="18" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+  <line x1="8" y1="8" x2="11.5" y2="11.5" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+  <line x1="24.5" y1="24.5" x2="28" y2="28" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+  <line x1="28" y1="8" x2="24.5" y2="11.5" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
+  <line x1="11.5" y1="24.5" x2="8" y2="28" stroke="#F4A853" strokeWidth="1.8" strokeLinecap="round"/>
 </svg>
             <div>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px' }}>Lur</div>
@@ -321,13 +321,11 @@ export default function Sovn({ bruker }: Props) {
         {/* Natt-knapp */}
         <div style={{ marginBottom: '20px' }}>
           <button onClick={() => startSøvn('natt')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <path d="M28 20C27.1 24.6 23 28 18 28C12.5 28 8 23.5 8 18C8 13 11.4 8.9 16 8C13 11 13 16.5 16.5 20C20 23.5 25 23.5 28 20Z" fill="#5C6BC0"/>
-              <circle cx="24" cy="10" r="1.5" fill="#5C6BC0" opacity="0.5"/>
-              <circle cx="28" cy="14" r="1" fill="#5C6BC0" opacity="0.4"/>
-            </svg>
+          <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+  <path d="M26 20C25.2 24 21.5 27 17 27C11.5 27 7 22.5 7 17C7 12 10.4 7.9 15 7C12 10 12 15.5 15.5 19C19 22.5 23.5 22 26 20Z" fill="#8B9FD4"/>
+</svg>
             <div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px' }}>Natta</div>
+            <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Lur</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Nattesøvn</div>
             </div>
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '20px' }}>›</div>
