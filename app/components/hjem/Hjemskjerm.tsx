@@ -15,11 +15,28 @@ const tidspunkt = () => {
   return 'God kveld';
 };
 
+const BlomstIllustrasjon = () => (
+  <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.7" transform="rotate(0 26 26)"/>
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.6" transform="rotate(45 26 26)"/>
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.5" transform="rotate(90 26 26)"/>
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.6" transform="rotate(135 26 26)"/>
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#F7D5C5" opacity="0.5" transform="rotate(180 26 26)"/>
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#F7D5C5" opacity="0.4" transform="rotate(225 26 26)"/>
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.5" transform="rotate(270 26 26)"/>
+    <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.6" transform="rotate(315 26 26)"/>
+    <circle cx="26" cy="26" r="7" fill="#C48E7B" opacity="0.85"/>
+    <circle cx="26" cy="26" r="4" fill="#EBC8B4" opacity="0.9"/>
+    <path d="M26 38 Q30 42 28 46 Q24 42 26 38Z" fill="#A8B5A2" opacity="0.7"/>
+    <path d="M26 38 Q22 43 24 46 Q28 42 26 38Z" fill="#A8B5A2" opacity="0.5"/>
+  </svg>
+);
+
 export default function Hjemskjerm({ bruker, onNavigate }: Props) {
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
-  const [babyBilde, setBabyBilde] = useState(null);
-  const [dagensFlyt, setDagensFlyt] = useState([]);
+  const [babyBilde, setBabyBilde] = useState<string | null>(null);
+  const [dagensFlyt, setDagensFlyt] = useState<any[]>([]);
 
   useEffect(() => {
     const lastProfil = async () => {
@@ -35,133 +52,404 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
     lastProfil();
   }, [bruker]);
 
-  const tilstandConfig = {
-    rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill' },
-    trøtt: { tekst: 'Virker trøtt', undertekst: 'Kanskje tid for en lur snart?' },
-    urolig: { tekst: 'Litt urolig', undertekst: 'Trenger ro og regulering' },
-    sover: { tekst: 'Sover nå', undertekst: 'Hvil deg du også 🌙' },
+  const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string; blobFarge: string }> = {
+    rolig: {
+      tekst: 'Rolig og våken',
+      undertekst: 'Klar for lek og samspill',
+      farge: '#A8B5A2',
+      blobFarge: 'radial-gradient(ellipse at 40% 40%, #D6E5DF 0%, #EBC8B4 60%, #F7F3EC 100%)',
+    },
+    trøtt: {
+      tekst: 'Virker trøtt',
+      undertekst: 'Kanskje tid for en lur snart?',
+      farge: '#C7BDD8',
+      blobFarge: 'radial-gradient(ellipse at 40% 40%, #C7BDD8 0%, #DCCFC0 60%, #F7F3EC 100%)',
+    },
+    urolig: {
+      tekst: 'Litt urolig',
+      undertekst: 'Trenger ro og regulering',
+      farge: '#C48E7B',
+      blobFarge: 'radial-gradient(ellipse at 40% 40%, #EBC8B4 0%, #DCCFC0 50%, #F7F3EC 100%)',
+    },
+    sover: {
+      tekst: 'Sover nå',
+      undertekst: 'Hvil deg du også 🌙',
+      farge: '#A8B5A2',
+      blobFarge: 'radial-gradient(ellipse at 40% 40%, #D6E5DF 0%, #C7BDD8 55%, #F7F3EC 100%)',
+    },
   };
 
   const valgtTilstand = tilstandConfig[babyTilstand] || tilstandConfig.rolig;
+
+  const aiInnsikt: Record<string, string> = {
+    rolig: 'Baby virker rolig og mottakelig nå ✦',
+    trøtt: 'Baby viser trøtthetstegn – kanskje start nedtrapping?',
+    urolig: 'Baby virker litt overstimulert i dag',
+    sover: 'Baby sover – bruk tiden til å hvile 🌙',
+  };
+
+  const tilstandLabels: Record<string, string> = {
+    rolig: 'Rolig',
+    trøtt: 'Trøtt',
+    urolig: 'Urolig',
+    sover: 'Sover',
+  };
 
   const snarveier = [
     {
       label: 'Søvn', side: 'sovn',
       svg: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M26 17C25.1 21.6 21 25 16 25C10.5 25 6 20.5 6 15C6 10 9.4 5.9 14 5C11 8 11 13.5 14.5 17C18 20.5 23 20.5 26 17Z" fill={farger.grønn} opacity="0.8"/>
-          <circle cx="22" cy="8" r="1.5" fill={farger.grønn} opacity="0.4"/>
-          <circle cx="26" cy="12" r="1" fill={farger.grønn} opacity="0.3"/>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M22 15C21.2 19 17.5 22 13 22C8 22 4 18 4 13C4 8.5 7.2 4.8 11.5 4C9 6.8 9 11.5 12 14.5C15 17.5 19.5 17.5 22 15Z" fill="#A8B5A2" opacity="0.85"/>
+          <circle cx="20" cy="6" r="1.2" fill="#A8B5A2" opacity="0.4"/>
+          <circle cx="23" cy="10" r="0.8" fill="#A8B5A2" opacity="0.3"/>
         </svg>
       ),
     },
     {
       label: 'Amming', side: 'amming',
       svg: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="10" y="15" width="12" height="13" rx="3" stroke={farger.grønn} strokeWidth="1.6" fill="none"/>
-          <path d="M12 15V13C12 11 13 10 14 10H18C19 10 20 11 20 13V15" stroke={farger.grønn} strokeWidth="1.4" strokeLinecap="round" fill="none"/>
-          <path d="M15 10C15 10 15 8.5 16 7.5C17 8.5 17 10 17 10" stroke={farger.grønn} strokeWidth="1.3" strokeLinecap="round"/>
-          <line x1="12.5" y1="19" x2="12.5" y2="21" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
-          <line x1="12.5" y1="22.5" x2="12.5" y2="24.5" stroke={farger.grønn} strokeWidth="1" opacity="0.5"/>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect x="8" y="13" width="12" height="11" rx="3.5" stroke="#A8B5A2" strokeWidth="1.6" fill="none"/>
+          <path d="M10 13V11.5C10 9.8 11 9 12 9H16C17 9 18 9.8 18 11.5V13" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+          <path d="M13 9C13 9 13 7.5 14 6.5C15 7.5 15 9 15 9" stroke="#A8B5A2" strokeWidth="1.3" strokeLinecap="round"/>
         </svg>
       ),
     },
     {
       label: 'Signal & uro', side: 'kolikk',
       svg: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M16 26C16 26 5 19 5 12C5 8.7 7.7 6 11 6C13 6 14.8 7 16 8.5C17.2 7 19 6 21 6C24.3 6 27 8.7 27 12C27 19 16 26 16 26Z" fill="none" stroke={farger.grønn} strokeWidth="1.8" strokeLinejoin="round"/>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M14 23C14 23 4 17 4 10.5C4 7.5 6.7 5 10 5C11.8 5 13.2 5.9 14 7.2C14.8 5.9 16.2 5 18 5C21.3 5 24 7.5 24 10.5C24 17 14 23 14 23Z" fill="none" stroke="#A8B5A2" strokeWidth="1.7" strokeLinejoin="round"/>
         </svg>
       ),
     },
   ];
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#F7F3EC', minHeight: '100vh', overflowX: 'hidden' }}>
+
       {/* Header */}
       <div style={{ padding: '20px 24px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', color: farger.tekst, marginBottom: '4px' }}>
+            <div style={{
+              fontSize: '22px',
+              fontFamily: 'var(--font-plus-jakarta), sans-serif',
+              fontWeight: 600,
+              color: '#3F3A37',
+              marginBottom: '2px',
+              letterSpacing: '-0.3px',
+            }}>
               {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
             </div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>
+            <div style={{
+              fontSize: '13px',
+              fontFamily: 'var(--font-inter), sans-serif',
+              color: '#7B746D',
+            }}>
               {valgtTilstand.tekst}
             </div>
           </div>
-          <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill={farger.tekstLys} />
-              <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke={farger.tekstLys} strokeWidth="2" strokeLinecap="round" />
+          <button style={{
+            background: 'rgba(255,255,255,0.7)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(220,207,192,0.5)',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#7B746D" opacity="0.7"/>
+              <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#7B746D" strokeWidth="1.8" strokeLinecap="round" opacity="0.7"/>
             </svg>
           </button>
         </div>
       </div>
 
-      {/* Boble */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '0 0' }}>
-        <div style={{ position: 'relative', width: '100%', height: '320px' }}>
-          <img src="/boble.png" alt="boble" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            {babyBilde ? (
-              <img src={babyBilde} alt="baby" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${farger.hvit}` }} />
-            ) : (
-              <img src="/baby-ansikt.png" alt="baby" style={{ width: '80px', height: '80px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
-            )}
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', color: farger.tekst, marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>{valgtTilstand.undertekst}</div>
+      {/* AI Innsikt-kort */}
+      <div style={{ padding: '16px 24px 0' }}>
+        <div style={{
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(235,200,180,0.4)',
+          borderRadius: '20px',
+          padding: '14px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
+        }}>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: '13.5px',
+              fontFamily: 'var(--font-inter), sans-serif',
+              color: '#3F3A37',
+              fontWeight: 450,
+              lineHeight: '1.4',
+              marginBottom: '6px',
+            }}>
+              {aiInnsikt[babyTilstand]}
+            </div>
+            <button
+              onClick={() => onNavigate('innsikt')}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontFamily: 'var(--font-inter), sans-serif',
+                color: '#A8B5A2',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px',
+              }}>
+              Se innsikt
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div style={{ marginLeft: '12px', flexShrink: 0 }}>
+            <BlomstIllustrasjon />
+          </div>
+        </div>
+      </div>
+
+      {/* Stor blob med babybilde */}
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '8px 0 4px', minHeight: '340px' }}>
+        <div style={{
+          position: 'absolute',
+          width: '310px',
+          height: '310px',
+          background: valgtTilstand.blobFarge,
+          borderRadius: '60% 40% 55% 45% / 50% 55% 45% 50%',
+          filter: 'blur(2px)',
+          opacity: 0.95,
+          transition: 'background 0.8s ease',
+          animation: 'blobPulse 6s ease-in-out infinite',
+        }} />
+        <div style={{
+          position: 'absolute',
+          width: '260px',
+          height: '260px',
+          background: valgtTilstand.blobFarge,
+          borderRadius: '45% 55% 60% 40% / 55% 45% 55% 45%',
+          opacity: 0.4,
+          filter: 'blur(18px)',
+        }} />
+        <div style={{
+          position: 'relative',
+          zIndex: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px',
+        }}>
+          {babyBilde ? (
+            <div style={{
+              width: '110px',
+              height: '110px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '3px solid rgba(255,255,255,0.9)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.10)',
+            }}>
+              <img src={babyBilde} alt="baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          ) : (
+            <div style={{
+              width: '90px',
+              height: '90px',
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.6)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px solid rgba(255,255,255,0.8)',
+            }}>
+              <img src="/baby-ansikt.png" alt="baby" style={{ width: '64px', height: '64px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+            </div>
+          )}
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '17px',
+              fontFamily: 'var(--font-plus-jakarta), sans-serif',
+              fontWeight: 600,
+              color: '#3F3A37',
+              marginBottom: '4px',
+              letterSpacing: '-0.2px',
+            }}>
+              {valgtTilstand.tekst}
+            </div>
+            <div style={{
+              fontSize: '12.5px',
+              fontFamily: 'var(--font-inter), sans-serif',
+              color: '#7B746D',
+            }}>
+              {valgtTilstand.undertekst}
             </div>
           </div>
         </div>
       </div>
 
       {/* Tilstandsvelger */}
-      <div style={{ display: 'flex', gap: '8px', padding: '16px 24px', overflowX: 'auto' }}>
-        {Object.entries(tilstandConfig).map(([key]) => (
-          <button key={key} onClick={() => setBabyTilstand(key)} style={{ flexShrink: 0, padding: '8px 14px', borderRadius: '20px', border: babyTilstand === key ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: babyTilstand === key ? farger.grønnLys : farger.hvit, color: babyTilstand === key ? farger.grønn : farger.tekstLys, fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', cursor: 'pointer', fontWeight: babyTilstand === key ? '600' : '400' }}>
-            {key.charAt(0).toUpperCase() + key.slice(1)}
+      <div style={{ display: 'flex', gap: '8px', padding: '0 24px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+        {Object.entries(tilstandConfig).map(([key, val]) => (
+          <button
+            key={key}
+            onClick={() => setBabyTilstand(key)}
+            style={{
+              flexShrink: 0,
+              padding: '9px 18px',
+              borderRadius: '24px',
+              border: babyTilstand === key
+                ? `1.5px solid ${val.farge}`
+                : '1.5px solid rgba(220,207,192,0.6)',
+              backgroundColor: babyTilstand === key
+                ? `${val.farge}22`
+                : 'rgba(255,255,255,0.6)',
+              color: babyTilstand === key ? val.farge : '#7B746D',
+              fontSize: '12.5px',
+              fontFamily: 'var(--font-inter), sans-serif',
+              cursor: 'pointer',
+              fontWeight: babyTilstand === key ? 600 : 400,
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(6px)',
+            }}
+          >
+            {tilstandLabels[key]}
           </button>
         ))}
       </div>
 
       {/* Snarveier */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '28px' }}>
         {snarveier.map(item => (
-          <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '16px 8px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+          <button
+            key={item.side}
+            onClick={() => onNavigate(item.side)}
+            style={{
+              padding: '18px 8px 14px',
+              background: 'rgba(255,255,255,0.75)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(220,207,192,0.4)',
+              borderRadius: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+              transition: 'all 0.3s ease',
+            }}
+          >
             {item.svg}
-            <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>{item.label}</span>
+            <span style={{
+              fontSize: '11px',
+              fontFamily: 'var(--font-inter), sans-serif',
+              color: '#7B746D',
+            }}>
+              {item.label}
+            </span>
           </button>
         ))}
       </div>
 
       {/* Dagens flyt */}
-      <div style={{ padding: '0 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', color: farger.tekst }}>Dagens flyt</div>
-          <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.grønn, background: 'none', border: `1px solid ${farger.grønnLys}`, padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se dagbok</button>
+      <div style={{ padding: '0 24px 32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div style={{
+            fontSize: '16px',
+            fontFamily: 'var(--font-plus-jakarta), sans-serif',
+            fontWeight: 600,
+            color: '#3F3A37',
+          }}>
+            Dagens flyt
+          </div>
+          <button style={{
+            fontSize: '12px',
+            fontFamily: 'var(--font-inter), sans-serif',
+            color: '#A8B5A2',
+            background: 'rgba(168,181,162,0.12)',
+            border: '1px solid rgba(168,181,162,0.3)',
+            padding: '5px 14px',
+            borderRadius: '20px',
+            cursor: 'pointer',
+            fontWeight: 500,
+          }}>
+            Se dagbok
+          </button>
         </div>
         {dagensFlyt.length === 0 ? (
-          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
-            <div style={{ fontSize: '14px', fontStyle: 'italic', color: farger.tekstLys, fontFamily: 'var(--font-plus-jakarta), sans-serif' }}>Ingen registreringer ennå i dag</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginTop: '6px' }}>Trykk + for å begynne</div>
+          <div style={{
+            background: 'rgba(255,255,255,0.6)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(220,207,192,0.35)',
+            borderRadius: '20px',
+            padding: '28px 24px',
+            textAlign: 'center',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+          }}>
+            <div style={{
+              fontSize: '14px',
+              fontStyle: 'italic',
+              color: '#7B746D',
+              fontFamily: 'var(--font-plus-jakarta), sans-serif',
+              marginBottom: '6px',
+            }}>
+              Ingen registreringer ennå i dag
+            </div>
+            <div style={{
+              fontSize: '12px',
+              fontFamily: 'var(--font-inter), sans-serif',
+              color: '#A8B5A2',
+            }}>
+              Trykk + for å begynne
+            </div>
           </div>
         ) : (
-          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.6)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(220,207,192,0.35)',
+            borderRadius: '20px',
+            overflow: 'hidden',
+          }}>
             {dagensFlyt.map((item: any, i) => (
-              <div key={i} style={{ padding: '12px 16px', borderBottom: i < dagensFlyt.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: farger.grønn, flexShrink: 0 }} />
+              <div key={i} style={{
+                padding: '14px 18px',
+                borderBottom: i < dagensFlyt.length - 1 ? '1px solid rgba(220,207,192,0.3)' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}>
+                <div style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#A8B5A2', flexShrink: 0 }} />
                 <div style={{ flex: 1 }}>
-                  <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginRight: '8px' }}>{item.tid}</span>
-                  <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekst }}>{item.tekst}</span>
+                  <span style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginRight: '8px' }}>{item.tid}</span>
+                  <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37' }}>{item.tekst}</span>
                 </div>
-                {item.varighet && <span style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys }}>{item.varighet}</span>}
+                {item.varighet && <span style={{ fontSize: '12px', color: '#7B746D' }}>{item.varighet}</span>}
               </div>
             ))}
           </div>
         )}
       </div>
+
+      <style>{`
+        @keyframes blobPulse {
+          0%, 100% { border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%; transform: scale(1); }
+          33% { border-radius: 50% 50% 40% 60% / 55% 45% 55% 45%; transform: scale(1.015); }
+          66% { border-radius: 45% 55% 60% 40% / 45% 55% 45% 55%; transform: scale(0.99); }
+        }
+      `}</style>
     </div>
   );
 }
