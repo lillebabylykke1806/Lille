@@ -190,7 +190,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
               fontSize: '13.5px',
               fontFamily: 'var(--font-inter), sans-serif',
               color: '#3F3A37',
-              fontWeight: 450,
               lineHeight: '1.4',
               marginBottom: '6px',
             }}>
@@ -224,27 +223,18 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       </div>
 
       {/* Stor blob med babybilde */}
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '8px 0 4px', minHeight: '340px' }}>
-        <div style={{
-          position: 'absolute',
-          width: '310px',
-          height: '310px',
-          background: valgtTilstand.blobFarge,
-          borderRadius: '60% 40% 55% 45% / 50% 55% 45% 50%',
-          filter: 'blur(2px)',
-          opacity: 0.95,
-          transition: 'background 0.8s ease',
-          animation: 'blobPulse 6s ease-in-out infinite',
-        }} />
-        <div style={{
-          position: 'absolute',
-          width: '260px',
-          height: '260px',
-          background: valgtTilstand.blobFarge,
-          borderRadius: '45% 55% 60% 40% / 55% 45% 55% 45%',
-          opacity: 0.4,
-          filter: 'blur(18px)',
-        }} />
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '380px' }}>
+        <img
+          src="/boble.png"
+          alt="boble"
+          style={{
+            position: 'absolute',
+            width: '115%',
+            height: '380px',
+            objectFit: 'contain',
+            left: '-7.5%',
+          }}
+        />
         <div style={{
           position: 'relative',
           zIndex: 2,
@@ -301,7 +291,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       </div>
 
       {/* Tilstandsvelger */}
-      <div style={{ display: 'flex', gap: '8px', padding: '0 24px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+      <div style={{ display: 'flex', gap: '8px', padding: '0 24px 16px', overflowX: 'auto' }}>
         {Object.entries(tilstandConfig).map(([key, val]) => (
           <button
             key={key}
@@ -322,7 +312,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
               cursor: 'pointer',
               fontWeight: babyTilstand === key ? 600 : 400,
               transition: 'all 0.3s ease',
-              backdropFilter: 'blur(6px)',
             }}
           >
             {tilstandLabels[key]}
@@ -339,7 +328,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
             style={{
               padding: '18px 8px 14px',
               background: 'rgba(255,255,255,0.75)',
-              backdropFilter: 'blur(10px)',
               border: '1px solid rgba(220,207,192,0.4)',
               borderRadius: '20px',
               display: 'flex',
@@ -391,12 +379,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         {dagensFlyt.length === 0 ? (
           <div style={{
             background: 'rgba(255,255,255,0.6)',
-            backdropFilter: 'blur(8px)',
             border: '1px solid rgba(220,207,192,0.35)',
             borderRadius: '20px',
             padding: '28px 24px',
             textAlign: 'center',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
           }}>
             <div style={{
               fontSize: '14px',
@@ -418,7 +404,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         ) : (
           <div style={{
             background: 'rgba(255,255,255,0.6)',
-            backdropFilter: 'blur(8px)',
             border: '1px solid rgba(220,207,192,0.35)',
             borderRadius: '20px',
             overflow: 'hidden',
@@ -443,13 +428,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         )}
       </div>
 
-      <style>{`
-        @keyframes blobPulse {
-          0%, 100% { border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%; transform: scale(1); }
-          33% { border-radius: 50% 50% 40% 60% / 55% 45% 55% 45%; transform: scale(1.015); }
-          66% { border-radius: 45% 55% 60% 40% / 45% 55% 45% 55%; transform: scale(0.99); }
-        }
-      `}</style>
     </div>
   );
 }
