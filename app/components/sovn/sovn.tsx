@@ -60,20 +60,13 @@ const Bølger = () => (
 const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean }) => {
     const size = 40;
     if (type === 'lur') return (
-      <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#F2E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="5" fill="#F4A853"/>
-          <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-          <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-          <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-          <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-          <line x1="4.9" y1="4.9" x2="7" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-          <line x1="17" y1="17" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-          <line x1="19.1" y1="4.9" x2="17" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-          <line x1="7" y1="17" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
-      </div>
-    );
+        <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#E8EFF8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M6 15C4.3 15 3 13.7 3 12C3 10.5 4 9.2 5.5 9C5.8 7.3 7.2 6 9 6C10.1 6 11 6.5 11.7 7.3C12.1 7.1 12.5 7 13 7C14.7 7 16 8.3 16 10C16 10.2 16 10.3 15.9 10.5C17.1 10.9 18 12 18 13.3C18 14.8 16.8 16 15.3 16H6V15Z" fill="#A8B5A2" opacity="0.7"/>
+            <text x="8" y="13" fontSize="5" fill="#5C7A6B" fontFamily="sans-serif" fontWeight="bold">zzz</text>
+          </svg>
+        </div>
+      );
     if (type === 'natt') return (
       <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
