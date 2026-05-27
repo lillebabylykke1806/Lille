@@ -58,15 +58,62 @@ const Bølger = () => (
 );
 
 const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean }) => {
-  const bg = mørk ? 'rgba(255,255,255,0.1)' : farger.kremMørk;
-  const size = 36;
-  if (type === 'lur' || type === 'natt') return (
-    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3D4F7C' : '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11.5 12.5 14C15.5 16.5 19.5 15.5 21 12.5Z" fill={mørk ? '#7C8FD4' : farger.grønn}/>
-      </svg>
-    </div>
-  );
+    const size = 40;
+    if (type === 'lur') return (
+      <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#F2E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+          <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="4.9" y1="4.9" x2="7" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="17" y1="17" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="19.1" y1="4.9" x2="17" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="7" y1="17" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </div>
+    );
+    if (type === 'natt') return (
+      <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+        </svg>
+      </div>
+    );
+    if (type === 'amming') return (
+      <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="7" y="11" width="10" height="9" rx="3" stroke="#C48E7B" strokeWidth="1.6" fill="none"/>
+          <path d="M9 11V9.5C9 8 10 7 11 7H13C14 7 15 8 15 9.5V11" stroke="#C48E7B" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+          <path d="M11 7C11 7 11 5.5 12 4.5C13 5.5 13 7 13 7" stroke="#C48E7B" strokeWidth="1.3" strokeLinecap="round"/>
+        </svg>
+      </div>
+    );
+    if (type === 'oppvåkning') return (
+      <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#EDE0F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="7" stroke="#9B6DB5" strokeWidth="1.6" fill="none"/>
+          <path d="M9 10C9 10 10 8 12 8C14 8 15 10 15 10" stroke="#9B6DB5" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+          <path d="M9 15 Q12 17 15 15" stroke="#9B6DB5" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+        </svg>
+      </div>
+    );
+    if (type === 'uro') return (
+      <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#FFF0D6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="#E8A830" opacity="0.8"/>
+        </svg>
+      </div>
+    );
+    return (
+      <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="#8A7060" strokeWidth="1.3"/>
+        </svg>
+      </div>
+    );
+
   if (type === 'amming') return (
     <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#4A3D5C' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <span style={{ fontSize: '14px' }}>🍼</span>
@@ -83,7 +130,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
     </div>
   );
   return (
-    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <span style={{ fontSize: '14px' }}>⭐</span>
     </div>
   );
@@ -506,7 +553,7 @@ export default function Sovn({ bruker }: Props) {
               <path d="M6 4L10 8L6 12" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          
+
           {/* Tidslinje */}
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
