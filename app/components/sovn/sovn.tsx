@@ -253,27 +253,38 @@ export default function Sovn({ bruker }: Props) {
       <div style={{ padding: '24px', textAlign: 'center' }}>
 
         {/* Måne med stjerner */}
-        <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-10px', left: '0px' }}>
-            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.45"/>
-          </svg>
-          <svg width="8" height="8" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '10px', right: '-18px' }}>
-            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.35"/>
-          </svg>
-          <svg width="6" height="6" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '0px', left: '-12px' }}>
-            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.3"/>
-          </svg>
-          <img
-            src="/mane.png"
-            alt="måne"
-            style={{
-              width: '150px',
-              height: 'auto',
-              maskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)',
-            }}
-          />
-        </div>
+<div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
+  {/* Stjerner rundt */}
+  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-14px', left: '-5px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.5"/>
+  </svg>
+  <svg width="8" height="8" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-5px', right: '-20px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.35"/>
+  </svg>
+  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '30px', right: '-28px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.4"/>
+  </svg>
+  <svg width="6" height="6" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '10px', left: '-18px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.3"/>
+  </svg>
+  <svg width="9" height="9" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '-8px', right: '-12px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.38"/>
+  </svg>
+  <svg width="7" height="7" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '60px', left: '-22px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.28"/>
+  </svg>
+
+  <img
+    src="/mane.png"
+    alt="måne"
+    style={{
+      width: '150px',
+      height: 'auto',
+      maskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)',
+      WebkitMaskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)',
+    }}
+  />
+</div>
 
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>
           Hva slags søvn<br/>skal du registrere?
