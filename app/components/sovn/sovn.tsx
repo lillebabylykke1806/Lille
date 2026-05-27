@@ -600,33 +600,46 @@ export default function Sovn({ bruker }: Props) {
 
   if (visning === 'nattAktiv') {
     return (
-      <div style={{ backgroundColor: '#1A1F2E', minHeight: '100vh', position: 'fixed', inset: 0, zIndex: 50, overflowY: 'auto' }}>
+      <div style={{ backgroundColor: '#0D1B3E', minHeight: '100vh', position: 'fixed', inset: 0, zIndex: 50, overflowY: 'auto' }}>
         <style>{`
-          @keyframes twinkle { 0%,100%{opacity:0.15;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
-          @keyframes glitterDrift { 0%{transform:translateX(0) translateY(0);opacity:0.8} 50%{transform:translateX(30px) translateY(-20px);opacity:0.3} 100%{transform:translateX(60px) translateY(0);opacity:0} }
+          @keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.4)} }
+          @keyframes twinkleStar { 0%,100%{opacity:0.3} 50%{opacity:1} }
+          @keyframes moonFloat { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+          @keyframes ringPulse { 0%,100%{opacity:0.8} 50%{opacity:1} }
         `}</style>
 
+        {/* Stjerner overalt */}
         {[
-          {x:15,y:8,s:2.5,d:0},{x:45,y:5,s:1.5,d:0.5},{x:75,y:10,s:2,d:1},
-          {x:88,y:6,s:1,d:0.3},{x:25,y:15,s:1.5,d:0.8},{x:60,y:8,s:1,d:1.2},
-          {x:92,y:18,s:2,d:0.6},{x:10,y:25,s:1,d:1.5},{x:35,y:20,s:1.5,d:0.2},
-          {x:80,y:22,s:1,d:1.8},{x:50,y:30,s:1,d:0.9},{x:70,y:15,s:2.5,d:0.4},
-          {x:5,y:40,s:1.5,d:1.1},{x:95,y:35,s:1,d:0.7},{x:20,y:50,s:1,d:2},
-          {x:65,y:45,s:2,d:0.3},{x:85,y:55,s:1.5,d:1.3},{x:40,y:60,s:1,d:0.6},
-          {x:55,y:55,s:1,d:1.7},{x:30,y:65,s:2,d:0.1},
-        ].map((stjerne, i) => (
+          {x:8,y:6,s:8,d:0},{x:20,y:4,s:6,d:0.5},{x:35,y:8,s:7,d:1},
+          {x:50,y:5,s:5,d:0.3},{x:65,y:7,s:8,d:0.8},{x:78,y:4,s:6,d:1.2},
+          {x:88,y:8,s:7,d:0.6},{x:95,y:5,s:5,d:1.5},{x:12,y:15,s:6,d:0.2},
+          {x:28,y:18,s:7,d:0.9},{x:45,y:14,s:5,d:1.4},{x:60,y:16,s:8,d:0.4},
+          {x:75,y:12,s:6,d:1.1},{x:90,y:18,s:7,d:0.7},{x:5,y:30,s:5,d:1.6},
+          {x:18,y:35,s:8,d:0.1},{x:32,y:28,s:6,d:1.3},{x:48,y:32,s:7,d:0.6},
+          {x:62,y:26,s:5,d:1.8},{x:76,y:33,s:8,d:0.3},{x:92,y:28,s:6,d:1.0},
+          {x:10,y:45,s:7,d:0.7},{x:25,y:50,s:5,d:1.5},{x:40,y:44,s:8,d:0.2},
+          {x:55,y:48,s:6,d:1.2},{x:70,y:42,s:7,d:0.8},{x:85,y:50,s:5,d:1.7},
+          {x:15,y:60,s:8,d:0.4},{x:30,y:65,s:6,d:1.1},{x:45,y:58,s:7,d:0.9},
+          {x:60,y:63,s:5,d:1.6},{x:75,y:57,s:8,d:0.5},{x:90,y:65,s:6,d:1.3},
+        ].map((s, i) => (
           <div key={i} style={{
-            position: 'fixed', borderRadius: '50%',
-            width: `${stjerne.s}px`, height: `${stjerne.s}px`,
-            backgroundColor: i % 5 === 0 ? '#E8C87A' : '#C4A882',
-            left: `${stjerne.x}%`, top: `${stjerne.y}%`,
-            boxShadow: stjerne.s > 2 ? `0 0 ${stjerne.s * 2}px #C4A882` : 'none',
-            animation: `twinkle ${2 + stjerne.d}s ${stjerne.d}s infinite ease-in-out`,
-          }} />
+            position: 'fixed',
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            width: `${s.s}px`,
+            height: `${s.s}px`,
+            animation: `twinkleStar ${2.5 + s.d}s ${s.d}s infinite ease-in-out`,
+          }}>
+            <svg viewBox="0 0 10 10" fill="none" width={s.s} height={s.s}>
+              <path d="M5 0L5.8 3.8L10 5L5.8 6.2L5 10L4.2 6.2L0 5L4.2 3.8Z" fill="#E8C87A"/>
+            </svg>
+          </div>
         ))}
 
         <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 120px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>‹</button>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '700', letterSpacing: '0.08em' }}>NATTA</div>
@@ -635,49 +648,72 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ width: '32px' }} />
           </div>
 
-          <div style={{ position: 'relative', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', left: '10px', top: '10px' }}>
-              <svg width="120" height="120" viewBox="0 0 120 120" style={{ filter: 'drop-shadow(0 0 25px rgba(232,200,122,0.6))' }}>
-                <path d="M 75 15 C 50 15 32 33 32 58 C 32 83 50 101 75 101 C 60 93 51 77 51 58 C 51 39 60 23 75 15 Z" fill="#E8C87A"/>
-                <ellipse cx="56" cy="52" rx="4" ry="5" fill="#D4A843" opacity="0.7"/>
-                <ellipse cx="63" cy="68" rx="3" ry="3.5" fill="#D4A843" opacity="0.5"/>
-                <path d="M52 55 Q56 60 60 55" stroke="#C49030" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
-                <circle cx="55" cy="50" r="1.5" fill="#FFF8E0" opacity="0.6"/>
-                <circle cx="72" cy="22" r="4" fill="#F5E6C8" opacity="0.25"/>
-              </svg>
+          {/* Måne + klokke */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '8px' }}>
+
+            {/* Stor måne til venstre */}
+            <div style={{ position: 'absolute', left: '-10px', top: '0px', animation: 'moonFloat 4s ease-in-out infinite' }}>
+              <img
+                src="/mane-natt.png"
+                alt="måne"
+                style={{
+                  width: '130px',
+                  height: 'auto',
+                  filter: 'drop-shadow(0 0 20px rgba(232,200,122,0.5))',
+                  maskImage: 'radial-gradient(ellipse 85% 85% at 40% 50%, black 40%, transparent 78%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 85% 85% at 40% 50%, black 40%, transparent 78%)',
+                }}
+              />
             </div>
-            <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
-              <svg width="200" height="200" viewBox="0 0 200 200">
+
+            {/* Sirkulær timer */}
+            <div style={{ position: 'relative', width: '210px', height: '210px', marginLeft: '40px' }}>
+              <svg width="210" height="210" viewBox="0 0 210 210">
                 <defs>
-                  <linearGradient id="nattGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#4A5580"/>
-                    <stop offset="100%" stopColor="#8B9FD4"/>
+                  <linearGradient id="nattGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3D5A9E"/>
+                    <stop offset="50%" stopColor="#8AAEE0"/>
+                    <stop offset="100%" stopColor="#3D5A9E"/>
+                  </linearGradient>
+                  <linearGradient id="nattBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#1A2A5E"/>
+                    <stop offset="100%" stopColor="#0D1B3E"/>
                   </linearGradient>
                 </defs>
-                <circle cx="100" cy="100" r="82" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
-                <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8"/>
-                <circle cx="100" cy="100" r="82" fill="none" stroke="url(#nattGrad)" strokeWidth="8" strokeLinecap="round"
-                  strokeDasharray={2 * Math.PI * 82}
-                  strokeDashoffset={2 * Math.PI * 82 - progress * 2 * Math.PI * 82}
-                  transform="rotate(-90 100 100)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
+                <circle cx="105" cy="105" r="90" fill="url(#nattBg)" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+                <circle cx="105" cy="105" r="90" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10"/>
+                <circle cx="105" cy="105" r="90" fill="none" stroke="url(#nattGrad)" strokeWidth="10" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 90}
+                  strokeDashoffset={2 * Math.PI * 90 - progress * 2 * Math.PI * 90}
+                  transform="rotate(-90 105 105)" style={{ transition: 'stroke-dashoffset 1s linear', animation: 'ringPulse 3s ease-in-out infinite' }}/>
               </svg>
+
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginBottom: '6px' }}>
-                  <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="none" stroke="#7C8FD4" strokeWidth="1.5"/>
+                {/* Liten måne */}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginBottom: '4px' }}>
+                  <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="none" stroke="#8AAEE0" strokeWidth="1.5"/>
+                  <circle cx="18" cy="8" r="1" fill="#8AAEE0" opacity="0.6"/>
                 </svg>
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '4px' }}>Natta pågår</div>
-                <div style={{ fontSize: '36px', fontFamily: 'var(--font-plus-jakarta)', color: '#FDFAF6', fontWeight: '700', lineHeight: 1 }}>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '2px' }}>Natta pågår</div>
+                <div style={{ fontSize: '38px', fontFamily: 'var(--font-plus-jakarta)', color: '#FDFAF6', fontWeight: '700', lineHeight: 1 }}>
                   {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
                 </div>
-                <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
+                <button
+                  onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}
+                >
                   <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>
                     Sovnet {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </button>
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style={{ marginTop: '4px' }}>
+                  <path d="M9 15C9 15 2 10.5 2 6C2 4 3.5 2.5 5.5 2.5C7 2.5 8.2 3.3 9 4.5C9.8 3.3 11 2.5 12.5 2.5C14.5 2.5 16 4 16 6C16 10.5 9 15 9 15Z" fill="none" stroke="#7C8FD4" strokeWidth="1.3"/>
+                </svg>
               </div>
             </div>
           </div>
 
+          {/* Juster tid */}
           {visJusterTid && (
             <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sett sovnetid:</div>
@@ -686,17 +722,19 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
+          {/* Knapper */}
           <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-            <button onClick={stoppSøvn} style={{ flex: 2, padding: '14px', backgroundColor: '#7C8FD4', border: 'none', borderRadius: '24px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A5580', border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               Avslutt natta
-              <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.4)', borderRadius: '3px' }} />
+              <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.4)', borderRadius: '3px' }} />
             </button>
-            <button onClick={registrerOppvåkning} style={{ flex: 1, padding: '14px', backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '24px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#C4A882', cursor: 'pointer', textAlign: 'center' }}>
+            <button onClick={registrerOppvåkning} style={{ flex: 1, padding: '16px', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '28px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#C4A882', cursor: 'pointer', textAlign: 'center' }}>
               Nattlig<br/>oppvåkning
             </button>
           </div>
 
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
+          {/* Natta oppsummert */}
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', marginBottom: '14px' }}>Natta oppsummert så langt</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
               <div>
@@ -720,6 +758,7 @@ export default function Sovn({ bruker }: Props) {
             </div>
           </div>
 
+          {/* Tidslinje I natt */}
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', marginBottom: '16px' }}>I natt</div>
@@ -742,14 +781,18 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
+          {/* Tips */}
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px' }}>
             <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '8px' }}>TIPS</div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{TIPS_NATT[tipIndex]}</div>
           </div>
+
         </div>
       </div>
     );
   }
+
+ 
 
   return null;
 }
