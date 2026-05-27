@@ -224,17 +224,19 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
       {/* Stor blob med babybilde */}
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '380px' }}>
-        <img
-          src="/boble.png"
-          alt="boble"
-          style={{
-            position: 'absolute',
-            width: '115%',
-            height: '380px',
-            objectFit: 'contain',
-            left: '-7.5%',
-          }}
-        />
+      <img
+  src="/boble.png"
+  alt="boble"
+  style={{
+    position: 'absolute',
+    width: '120%',
+    height: '420px',
+    objectFit: 'contain',
+    left: '-10%',
+    opacity: 1,
+    mixBlendMode: 'multiply',
+  }}
+/>
         <div style={{
           position: 'relative',
           zIndex: 2,
