@@ -252,15 +252,28 @@ export default function Sovn({ bruker }: Props) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
         <div style={{ marginBottom: '16px', position: 'relative', display: 'inline-block' }}>
-          <span style={{ position: 'absolute', top: '-8px', left: '10px', fontSize: '14px', opacity: 0.6 }}>✦</span>
-          <span style={{ position: 'absolute', top: '0px', right: '5px', fontSize: '10px', opacity: 0.5 }}>✦</span>
-          <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
-            <path d="M 55 12 C 37 12 23 26 23 47 C 23 68 37 82 55 82 C 43 75 35 62 35 47 C 35 32 43 19 55 12 Z" fill="#E8C87A"/>
-            <circle cx="38" cy="42" r="3" fill="#D4A843" opacity="0.6"/>
-            <circle cx="45" cy="55" r="2" fill="#D4A843" opacity="0.4"/>
-            <path d="M35 44 Q38 47 41 44" stroke="#D4A843" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.7"/>
-          </svg>
-        </div>
+  {/* 4-spisse stjerner */}
+  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-10px', left: '5px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.55"/>
+  </svg>
+  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '0px', right: '-5px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.4"/>
+  </svg>
+
+  {/* Stor gyllen halvmåne med ansikt */}
+  <svg width="100" height="110" viewBox="0 0 100 110" fill="none">
+    {/* Halvmåne kropp */}
+    <path d="M 65 8 C 38 8 18 28 18 55 C 18 82 38 102 65 102 C 48 93 37 75 37 55 C 37 35 48 17 65 8 Z" fill="#E8C87A"/>
+    {/* Ansikt - øyne */}
+    <ellipse cx="42" cy="50" rx="3.5" ry="4" fill="#C49030" opacity="0.75"/>
+    <ellipse cx="50" cy="66" rx="2.5" ry="3" fill="#C49030" opacity="0.55"/>
+    {/* Munn/smil */}
+    <path d="M39 54 Q43 59 47 54" stroke="#B8860B" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
+    {/* Glans */}
+    <circle cx="41" cy="48" r="1.5" fill="#FFF8E0" opacity="0.7"/>
+    <circle cx="60" cy="18" r="4" fill="#F5E6C8" opacity="0.2"/>
+  </svg>
+</div>
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>Hva slags søvn<br/>skal du registrere?</div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>Velg type for best mulig innsikt</div>
         <div style={{ marginBottom: '10px' }}>
