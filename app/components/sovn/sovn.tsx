@@ -50,12 +50,12 @@ const GlitterOvergang = ({ onDone }: { onDone: () => void }) => {
 };
 
 const Bølger = () => (
-  <svg viewBox="0 0 430 180" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '180px' }} preserveAspectRatio="none">
-    <path d="M0 120 C60 80 120 140 180 100 C240 60 300 130 360 90 C400 65 430 80 430 80 L430 180 L0 180 Z" fill="#D6E5DF" opacity="0.5"/>
-    <path d="M0 140 C80 100 160 160 240 120 C300 90 370 140 430 110 L430 180 L0 180 Z" fill="#D6E5DF" opacity="0.7"/>
-    <path d="M0 160 C100 130 200 170 300 145 C370 128 430 150 430 150 L430 180 L0 180 Z" fill="#C8D8D0" opacity="0.6"/>
-  </svg>
-);
+    <svg viewBox="0 0 430 200" style={{ position: 'absolute', top: '60px', left: 0, width: '100%', height: '200px', zIndex: 0 }} preserveAspectRatio="none">
+      <path d="M0 100 C60 60 120 130 180 90 C240 50 300 120 360 80 C400 55 430 70 430 70 L430 200 L0 200 Z" fill="#A8B5A2" opacity="0.2"/>
+      <path d="M0 120 C80 85 160 145 240 110 C300 82 370 130 430 105 L430 200 L0 200 Z" fill="#A8B5A2" opacity="0.25"/>
+      <path d="M0 145 C100 118 200 155 300 135 C370 120 430 140 430 140 L430 200 L0 200 Z" fill="#A8B5A2" opacity="0.2"/>
+    </svg>
+  );
 
 const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean }) => {
     const size = 40;
@@ -438,7 +438,7 @@ export default function Sovn({ bruker }: Props) {
           </div>
 
           {/* Timer område */}
-          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px' }}>
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px', zIndex: 1 }}>
 
             {/* Sol øverst til venstre */}
             <div style={{ position: 'absolute', left: '10px', top: '0px', opacity: 0.7 }}>
