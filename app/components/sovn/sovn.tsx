@@ -379,6 +379,8 @@ export default function Sovn({ bruker }: Props) {
       <div style={{ backgroundColor: '#F8F3EE', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
         <Bølger />
         <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 120px' }}>
+
+          {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: farger.tekstLys, cursor: 'pointer', fontSize: '24px' }}>‹</button>
             <div style={{ textAlign: 'center' }}>
@@ -388,37 +390,76 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ width: '32px' }} />
           </div>
 
-          <div style={{ position: 'relative', width: '220px', height: '220px', margin: '0 auto 8px' }}>
-            <svg width="220" height="220" viewBox="0 0 220 220">
-              <defs>
-                <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#D6E5DF"/>
-                  <stop offset="100%" stopColor="#2D5C45"/>
-                </linearGradient>
-                <linearGradient id="lurBg" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#F5EFE6"/>
-                  <stop offset="100%" stopColor="#EDE5D8"/>
-                </linearGradient>
-              </defs>
-              <circle cx="110" cy="110" r="85" fill="url(#lurBg)" stroke={farger.kremMørk} strokeWidth="1"/>
-              <circle cx="110" cy="110" r="85" fill="none" stroke="#F0E8E0" strokeWidth="10"/>
-              <circle cx="110" cy="110" r="85" fill="none" stroke="url(#lurGrad)" strokeWidth="10" strokeLinecap="round"
-                strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
-                transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
-            </svg>
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Luren pågår</div>
-              <div style={{ fontSize: '38px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
-                {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
-              </div>
-              <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                  Est. start {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
-                </div>
-              </button>
+          {/* Timer område */}
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px' }}>
+
+            {/* Sol øverst til venstre */}
+            <div style={{ position: 'absolute', left: '10px', top: '0px', opacity: 0.7 }}>
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="9" fill="#F4A853" opacity="0.9"/>
+                <line x1="24" y1="4" x2="24" y2="11" stroke="#F4A853" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="24" y1="37" x2="24" y2="44" stroke="#F4A853" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="4" y1="24" x2="11" y2="24" stroke="#F4A853" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="37" y1="24" x2="44" y2="24" stroke="#F4A853" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="9" y1="9" x2="14" y2="14" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="34" y1="34" x2="39" y2="39" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="39" y1="9" x2="34" y2="14" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="14" y1="34" x2="9" y2="39" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
             </div>
+
+            {/* Liten sol øverst midten */}
+            <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', opacity: 0.4 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="4" fill="#F4A853"/>
+                <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+
+            {/* Sirkulær timer */}
+            <button
+              onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', width: '220px', height: '220px' }}
+            >
+              <svg width="220" height="220" viewBox="0 0 220 220">
+                <defs>
+                  <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#A8B5A2"/>
+                    <stop offset="50%" stopColor="#EBC8B4"/>
+                    <stop offset="100%" stopColor="#2D5C45"/>
+                  </linearGradient>
+                  <linearGradient id="lurBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#F5EFE6"/>
+                    <stop offset="100%" stopColor="#EDE5D8"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="110" cy="110" r="95" fill="url(#lurBg)"/>
+                <circle cx="110" cy="110" r="95" fill="none" stroke="#EDE5D8" strokeWidth="12"/>
+                <circle cx="110" cy="110" r="95" fill="none" stroke="url(#lurGrad)" strokeWidth="12" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 95}
+                  strokeDashoffset={2 * Math.PI * 95 - progress * 2 * Math.PI * 95}
+                  transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                {/* Hjerte ikon */}
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ marginBottom: '6px' }}>
+                  <path d="M9 15C9 15 2 10.5 2 6C2 4 3.5 2.5 5.5 2.5C7 2.5 8.2 3.3 9 4.5C9.8 3.3 11 2.5 12.5 2.5C14.5 2.5 16 4 16 6C16 10.5 9 15 9 15Z" fill="none" stroke="#C48E7B" strokeWidth="1.3"/>
+                </svg>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Luren pågår</div>
+                <div style={{ fontSize: '40px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
+                  {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
+                </div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px', textDecoration: 'underline' }}>
+                  Trykk for å justere tid
+                </div>
+              </div>
+            </button>
           </div>
 
+          {/* Juster tid */}
           {visJusterTid && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Sett starttid:</div>
@@ -427,16 +468,18 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
+          {/* Knapper */}
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <button onClick={stoppSøvn} style={{ flex: 2, padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '24px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A7C59', border: 'none', borderRadius: '28px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               Avslutt lur
-              <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.5)', borderRadius: '3px' }} />
+              <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.6)', borderRadius: '3px' }} />
             </button>
-            <button style={{ flex: 1, padding: '14px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <button style={{ flex: 1, padding: '16px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '28px', fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
               Pauser <span style={{ letterSpacing: '2px' }}>||</span>
             </button>
           </div>
 
+          {/* Signaler */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
@@ -450,6 +493,7 @@ export default function Sovn({ bruker }: Props) {
             </div>
           </div>
 
+          {/* Tidslinje */}
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '16px' }}>I dag</div>
@@ -472,10 +516,12 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
+          {/* Tips */}
           <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px' }}>
             <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>💡 TIPS</div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>En god våkentid før lur gir ofte en lengre og roligere søvn.</div>
           </div>
+
         </div>
       </div>
     );
