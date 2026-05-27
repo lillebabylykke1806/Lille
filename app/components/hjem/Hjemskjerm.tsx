@@ -70,6 +70,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
   
     lastProfil();
     lastDagensFlyt();
+  
+    // Oppdater hvert minutt
+    const interval = setInterval(lastDagensFlyt, 60000);
+    return () => clearInterval(interval);
   }, [bruker]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string; blobFarge: string }> = {
