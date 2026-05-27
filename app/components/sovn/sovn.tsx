@@ -470,7 +470,7 @@ export default function Sovn({ bruker }: Props) {
 
           {/* Knapper */}
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A7C59', border: 'none', borderRadius: '28px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#A8B5A2', border: 'none', borderRadius: '28px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               Avslutt lur
               <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.6)', borderRadius: '3px' }} />
             </button>
