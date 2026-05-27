@@ -408,16 +408,7 @@ export default function Sovn({ bruker }: Props) {
               </svg>
             </div>
 
-            {/* Liten sol øverst midten */}
-            <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', opacity: 0.4 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="4" fill="#F4A853"/>
-                <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </div>
+           
 
             {/* Sirkulær timer */}
             <button
@@ -430,30 +421,18 @@ export default function Sovn({ bruker }: Props) {
       <stop offset="0%" stopColor="#F5EFE6"/>
       <stop offset="100%" stopColor="#EDE5D8"/>
     </linearGradient>
+    <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#A8B5A2"/>
+      <stop offset="50%" stopColor="#EBC8B4"/>
+      <stop offset="100%" stopColor="#A8B5A2"/>
+    </linearGradient>
   </defs>
   <circle cx="110" cy="110" r="95" fill="url(#lurBg)"/>
-  {/* Bakgrunnssirkel */}
   <circle cx="110" cy="110" r="95" fill="none" stroke="#EDE5D8" strokeWidth="12"/>
-  {/* Grønt segment - første kvartal */}
-  <circle cx="110" cy="110" r="95" fill="none" stroke="#A8B5A2" strokeWidth="12" strokeLinecap="round"
-    strokeDasharray={`${2 * Math.PI * 95 * Math.min(progress, 0.25)} ${2 * Math.PI * 95}`}
-    strokeDashoffset={2 * Math.PI * 95 * 0.25}
-    transform="rotate(-90 110 110)"/>
-  {/* Fersken segment - andre kvartal */}
-  <circle cx="110" cy="110" r="95" fill="none" stroke="#EBC8B4" strokeWidth="12" strokeLinecap="round"
-    strokeDasharray={`${2 * Math.PI * 95 * Math.min(Math.max(progress - 0.25, 0), 0.25)} ${2 * Math.PI * 95}`}
-    strokeDashoffset={2 * Math.PI * 95 * 0}
-    transform="rotate(-90 110 110)" style={{ transformOrigin: '110px 110px', transform: `rotate(${-90 + 90}deg)` }}/>
-  {/* Grønt segment igjen - tredje kvartal */}
-  <circle cx="110" cy="110" r="95" fill="none" stroke="#A8B5A2" strokeWidth="12" strokeLinecap="round"
-    strokeDasharray={`${2 * Math.PI * 95 * Math.min(Math.max(progress - 0.5, 0), 0.25)} ${2 * Math.PI * 95}`}
-    strokeDashoffset={2 * Math.PI * 95 * (-0.25)}
-    transform="rotate(-90 110 110)" style={{ transformOrigin: '110px 110px', transform: `rotate(${-90 + 180}deg)` }}/>
-  {/* Fersken segment igjen - fjerde kvartal */}
-  <circle cx="110" cy="110" r="95" fill="none" stroke="#EBC8B4" strokeWidth="12" strokeLinecap="round"
-    strokeDasharray={`${2 * Math.PI * 95 * Math.min(Math.max(progress - 0.75, 0), 0.25)} ${2 * Math.PI * 95}`}
-    strokeDashoffset={2 * Math.PI * 95 * (-0.5)}
-    transform="rotate(-90 110 110)" style={{ transformOrigin: '110px 110px', transform: `rotate(${-90 + 270}deg)` }}/>
+  <circle cx="110" cy="110" r="95" fill="none" stroke="url(#lurGrad)" strokeWidth="12" strokeLinecap="round"
+    strokeDasharray={2 * Math.PI * 95}
+    strokeDashoffset={2 * Math.PI * 95 - progress * 2 * Math.PI * 95}
+    transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
 </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 {/* Hjerte ikon */}
