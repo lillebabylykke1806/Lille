@@ -227,39 +227,39 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
 {/* Lag 1 - fersken, høyre */}
 <div style={{
-  position: 'absolute',
-  width: '380px',
-  height: '360px',
-  background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)',
-  borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%',
-  opacity: 0.55,
-  filter: 'blur(22px)',
-  transform: 'translate(50px, -30px)',
-}} />
+    position: 'absolute',
+    width: '380px',
+    height: '360px',
+    background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)',
+    borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%',
+    opacity: 0.35,
+    filter: 'blur(22px)',
+    transform: 'translate(50px, -30px)',
+  }} />
 
-{/* Lag 2 - lilla, venstre */}
-<div style={{
-  position: 'absolute',
-  width: '360px',
-  height: '340px',
-  background: 'radial-gradient(ellipse, #C7BDD8 0%, transparent 70%)',
-  borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%',
-  opacity: 0.4,
-  filter: 'blur(20px)',
-  transform: 'translate(-50px, 20px)',
-}} />
+  {/* Lag 2 - lilla, venstre */}
+  <div style={{
+    position: 'absolute',
+    width: '360px',
+    height: '340px',
+    background: 'radial-gradient(ellipse, #C7BDD8 0%, transparent 70%)',
+    borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%',
+    opacity: 0.25,
+    filter: 'blur(20px)',
+    transform: 'translate(-50px, 20px)',
+  }} />
 
-{/* Lag 3 - grønn, kjerne */}
-<div style={{
-  position: 'absolute',
-  width: '340px',
-  height: '340px',
-  background: 'radial-gradient(ellipse at 50% 50%, #A8B5A2 0%, transparent 70%)',
-  borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%',
-  opacity: 0.45,
-  filter: 'blur(16px)',
-  transform: 'translate(0px, 10px)',
-}} />
+  {/* Lag 3 - grønn, kjerne */}
+  <div style={{
+    position: 'absolute',
+    width: '340px',
+    height: '340px',
+    background: 'radial-gradient(ellipse at 50% 50%, #A8B5A2 0%, transparent 70%)',
+    borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%',
+    opacity: 0.7,
+    filter: 'blur(16px)',
+    transform: 'translate(0px, 10px)',
+  }} />
 
 {/* Lag 4 - hvit glow i midten */}
 <div style={{
