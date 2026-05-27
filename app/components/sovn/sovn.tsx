@@ -314,11 +314,11 @@ export default function Sovn({ bruker }: Props) {
         {/* Natt-knapp */}
         <div style={{ marginBottom: '28px' }}>
           <button onClick={() => startSøvn('natt')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <path d="M28 20C27.1 24.6 23 28 18 28C12.5 28 8 23.5 8 18C8 13 11.4 8.9 16 8C13 11 13 16.5 16.5 20C20 23.5 25 23.5 28 20Z" fill="#6B7FC4"/>
-              <ellipse cx="17" cy="17" rx="1.5" ry="1" fill="#4A5A9A" opacity="0.7"/>
-              <path d="M15 20 Q17 22 19 20" stroke="#4A5A9A" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.7"/>
-            </svg>
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+  <path d="M28 20C27.1 24.6 23 28 18 28C12.5 28 8 23.5 8 18C8 13 11.4 8.9 16 8C13 11 13 16.5 16.5 20C20 23.5 25 23.5 28 20Z" fill="#6B7FC4"/>
+  <circle cx="24" cy="11" r="1.2" fill="#6B7FC4" opacity="0.5"/>
+  <circle cx="28" cy="15" r="0.8" fill="#6B7FC4" opacity="0.4"/>
+</svg>
             <div>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Natta</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Nattesøvn</div>
