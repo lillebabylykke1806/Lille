@@ -222,75 +222,75 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         </div>
       </div>
 
-      {/* Stor blob med babybilde */}
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '380px' }}>
-      <img
-  src="/boble.png"
-  alt="boble"
-  style={{
-    position: 'absolute',
-    width: '120%',
-    height: '420px',
-    objectFit: 'contain',
-    left: '-10%',
-    opacity: 1,
-    mixBlendMode: 'multiply',
-  }}
-/>
-        <div style={{
-          position: 'relative',
-          zIndex: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '12px',
-        }}>
-          {babyBilde ? (
-            <div style={{
-              width: '110px',
-              height: '110px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '3px solid rgba(255,255,255,0.9)',
-              boxShadow: '0 8px 30px rgba(0,0,0,0.10)',
-            }}>
-              <img src={babyBilde} alt="baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-          ) : (
-            <div style={{
-              width: '90px',
-              height: '90px',
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.6)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '2px solid rgba(255,255,255,0.8)',
-            }}>
-              <img src="/baby-ansikt.png" alt="baby" style={{ width: '64px', height: '64px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
-            </div>
-          )}
-          <div style={{ textAlign: 'center' }}>
-            <div style={{
-              fontSize: '17px',
-              fontFamily: 'var(--font-plus-jakarta), sans-serif',
-              fontWeight: 600,
-              color: '#3F3A37',
-              marginBottom: '4px',
-              letterSpacing: '-0.2px',
-            }}>
-              {valgtTilstand.tekst}
-            </div>
-            <div style={{
-              fontSize: '12.5px',
-              fontFamily: 'var(--font-inter), sans-serif',
-              color: '#7B746D',
-            }}>
-              {valgtTilstand.undertekst}
-            </div>
-          </div>
-        </div>
+    {/* Stor blob med babybilde */}
+<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '500px', marginTop: '-20px' }}>
+  <img
+    src="/boble.png"
+    alt="boble"
+    style={{
+      position: 'absolute',
+      width: '160%',
+      height: '520px',
+      objectFit: 'contain',
+      left: '-30%',
+      mixBlendMode: 'multiply',
+    }}
+  />
+  <div style={{
+    position: 'relative',
+    zIndex: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '12px',
+    marginTop: '-40px',
+  }}>
+    {babyBilde ? (
+      <div style={{
+        width: '130px',
+        height: '130px',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        border: '3px solid rgba(255,255,255,0.9)',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.10)',
+      }}>
+        <img src={babyBilde} alt="baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
+    ) : (
+      <div style={{
+        width: '90px',
+        height: '90px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.6)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '2px solid rgba(255,255,255,0.8)',
+      }}>
+        <img src="/baby-ansikt.png" alt="baby" style={{ width: '64px', height: '64px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+      </div>
+    )}
+    <div style={{ textAlign: 'center' }}>
+      <div style={{
+        fontSize: '17px',
+        fontFamily: 'var(--font-plus-jakarta), sans-serif',
+        fontWeight: 600,
+        color: '#3F3A37',
+        marginBottom: '4px',
+        letterSpacing: '-0.2px',
+      }}>
+        {valgtTilstand.tekst}
+      </div>
+      <div style={{
+        fontSize: '12.5px',
+        fontFamily: 'var(--font-inter), sans-serif',
+        color: '#7B746D',
+      }}>
+        {valgtTilstand.undertekst}
+      </div>
+    </div>
+  </div>
+</div>
 
       {/* Tilstandsvelger */}
       <div style={{ display: 'flex', gap: '8px', padding: '0 24px 16px', overflowX: 'auto' }}>
