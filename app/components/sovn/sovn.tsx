@@ -251,21 +251,40 @@ export default function Sovn({ bruker }: Props) {
   if (visning === 'velg') {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
-       <div style={{ marginBottom: '16px', position: 'relative', display: 'inline-block' }}>
-  {/* 4-spisse stjerner */}
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-8px', right: '10px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.45"/>
-  </svg>
-  <svg width="8" height="8" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '20px', right: '-12px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.35"/>
-  </svg>
 
-  <img src="/mane.png" alt="måne" style={{ width: '110px', height: 'auto' }} />
-</div>
-        <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>Hva slags søvn<br/>skal du registrere?</div>
-        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>Velg type for best mulig innsikt</div>
+        {/* Måne med stjerner */}
+        <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-10px', left: '0px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.45"/>
+          </svg>
+          <svg width="8" height="8" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '10px', right: '-18px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.35"/>
+          </svg>
+          <svg width="6" height="6" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', bottom: '0px', left: '-12px' }}>
+            <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.3"/>
+          </svg>
+          <img
+            src="/mane.png"
+            alt="måne"
+            style={{
+              width: '150px',
+              height: 'auto',
+              maskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)',
+            }}
+          />
+        </div>
+
+        <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>
+          Hva slags søvn<br/>skal du registrere?
+        </div>
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>
+          Velg type for best mulig innsikt
+        </div>
+
+        {/* Lur-knapp */}
         <div style={{ marginBottom: '10px' }}>
-          <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
+          <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvil, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
               <circle cx="18" cy="18" r="7" fill="none" stroke="#F4A853" strokeWidth="2"/>
               <line x1="18" y1="3" x2="18" y2="8" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
@@ -287,6 +306,8 @@ export default function Sovn({ bruker }: Props) {
             <span style={{ fontSize: '16px' }}>+</span> Legg til tidligere lur
           </button>
         </div>
+
+        {/* Natt-knapp */}
         <div style={{ marginBottom: '20px' }}>
           <button onClick={() => startSøvn('natt')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -304,6 +325,8 @@ export default function Sovn({ bruker }: Props) {
             <span style={{ fontSize: '16px' }}>+</span> Legg til tidligere natt
           </button>
         </div>
+
+        {/* Tips */}
         <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start', textAlign: 'left' }}>
           <span style={{ fontSize: '18px' }}>💡</span>
           <div>
@@ -311,10 +334,11 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Ved å registrere riktig søvntype får du mer treffsikre innsikter.</div>
           </div>
         </div>
+
       </div>
     );
   }
-
+  
   if (visning === 'etterregistrer') {
     return (
       <div style={{ padding: '24px' }}>
