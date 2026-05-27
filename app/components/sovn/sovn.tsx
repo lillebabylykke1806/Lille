@@ -251,27 +251,53 @@ export default function Sovn({ bruker }: Props) {
   if (visning === 'velg') {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
-        <div style={{ marginBottom: '16px', position: 'relative', display: 'inline-block' }}>
+       <div style={{ marginBottom: '16px', position: 'relative', display: 'inline-block' }}>
   {/* 4-spisse stjerner */}
-  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-10px', left: '5px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.55"/>
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '-8px', right: '10px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.45"/>
   </svg>
-  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '0px', right: '-5px' }}>
-    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.4"/>
+  <svg width="8" height="8" viewBox="0 0 12 12" fill="none" style={{ position: 'absolute', top: '20px', right: '-12px' }}>
+    <path d="M6 0L7.2 4.8L12 6L7.2 7.2L6 12L4.8 7.2L0 6L4.8 4.8Z" fill="#8A7060" opacity="0.35"/>
   </svg>
 
-  {/* Stor gyllen halvmåne med ansikt */}
-  <svg width="100" height="110" viewBox="0 0 100 110" fill="none">
+  <svg width="120" height="130" viewBox="0 0 120 130" fill="none">
+    <defs>
+      <linearGradient id="maneGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+        <stop offset="0%" stopColor="#F5D060"/>
+        <stop offset="40%" stopColor="#E8C030"/>
+        <stop offset="100%" stopColor="#C4A020"/>
+      </linearGradient>
+      <linearGradient id="maneSkygge" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#A08010" opacity="0.4"/>
+        <stop offset="100%" stopColor="#F5D060" opacity="0"/>
+      </linearGradient>
+    </defs>
+
     {/* Halvmåne kropp */}
-    <path d="M 65 8 C 38 8 18 28 18 55 C 18 82 38 102 65 102 C 48 93 37 75 37 55 C 37 35 48 17 65 8 Z" fill="#E8C87A"/>
-    {/* Ansikt - øyne */}
-    <ellipse cx="42" cy="50" rx="3.5" ry="4" fill="#C49030" opacity="0.75"/>
-    <ellipse cx="50" cy="66" rx="2.5" ry="3" fill="#C49030" opacity="0.55"/>
-    {/* Munn/smil */}
-    <path d="M39 54 Q43 59 47 54" stroke="#B8860B" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
-    {/* Glans */}
-    <circle cx="41" cy="48" r="1.5" fill="#FFF8E0" opacity="0.7"/>
-    <circle cx="60" cy="18" r="4" fill="#F5E6C8" opacity="0.2"/>
+    <path d="M 85 5 C 50 5 22 30 22 65 C 22 100 50 125 85 125 C 62 114 48 91 48 65 C 48 39 62 16 85 5 Z" fill="url(#maneGrad)"/>
+
+    {/* Indre skygge for dybde */}
+    <path d="M 85 5 C 50 5 22 30 22 65 C 22 100 50 125 85 125 C 62 114 48 91 48 65 C 48 39 62 16 85 5 Z" fill="url(#maneSkygge)" opacity="0.5"/>
+
+    {/* Øyenbryn - bøyd */}
+    <path d="M 42 48 Q 52 42 58 46" stroke="#9A8020" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.8"/>
+
+    {/* Lukket øye */}
+    <path d="M 42 52 Q 50 57 58 52" stroke="#9A8020" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7"/>
+
+    {/* Nese */}
+    <path d="M 50 62 Q 47 68 50 70" stroke="#9A8020" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.5"/>
+
+    {/* Smil */}
+    <path d="M 42 78 Q 50 84 58 78" stroke="#9A8020" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.6"/>
+
+    {/* Prikker på kinnet */}
+    <circle cx="44" cy="68" r="1.2" fill="#C49020" opacity="0.4"/>
+    <circle cx="48" cy="70" r="0.9" fill="#C49020" opacity="0.35"/>
+    <circle cx="45" cy="72" r="0.8" fill="#C49020" opacity="0.3"/>
+
+    {/* Glans øverst */}
+    <ellipse cx="75" cy="18" rx="8" ry="5" fill="#FFF0A0" opacity="0.25" transform="rotate(-30 75 18)"/>
   </svg>
 </div>
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>Hva slags søvn<br/>skal du registrere?</div>
