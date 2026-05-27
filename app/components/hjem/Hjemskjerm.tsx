@@ -387,7 +387,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         ))}
       </div>
 
-      {/* Dagens flyt */}
+     {/* Dagens flyt */}
       <div style={{ padding: '0 24px 32px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <div style={{
@@ -412,58 +412,120 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
             Se dagbok
           </button>
         </div>
-        {dagensFlyt.length === 0 ? (
-          <div style={{
-            background: 'rgba(255,255,255,0.6)',
-            border: '1px solid rgba(220,207,192,0.35)',
-            borderRadius: '20px',
-            padding: '28px 24px',
-            textAlign: 'center',
-          }}>
-            <div style={{
-              fontSize: '14px',
-              fontStyle: 'italic',
-              color: '#7B746D',
-              fontFamily: 'var(--font-plus-jakarta), sans-serif',
-              marginBottom: '6px',
-            }}>
-              Ingen registreringer ennå i dag
-            </div>
-            <div style={{
-              fontSize: '12px',
-              fontFamily: 'var(--font-inter), sans-serif',
-              color: '#A8B5A2',
-            }}>
-              Trykk + for å begynne
-            </div>
-          </div>
-        ) : (
-          <div style={{
-            background: 'rgba(255,255,255,0.6)',
-            border: '1px solid rgba(220,207,192,0.35)',
-            borderRadius: '20px',
-            overflow: 'hidden',
-          }}>
-            {dagensFlyt.map((item: any, i) => (
-              <div key={i} style={{
-                padding: '14px 18px',
-                borderBottom: i < dagensFlyt.length - 1 ? '1px solid rgba(220,207,192,0.3)' : 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-              }}>
-                <div style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#A8B5A2', flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <span style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginRight: '8px' }}>{item.tid}</span>
-                  <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37' }}>{item.tekst}</span>
-                </div>
-                {item.varighet && <span style={{ fontSize: '12px', color: '#7B746D' }}>{item.varighet}</span>}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
 
-    </div>
+        <div style={{
+          background: 'rgba(255,255,255,0.6)',
+          border: '1px solid rgba(220,207,192,0.35)',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          padding: '8px 0',
+        }}>
+          {dagensFlyt.length === 0 ? (
+            <div style={{ padding: '28px 24px', textAlign: 'center' }}>
+              <div style={{
+                fontSize: '14px',
+                fontStyle: 'italic',
+                color: '#7B746D',
+                fontFamily: 'var(--font-plus-jakarta), sans-serif',
+                marginBottom: '6px',
+              }}>
+                Ingen registreringer ennå i dag
+              </div>
+              <div style={{
+                fontSize: '12px',
+                fontFamily: 'var(--font-inter), sans-serif',
+                color: '#A8B5A2',
+              }}>
+                Trykk + for å begynne
+              </div>
+            </div>
+          ) : (
+            dagensFlyt.map((item: any, i) => {
+              const erSiste = i === 0;
+              const ikon = () => {
+                if (item.type === 'lur') return (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F2E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+                      <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="4.9" y1="4.9" x2="7" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                      <line x1="17" y1="17" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                      <line x1="19.1" y1="4.9" x2="17" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                      <line x1="7" y1="17" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                );
+                if (item.type === 'natt') return (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+                    </svg>
+                  </div>
+                );
+                if (item.type === 'amming') return (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <rect x="7" y="11" width="10" height="9" rx="3" stroke="#C48E7B" strokeWidth="1.6" fill="none"/>
+                      <path d="M9 11V9.5C9 8 10 7 11 7H13C14 7 15 8 15 9.5V11" stroke="#C48E7B" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                    </svg>
+                  </div>
+                );
+                if (item.type === 'oppvåkning') return (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#EDE0F0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="7" stroke="#9B6DB5" strokeWidth="1.6" fill="none"/>
+                      <path d="M9 10C9 10 10 8 12 8C14 8 15 10 15 10" stroke="#9B6DB5" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                    </svg>
+                  </div>
+                );
+                return (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#FFF0D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="#E8A830" opacity="0.8"/>
+                    </svg>
+                  </div>
+                );
+              };
+              return (
+                <div key={i} style={{
+                  padding: '12px 18px',
+                  borderBottom: i < dagensFlyt.length - 1 ? '1px solid rgba(220,207,192,0.3)' : 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}>
+                  {ikon()}
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      fontSize: '14px',
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      color: erSiste ? '#3F3A37' : '#3F3A37',
+                      fontWeight: erSiste ? 600 : 400,
+                    }}>{item.tekst}</div>
+                    <div style={{
+                      fontSize: '11px',
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      color: '#7B746D',
+                      marginTop: '2px',
+                    }}>{item.tid}</div>
+                  </div>
+                  {item.varighet && (
+                    <div style={{
+                      fontSize: '12px',
+                      fontFamily: 'var(--font-inter), sans-serif',
+                      color: '#A8B5A2',
+                      fontWeight: 500,
+                    }}>{item.varighet}</div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+      </div>
   );
 }
