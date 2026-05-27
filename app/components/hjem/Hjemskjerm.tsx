@@ -49,7 +49,27 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
       const lagretBilde = localStorage.getItem('lille_babybilde');
       if (lagretBilde) setBabyBilde(lagretBilde);
     };
+  
+    const lastDagensFlyt = async () => {
+      const dagensdato = new Date().toISOString().split('T')[0];
+      const { data } = await supabase
+        .from('lurer')
+        .select('*')
+        .eq('profil_id', bruker.id)
+        .eq('dato', dagensdato)
+        .order('start', { ascending: false });
+      if (!data) return;
+      const items = data.map((l: any) => ({
+        tid: l.start,
+        tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.type === 'amming' ? 'Amming' : l.tekst || l.type,
+        type: l.type,
+        varighet: l.varighet ? `${l.varighet} min` : null,
+      }));
+      setDagensFlyt(items);
+    };
+  
     lastProfil();
+    lastDagensFlyt();
   }, [bruker]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string; blobFarge: string }> = {
