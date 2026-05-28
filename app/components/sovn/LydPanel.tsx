@@ -1,6 +1,4 @@
 'use client';
-import { useState, useRef } from 'react';
-'use client';
 import React, { useState, useRef } from 'react';
 
 type Props = { onLukk: () => void; };
