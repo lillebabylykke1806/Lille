@@ -570,9 +570,9 @@ export default function Sovn({ bruker }: Props) {
 
           {/* Måne + klokke */}
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px' }}>
-            <div style={{ position: 'absolute', left: '-20px', top: '-10px', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
-              <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.6))', maskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)', WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)' }} />
-            </div>
+          <div style={{ position: 'absolute', left: '-20px', top: '-10px', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
+  <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
+</div>
             <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
               <svg width="200" height="200" viewBox="0 0 200 200">
                 <defs>
