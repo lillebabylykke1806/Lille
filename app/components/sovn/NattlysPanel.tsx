@@ -19,32 +19,32 @@ const SCENARIER: Scenario[] = [
   {
     id: 'maaneskinn',
     navn: '🌙 Måneskinn',
-    beskrivelse: 'Mørk blå og stille. Perfekt under nattamming.',
-    bakgrunn: 'radial-gradient(ellipse at 30% 40%, #1A2A5E 0%, #0D1B3E 60%, #060D1F 100%)',
-    glow: 'rgba(138,174,224,0.15)',
+    beskrivelse: 'Mørk blå med svak måneglow. Perfekt under nattamming.',
+    bakgrunn: 'radial-gradient(ellipse at 25% 30%, #2A4A8E 0%, #0D1B3E 55%, #050D20 100%)',
+    glow: 'rgba(138,174,224,0.35)',
     stjerner: true,
   },
   {
     id: 'varm',
-    navn: '☁️ Rolig varm',
-    beskrivelse: 'Varm beige som en saltlampe. Beroligende.',
-    bakgrunn: 'radial-gradient(ellipse at 50% 40%, #8B4513 0%, #5C2A0A 40%, #3A1A06 100%)',
-    glow: 'rgba(235,180,100,0.25)',
+    navn: '🕯️ Rolig varm',
+    beskrivelse: 'Dyp amber som en saltlampe. Beroligende og varm.',
+    bakgrunn: 'radial-gradient(ellipse at 50% 60%, #7A3A0A 0%, #3D1A05 45%, #1A0A02 100%)',
+    glow: 'rgba(220,140,50,0.5)',
   },
   {
     id: 'stjernehimmel',
     navn: '✨ Stjernehimmel',
-    beskrivelse: 'Mørk med sakte stjernestøv. Meditasjonsfølelse.',
-    bakgrunn: 'radial-gradient(ellipse at 50% 50%, #0F1A3E 0%, #060D1F 100%)',
-    glow: 'rgba(200,180,255,0.1)',
+    beskrivelse: 'Dyp lilla natt med glitrende stjerner.',
+    bakgrunn: 'radial-gradient(ellipse at 60% 40%, #2A1A5E 0%, #0F0820 70%, #050310 100%)',
+    glow: 'rgba(160,120,255,0.35)',
     stjerner: true,
   },
   {
     id: 'havlys',
     navn: '🌊 Havlys',
-    beskrivelse: 'Blå-lilla gradient med sakte bølgebevegelse.',
-    bakgrunn: 'radial-gradient(ellipse at 40% 60%, #0D3B5E 0%, #1A1040 60%, #060D1F 100%)',
-    glow: 'rgba(80,160,220,0.2)',
+    beskrivelse: 'Dyp turkis-blå med myke bølger som beveger seg.',
+    bakgrunn: 'radial-gradient(ellipse at 40% 70%, #0A3D4A 0%, #051D2E 50%, #020D18 100%)',
+    glow: 'rgba(30,180,180,0.4)',
     bølger: true,
   },
 ];
@@ -61,7 +61,7 @@ export default function NattlysPanel({ onLukk }: Props) {
   const [aktivTab, setAktivTab] = useState<'farger' | 'scener'>('scener');
   const [valgtScenario, setValgtScenario] = useState<Scenario | null>(null);
   const [valgtFarge, setValgtFarge] = useState(FARGER[0]);
-  const [lysstyrke, setLysstyrke] = useState(30);
+  const [lysstyrke, setLysstyrke] = useState(50);
   const [timer, setTimer] = useState<number | null>(60);
   const [aktivtNattlys, setAktivtNattlys] = useState(false);
   const [stjerner] = useState(() =>
