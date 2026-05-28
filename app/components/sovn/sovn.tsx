@@ -40,11 +40,13 @@ const GlitterOvergang = ({ onDone }: { onDone: () => void }) => {
   useEffect(() => { const t = setTimeout(onDone, 2500); return () => clearTimeout(t); }, [onDone]);
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none', overflow: 'hidden' }}>
-     <style>{`
-  @keyframes moonRise { 0%{transform:translateY(140px);opacity:0} 100%{transform:translateY(0px);opacity:1} }
-  @keyframes moonFloat { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
-  @keyframes sheetUp { 0%{transform:translateY(100%)} 100%{transform:translateY(0)} }
-`}</style>
+      <style>{`
+        @keyframes glitterFall { 0%{transform:translateY(-20px) scale(0);opacity:0} 20%{opacity:1;transform:translateY(0) scale(1)} 100%{transform:translateY(110vh) rotate(360deg);opacity:0} }
+        @keyframes bgDark { 0%{background:rgba(13,27,62,0)} 100%{background:rgba(13,27,62,0.97)} }
+      `}</style>
+    </div>
+  );
+};
 
 const Bølger = () => (
   <svg viewBox="0 0 430 200" style={{ position: 'absolute', top: '60px', left: 0, width: '100%', height: '200px', zIndex: 0 }} preserveAspectRatio="none">
@@ -529,9 +531,8 @@ export default function Sovn({ bruker }: Props) {
     return (
       <div style={{ backgroundColor: '#0D1B3E', minHeight: '100vh', position: 'fixed', inset: 0, zIndex: 50, overflowY: 'auto' }}>
         <style>{`
-          @keyframes twinkleStar { 0%,100%{opacity:0.15;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+          @keyframes moonRise { 0%{transform:translateY(140px);opacity:0} 100%{transform:translateY(0px);opacity:1} }
           @keyframes moonFloat { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
-          @keyframes moonRise { 0%{transform:translateY(120px);opacity:0} 100%{transform:translateY(0px);opacity:1} }
           @keyframes sheetUp { 0%{transform:translateY(100%)} 100%{transform:translateY(0)} }
         `}</style>
 
@@ -546,12 +547,17 @@ export default function Sovn({ bruker }: Props) {
           {x:62,y:26,s:4,d:1.8,op:0.8},{x:76,y:33,s:7,d:0.3,op:0.5},{x:92,y:28,s:5,d:1.0,op:0.7},
           {x:10,y:45,s:6,d:0.7,op:0.6},{x:25,y:50,s:4,d:1.5,op:0.8},{x:40,y:44,s:7,d:0.2,op:0.5},
           {x:55,y:48,s:5,d:1.2,op:0.9},{x:70,y:42,s:6,d:0.8,op:0.7},{x:85,y:50,s:4,d:1.7,op:0.6},
-       
+        ].map((s, i) => (
+          <div key={i} style={{ position: 'fixed', left: `${s.x}%`, top: `${s.y}%`, animation: `twinkleStar ${2 + s.d}s ${s.d}s infinite ease-in-out` }}>
+            <svg viewBox="0 0 10 10" fill="none" width={s.s} height={s.s}>
+              <path d="M5 0L5.8 3.8L10 5L5.8 6.2L5 10L4.2 6.2L0 5L4.2 3.8Z" fill="#E8C87A" opacity={s.op}/>
+            </svg>
+          </div>
+        ))}
 
-          <div style={{ position: 'absolute', left: '-20px', top: '-10px', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
-          <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
-        </div>
+        <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 140px' }}>
 
+        
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>‹</button>
@@ -620,7 +626,6 @@ export default function Sovn({ bruker }: Props) {
   </div>
   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{søvnmelding()}</div>
 </div>
-          )}
 
           {/* Signaler i kveld */}
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
