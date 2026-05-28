@@ -2,6 +2,9 @@
 import { farger } from '../../lib/farger';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import NattlysPanel from './NattlysPanel';
+import PustMedMeg from './PustMedMeg';
+import LydPanel from './LydPanel';
 
 type Props = { bruker: any; };
 type TidslinjeItem = { tid: string; tekst: string; type: string; };
@@ -76,19 +79,21 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
   if (type === 'amming') return (
     <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3A2A1E' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <rect x="7" y="11" width="10" height="9" rx="3" stroke={mørk ? '#E8C87A' : '#C48E7B'} strokeWidth="1.6" fill="none"/>
-        <path d="M9 11V9.5C9 8 10 7 11 7H13C14 7 15 8 15 9.5V11" stroke={mørk ? '#E8C87A' : '#C48E7B'} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-        <path d="M11 7C11 7 11 5.5 12 4.5C13 5.5 13 7 13 7" stroke={mørk ? '#E8C87A' : '#C48E7B'} strokeWidth="1.3" strokeLinecap="round"/>
-      </svg>
+      <img src="/tateflaske.png" alt="amming" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
     </div>
   );
   if (type === 'oppvåkning') return (
-    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#2A1A3E' : '#EDE0F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#2A1E3A' : '#F2E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="7" stroke={mørk ? '#C4A882' : '#9B6DB5'} strokeWidth="1.6" fill="none"/>
-        <path d="M9 10C9 10 10 8 12 8C14 8 15 10 15 10" stroke={mørk ? '#C4A882' : '#9B6DB5'} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-        <path d="M9 15 Q12 17 15 15" stroke={mørk ? '#C4A882' : '#9B6DB5'} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+        <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+        <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="4.9" y1="4.9" x2="7" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="17" y1="17" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="19.1" y1="4.9" x2="17" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="7" y1="17" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     </div>
   );
@@ -126,6 +131,9 @@ export default function Sovn({ bruker }: Props) {
   const [nyStart, setNyStart] = useState('');
   const [nySlutt, setNySlutt] = useState('');
   const [visLydPanel, setVisLydPanel] = useState(false);
+  const [visNattlys, setVisNattlys] = useState(false);
+  const [visPust, setVisPust] = useState(false);
+  const [visManeAnimasjon, setVisManeAnimasjon] = useState(false);
 
   const lastTidslinje = useCallback(async () => {
     const { data } = await supabase
@@ -186,7 +194,13 @@ export default function Sovn({ bruker }: Props) {
     if (data?.[0]) setLurId(data[0].id);
     if (type === 'natt') {
       setVisGlitter(true);
-      setTimeout(() => { setVisGlitter(false); setVisning('nattAktiv'); lastTidslinje(); }, 2500);
+      setVisManeAnimasjon(true);
+      setTimeout(() => {
+        setVisGlitter(false);
+        setVisning('nattAktiv');
+        lastTidslinje();
+        setTimeout(() => setVisManeAnimasjon(false), 2000);
+      }, 2500);
     } else {
       setVisning('lurAktiv');
       lastTidslinje();
@@ -254,14 +268,18 @@ export default function Sovn({ bruker }: Props) {
   };
 
   const søvnmelding = () => {
-    if (søvnkvalitet === 'Utmerket') return 'Fantastisk natt! ✨ Baby har sovet godt og sammenhengende.';
-    if (søvnkvalitet === 'God') return 'Nydelig start på natta ✨ Baby har sovet godt og hatt få oppvåkninger.';
+    if (minutter < 30) return 'Baby har akkurat sovnet 🌙 La natta senke seg rolig.';
+    if (søvnkvalitet === 'Utmerket') return 'Fantastisk natt! ✨ Baby sover godt og sammenhengende.';
+    if (søvnkvalitet === 'God') return 'Nydelig natt ✨ Baby sover godt med få oppvåkninger.';
     if (søvnkvalitet === 'Ok') return 'En grei natt 🌙 Litt uro, men baby sover.';
     return 'Urolig natt 💛 Baby trenger ekstra ro og nærhet nå.';
   };
 
   const circumference = 2 * Math.PI * 95;
   const progress = Math.min((minutter % 60) / 60, 1);
+  const timer = Math.floor(minutter / 60);
+  const sek = minutter % 60;
+  const timerTekst = timer > 0 ? `${timer} t ${sek} m` : `${sek} m`;
 
   if (visGlitter) return <GlitterOvergang onDone={() => {}} />;
 
@@ -289,14 +307,12 @@ export default function Sovn({ bruker }: Props) {
           </svg>
           <img src="/mane.png" alt="måne" style={{ width: '150px', height: 'auto', maskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)', WebkitMaskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)' }} />
         </div>
-
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>
           Hva slags søvn<br/>skal du registrere?
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>
           Velg type for best mulig innsikt
         </div>
-
         <div style={{ marginBottom: '10px' }}>
           <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -317,7 +333,6 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
         </div>
-
         <div style={{ marginBottom: '28px' }}>
           <button onClick={() => startSøvn('natt')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -332,7 +347,6 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
         </div>
-
         <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start', textAlign: 'left' }}>
           <span style={{ fontSize: '18px' }}>💡</span>
           <div>
@@ -391,7 +405,6 @@ export default function Sovn({ bruker }: Props) {
             </div>
             <div style={{ width: '32px' }} />
           </div>
-
           <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px', zIndex: 1 }}>
             <div style={{ position: 'absolute', left: '10px', top: '0px', opacity: 0.7 }}>
               <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -438,7 +451,6 @@ export default function Sovn({ bruker }: Props) {
               </div>
             </button>
           </div>
-
           {visJusterTid && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Sett starttid:</div>
@@ -446,7 +458,6 @@ export default function Sovn({ bruker }: Props) {
               <button onClick={justerStartTidManuelt} style={{ padding: '6px 14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
             </div>
           )}
-
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#A8B5A2', border: 'none', borderRadius: '28px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               Avslutt lur
@@ -456,7 +467,6 @@ export default function Sovn({ bruker }: Props) {
               Pauser <span style={{ letterSpacing: '2px' }}>||</span>
             </button>
           </div>
-
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '12px' }}>
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
@@ -479,7 +489,6 @@ export default function Sovn({ bruker }: Props) {
               <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Legg til eget signal</span>
             </button>
           </div>
-
           <button style={{ width: '100%', padding: '16px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '16px' }}>
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px' }}>Se signalhistorikk</div>
@@ -489,7 +498,6 @@ export default function Sovn({ bruker }: Props) {
               <path d="M6 4L10 8L6 12" stroke="#8A7060" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -514,7 +522,6 @@ export default function Sovn({ bruker }: Props) {
               </div>
             </div>
           )}
-
           <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px' }}>
             <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>💡 TIPS</div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>En god våkentid før lur gir ofte en lengre og roligere søvn.</div>
@@ -525,32 +532,30 @@ export default function Sovn({ bruker }: Props) {
   }
 
   if (visning === 'nattAktiv') {
-    const timer = Math.floor(minutter / 60);
-    const sek = minutter % 60;
-    const timerTekst = timer > 0 ? `${timer} t ${sek} m` : `${sek} m`;
-
     return (
       <div style={{ backgroundColor: '#0D1B3E', minHeight: '100vh', position: 'fixed', inset: 0, zIndex: 50, overflowY: 'auto' }}>
         <style>{`
-          @keyframes twinkleStar { 0%,100%{opacity:0.2} 50%{opacity:1} }
-          @keyframes moonFloat { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-6px)} }
-          @keyframes auraGlow { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:0.9;transform:scale(1.05)} }
+          @keyframes twinkleStar { 0%,100%{opacity:0.15;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+          @keyframes moonFloat { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+          @keyframes moonRise { 0%{transform:translateY(120px);opacity:0} 100%{transform:translateY(0px);opacity:1} }
           @keyframes sheetUp { 0%{transform:translateY(100%)} 100%{transform:translateY(0)} }
         `}</style>
 
         {/* Stjerner */}
         {[
-          {x:8,y:6,s:8,d:0},{x:20,y:4,s:6,d:0.5},{x:35,y:8,s:7,d:1},
-          {x:50,y:5,s:5,d:0.3},{x:65,y:7,s:8,d:0.8},{x:78,y:4,s:6,d:1.2},
-          {x:88,y:8,s:7,d:0.6},{x:95,y:5,s:5,d:1.5},{x:12,y:15,s:6,d:0.2},
-          {x:28,y:18,s:7,d:0.9},{x:45,y:14,s:5,d:1.4},{x:60,y:16,s:8,d:0.4},
-          {x:75,y:12,s:6,d:1.1},{x:90,y:18,s:7,d:0.7},{x:5,y:30,s:5,d:1.6},
-          {x:18,y:35,s:8,d:0.1},{x:32,y:28,s:6,d:1.3},{x:48,y:32,s:7,d:0.6},
-          {x:62,y:26,s:5,d:1.8},{x:76,y:33,s:8,d:0.3},{x:92,y:28,s:6,d:1.0},
+          {x:8,y:6,s:6,d:0,op:0.7},{x:20,y:4,s:5,d:0.5,op:0.5},{x:35,y:8,s:6,d:1,op:0.8},
+          {x:50,y:5,s:4,d:0.3,op:0.6},{x:65,y:7,s:7,d:0.8,op:0.9},{x:78,y:4,s:5,d:1.2,op:0.5},
+          {x:88,y:8,s:6,d:0.6,op:0.7},{x:95,y:5,s:4,d:1.5,op:0.6},{x:12,y:15,s:5,d:0.2,op:0.8},
+          {x:28,y:18,s:6,d:0.9,op:0.5},{x:45,y:14,s:4,d:1.4,op:0.7},{x:60,y:16,s:7,d:0.4,op:0.9},
+          {x:75,y:12,s:5,d:1.1,op:0.6},{x:90,y:18,s:6,d:0.7,op:0.8},{x:5,y:30,s:4,d:1.6,op:0.5},
+          {x:18,y:35,s:7,d:0.1,op:0.9},{x:32,y:28,s:5,d:1.3,op:0.7},{x:48,y:32,s:6,d:0.6,op:0.6},
+          {x:62,y:26,s:4,d:1.8,op:0.8},{x:76,y:33,s:7,d:0.3,op:0.5},{x:92,y:28,s:5,d:1.0,op:0.7},
+          {x:10,y:45,s:6,d:0.7,op:0.6},{x:25,y:50,s:4,d:1.5,op:0.8},{x:40,y:44,s:7,d:0.2,op:0.5},
+          {x:55,y:48,s:5,d:1.2,op:0.9},{x:70,y:42,s:6,d:0.8,op:0.7},{x:85,y:50,s:4,d:1.7,op:0.6},
         ].map((s, i) => (
-          <div key={i} style={{ position: 'fixed', left: `${s.x}%`, top: `${s.y}%`, width: `${s.s}px`, height: `${s.s}px`, animation: `twinkleStar ${2.5 + s.d}s ${s.d}s infinite ease-in-out` }}>
+          <div key={i} style={{ position: 'fixed', left: `${s.x}%`, top: `${s.y}%`, animation: `twinkleStar ${2 + s.d}s ${s.d}s infinite ease-in-out` }}>
             <svg viewBox="0 0 10 10" fill="none" width={s.s} height={s.s}>
-              <path d="M5 0L5.8 3.8L10 5L5.8 6.2L5 10L4.2 6.2L0 5L4.2 3.8Z" fill="#E8C87A"/>
+              <path d="M5 0L5.8 3.8L10 5L5.8 6.2L5 10L4.2 6.2L0 5L4.2 3.8Z" fill="#E8C87A" opacity={s.op}/>
             </svg>
           </div>
         ))}
@@ -568,11 +573,11 @@ export default function Sovn({ bruker }: Props) {
           </div>
 
           {/* Måne + klokke */}
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '240px', marginBottom: '16px' }}>
-            <div style={{ position: 'absolute', left: '-10px', top: '0px', animation: 'moonFloat 4s ease-in-out infinite' }}>
-              <img src="/mane-natt.jpg" alt="måne" style={{ width: '120px', height: 'auto', filter: 'drop-shadow(0 0 20px rgba(232,200,122,0.5))', maskImage: 'radial-gradient(ellipse 85% 85% at 40% 50%, black 40%, transparent 78%)', WebkitMaskImage: 'radial-gradient(ellipse 85% 85% at 40% 50%, black 40%, transparent 78%)' }} />
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px' }}>
+            <div style={{ position: 'absolute', left: '-20px', top: '-10px', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
+              <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.6))', maskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)', WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at 38% 50%, black 35%, transparent 72%)' }} />
             </div>
-            <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '40px' }}>
+            <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
               <svg width="200" height="200" viewBox="0 0 200 200">
                 <defs>
                   <linearGradient id="nattGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -606,12 +611,6 @@ export default function Sovn({ bruker }: Props) {
                 </button>
               </div>
             </div>
-
-            {/* AI badge */}
-            <div style={{ position: 'absolute', right: 0, top: '20px', backgroundColor: 'rgba(124,143,212,0.2)', border: '1px solid rgba(124,143,212,0.3)', borderRadius: '12px', padding: '8px 12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '16px', marginBottom: '2px' }}>✦</div>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.3 }}>{søvnkvalitet}<br/>natt</div>
-            </div>
           </div>
 
           {/* Juster tid */}
@@ -623,27 +622,31 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-          {/* AI innsikt */}
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span style={{ fontSize: '14px' }}>✨</span>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Nattens innsikt</div>
+          {/* AI innsikt – vises kun etter 30 min */}
+          {minutter >= 30 && (
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <span style={{ fontSize: '14px' }}>✨</span>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Nattens innsikt</div>
+              </div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{søvnmelding()}</div>
             </div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{søvnmelding()}</div>
-          </div>
+          )}
 
           {/* Signaler i kveld */}
-          {valgteSignaler.length > 0 && (
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Signaler i kveld</div>
-                <button style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', background: 'none', border: '1px solid rgba(255,255,255,0.1)', padding: '3px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se alle</button>
-              </div>
-              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto' }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Signaler i kveld</div>
+              <button style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', background: 'none', border: '1px solid rgba(255,255,255,0.1)', padding: '3px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se alle</button>
+            </div>
+            {valgteSignaler.length === 0 ? (
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', fontStyle: 'italic' }}>Ingen signaler registrert ennå i kveld</div>
+            ) : (
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {valgteSignaler.map((s, i) => {
                   const signal = SIGNALER.find(sig => sig.id === s);
                   return signal ? (
-                    <div key={i} style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                       <div style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: 'rgba(124,143,212,0.15)', border: '1px solid rgba(124,143,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                           <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="#8AAEE0" opacity="0.8"/>
@@ -654,8 +657,8 @@ export default function Sovn({ bruker }: Props) {
                   ) : null;
                 })}
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Nattens tidslinje */}
           {tidslinje.length > 0 && (
@@ -684,17 +687,40 @@ export default function Sovn({ bruker }: Props) {
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Hurtigregistrering</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-              {[
-                { label: 'Våknet', onClick: registrerOppvåkning, svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="#F4A853"/><line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/><line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/><line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/><line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/></svg> },
-                { label: 'Ammet', onClick: () => {}, svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="9" rx="3" stroke="#E8C87A" strokeWidth="1.6" fill="none"/><path d="M9 11V9.5C9 8 10 7 11 7H13C14 7 15 8 15 9.5V11" stroke="#E8C87A" strokeWidth="1.5" strokeLinecap="round" fill="none"/></svg> },
-                { label: 'Bleieskift', onClick: () => {}, svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 8L8 4L12 8L16 4L20 8L16 12L20 16L16 20L12 16L8 20L4 16L8 12Z" stroke="#8AAEE0" strokeWidth="1.5" fill="none" strokeLinejoin="round"/></svg> },
-                { label: 'Annet', onClick: () => {}, svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="2" fill="#8A8FA8"/><circle cx="5" cy="12" r="2" fill="#8A8FA8"/><circle cx="19" cy="12" r="2" fill="#8A8FA8"/></svg> },
-              ].map((item, i) => (
-                <button key={i} onClick={item.onClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-                  {item.svg}
-                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>{item.label}</div>
-                </button>
-              ))}
+              <button onClick={registrerOppvåkning} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+                  <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="4.9" y1="4.9" x2="7" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                  <line x1="17" y1="17" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                  <line x1="19.1" y1="4.9" x2="17" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                  <line x1="7" y1="17" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Våknet</div>
+              </button>
+              <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+                <img src="/tateflaske.png" alt="amming" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Ammet</div>
+              </button>
+              <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 8H21L19 16C18.5 17.5 17 18 16 18H8C7 18 5.5 17.5 5 16L3 8Z" stroke="#8AAEE0" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+                  <path d="M3 8L5 5H19L21 8" stroke="#8AAEE0" strokeWidth="1.5" strokeLinejoin="round" fill="none"/>
+                  <line x1="8" y1="12" x2="16" y2="12" stroke="#8AAEE0" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Bleieskift</div>
+              </button>
+              <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="2" fill="#8A8FA8"/>
+                  <circle cx="5" cy="12" r="2" fill="#8A8FA8"/>
+                  <circle cx="19" cy="12" r="2" fill="#8A8FA8"/>
+                </svg>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Annet</div>
+              </button>
             </div>
           </div>
 
@@ -702,16 +728,31 @@ export default function Sovn({ bruker }: Props) {
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-              {[
-                { label: 'Lyder', emoji: '☁️', onClick: () => setVisLydPanel(true) },
-                { label: 'Nattlys', emoji: '✨', onClick: () => {} },
-                { label: 'Pust med meg', emoji: '🤍', onClick: () => {} },
-              ].map((item, i) => (
-                <button key={i} onClick={item.onClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-                  <div style={{ fontSize: '28px' }}>{item.emoji}</div>
-                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>{item.label}</div>
-                </button>
-              ))}
+              <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                  <path d="M2 18 C6 12 10 20 14 14 C18 8 22 18 26 12 C28 9 30 13 30 13" stroke="#8AAEE0" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  <path d="M2 23 C6 17 10 25 14 19 C18 13 22 23 26 17" stroke="#8AAEE0" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.4"/>
+                </svg>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
+              </button>
+              <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                  <path d="M13 26 L12 30 L20 30 L19 26" stroke="#E8C87A" strokeWidth="1.5" strokeLinejoin="round" fill="none"/>
+                  <line x1="16" y1="30" x2="16" y2="32" stroke="#E8C87A" strokeWidth="1.5" strokeLinecap="round"/>
+                  <path d="M12 26 Q10 18 16 13 Q22 18 20 26 Z" fill="#E8C87A" opacity="0.25" stroke="#E8C87A" strokeWidth="1.5" strokeLinejoin="round"/>
+                  <circle cx="16" cy="19" r="3" fill="#E8C87A" opacity="0.7"/>
+                  <line x1="16" y1="8" x2="16" y2="10" stroke="#E8C87A" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                  <line x1="22" y1="10" x2="20.5" y2="11.5" stroke="#E8C87A" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                  <line x1="10" y1="10" x2="11.5" y2="11.5" stroke="#E8C87A" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                </svg>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
+              </button>
+              <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+                <svg width="28" height="28" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="#C4A882" strokeWidth="1.3"/>
+                </svg>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
+              </button>
             </div>
           </div>
 
@@ -727,41 +768,10 @@ export default function Sovn({ bruker }: Props) {
           </div>
         </div>
 
-        {/* Lydpanel sheet */}
-        {visLydPanel && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 100 }} onClick={() => setVisLydPanel(false)}>
-            <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
-            <div onClick={e => e.stopPropagation()} style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#0D1B3E', borderRadius: '24px 24px 0 0', padding: '24px', animation: 'sheetUp 0.3s ease-out', border: '1px solid rgba(255,255,255,0.1)', maxHeight: '80vh', overflowY: 'auto' }}>
-              <div style={{ width: '40px', height: '4px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '2px', margin: '0 auto 20px' }} />
-              <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '4px' }}>Skap ro</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '20px' }}>Velg en lyd som roer dere begge</div>
-
-              {[
-                { kategori: 'Rolige lyder', lyder: ['🌧 Regn', '🌊 Hav', '⬜ White noise', '💨 Vifte', '💗 Hjertelyd'] },
-                { kategori: 'Regulering', lyder: ['🫁 Pustelyder', '🌀 Womb sounds', '🎵 Myke rytmer', '✨ Beroligende frekvenser'] },
-                { kategori: 'Foreldrero', lyder: ['🌙 Nattpust', '🎹 Rolig piano', '🌿 Grounding-lyder'] },
-              ].map((gruppe, gi) => (
-                <div key={gi} style={{ marginBottom: '20px' }}>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '10px' }}>{gruppe.kategori}</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {gruppe.lyder.map((lyd, li) => (
-                      <button key={li} style={{ padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', textAlign: 'left' }}>
-                        <div style={{ fontSize: '20px' }}>{lyd.split(' ')[0]}</div>
-                        <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>{lyd.split(' ').slice(1).join(' ')}</div>
-                        <div style={{ marginLeft: 'auto' }}>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"/>
-                            <path d="M10 8L16 12L10 16V8Z" fill="rgba(255,255,255,0.4)"/>
-                          </svg>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Paneler */}
+        {visLydPanel && <LydPanel onLukk={() => setVisLydPanel(false)} />}
+        {visNattlys && <NattlysPanel onLukk={() => setVisNattlys(false)} />}
+        {visPust && <PustMedMeg onLukk={() => setVisPust(false)} />}
       </div>
     );
   }
