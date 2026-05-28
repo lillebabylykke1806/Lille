@@ -1,5 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
+'use client';
+import React, { useState, useRef } from 'react';
 
 type Props = { onLukk: () => void; };
 
@@ -37,7 +39,7 @@ const LYDER: Gruppe[] = [
 ];
 
 const LydIkon = ({ id }: { id: string }) => {
-  const ikoner: Record<string, JSX.Element> = {
+  const ikoner: Record<string, React.ReactElement> = {
     regn: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path d="M6 16C4 16 2 14.5 2 12C2 9.8 3.5 8 5.5 7.5C5.8 5.5 7.5 4 9.5 4C11 4 12.3 4.8 13 6C13.5 5.4 14.2 5 15 5C16.7 5 18 6.3 18 8C19.7 8.3 21 9.8 21 11.5C21 13.5 19.3 15 17.5 15" stroke="#8AAEE0" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
