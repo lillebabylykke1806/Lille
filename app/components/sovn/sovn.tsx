@@ -18,10 +18,6 @@ const SIGNALER = [
   { id: 'hodet', label: 'Vendte hodet bort' },
   { id: 'kranglete', label: 'Ble kranglete' },
   { id: 'interesse', label: 'Mistet interesse' },
-  { id: 'ben', label: 'Trakk ben opp' },
-  { id: 'rygg', label: 'Bøyde ryggen' },
-  { id: 'luft', label: 'Mye luft' },
-  { id: 'mat', label: 'Knotete etter mat' },
 ];
 
 const TIPS_NATT = [
@@ -44,6 +40,10 @@ const GlitterOvergang = ({ onDone }: { onDone: () => void }) => {
         @keyframes glitterFall { 0%{transform:translateY(-20px) scale(0);opacity:0} 20%{opacity:1;transform:translateY(0) scale(1)} 100%{transform:translateY(110vh) rotate(360deg);opacity:0} }
         @keyframes bgDark { 0%{background:rgba(13,27,62,0)} 100%{background:rgba(13,27,62,0.97)} }
       `}</style>
+      <div style={{ position: 'absolute', inset: 0, animation: 'bgDark 1.5s ease forwards' }} />
+      {partikler.map(p => (
+        <div key={p.id} style={{ position: 'absolute', left: `${p.x}%`, top: `${p.y}%`, width: `${p.størrelse}px`, height: `${p.størrelse}px`, borderRadius: '50%', backgroundColor: p.farge, boxShadow: `0 0 ${p.størrelse * 2}px ${p.farge}`, animation: `glitterFall 2s ${p.forsinkelse}s ease-in forwards` }} />
+      ))}
     </div>
   );
 };
@@ -75,7 +75,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
   if (type === 'amming') return (
     <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3A2A1E' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img src="/tateflaske.png" alt="amming" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+      <img src="/tateflaske.png" alt="amming" style={{ width: '22px', height: '22px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
     </div>
   );
   if (type === 'oppvåkning') return (
@@ -121,7 +121,6 @@ export default function Sovn({ bruker }: Props) {
   const [valgteSignaler, setValgteSignaler] = useState<string[]>([]);
   const [tidslinje, setTidslinje] = useState<TidslinjeItem[]>([]);
   const [søvnkvalitet, setSøvnkvalitet] = useState('God');
-  const [tipIndex] = useState(Math.floor(Math.random() * TIPS_NATT.length));
   const [nyDato, setNyDato] = useState(dagensdato());
   const [nyType, setNyType] = useState<'lur' | 'natt'>('lur');
   const [nyStart, setNyStart] = useState('');
@@ -264,7 +263,8 @@ export default function Sovn({ bruker }: Props) {
   };
 
   const søvnmelding = () => {
-    if (minutter < 30) return 'Baby har akkurat sovnet 🌙 La natta senke seg rolig.';
+    if (minutter < 60) return 'Baby sover 🌙 Natta har så vidt begynt – la ro senke seg.';
+    if (valgteSignaler.length > 0) return `Baby viste ${valgteSignaler.length} trøtthetstegn før legging. Bra at du la merke til det! 🌿`;
     if (søvnkvalitet === 'Utmerket') return 'Fantastisk natt! ✨ Baby sover godt og sammenhengende.';
     if (søvnkvalitet === 'God') return 'Nydelig natt ✨ Baby sover godt med få oppvåkninger.';
     if (søvnkvalitet === 'Ok') return 'En grei natt 🌙 Litt uro, men baby sover.';
@@ -466,7 +466,7 @@ export default function Sovn({ bruker }: Props) {
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '12px' }}>
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', marginBottom: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '12px' }}>
               {SIGNALER.map(signal => (
                 <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -533,6 +533,7 @@ export default function Sovn({ bruker }: Props) {
         <style>{`
           @keyframes moonRise { 0%{transform:translateY(140px);opacity:0} 100%{transform:translateY(0px);opacity:1} }
           @keyframes moonFloat { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+          @keyframes twinkleStar { 0%,100%{opacity:0.15;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
           @keyframes sheetUp { 0%{transform:translateY(100%)} 100%{transform:translateY(0)} }
         `}</style>
 
@@ -557,7 +558,6 @@ export default function Sovn({ bruker }: Props) {
 
         <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 140px' }}>
 
-        
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>‹</button>
@@ -570,9 +570,9 @@ export default function Sovn({ bruker }: Props) {
 
           {/* Måne + klokke */}
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px' }}>
-          <div style={{ position: 'absolute', left: '-20px', top: '-10px', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
-  <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
-</div>
+            <div style={{ position: 'absolute', left: '-20px', top: '-10px', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
+              <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
+            </div>
             <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
               <svg width="200" height="200" viewBox="0 0 200 200">
                 <defs>
@@ -618,32 +618,32 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-         {/* AI innsikt */}
-<div style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-    <span style={{ fontSize: '14px' }}>✨</span>
-    <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Nattens innsikt</div>
-  </div>
-  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{søvnmelding()}</div>
-</div>
+          {/* AI innsikt */}
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <span style={{ fontSize: '14px' }}>✨</span>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Nattens innsikt</div>
+            </div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{søvnmelding()}</div>
+          </div>
 
           {/* Signaler i kveld */}
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-    <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Signaler i kveld</div>
-    <button style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', background: 'none', border: '1px solid rgba(255,255,255,0.1)', padding: '3px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se alle</button>
-  </div>
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
-    {SIGNALER.map(signal => (
-      <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? '1.5px solid rgba(138,174,224,0.6)' : '1px solid rgba(255,255,255,0.08)', backgroundColor: valgteSignaler.includes(signal.id) ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-          <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'none'} stroke={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'rgba(255,255,255,0.3)'} strokeWidth="1.3"/>
-        </svg>
-        <div style={{ fontSize: '8px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? '#8AAEE0' : '#8A8FA8', textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
-      </button>
-    ))}
-  </div>
-</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Signaler i kveld</div>
+              <button style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', background: 'none', border: '1px solid rgba(255,255,255,0.1)', padding: '3px 10px', borderRadius: '20px', cursor: 'pointer' }}>Se alle</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+              {SIGNALER.map(signal => (
+                <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? '1.5px solid rgba(138,174,224,0.6)' : '1px solid rgba(255,255,255,0.08)', backgroundColor: valgteSignaler.includes(signal.id) ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'none'} stroke={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'rgba(255,255,255,0.3)'} strokeWidth="1.3"/>
+                  </svg>
+                  <div style={{ fontSize: '8px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? '#8AAEE0' : '#8A8FA8', textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Nattens tidslinje */}
           {tidslinje.length > 0 && (
@@ -668,8 +668,8 @@ export default function Sovn({ bruker }: Props) {
             </div>
           )}
 
-    {/* Hurtigregistrering */}
-    <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+          {/* Hurtigregistrering */}
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Hurtigregistrering</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
               <button onClick={registrerOppvåkning} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
@@ -686,17 +686,14 @@ export default function Sovn({ bruker }: Props) {
                 </svg>
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Våknet</div>
               </button>
-
               <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-                <img src="/tateflaske.png" alt="amming" style={{ width: '24px', height: '24px', objectFit: 'contain', mixBlendMode: 'screen' }} />
+                <img src="/tateflaske.png" alt="amming" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Ammet</div>
               </button>
-
               <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-                <img src="/bleie.png" alt="bleie" style={{ width: '24px', height: '24px', objectFit: 'contain', mixBlendMode: 'screen' }} />
+                <img src="/bleie.png" alt="bleie" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Bleieskift</div>
               </button>
-
               <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="2" fill="#8A8FA8"/>
@@ -713,15 +710,15 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
               <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-                <img src="/lydbolge.jpg" alt="lyder" style={{ width: '36px', height: '36px', objectFit: 'contain', mixBlendMode: 'screen' }} />
+                <img src="/lydbolge.png" alt="lyder" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
               </button>
               <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-                <img src="/nattlampe.jpg" alt="nattlys" style={{ width: '36px', height: '36px', objectFit: 'contain', mixBlendMode: 'screen' }} />
+                <img src="/nattlampe.png" alt="nattlys" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
               </button>
               <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-                <img src="/pusteboble.png" alt="pust" style={{ width: '36px', height: '36px', objectFit: 'contain', mixBlendMode: 'screen' }} />
+                <img src="/pusteboble.png" alt="pust" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
               </button>
             </div>
