@@ -129,9 +129,9 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
 
   // Viftemeny - plasser ikoner i halvsirkel
   const antall = favoritter.length;
-  const radius = 110;
-  const startVinkel = -180;
-  const sluttVinkel = 0;
+  const radius = 90;
+const startVinkel = -160;
+const sluttVinkel = -20;
 
   const posisjoner = favoritter.map((_, i) => {
     const vinkel = startVinkel + (i / (antall - 1)) * (sluttVinkel - startVinkel);
@@ -184,7 +184,7 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
       <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} />
 
       {/* Vifteikoner */}
-      <div style={{ position: 'absolute', bottom: '60px', left: '50%', transform: 'translateX(-50%)' }}>
+      <div style={{ position: 'absolute', bottom: '80px', left: '50%', transform: 'translateX(-50%)' }}>
         {favoritter.map((id, i) => {
           const pos = posisjoner[i];
           const info = ALLE_SIDER[id];
