@@ -75,7 +75,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
   if (type === 'amming') return (
     <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3A2A1E' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img src="/tateflaske.png" alt="amming" style={{ width: '22px', height: '22px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+      <img src="/tateflaske.png" alt="amming" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
     </div>
   );
   if (type === 'oppvåkning') return (
@@ -691,7 +691,7 @@ export default function Sovn({ bruker }: Props) {
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Ammet</div>
               </button>
               <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-                <img src="/bleie.png" alt="bleie" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
+              <img src="/bleie.png" alt="bleie" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Bleieskift</div>
               </button>
               <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
@@ -710,15 +710,15 @@ export default function Sovn({ bruker }: Props) {
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
               <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-                <img src="/lydbolge.png" alt="lyder" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+              <img src="/lydbolge.png" alt="lyder" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
               </button>
               <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-                <img src="/nattlampe.png" alt="nattlys" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+              <img src="/nattlampe.png" alt="nattlys" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
               </button>
               <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-                <img src="/pusteboble.png" alt="pust" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+              <img src="/pusteboble.png" alt="pust" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
               </button>
             </div>
