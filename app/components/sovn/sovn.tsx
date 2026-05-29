@@ -706,23 +706,23 @@ export default function Sovn({ bruker }: Props) {
           </div>
 
           {/* Skap ro */}
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-              <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-              <img src="/lydbolge.png" alt="lyder" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
-              </button>
-              <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-              <img src="/nattlampe.png" alt="nattlys" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
-              </button>
-              <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-              <img src="/pusteboble.png" alt="pust" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
-              </button>
-            </div>
-          </div>
+<div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+  <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '20px 16px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer', width: '100%' }}>
+      <img src="/lydbolge.png" alt="lyder" style={{ width: '100%', height: '70px', objectFit: 'contain' }} />
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
+    </button>
+    <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '20px 16px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer', width: '100%' }}>
+      <img src="/nattlampe.png" alt="nattlys" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
+    </button>
+    <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '20px 16px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer', width: '100%' }}>
+      <img src="/pusteboble.png" alt="pust" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
+    </button>
+  </div>
+</div>
 
           {/* Knapper */}
           <div style={{ display: 'flex', gap: '10px' }}>
