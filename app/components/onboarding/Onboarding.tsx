@@ -8,26 +8,135 @@ type Props = {
   onFerdig: () => void;
 };
 
-const ALLE_FAVORITTER = [
-  { id: 'sovn', label: 'Søvn / lur', ikon: '🌙' },
-  { id: 'amming', label: 'Amming', ikon: '🍼' },
-  { id: 'bleie', label: 'Bleie', ikon: '👶' },
-  { id: 'medisin', label: 'Medisin / vaksine', ikon: '💊' },
-  { id: 'signaler', label: 'Signaler', ikon: '🤍' },
-  { id: 'pumping', label: 'Pumping', ikon: '🫧' },
-  { id: 'mat', label: 'Mat (fast føde)', ikon: '🥣' },
-  { id: 'aktivitet', label: 'Aktivitet', ikon: '🌿' },
-  { id: 'notat', label: 'Notat', ikon: '📝' },
-  { id: 'temperatur', label: 'Temperatur', ikon: '🌡️' },
-  { id: 'vekt', label: 'Vekt / lengde', ikon: '📏' },
-];
-
 const hentAnbefalte = (alder: number) => {
   if (alder < 1) return ['amming', 'sovn', 'bleie', 'signaler', 'notat', 'medisin'];
   if (alder < 4) return ['sovn', 'amming', 'bleie', 'signaler', 'aktivitet', 'notat'];
   if (alder < 8) return ['sovn', 'mat', 'bleie', 'aktivitet', 'signaler', 'notat'];
   if (alder < 12) return ['sovn', 'mat', 'bleie', 'aktivitet', 'medisin', 'notat'];
   return ['sovn', 'mat', 'aktivitet', 'medisin', 'vekt', 'notat'];
+};
+
+const ALLE_FAVORITTER = [
+  { id: 'amming', label: 'Amming' },
+  { id: 'sovn', label: 'Søvn / lur' },
+  { id: 'medisin', label: 'Medisin / vaksine' },
+  { id: 'bleie', label: 'Bleie' },
+  { id: 'signaler', label: 'Signaler' },
+  { id: 'pumping', label: 'Pumping' },
+  { id: 'mat', label: 'Mat (fast føde)' },
+  { id: 'aktivitet', label: 'Aktivitet' },
+  { id: 'notat', label: 'Notat' },
+  { id: 'temperatur', label: 'Temperatur' },
+  { id: 'vaksine', label: 'Vaksine' },
+  { id: 'vekt', label: 'Vekt / lengde' },
+];
+
+const IkonKomponent = ({ id, valgt }: { id: string; valgt: boolean }) => {
+  const farge = valgt ? farger.grønn : '#8A7060';
+  const bgFarge = valgt ? `${farger.grønn}18` : farger.kremMørk;
+
+  if (id === 'amming' || id === 'pumping') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/tateflaske.png" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+    </div>
+  );
+  if (id === 'bleie') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/bleie.png" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+    </div>
+  );
+  if (id === 'sovn') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill={farge} opacity="0.9"/>
+      </svg>
+    </div>
+  );
+  if (id === 'medisin') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <rect x="8" y="4" width="8" height="14" rx="4" stroke={farge} strokeWidth="1.5" fill="none"/>
+        <path d="M10 4V3C10 2.45 10.45 2 11 2H13C13.55 2 14 2.45 14 3V4" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="12" y1="8" x2="12" y2="14" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="9" y1="11" x2="15" y2="11" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    </div>
+  );
+  if (id === 'signaler') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 21C12 21 3 15 3 9C3 6.5 5 4.5 7.5 4.5C9.2 4.5 10.7 5.4 12 7C13.3 5.4 14.8 4.5 16.5 4.5C19 4.5 21 6.5 21 9C21 15 12 21 12 21Z" stroke={farge} strokeWidth="1.5" fill={valgt ? `${farger.grønn}30` : 'none'} strokeLinejoin="round"/>
+      </svg>
+    </div>
+  );
+  if (id === 'mat') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <ellipse cx="12" cy="15" rx="7" ry="4" stroke={farge} strokeWidth="1.5" fill="none"/>
+        <path d="M5 15C5 15 5 12 12 12C19 12 19 15 19 15" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="12" y1="12" x2="12" y2="7" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M10 7C10 7 10 5 12 5C14 5 14 7 14 7" stroke={farge} strokeWidth="1.3" strokeLinecap="round" fill="none"/>
+      </svg>
+    </div>
+  );
+  if (id === 'aktivitet') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 20C12 20 5 14 5 9C5 6 7 4 9.5 4C10.8 4 12 5 12 5C12 5 13.2 4 14.5 4C17 4 19 6 19 9C19 14 12 20 12 20Z" fill={valgt ? `${farger.grønn}30` : 'none'} stroke={farge} strokeWidth="1.5"/>
+        <path d="M12 5C12 5 10 8 10 11C10 13 11 15 12 16" stroke={farge} strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
+      </svg>
+    </div>
+  );
+  if (id === 'notat') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <rect x="5" y="3" width="14" height="18" rx="2" stroke={farge} strokeWidth="1.5" fill="none"/>
+        <line x1="8" y1="8" x2="16" y2="8" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
+        <line x1="8" y1="12" x2="16" y2="12" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
+        <line x1="8" y1="16" x2="13" y2="16" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
+      </svg>
+    </div>
+  );
+  if (id === 'temperatur') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <rect x="9" y="3" width="6" height="13" rx="3" stroke={farge} strokeWidth="1.5" fill="none"/>
+        <circle cx="12" cy="17" r="3" stroke={farge} strokeWidth="1.5" fill={valgt ? `${farger.grønn}40` : 'none'}/>
+        <line x1="12" y1="10" x2="12" y2="14" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="15" y1="7" x2="17" y2="7" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
+        <line x1="15" y1="10" x2="17" y2="10" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
+      </svg>
+    </div>
+  );
+  if (id === 'vaksine') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <line x1="19" y1="5" x2="21" y2="3" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="15" y1="5" x2="19" y2="5" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M6 18L15 9" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M9 7L17 15" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="4" y1="20" x2="6" y2="18" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M11 7L17 13" stroke={farge} strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
+      </svg>
+    </div>
+  );
+  if (id === 'vekt') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="10" width="18" height="10" rx="2" stroke={farge} strokeWidth="1.5" fill="none"/>
+        <path d="M8 10C8 7.8 9.8 6 12 6C14.2 6 16 7.8 16 10" stroke={farge} strokeWidth="1.5" fill="none"/>
+        <line x1="12" y1="13" x2="12" y2="16" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="10" y1="15" x2="14" y2="15" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    </div>
+  );
+  return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="8" stroke={farge} strokeWidth="1.5" fill="none"/>
+      </svg>
+    </div>
+  );
 };
 
 export default function Onboarding({ bruker, onFerdig }: Props) {
@@ -168,9 +277,7 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
             </button>
             <button
               onClick={() => {
-                if (fødselsdato) {
-                  setFavoritter(hentAnbefalte(alderIMåneder()));
-                }
+                if (fødselsdato) setFavoritter(hentAnbefalte(alderIMåneder()));
                 setSteg(3);
               }}
               disabled={!babyNavn || !fødselsdato}
@@ -192,7 +299,7 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
             Velg opptil 6 ting du vil ha rask tilgang til
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontStyle: 'italic', marginBottom: '8px' }}>
-            Vi har foreslått basert på {babyNavn}s alder ({alderTekst()})
+            Basert på {babyNavn}s alder ({alderTekst()})
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '20px' }}>
             {favoritter.length}/6 valgt
@@ -218,9 +325,10 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
                     opacity: deaktivert ? 0.4 : 1,
                     transition: 'all 0.2s ease',
                     textAlign: 'left',
+                    width: '100%',
                   }}
                 >
-                  <span style={{ fontSize: '22px' }}>{item.ikon}</span>
+                  <IkonKomponent id={item.id} valgt={valgt} />
                   <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: valgt ? farger.grønn : farger.tekst, fontWeight: valgt ? '600' : '400', flex: 1 }}>
                     {item.label}
                   </span>

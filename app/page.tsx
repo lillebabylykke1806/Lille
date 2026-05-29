@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import Hjemskjerm from './components/hjem/Hjemskjerm';
 import Profil from './components/hjem/profil';
 import Sovn from './components/sovn/sovn';
+import Onboarding from './components/onboarding/Onboarding';
+
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -15,12 +17,16 @@ export default function Home() {
   const [erNyBruker, setErNyBruker] = useState(false);
   const [innloggingFeil, setInnloggingFeil] = useState('');
   const [visRegistrer, setVisRegistrer] = useState(false);
+  const [visOnboarding, setVisOnboarding] = useState(false);
 
   useEffect(() => {
     const lastData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setBruker(session.user);
+        const { data: profil } = await supabase.from('profiler').select('*').eq('id', session.user.id).single();
+        if (!profil?.baby_navn) setVisOnboarding(true);
+      }
         // Sjekk om baby sover nå
         const lagretType = localStorage.getItem('lille_sovtype');
         if (lagretType === 'natt') {
@@ -67,6 +73,7 @@ export default function Home() {
     );
   }
 
+  if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={() => setVisOnboarding(false)} />;
   if (!bruker) {
     return (
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
