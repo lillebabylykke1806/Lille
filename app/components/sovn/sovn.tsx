@@ -12,13 +12,11 @@ type TidslinjeItem = { tid: string; tekst: string; type: string; };
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
 const SIGNALER = [
-  { id: 'gned', label: 'Gned øynene' },
-  { id: 'stirret', label: 'Stirret tomt' },
-  { id: 'gjesping', label: 'Gjesping' },
-  { id: 'hodet', label: 'Vendte hodet bort' },
-  { id: 'kranglete', label: 'Ble kranglete' },
-  { id: 'interesse', label: 'Mistet interesse' },
-];
+    { id: 'gned', label: 'Gned øynene' },
+    { id: 'gjesping', label: 'Gjesping' },
+    { id: 'stirret', label: 'Stirret tomt' },
+    { id: 'hodet', label: 'Vendte hodet' },
+  ];
 
 const TIPS_NATT = [
   'En rolig legging og mørkt rom kan bidra til dypere og lengre søvn.',
@@ -75,7 +73,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
   if (type === 'amming') return (
     <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3A2A1E' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img src="/tateflaske.png" alt="amming" style={{ width: '40px', height: '40px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
+      <img src="/tateflaske.png" alt="amming" style={{ width: '40px', height: '40px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
     </div>
   );
   if (type === 'oppvåkning') return (
