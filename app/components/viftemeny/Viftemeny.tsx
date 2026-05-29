@@ -184,44 +184,48 @@ const sluttVinkel = -20;
       <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} />
 
       {/* Vifteikoner */}
-      <div style={{ position: 'absolute', bottom: '80px', left: '50%', transform: 'translateX(-50%)' }}>
-        {favoritter.map((id, i) => {
-          const pos = posisjoner[i];
-          const info = ALLE_SIDER[id];
-          return (
-            <div
-              key={id}
-              onClick={e => {
-                e.stopPropagation();
-                if (info?.bygget) {
-                  onNavigate(id);
-                  onLukk();
-                }
-              }}
-              style={{
-                position: 'absolute',
-                left: `${pos.x}px`,
-                top: `${pos.y}px`,
-                transform: 'translate(-50%, -50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '4px',
-                cursor: info?.bygget ? 'pointer' : 'default',
-                opacity: info?.bygget ? 1 : 0.5,
-              }}
-            >
-              <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IkonKomponent id={id} />
-              </div>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.hvit, fontWeight: '500', textShadow: '0 1px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap' }}>
-                {info?.label}
-                {!info?.bygget && ' 🔜'}
-              </div>
-            </div>
-          );
-        })}
+<div style={{ position: 'fixed', bottom: '160px', left: '50%', transform: 'translateX(-50%)', width: '320px', height: '200px' }}>
+  {favoritter.map((id, i) => {
+    const info = ALLE_SIDER[id];
+    const antall = favoritter.length;
+    const vinkel = -180 + (i / (antall - 1)) * 160;
+    const rad = (vinkel * Math.PI) / 180;
+    const x = 160 + Math.cos(rad) * 130;
+    const y = 200 + Math.sin(rad) * 130;
+    return (
+      <div
+        key={id}
+        onClick={e => {
+          e.stopPropagation();
+          if (info?.bygget) {
+            onNavigate(id);
+            onLukk();
+          }
+        }}
+        style={{
+          position: 'absolute',
+          left: `${x}px`,
+          top: `${y}px`,
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '4px',
+          cursor: info?.bygget ? 'pointer' : 'default',
+          opacity: info?.bygget ? 1 : 0.5,
+        }}
+      >
+        <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <IkonKomponent id={id} />
+        </div>
+        <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.hvit, fontWeight: '500', textShadow: '0 1px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap' }}>
+          {info?.label}
+          {!info?.bygget && ' 🔜'}
+        </div>
       </div>
+    );
+  })}
+</div>
 
       {/* Lukk-knapp */}
       <div style={{ position: 'absolute', bottom: '68px', left: '50%', transform: 'translateX(-50%)' }}>
