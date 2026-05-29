@@ -19,13 +19,19 @@ export default function Home() {
   useEffect(() => {
     const lastData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) setBruker(session.user);
+      if (session) {
+        setBruker(session.user);
+        // Sjekk om baby sover nå
+        const lagretType = localStorage.getItem('lille_sovtype');
+        if (lagretType === 'natt') {
+          setAktivSide('sovn');
+        }
+      }
       setLaster(false);
     };
     setTimeout(() => setLaster(false), 5000);
     lastData();
   }, []);
-
   const loggInn = async () => {
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
