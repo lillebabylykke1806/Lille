@@ -26,18 +26,15 @@ export default function Home() {
         setBruker(session.user);
         const { data: profil } = await supabase.from('profiler').select('*').eq('id', session.user.id).single();
         if (!profil?.baby_navn) setVisOnboarding(true);
-      }
-        // Sjekk om baby sover nå
         const lagretType = localStorage.getItem('lille_sovtype');
-        if (lagretType === 'natt') {
-          setAktivSide('sovn');
-        }
+        if (lagretType === 'natt') setAktivSide('sovn');
       }
       setLaster(false);
     };
     setTimeout(() => setLaster(false), 5000);
     lastData();
   }, []);
+       
   const loggInn = async () => {
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
