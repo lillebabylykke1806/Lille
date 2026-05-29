@@ -718,7 +718,7 @@ export default function Sovn({ bruker }: Props) {
       <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
     </button>
     <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px 6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
-      <img src="/pusteboble.png" alt="pust" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+    <img src="/pusteboble.png" alt="pust" style={{ width: '90px', height: '90px', objectFit: 'contain' }} />
       <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
     </button>
   </div>
