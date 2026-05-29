@@ -183,47 +183,56 @@ const sluttVinkel = -20;
     <div style={{ position: 'fixed', inset: 0, zIndex: 100 }} onClick={onLukk}>
       <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} />
 
-     {/* Vifteikoner */}
-{favoritter.map((id, i) => {
-  const info = ALLE_SIDER[id];
-  const antall = favoritter.length;
-  const vinkel = -150 + (i / (antall - 1)) * 120;
-  const rad = (vinkel * Math.PI) / 180;
-  const x = 50 + Math.cos(rad) * 35;
-  const y = 85 + Math.sin(rad) * 35;
-  return (
-    <div
-      key={id}
-      onClick={e => {
-        e.stopPropagation();
-        if (info?.bygget) {
-          onNavigate(id);
-          onLukk();
-        }
-      }}
-      style={{
-        position: 'fixed',
-        left: `${x}%`,
-        bottom: `${y}px`,
-        transform: 'translateX(-50%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '4px',
-        cursor: info?.bygget ? 'pointer' : 'default',
-        opacity: info?.bygget ? 1 : 0.5,
-        zIndex: 101,
-      }}
-    >
-      <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, boxShadow: '0 4px 16px rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <IkonKomponent id={id} />
-      </div>
-      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.hvit, fontWeight: '500', textShadow: '0 1px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap' }}>
-        {info?.label}
-      </div>
-    </div>
-  );
-})}
+    {/* Vifteikoner som grid */}
+<div style={{
+  position: 'fixed',
+  bottom: '100px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: 'calc(100% - 48px)',
+  maxWidth: '382px',
+  backgroundColor: 'rgba(255,255,255,0.95)',
+  borderRadius: '20px',
+  padding: '20px',
+  zIndex: 101,
+  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+}} onClick={e => e.stopPropagation()}>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+    {favoritter.map(id => {
+      const info = ALLE_SIDER[id];
+      return (
+        <button
+          key={id}
+          onClick={e => {
+            e.stopPropagation();
+            if (info?.bygget) {
+              onNavigate(id);
+              onLukk();
+            }
+          }}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '14px 8px',
+            borderRadius: '16px',
+            border: `1px solid ${farger.kremMørk}`,
+            backgroundColor: farger.bakgrunn,
+            cursor: info?.bygget ? 'pointer' : 'not-allowed',
+            opacity: info?.bygget ? 1 : 0.5,
+          }}
+        >
+          <IkonKomponent id={id} />
+          <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekst, textAlign: 'center' }}>
+            {info?.label}
+            {!info?.bygget && ' 🔜'}
+          </div>
+        </button>
+      );
+    })}
+  </div>
+</div>
 
       {/* Lukk-knapp */}
       <div style={{ position: 'absolute', bottom: '68px', left: '50%', transform: 'translateX(-50%)' }}>
