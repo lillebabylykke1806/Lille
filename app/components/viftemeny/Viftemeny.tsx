@@ -182,6 +182,10 @@ const sluttVinkel = -20;
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100 }} onClick={onLukk}>
       <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} />
+      
+      <div style={{ position: 'fixed', top: '100px', left: '50%', transform: 'translateX(-50%)', color: 'white', fontSize: '16px', zIndex: 200, backgroundColor: 'red', padding: '10px' }}>
+        Favoritter: {favoritter.join(', ')} ({favoritter.length})
+      </div>
 
     {/* Vifteikoner i halvsirkel */}
 {favoritter.map((id, i) => {
