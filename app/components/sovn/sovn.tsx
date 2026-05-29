@@ -73,7 +73,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
   if (type === 'amming') return (
     <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3A2A1E' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img src="/tateflaske.png" alt="amming" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+      <img src="/tateflaske.png" alt="amming" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
     </div>
   );
   if (type === 'oppvåkning') return (
@@ -689,7 +689,7 @@ export default function Sovn({ bruker }: Props) {
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Ammet</div>
               </button>
               <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-              <img src="/bleie.png" alt="bleie" style={{ width: '40px', height: '40px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
+              <img src="/bleie.png" alt="bleie" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Bleieskift</div>
               </button>
               <button onClick={() => {}} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
