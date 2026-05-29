@@ -708,22 +708,21 @@ export default function Sovn({ bruker }: Props) {
           {/* Skap ro */}
 <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
   <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-    <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '20px 16px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer', width: '100%' }}>
-    <img src="/lydbolge.png" alt="lyder" style={{ width: '100%', height: '60px', objectFit: 'contain' }} />
-      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+    <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px 6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+      <img src="/lydbolge.png" alt="lyder" style={{ width: '100%', height: '50px', objectFit: 'contain' }} />
+      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
     </button>
-    <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '20px 16px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer', width: '100%' }}>
-    <img src="/nattlampe.png" alt="nattlys" style={{ width: '90px', height: '90px', objectFit: 'contain' }} />
-      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
+    <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px 6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+      <img src="/nattlampe.png" alt="nattlys" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
     </button>
-    <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '20px 16px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer', width: '100%' }}>
-    <img src="/pusteboble.png" alt="pust" style={{ width: '90px', height: '90px', objectFit: 'contain' }} />
-      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
+    <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px 6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
+      <img src="/pusteboble.png" alt="pust" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
     </button>
   </div>
 </div>
-
           {/* Knapper */}
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A5580', border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
