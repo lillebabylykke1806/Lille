@@ -73,7 +73,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
   if (type === 'amming') return (
     <div style={{ width: size, height: size, borderRadius: '50%', backgroundColor: mørk ? '#3A2A1E' : '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img src="/tateflaske.png" alt="amming" style={{ width: '40px', height: '40px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+      <img src="/tateflaske.png" alt="amming" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
     </div>
   );
   if (type === 'oppvåkning') return (
