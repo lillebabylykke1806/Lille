@@ -6,11 +6,11 @@ import Hjemskjerm from './components/hjem/Hjemskjerm';
 import Profil from './components/hjem/profil';
 import Sovn from './components/sovn/sovn';
 import Onboarding from './components/onboarding/Onboarding';
-
+import Viftemeny from './components/viftemeny/Viftemeny';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
-  const [bruker, setBruker] = useState(null);
+  const [bruker, setBruker] = useState<any>(null);
   const [laster, setLaster] = useState(true);
   const [epost, setEpost] = useState('');
   const [passord, setPassord] = useState('');
@@ -34,7 +34,7 @@ export default function Home() {
     setTimeout(() => setLaster(false), 5000);
     lastData();
   }, []);
-       
+
   const loggInn = async () => {
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
@@ -71,6 +71,7 @@ export default function Home() {
   }
 
   if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={() => setVisOnboarding(false)} />;
+
   if (!bruker) {
     return (
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
@@ -105,48 +106,56 @@ export default function Home() {
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 
+      {/* Navigasjon */}
       <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', backgroundColor: farger.hvit, borderTop: `1px solid ${farger.kremMørk}`, display: 'flex', alignItems: 'center', padding: '8px 0 24px' }}>
         <button onClick={() => setAktivSide('hjem')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill={aktivSide === 'hjem' ? farger.grønn : farger.kremMørk} /></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill={aktivSide === 'hjem' ? farger.grønn : farger.kremMørk}/>
+          </svg>
           <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'hjem' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'hjem' ? '600' : '400' }}>Hjem</span>
         </button>
+
         <button onClick={() => setAktivSide('sovn')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C14.5 21 16.76 20.01 18.43 18.4C14.1 18.17 10.5 14.43 10.5 9.9C10.5 7.3 11.72 4.98 13.62 3.45C13.09 3.16 12.56 3 12 3Z" fill={aktivSide === 'sovn' ? farger.grønn : farger.kremMørk} /></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C14.5 21 16.76 20.01 18.43 18.4C14.1 18.17 10.5 14.43 10.5 9.9C10.5 7.3 11.72 4.98 13.62 3.45C13.09 3.16 12.56 3 12 3Z" fill={aktivSide === 'sovn' ? farger.grønn : farger.kremMørk}/>
+          </svg>
           <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'sovn' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'sovn' ? '600' : '400' }}>Søvn</span>
         </button>
-        <button onClick={() => setVisRegistrer(true)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0' }}>
+
+        {/* + Knapp */}
+        <button onClick={() => setVisRegistrer(!visRegistrer)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0' }}>
           <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønn, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-20px', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round" /></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d={visRegistrer ? "M18 6L6 18M6 6L18 18" : "M12 5V19M5 12H19"} stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
+            </svg>
           </div>
         </button>
+
         <button onClick={() => setAktivSide('innsikt')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="12" width="4" height="9" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk} /><rect x="10" y="7" width="4" height="14" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk} /><rect x="17" y="3" width="4" height="18" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk} /></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="12" width="4" height="9" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
+            <rect x="10" y="7" width="4" height="14" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
+            <rect x="17" y="3" width="4" height="18" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
+          </svg>
           <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'innsikt' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'innsikt' ? '600' : '400' }}>Innsikt</span>
         </button>
+
         <button onClick={() => setAktivSide('profil')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill={aktivSide === 'profil' ? farger.grønn : farger.kremMørk} /><path d="M4 20C4 16.69 7.58 14 12 14C16.42 14 20 16.69 20 20" stroke={aktivSide === 'profil' ? farger.grønn : farger.kremMørk} strokeWidth="2" strokeLinecap="round" /></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="8" r="4" fill={aktivSide === 'profil' ? farger.grønn : farger.kremMørk}/>
+            <path d="M4 20C4 16.69 7.58 14 12 14C16.42 14 20 16.69 20 20" stroke={aktivSide === 'profil' ? farger.grønn : farger.kremMørk} strokeWidth="2" strokeLinecap="round"/>
+          </svg>
           <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'profil' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'profil' ? '600' : '400' }}>Profil</span>
         </button>
       </div>
 
+      {/* Viftemeny */}
       {visRegistrer && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisRegistrer(false)}>
-          <div style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }} onClick={e => e.stopPropagation()}>
-            <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 24px' }} />
-            <p style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, margin: '0 0 20px', textAlign: 'center' }}>Hva vil du registrere?</p>
-            {[
-              { id: 'sovn', label: 'Søvn', ikon: '🌙' },
-              { id: 'kolikk', label: 'Uro / kolikk', ikon: '💛' },
-              { id: 'amming', label: 'Amming', ikon: '🤱' },
-              { id: 'vaksiner', label: 'Vaksine / medisin', ikon: '💉' },
-            ].map(item => (
-                <button key={item.id} onClick={() => { setAktivSide(item.id); setVisRegistrer(false); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.bakgrunn, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif', fontSize: '15px', color: farger.tekst }}>
-                <span style={{ fontSize: '22px' }}>{item.ikon}</span>
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <Viftemeny
+          bruker={bruker}
+          onNavigate={setAktivSide}
+          onLukk={() => setVisRegistrer(false)}
+        />
       )}
     </div>
   );
