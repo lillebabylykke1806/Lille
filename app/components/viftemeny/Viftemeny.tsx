@@ -24,6 +24,21 @@ const ALLE_SIDER: Record<string, { label: string; bygget: boolean }> = {
   vekt: { label: 'Vekt', bygget: false },
 };
 
+const bgFarger: Record<string, string> = {
+  sovn: '#E8E4F0',
+  amming: '#FFE8D6',
+  bleie: '#E8F0E8',
+  medisin: '#E8F0E8',
+  signaler: '#FFE8E8',
+  pumping: '#FFE8D6',
+  mat: '#FFF3D6',
+  aktivitet: '#E8F0E8',
+  notat: '#FFF3D6',
+  temperatur: '#FFE8E8',
+  vaksine: '#E8E4F0',
+  vekt: '#E8E4F0',
+};
+
 const IkonKomponent = ({ id }: { id: string }) => {
   const farge = farger.grønn;
   if (id === 'amming' || id === 'pumping') return (
@@ -165,7 +180,7 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100 }} onClick={onLukk}>
       {/* Mørk bakgrunn */}
-      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)' }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }} />
 
       {/* Vifteikoner i halvsirkel */}
       {favoritter.map((id, i) => {
@@ -175,24 +190,9 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
         const rad = (vinkel * Math.PI) / 180;
         const radius = 190;
         const senterX = typeof window !== 'undefined' ? window.innerWidth / 2 : 200;
-        const senterY = typeof window !== 'undefined' ? window.innerHeight - 320 : 700;
+        const senterY = typeof window !== 'undefined' ? window.innerHeight - 360 : 700;
         const x = senterX + Math.cos(rad) * radius;
         const y = senterY + Math.sin(rad) * radius;
-
-        const bgFarger: Record<string, string> = {
-          sovn: '#E8E4F0',
-          amming: '#FFE8D6',
-          bleie: '#E8F0E8',
-          medisin: '#E8F0E8',
-          signaler: '#FFE8E8',
-          pumping: '#FFE8D6',
-          mat: '#FFF3D6',
-          aktivitet: '#E8F0E8',
-          notat: '#FFF3D6',
-          temperatur: '#FFE8E8',
-          vaksine: '#E8E4F0',
-          vekt: '#E8E4F0',
-        };
 
         return (
           <div
@@ -210,7 +210,7 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '6px',
-              zIndex: 101,
+              zIndex: 102,
               cursor: info?.bygget ? 'pointer' : 'default',
               opacity: info?.bygget ? 1 : 0.7,
             }}
@@ -241,11 +241,22 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
         );
       })}
 
-     {/* Beige panel */}
-     <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', backgroundColor: '#F7F3EC', borderRadius: '32px 32px 0 0', padding: '24px 24px 120px', zIndex: 101 }} onClick={e => e.stopPropagation()}>
-        
+      {/* Beige panel nedre del */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '100%',
+        maxWidth: '430px',
+        backgroundColor: '#F7F3EC',
+        borderRadius: '40px 40px 0 0',
+        padding: '24px 24px 120px',
+        zIndex: 101,
+      }} onClick={e => e.stopPropagation()}>
+
         {/* Lukk-knapp */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
           <button onClick={onLukk} style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6L18 18" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
