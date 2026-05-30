@@ -173,9 +173,9 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
         const antall = favoritter.length;
         const vinkel = 210 + (i / (antall - 1)) * 120;
         const rad = (vinkel * Math.PI) / 180;
-        const radius = 150;
+        const radius = 170;
         const senterX = typeof window !== 'undefined' ? window.innerWidth / 2 : 200;
-        const senterY = typeof window !== 'undefined' ? window.innerHeight - 100 : 700;
+        const senterY = typeof window !== 'undefined' ? window.innerHeight - 280 : 700;
         const x = senterX + Math.cos(rad) * radius;
         const y = senterY + Math.sin(rad) * radius;
 
