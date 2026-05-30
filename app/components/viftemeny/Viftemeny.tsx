@@ -164,7 +164,8 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100 }} onClick={onLukk}>
-      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} />
+      {/* Mørk bakgrunn */}
+      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)' }} />
 
       {/* Vifteikoner i halvsirkel */}
       {favoritter.map((id, i) => {
@@ -172,11 +173,27 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
         const antall = favoritter.length;
         const vinkel = 210 + (i / (antall - 1)) * 120;
         const rad = (vinkel * Math.PI) / 180;
-        const radius = 130;
+        const radius = 150;
         const senterX = typeof window !== 'undefined' ? window.innerWidth / 2 : 200;
-        const senterY = typeof window !== 'undefined' ? window.innerHeight - 90 : 700;
+        const senterY = typeof window !== 'undefined' ? window.innerHeight - 100 : 700;
         const x = senterX + Math.cos(rad) * radius;
         const y = senterY + Math.sin(rad) * radius;
+
+        const bgFarger: Record<string, string> = {
+          sovn: '#E8E4F0',
+          amming: '#FFE8D6',
+          bleie: '#E8F0E8',
+          medisin: '#E8F0E8',
+          signaler: '#FFE8E8',
+          pumping: '#FFE8D6',
+          mat: '#FFF3D6',
+          aktivitet: '#E8F0E8',
+          notat: '#FFF3D6',
+          temperatur: '#FFE8E8',
+          vaksine: '#E8E4F0',
+          vekt: '#E8E4F0',
+        };
+
         return (
           <div
             key={id}
@@ -192,16 +209,32 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '4px',
+              gap: '6px',
               zIndex: 101,
               cursor: info?.bygget ? 'pointer' : 'default',
-              opacity: info?.bygget ? 1 : 0.6,
+              opacity: info?.bygget ? 1 : 0.7,
             }}
           >
-            <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              backgroundColor: bgFarger[id] || '#F0EBE3',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
               <IkonKomponent id={id} />
             </div>
-            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.hvit, fontWeight: '500', textShadow: '0 1px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap' }}>
+            <div style={{
+              fontSize: '11px',
+              fontFamily: 'var(--font-inter)',
+              color: '#FDFAF6',
+              fontWeight: '500',
+              textShadow: '0 1px 4px rgba(0,0,0,0.6)',
+              whiteSpace: 'nowrap',
+            }}>
               {info?.label}
             </div>
           </div>
@@ -210,7 +243,7 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
 
       {/* Lukk-knapp */}
       <div style={{ position: 'fixed', bottom: '68px', left: '50%', transform: 'translateX(-50%)', zIndex: 102 }}>
-        <button onClick={onLukk} style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
+        <button onClick={onLukk} style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6L18 18" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
@@ -218,8 +251,8 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
       </div>
 
       {/* Dine favoritter-kort */}
-      <div style={{ position: 'fixed', bottom: '130px', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 48px)', maxWidth: '382px', zIndex: 102 }}>
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: '16px', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+      <div style={{ position: 'fixed', bottom: '136px', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 48px)', maxWidth: '382px', zIndex: 102 }}>
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.97)', borderRadius: '16px', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" fill={farger.grønn} opacity="0.7"/>
