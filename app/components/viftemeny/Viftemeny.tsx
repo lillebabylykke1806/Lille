@@ -173,9 +173,9 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
         const antall = favoritter.length;
         const vinkel = 210 + (i / (antall - 1)) * 120;
         const rad = (vinkel * Math.PI) / 180;
-        const radius = 170;
+        const radius = 190;
         const senterX = typeof window !== 'undefined' ? window.innerWidth / 2 : 200;
-        const senterY = typeof window !== 'undefined' ? window.innerHeight - 280 : 700;
+        const senterY = typeof window !== 'undefined' ? window.innerHeight - 320 : 700;
         const x = senterX + Math.cos(rad) * radius;
         const y = senterY + Math.sin(rad) * radius;
 
@@ -241,8 +241,19 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
         );
       })}
 
-     {/* Hvit panel nedre del */}
-     <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', backgroundColor: 'rgba(255,255,255,0.97)', borderRadius: '24px 24px 0 0', padding: '20px 24px 120px', zIndex: 101 }} onClick={e => e.stopPropagation()}>
+     {/* Beige panel */}
+     <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', backgroundColor: '#F7F3EC', borderRadius: '32px 32px 0 0', padding: '24px 24px 120px', zIndex: 101 }} onClick={e => e.stopPropagation()}>
+        
+        {/* Lukk-knapp */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+          <button onClick={onLukk} style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6L18 18" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Dine favoritter */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -257,15 +268,6 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
             Se alle
           </button>
         </div>
-      </div>
-
-      {/* Lukk-knapp */}
-      <div style={{ position: 'fixed', bottom: '108px', left: '50%', transform: 'translateX(-50%)', zIndex: 103 }}>
-        <button onClick={onLukk} style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6L18 18" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
-          </svg>
-        </button>
       </div>
     </div>
   );
