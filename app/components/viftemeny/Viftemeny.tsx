@@ -241,18 +241,9 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
         );
       })}
 
-      {/* Lukk-knapp */}
-      <div style={{ position: 'fixed', bottom: '68px', left: '50%', transform: 'translateX(-50%)', zIndex: 102 }}>
-        <button onClick={onLukk} style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6L18 18" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Dine favoritter-kort */}
-      <div style={{ position: 'fixed', bottom: '136px', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 48px)', maxWidth: '382px', zIndex: 102 }}>
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.97)', borderRadius: '16px', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
+     {/* Hvit panel nedre del */}
+     <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', backgroundColor: 'rgba(255,255,255,0.97)', borderRadius: '24px 24px 0 0', padding: '20px 24px 120px', zIndex: 101 }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" fill={farger.grønn} opacity="0.7"/>
@@ -266,6 +257,15 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
             Se alle
           </button>
         </div>
+      </div>
+
+      {/* Lukk-knapp */}
+      <div style={{ position: 'fixed', bottom: '108px', left: '50%', transform: 'translateX(-50%)', zIndex: 103 }}>
+        <button onClick={onLukk} style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6L18 18" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
+          </svg>
+        </button>
       </div>
     </div>
   );
