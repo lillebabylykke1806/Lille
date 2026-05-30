@@ -271,8 +271,8 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
               <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" fill={farger.grønn} opacity="0.7"/>
             </svg>
             <div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Dine favoritter</div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trykk for å endre dine favoritter</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Dine favoritter</div>
+            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Velg hvilke snarveier du vil ha i menyen</div>
             </div>
           </div>
           <button onClick={e => { e.stopPropagation(); setVisVelgFavoritter(true); }} style={{ padding: '6px 14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', cursor: 'pointer' }}>
