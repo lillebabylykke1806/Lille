@@ -127,21 +127,6 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
     }
   };
 
-  // Viftemeny - plasser ikoner i halvsirkel
-  const antall = favoritter.length;
-  const radius = 90;
-const startVinkel = -160;
-const sluttVinkel = -20;
-
-  const posisjoner = favoritter.map((_, i) => {
-    const vinkel = startVinkel + (i / (antall - 1)) * (sluttVinkel - startVinkel);
-    const rad = (vinkel * Math.PI) / 180;
-    return {
-      x: Math.cos(rad) * radius,
-      y: Math.sin(rad) * radius,
-    };
-  });
-
   if (visVelgFavoritter) {
     return (
       <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisVelgFavoritter(false)}>
@@ -150,7 +135,6 @@ const sluttVinkel = -20;
           <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>Velg dine favoritter</div>
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Velg opptil 6 ting du vil ha rask tilgang til</div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '20px' }}>{alleFavoritter.length}/6 valgt</div>
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
             {Object.entries(ALLE_SIDER).map(([id, info]) => {
               const valgt = alleFavoritter.includes(id);
@@ -170,7 +154,6 @@ const sluttVinkel = -20;
               );
             })}
           </div>
-
           <button onClick={lagreFavoritter} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
             Lagre
           </button>
@@ -182,54 +165,51 @@ const sluttVinkel = -20;
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100 }} onClick={onLukk}>
       <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }} />
-      
-      <div style={{ position: 'fixed', top: '100px', left: '50%', transform: 'translateX(-50%)', color: 'white', fontSize: '16px', zIndex: 200, backgroundColor: 'red', padding: '10px' }}>
-  Favoritter: {favoritter.join(', ')} ({favoritter.length}) | BrukerID: {bruker?.id}
-</div>
 
-    {/* Vifteikoner i halvsirkel */}
-{favoritter.map((id, i) => {
-  const info = ALLE_SIDER[id];
-  const antall = favoritter.length;
-  const vinkel = 180 + 30 + (i / (antall - 1)) * 120;
-  const rad = (vinkel * Math.PI) / 180;
-  const radius = 120;
-  const senterX = window.innerWidth / 2;
-  const senterY = window.innerHeight - 80;
-  const x = senterX + Math.cos(rad) * radius;
-  const y = senterY + Math.sin(rad) * radius;
-  return (
-    <div
-      key={id}
-      onClick={e => {
-        e.stopPropagation();
-        if (info?.bygget) { onNavigate(id); onLukk(); }
-      }}
-      style={{
-        position: 'fixed',
-        left: `${x}px`,
-        top: `${y}px`,
-        transform: 'translate(-50%, -50%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '4px',
-        zIndex: 101,
-        cursor: info?.bygget ? 'pointer' : 'default',
-        opacity: info?.bygget ? 1 : 0.6,
-      }}
-    >
-      <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <IkonKomponent id={id} />
-      </div>
-      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.hvit, fontWeight: '500', textShadow: '0 1px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap' }}>
-        {info?.label}
-      </div>
-    </div>
-  );
-})}
+      {/* Vifteikoner i halvsirkel */}
+      {favoritter.map((id, i) => {
+        const info = ALLE_SIDER[id];
+        const antall = favoritter.length;
+        const vinkel = 210 + (i / (antall - 1)) * 120;
+        const rad = (vinkel * Math.PI) / 180;
+        const radius = 130;
+        const senterX = typeof window !== 'undefined' ? window.innerWidth / 2 : 200;
+        const senterY = typeof window !== 'undefined' ? window.innerHeight - 90 : 700;
+        const x = senterX + Math.cos(rad) * radius;
+        const y = senterY + Math.sin(rad) * radius;
+        return (
+          <div
+            key={id}
+            onClick={e => {
+              e.stopPropagation();
+              if (info?.bygget) { onNavigate(id); onLukk(); }
+            }}
+            style={{
+              position: 'fixed',
+              left: `${x}px`,
+              top: `${y}px`,
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              zIndex: 101,
+              cursor: info?.bygget ? 'pointer' : 'default',
+              opacity: info?.bygget ? 1 : 0.6,
+            }}
+          >
+            <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <IkonKomponent id={id} />
+            </div>
+            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.hvit, fontWeight: '500', textShadow: '0 1px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap' }}>
+              {info?.label}
+            </div>
+          </div>
+        );
+      })}
+
       {/* Lukk-knapp */}
-      <div style={{ position: 'absolute', bottom: '68px', left: '50%', transform: 'translateX(-50%)' }}>
+      <div style={{ position: 'fixed', bottom: '68px', left: '50%', transform: 'translateX(-50%)', zIndex: 102 }}>
         <button onClick={onLukk} style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønn, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6L18 18" stroke="#FDFAF6" strokeWidth="2.5" strokeLinecap="round"/>
@@ -238,7 +218,7 @@ const sluttVinkel = -20;
       </div>
 
       {/* Dine favoritter-kort */}
-      <div style={{ position: 'absolute', bottom: '130px', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 48px)', maxWidth: '382px' }}>
+      <div style={{ position: 'fixed', bottom: '130px', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 48px)', maxWidth: '382px', zIndex: 102 }}>
         <div style={{ backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: '16px', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
