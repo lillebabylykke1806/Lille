@@ -138,12 +138,26 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
           type: 'amming',
           varighet: a.varighet ? `${a.varighet} min` : null,
         }));
+
+        const { data: bleier } = await supabase
+  .from('bleie')
+  .select('*')
+  .eq('profil_id', bruker.id)
+  .eq('dato', dagensdato)
+  .order('tidspunkt', { ascending: false });
+
+const bleieItems = (bleier || []).map((b: any) => ({
+  tid: b.tidspunkt,
+  tekst: `Bleie · ${b.type}`,
+  type: 'bleie',
+  varighet: null,
+}));
       
         // Slå sammen og sorter på tid
-        const alle = [...lurItems, ...ammingItems].sort((a, b) => {
-          if (!a.tid || !b.tid) return 0;
-          return b.tid.localeCompare(a.tid);
-        });
+        const alle = [...lurItems, ...ammingItems, ...bleieItems].sort((a, b) => {
+            if (!a.tid || !b.tid) return 0;
+            return b.tid.localeCompare(a.tid);
+          });
       
         setDagensFlyt(alle);
       };
