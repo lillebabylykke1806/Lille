@@ -304,40 +304,49 @@ const bleieItems = (bleier || []).map((b: any) => ({
         ))}
       </div>
 
-      {/* Dagens flyt */}
-      <div style={{ padding: '0 24px 32px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-          <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
-          <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
-        </div>
+  {/* Dagens flyt */}
+<div style={{ padding: '0 24px 32px' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
+    <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
+  </div>
 
-        <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
-          {dagensFlyt.length === 0 ? (
-            <div style={{ padding: '28px 24px', textAlign: 'center' }}>
-              <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>Ingen registreringer ennå i dag</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>Trykk + for å begynne</div>
-            </div>
-          ) : (
-            dagensFlyt.map((item: any, i) => (
-              <div key={i} style={{ position: 'relative' }}>
-                {i < dagensFlyt.length - 1 && (
-                  <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
-                )}
-                <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <IkonKomponent type={item.type} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
-                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>{item.tid}</div>
-                  </div>
-                  {item.varighet && (
-                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+  <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
+    {dagensFlyt.length === 0 ? (
+      <div style={{ padding: '28px 24px', textAlign: 'center' }}>
+        <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>Ingen registreringer ennå i dag</div>
+        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>Trykk + for å begynne</div>
       </div>
+    ) : (
+      <>
+        {dagensFlyt.slice(0, 5).map((item: any, i) => (
+          <div key={i} style={{ position: 'relative' }}>
+            {i < Math.min(dagensFlyt.length, 5) - 1 && (
+              <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
+            )}
+            <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <IkonKomponent type={item.type} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>{item.tid}</div>
+              </div>
+              {item.varighet && (
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
+              )}
+            </div>
+          </div>
+        ))}
+ {dagensFlyt.length > 5 && (
+          <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+              + {dagensFlyt.length - 5} flere – trykk «Se dagbok» for full oversikt
+            </div>
+          </div>
+        )}
+      </>
+    )}
+  </div>
+</div>
 
     </div>
   );
