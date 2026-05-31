@@ -338,8 +338,10 @@ const bleieItems = (bleier || []).map((b: any) => ({
         ))}
  {dagensFlyt.length > 5 && (
           <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-              + {dagensFlyt.length - 5} flere – trykk «Se dagbok» for full oversikt
+           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
+  +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag<br/>
+  Se dagbok for full oversikt
+
             </div>
           </div>
         )}
