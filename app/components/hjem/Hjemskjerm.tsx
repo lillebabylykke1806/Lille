@@ -107,22 +107,46 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
     };
 
     const lastDagensFlyt = async () => {
-      const dagensdato = new Date().toISOString().split('T')[0];
-      const { data } = await supabase
-        .from('lurer')
-        .select('*')
-        .eq('profil_id', bruker.id)
-        .eq('dato', dagensdato)
-        .order('start', { ascending: false });
-      if (!data) return;
-      const items = data.map((l: any) => ({
-        tid: l.start,
-        tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.type === 'amming' ? 'Amming' : l.tekst || l.type,
-        type: l.type,
-        varighet: l.varighet ? `${l.varighet} min` : null,
-      }));
-      setDagensFlyt(items);
-    };
+        const dagensdato = new Date().toISOString().split('T')[0];
+        
+        // Hent lurer
+        const { data: lurer } = await supabase
+          .from('lurer')
+          .select('*')
+          .eq('profil_id', bruker.id)
+          .eq('dato', dagensdato)
+          .order('start', { ascending: false });
+      
+        // Hent amming
+        const { data: amming } = await supabase
+          .from('amming')
+          .select('*')
+          .eq('profil_id', bruker.id)
+          .eq('dato', dagensdato)
+          .order('start', { ascending: false });
+      
+        const lurItems = (lurer || []).map((l: any) => ({
+          tid: l.start,
+          tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.tekst || l.type,
+          type: l.type,
+          varighet: l.varighet ? `${l.varighet} min` : null,
+        }));
+      
+        const ammingItems = (amming || []).map((a: any) => ({
+          tid: a.start,
+          tekst: `Amming · ${a.bryst === 'venstre' ? 'venstre' : 'høyre'} bryst`,
+          type: 'amming',
+          varighet: a.varighet ? `${a.varighet} min` : null,
+        }));
+      
+        // Slå sammen og sorter på tid
+        const alle = [...lurItems, ...ammingItems].sort((a, b) => {
+          if (!a.tid || !b.tid) return 0;
+          return b.tid.localeCompare(a.tid);
+        });
+      
+        setDagensFlyt(alle);
+      };
 
     lastProfil();
     lastDagensFlyt();
