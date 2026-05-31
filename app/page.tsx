@@ -123,7 +123,6 @@ export default function Home() {
           <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'sovn' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'sovn' ? '600' : '400' }}>Søvn</span>
         </button>
 
-        {/* + Knapp */}
         <button onClick={() => setVisRegistrer(!visRegistrer)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0' }}>
           <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønn, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-20px', boxShadow: '0 4px 12px rgba(45,92,69,0.35)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -150,7 +149,6 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Viftemeny */}
       {visRegistrer && (
         <Viftemeny
           bruker={bruker}
