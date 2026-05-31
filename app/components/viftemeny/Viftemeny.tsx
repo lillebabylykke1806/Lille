@@ -73,10 +73,7 @@ const IkonKomponent = ({ id }: { id: string }) => {
     </svg>
   );
   if (id === 'aktivitet') return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <path d="M12 22C12 22 4 16 4 9C4 5 7 3 10 3C11.5 3 12 4 12 4C12 4 12.5 3 14 3C17 3 20 5 20 9C20 16 12 22 12 22Z" stroke={farger.grønn} strokeWidth="1.5" fill="none"/>
-      <path d="M12 4C12 4 9 8 9 12C9 15 11 17 12 18" stroke={farger.grønn} strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
-    </svg>
+    <img src="/blad.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
   );
   if (id === 'notat') return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
