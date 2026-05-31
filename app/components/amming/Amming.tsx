@@ -179,9 +179,9 @@ export default function Amming({ bruker }: Props) {
           </button>
 
           {/* Avslutt */}
-          <button onClick={avsluttAmming} disabled={laster} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            {laster ? 'Lagrer...' : 'Avslutt amming'}
-          </button>
+          <button onClick={avsluttAmming} disabled={laster} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+  {laster ? 'Lagrer...' : 'Avslutt amming'}
+</button>
         </div>
       )}
 
@@ -225,18 +225,12 @@ export default function Amming({ bruker }: Props) {
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px', textAlign: 'center' }}>
                   Anbefalt neste bryst
                 </div>
-                <button
-                  onClick={() => startAmming(anbefalingBryst as 'venstre' | 'høyre')}
-                  style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}
-                >
-                  🤍 Start med {anbefalingBryst === 'venstre' ? 'venstre' : 'høyre'} bryst
-                </button>
-                <button
-                  onClick={() => startAmming(motattBryst(anbefalingBryst) as 'venstre' | 'høyre')}
-                  style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '13px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
-                >
-                  Eller start med {motattBryst(anbefalingBryst) === 'venstre' ? 'venstre' : 'høyre'} bryst
-                </button>
+                <button onClick={() => startAmming(anbefalingBryst as 'venstre' | 'høyre')} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
+  🤍 Start med {anbefalingBryst === 'venstre' ? 'venstre' : 'høyre'} bryst
+</button>
+<button onClick={() => startAmming(motattBryst(anbefalingBryst) as 'venstre' | 'høyre')} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '13px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+  Eller start med {motattBryst(anbefalingBryst) === 'venstre' ? 'venstre' : 'høyre'} bryst
+</button>
               </>
             ) : (
               <>
