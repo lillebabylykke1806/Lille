@@ -15,16 +15,39 @@ type BleieLogg = {
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
 const BLEIE_TYPER = [
-  { id: 'våt', label: 'Våt', emoji: '💧', farge: '#E8F0F8', tekstFarge: '#4A7BAF' },
-  { id: 'skitten', label: 'Skitten', emoji: '💩', farge: '#F5EDE0', tekstFarge: '#8B6340' },
-  { id: 'begge', label: 'Begge', emoji: '💧💩', farge: '#EDE8F5', tekstFarge: '#6B4AAF' },
-  { id: 'tørr', label: 'Tørr', emoji: '✨', farge: '#E8F5EC', tekstFarge: '#2D5C45' },
+  { id: 'våt', label: 'Våt' },
+  { id: 'tørr', label: 'Tørr' },
+  { id: 'avføring', label: 'Avføring' },
 ];
+
+const BleieIkon = ({ type, aktiv }: { type: string; aktiv: boolean }) => {
+  const farge = aktiv ? farger.grønn : farger.tekstLys;
+  if (type === 'våt') return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+      <path d="M12 3C12 3 5 10 5 15C5 18.87 8.13 22 12 22C15.87 22 19 18.87 19 15C19 10 12 3 12 3Z" stroke={farge} strokeWidth="1.5" fill={aktiv ? `${farger.grønn}20` : 'none'}/>
+      <path d="M9 15C9 15 10 18 12 18" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+  if (type === 'tørr') return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+      <path d="M12 3L14.5 8.5L20.5 9.3L16.3 13.4L17.3 19.4L12 16.6L6.7 19.4L7.7 13.4L3.5 9.3L9.5 8.5L12 3Z" stroke={farge} strokeWidth="1.5" fill={aktiv ? `${farger.grønn}20` : 'none'} strokeLinejoin="round"/>
+    </svg>
+  );
+  if (type === 'avføring') return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="14" r="5" stroke={farge} strokeWidth="1.5" fill={aktiv ? `${farger.grønn}20` : 'none'}/>
+      <path d="M9 11C9 11 8 8 10 7C12 6 13 8 15 7C17 6 17 9 17 9" stroke={farge} strokeWidth="1.3" strokeLinecap="round" fill="none"/>
+    </svg>
+  );
+  return <div style={{ width: 28, height: 28 }} />;
+};
 
 export default function Bleie({ bruker }: Props) {
   const [logg, setLogg] = useState<BleieLogg[]>([]);
-  const [lagrer, setLagrer] = useState<string | null>(null);
-  const [visBekreftet, setVisBekreftet] = useState<string | null>(null);
+  const [valgt, setValgt] = useState<string | null>(null);
+  const [notat, setNotat] = useState('');
+  const [lagrer, setLagrer] = useState(false);
+  const [visBekreftet, setVisBekreftet] = useState(false);
 
   const lastLogg = useCallback(async () => {
     const { data } = await supabase
@@ -40,18 +63,22 @@ export default function Bleie({ bruker }: Props) {
     lastLogg();
   }, [lastLogg]);
 
-  const registrerBleie = async (type: string) => {
-    setLagrer(type);
+  const registrerBleie = async () => {
+    if (!valgt) return;
+    setLagrer(true);
     const tidspunkt = new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
     await supabase.from('bleie').insert({
       profil_id: bruker?.id,
       dato: dagensdato(),
-      type,
+      type: valgt,
       tidspunkt,
+      notat,
     });
-    setLagrer(null);
-    setVisBekreftet(type);
-    setTimeout(() => setVisBekreftet(null), 2000);
+    setLagrer(false);
+    setVisBekreftet(true);
+    setValgt(null);
+    setNotat('');
+    setTimeout(() => setVisBekreftet(false), 2000);
     lastLogg();
   };
 
@@ -74,19 +101,17 @@ export default function Bleie({ bruker }: Props) {
       {/* Bekreftelses-animasjon */}
       {visBekreftet && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', padding: '20px 32px', zIndex: 200, textAlign: 'center', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
-          <div style={{ fontSize: '32px', marginBottom: '8px' }}>✓</div>
+          <div style={{ fontSize: '32px', marginBottom: '8px', color: farger.grønn }}>✓</div>
           <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>Registrert!</div>
         </div>
       )}
 
       {/* Siste bytte */}
       {sisteBytte && (
-        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px', marginBottom: '16px' }}>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>Siste bleieskift</div>
+        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px', marginBottom: '12px' }}>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Siste bleieskift</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ fontSize: '28px' }}>
-              {BLEIE_TYPER.find(b => b.id === sisteBytte.type)?.emoji || '👶'}
-            </div>
+            <BleieIkon type={sisteBytte.type} aktiv={true} />
             <div>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>
                 {BLEIE_TYPER.find(b => b.id === sisteBytte.type)?.label || sisteBytte.type}
@@ -106,45 +131,69 @@ export default function Bleie({ bruker }: Props) {
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
             {antallBleier >= 6
               ? `${antallBleier} bleieskift i dag – flott oversikt! 🤍`
-              : antallBleier === 1
-              ? `1 bleieskift registrert i dag.`
               : `${antallBleier} bleieskift registrert i dag.`}
           </div>
         </div>
       )}
 
       {/* Registrer */}
-      <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
-        <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '16px', textAlign: 'center' }}>
-          Hva slags bleie?
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
+        
+        {/* Type */}
+        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>Type</div>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
           {BLEIE_TYPER.map(type => (
             <button
               key={type.id}
-              onClick={() => registrerBleie(type.id)}
-              disabled={lagrer !== null}
+              onClick={() => setValgt(type.id)}
               style={{
-                padding: '20px 12px',
-                backgroundColor: lagrer === type.id ? farger.grønnLys : type.farge,
-                border: `1.5px solid ${lagrer === type.id ? farger.grønn : 'transparent'}`,
-                borderRadius: '16px',
+                flex: 1,
+                padding: '14px 8px',
+                backgroundColor: valgt === type.id ? farger.grønnLys : farger.bakgrunn,
+                border: `1.5px solid ${valgt === type.id ? farger.grønn : farger.kremMørk}`,
+                borderRadius: '14px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '8px',
-                cursor: lagrer !== null ? 'not-allowed' : 'pointer',
-                opacity: lagrer !== null && lagrer !== type.id ? 0.6 : 1,
+                cursor: 'pointer',
                 transition: 'all 0.2s ease',
               }}
             >
-              <div style={{ fontSize: '32px' }}>{type.emoji}</div>
-              <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: type.tekstFarge, fontWeight: '600' }}>
-                {lagrer === type.id ? 'Lagrer...' : type.label}
+              <BleieIkon type={type.id} aktiv={valgt === type.id} />
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: valgt === type.id ? farger.grønn : farger.tekst, fontWeight: valgt === type.id ? '600' : '400' }}>
+                {type.label}
               </div>
             </button>
           ))}
         </div>
+
+        {/* Tidspunkt */}
+        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Tidspunkt</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: farger.bakgrunn, borderRadius: '12px', marginBottom: '20px' }}>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Nå</div>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
+            {new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
+          </div>
+        </div>
+
+        {/* Notat */}
+        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Bleie (valgfritt)</div>
+        <textarea
+          value={notat}
+          onChange={e => setNotat(e.target.value)}
+          placeholder="Skriv en liten notat..."
+          style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '80px', boxSizing: 'border-box' }}
+        />
+
+        {/* Lagre */}
+        <button
+          onClick={registrerBleie}
+          disabled={!valgt || lagrer}
+          style={{ width: '100%', padding: '16px', marginTop: '16px', backgroundColor: valgt ? farger.grønnLys : farger.kremMørk, border: `1px solid ${valgt ? farger.grønn : 'transparent'}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: valgt ? farger.grønn : farger.tekstLys, cursor: valgt ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}
+        >
+          {lagrer ? 'Lagrer...' : 'Lagre'}
+        </button>
       </div>
 
       {/* Logg */}
@@ -155,24 +204,21 @@ export default function Bleie({ bruker }: Props) {
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{antallBleier} totalt</div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {logg.map((l, i) => {
-              const type = BLEIE_TYPER.find(b => b.id === l.type);
-              return (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: farger.bakgrunn, borderRadius: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ fontSize: '20px' }}>{type?.emoji || '👶'}</div>
-                    <div>
-                      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
-                        {type?.label || l.type}
-                      </div>
-                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                        {l.tidspunkt}
-                      </div>
+            {logg.map((l, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: farger.bakgrunn, borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <BleieIkon type={l.type} aktiv={false} />
+                  <div>
+                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
+                      {BLEIE_TYPER.find(b => b.id === l.type)?.label || l.type}
+                    </div>
+                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+                      {l.tidspunkt}
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       )}
