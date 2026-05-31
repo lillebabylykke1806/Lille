@@ -12,7 +12,7 @@ type Props = {
 const ALLE_SIDER: Record<string, { label: string; bygget: boolean }> = {
   sovn: { label: 'Søvn / lur', bygget: true },
   amming: { label: 'Amming', bygget: true },
-  bleie: { label: 'Bleie', bygget: false },
+  bleie: { label: 'Bleie', bygget: true },
   medisin: { label: 'Medisin', bygget: false },
   signaler: { label: 'Signaler', bygget: false },
   pumping: { label: 'Pumping', bygget: false },
