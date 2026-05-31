@@ -43,6 +43,7 @@ const IkonKomponent = ({ id }: { id: string }) => {
   const farge = farger.grønn;
   if (id === 'amming' || id === 'pumping') return (
     <img src="/tateflaske.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
+
   );
   if (id === 'bleie') return (
     <img src="/bleie.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
@@ -73,7 +74,8 @@ const IkonKomponent = ({ id }: { id: string }) => {
   );
   if (id === 'aktivitet') return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <path d="M12 20C12 20 5 14 5 9C5 6 7 4 9.5 4C10.8 4 12 5 12 5C12 5 13.2 4 14.5 4C17 4 19 6 19 9C19 14 12 20 12 20Z" stroke={farge} strokeWidth="1.5" fill="none"/>
+      <path d="M12 22C12 22 4 16 4 9C4 5 7 3 10 3C11.5 3 12 4 12 4C12 4 12.5 3 14 3C17 3 20 5 20 9C20 16 12 22 12 22Z" stroke={farger.grønn} strokeWidth="1.5" fill="none"/>
+      <path d="M12 4C12 4 9 8 9 12C9 15 11 17 12 18" stroke={farger.grønn} strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
     </svg>
   );
   if (id === 'notat') return (
@@ -272,7 +274,7 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
             </svg>
             <div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Dine favoritter</div>
-            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Velg hvilke snarveier du vil ha i menyen</div>
+<div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Velg hvilke snarveier du vil ha i menyen</div>
             </div>
           </div>
           <button onClick={e => { e.stopPropagation(); setVisVelgFavoritter(true); }} style={{ padding: '6px 14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', cursor: 'pointer' }}>
