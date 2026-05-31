@@ -7,6 +7,7 @@ import Profil from './components/hjem/profil';
 import Sovn from './components/sovn/sovn';
 import Onboarding from './components/onboarding/Onboarding';
 import Viftemeny from './components/viftemeny/Viftemeny';
+import Amming from './components/amming/Amming';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -101,7 +102,7 @@ export default function Home() {
         {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} onNavigate={setAktivSide} />}
         {aktivSide === 'sovn' && <Sovn bruker={bruker} />}
         {aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
-        {aktivSide === 'amming' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Amming kommer her</p></div>}
+        {aktivSide === 'amming' && <Amming bruker={bruker} />}
         {aktivSide === 'innsikt' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Innsikt kommer her</p></div>}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
