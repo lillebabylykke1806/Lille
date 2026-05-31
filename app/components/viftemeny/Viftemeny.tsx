@@ -42,10 +42,11 @@ const bgFarger: Record<string, string> = {
 const IkonKomponent = ({ id }: { id: string }) => {
   const farge = farger.grønn;
   if (id === 'amming' || id === 'pumping') return (
-    <img src="/tateflaske-mork.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
+    <img src="/tateflaske-mork.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   if (id === 'bleie') return (
-    <img src="/bleie.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
+    <img src="/bleie.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
+
   );
   if (id === 'sovn') return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
