@@ -111,14 +111,14 @@ export default function Amming({ bruker }: Props) {
       <style>{pulsAnimasjon}</style>
 
       {/* Header */}
-      <div style={{ marginBottom: '20px' }}>
-        <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          Amming
-        </div>
-        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-          Registrer og følg ammingen
-        </div>
-      </div>
+      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+  <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
+    Amming
+  </div>
+  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+    Registrer og følg ammingen
+  </div>
+</div>
 
       {/* AKTIV AMMING */}
       {fase === 'aktiv' && (
