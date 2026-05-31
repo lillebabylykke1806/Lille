@@ -34,10 +34,7 @@ const BleieIkon = ({ type, aktiv }: { type: string; aktiv: boolean }) => {
     </svg>
   );
   if (type === 'avføring') return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="14" r="5" stroke={farge} strokeWidth="1.5" fill={aktiv ? `${farger.grønn}20` : 'none'}/>
-      <path d="M9 11C9 11 8 8 10 7C12 6 13 8 15 7C17 6 17 9 17 9" stroke={farge} strokeWidth="1.3" strokeLinecap="round" fill="none"/>
-    </svg>
+    <img src="/bleie.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
   );
   return <div style={{ width: 28, height: 28 }} />;
 };
