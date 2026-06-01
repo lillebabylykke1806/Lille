@@ -9,6 +9,7 @@ import Onboarding from './components/onboarding/Onboarding';
 import Viftemeny from './components/viftemeny/Viftemeny';
 import Amming from './components/amming/Amming';
 import Bleie from './components/bleie/Bleie';
+import Innsikt from './components/innsikt/Innsikt';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -105,7 +106,7 @@ export default function Home() {
         {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
 {aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
         {aktivSide === 'amming' && <Amming bruker={bruker} />}
-        {aktivSide === 'innsikt' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Innsikt kommer her</p></div>}
+        {aktivSide === 'innsikt' && <Innsikt bruker={bruker} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 
