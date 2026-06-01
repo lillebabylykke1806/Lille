@@ -154,17 +154,24 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
               const valgt = alleFavoritter.includes(id);
               const deaktivert = alleFavoritter.length >= 6 && !valgt;
               return (
-                <button key={id} onClick={() => toggleFavoritt(id)} style={{ padding: '14px 16px', backgroundColor: valgt ? `${farger.grønn}18` : farger.bakgrunn, border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '14px', cursor: deaktivert ? 'not-allowed' : 'pointer', opacity: deaktivert ? 0.4 : 1, textAlign: 'left', width: '100%' }}>
-                  <IkonKomponent id={id} />
-                  <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: valgt ? farger.grønn : farger.tekst, fontWeight: valgt ? '600' : '400', flex: 1 }}>{info.label}</span>
-                  {valgt && (
-                    <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: farger.grønn, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                  )}
-                </button>
+                <button key={id} style={{ padding: '14px 16px', backgroundColor: valgt ? `${farger.grønn}18` : farger.bakgrunn, border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '14px', textAlign: 'left', width: '100%' }}>
+  <div onClick={() => { if (info.bygget) { onNavigate(id); onLukk(); }}} style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, cursor: info.bygget ? 'pointer' : 'default' }}>
+    <IkonKomponent id={id} />
+    <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: valgt ? farger.grønn : farger.tekst, fontWeight: valgt ? '600' : '400', flex: 1 }}>
+      {info.label}
+      {!info.bygget && <span style={{ fontSize: '10px', color: farger.tekstLys }}> · kommer snart</span>}
+    </span>
+  </div>
+  <div onClick={() => toggleFavoritt(id)} style={{ cursor: deaktivert ? 'not-allowed' : 'pointer', opacity: deaktivert ? 0.4 : 1, flexShrink: 0 }}>
+    <div style={{ width: '22px', height: '22px', borderRadius: '50%', border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, backgroundColor: valgt ? farger.grønn : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {valgt && (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )}
+    </div>
+  </div>
+</button>
               );
             })}
           </div>
