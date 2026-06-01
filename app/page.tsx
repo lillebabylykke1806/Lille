@@ -12,6 +12,7 @@ import Bleie from './components/bleie/Bleie';
 import Innsikt from './components/innsikt/Innsikt';
 import Medisin from './components/medisin/Medisin';
 import Notat from './components/notat/Notat';
+import Aktivitet from './components/aktivitet/Aktivitet';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -111,6 +112,7 @@ export default function Home() {
         {aktivSide === 'innsikt' && <Innsikt bruker={bruker} />}
         {aktivSide === 'medisin' && <Medisin bruker={bruker} />}
         {aktivSide === 'notat' && <Notat bruker={bruker} />}
+        {aktivSide === 'aktivitet' && <Aktivitet bruker={bruker} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 
