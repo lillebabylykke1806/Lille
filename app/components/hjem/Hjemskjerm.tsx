@@ -410,6 +410,10 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         ))}
       </div>
 
+      <div style={{ padding: '0 24px', fontSize: '12px', color: 'red' }}>
+  NesteLur: {JSON.stringify(nesteLur)}
+</div>
+
       {/* Neste lur-kort */}
       {nesteLur && (
         <div style={{ padding: '0 24px 16px' }}>
