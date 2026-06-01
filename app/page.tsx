@@ -11,6 +11,7 @@ import Amming from './components/amming/Amming';
 import Bleie from './components/bleie/Bleie';
 import Innsikt from './components/innsikt/Innsikt';
 import Medisin from './components/medisin/Medisin';
+import Notat from './components/notat/Notat';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -109,6 +110,7 @@ export default function Home() {
         {aktivSide === 'amming' && <Amming bruker={bruker} />}
         {aktivSide === 'innsikt' && <Innsikt bruker={bruker} />}
         {aktivSide === 'medisin' && <Medisin bruker={bruker} />}
+        {aktivSide === 'notat' && <Notat bruker={bruker} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 

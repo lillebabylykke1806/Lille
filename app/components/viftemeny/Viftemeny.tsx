@@ -18,7 +18,7 @@ const ALLE_SIDER: Record<string, { label: string; bygget: boolean }> = {
   pumping: { label: 'Pumping', bygget: false },
   mat: { label: 'Mat', bygget: false },
   aktivitet: { label: 'Aktivitet', bygget: false },
-  notat: { label: 'Notat', bygget: false },
+  notat: { label: 'Notat', bygget: true },
   temperatur: { label: 'Temperatur', bygget: false },
   vaksine: { label: 'Vaksine', bygget: false },
   vekt: { label: 'Vekt', bygget: false },
