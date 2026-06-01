@@ -108,8 +108,7 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   else if (alder < 9) våkenvindu = 150;
   else if (alder < 12) våkenvindu = 180;
   else våkenvindu = 210;
-
-  const sisteOppvåkning = lurer
+  
   const sisteOppvåkning = [...(lurer || [])]
   .sort((a: any, b: any) => b.start?.localeCompare(a.start))[0];
 
