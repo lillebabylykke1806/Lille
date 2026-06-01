@@ -108,7 +108,7 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   else if (alder < 9) våkenvindu = 150;
   else if (alder < 12) våkenvindu = 180;
   else våkenvindu = 210;
-  
+
   const sisteOppvåkning = [...(lurer || [])]
   .sort((a: any, b: any) => b.start?.localeCompare(a.start))[0];
 
@@ -409,10 +409,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         ))}
       </div>
 
-      <div style={{ padding: '0 24px', fontSize: '12px', color: 'red' }}>
-  NesteLur: {JSON.stringify(nesteLur)}
-</div>
-
+   
       {/* Neste lur-kort */}
       {nesteLur && (
         <div style={{ padding: '0 24px 16px' }}>
