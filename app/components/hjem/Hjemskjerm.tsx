@@ -72,6 +72,11 @@ const IkonKomponent = ({ type }: { type: string }) => {
       </svg>
     </div>
   );
+  if (type === 'bleie') return (
+    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#E8F0E8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/bleie.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+    </div>
+  );
   if (type === 'uro') return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#FFE8E8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -88,89 +93,136 @@ const IkonKomponent = ({ type }: { type: string }) => {
   );
 };
 
+const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
+  const alderIMnd = () => {
+    if (!fødselsdato) return 3;
+    const nå = new Date();
+    const født = new Date(fødselsdato);
+    return (nå.getFullYear() - født.getFullYear()) * 12 + (nå.getMonth() - født.getMonth());
+  };
+  const alder = alderIMnd();
+  let våkenvindu = 90;
+  if (alder < 2) våkenvindu = 45;
+  else if (alder < 4) våkenvindu = 75;
+  else if (alder < 6) våkenvindu = 120;
+  else if (alder < 9) våkenvindu = 150;
+  else if (alder < 12) våkenvindu = 180;
+  else våkenvindu = 210;
+
+  const sisteOppvåkning = lurer
+    ?.filter((l: any) => l.type === 'oppvåkning')
+    ?.sort((a: any, b: any) => b.start?.localeCompare(a.start))[0];
+
+  if (!sisteOppvåkning?.start) return null;
+
+  const [timer, minutter] = sisteOppvåkning.start.split(':').map(Number);
+  const oppvåkningTid = new Date();
+  oppvåkningTid.setHours(timer, minutter, 0, 0);
+
+  const nesteLurTid = new Date(oppvåkningTid.getTime() + våkenvindu * 60000);
+  const nå = new Date();
+  const omMinutter = Math.round((nesteLurTid.getTime() - nå.getTime()) / 60000);
+
+  if (omMinutter < -30) return null;
+
+  const klokkeslett = nesteLurTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+  const nåTimer = nå.getHours();
+  const erLeggetid = nåTimer >= 18 || nesteLurTid.getHours() >= 18;
+
+  const omTekst = omMinutter <= 0
+    ? 'Nå!'
+    : omMinutter < 60
+    ? `Om ca. ${omMinutter} min`
+    : `Om ca. ${Math.floor(omMinutter / 60)}t ${omMinutter % 60 > 0 ? `${omMinutter % 60}min` : ''}`;
+
+  return { tid: klokkeslett, om: omTekst, type: erLeggetid ? 'natt' as const : 'lur' as const };
+};
+
 const AIInnsiktKort = ({ bruker, babyNavn, onNavigate }: { bruker: any; babyNavn: string; onNavigate: (side: string) => void }) => {
-    const [innsikt, setInnsikt] = useState('');
-    const [laster, setLaster] = useState(false);
-  
-    useEffect(() => {
-      const hentInnsikt = async () => {
-        setLaster(true);
-        const fraDate = new Date();
-        fraDate.setDate(fraDate.getDate() - 3);
-        const fra = fraDate.toISOString().split('T')[0];
-  
-        const [lurer, amming] = await Promise.all([
-          supabase.from('lurer').select('*').eq('profil_id', bruker.id).gte('dato', fra),
-          supabase.from('amming').select('*').eq('profil_id', bruker.id).gte('dato', fra),
-        ]);
-  
-        if (!lurer.data?.length && !amming.data?.length) {
-          setInnsikt(`Begynn å registrere for å få personlige innsikter om ${babyNavn} ✨`);
-          setLaster(false);
-          return;
-        }
-  
-        try {
-          const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              model: 'claude-sonnet-4-20250514',
-              max_tokens: 150,
-              messages: [{
-                role: 'user',
-                content: `Du er en varm babyekspert i appen Lille. Gi ÉN kort og personlig innsikt på norsk basert på disse dataene. Maks 1-2 setninger. Bruk babyens navn ${babyNavn}. Vær varm og konkret.
-  
-  Søvndata siste 3 dager: ${JSON.stringify(lurer.data?.slice(0, 10))}
-  Ammingdata siste 3 dager: ${JSON.stringify(amming.data?.slice(0, 10))}
-  
-  Svar kun med innsikten, ingen introduksjon.`
-              }],
-            }),
-          });
-          const result = await response.json();
-          const tekst = result.content?.[0]?.text || '';
-          setInnsikt(tekst);
-        } catch {
-          setInnsikt(`Registrer søvn og amming for å få personlige innsikter om ${babyNavn} ✨`);
-        }
+  const [innsikt, setInnsikt] = useState('');
+  const [laster, setLaster] = useState(false);
+
+  useEffect(() => {
+    const hentInnsikt = async () => {
+      setLaster(true);
+      const fraDate = new Date();
+      fraDate.setDate(fraDate.getDate() - 3);
+      const fra = fraDate.toISOString().split('T')[0];
+
+      const [lurer, amming] = await Promise.all([
+        supabase.from('lurer').select('*').eq('profil_id', bruker.id).gte('dato', fra),
+        supabase.from('amming').select('*').eq('profil_id', bruker.id).gte('dato', fra),
+      ]);
+
+      if (!lurer.data?.length && !amming.data?.length) {
+        setInnsikt(`Begynn å registrere for å få personlige innsikter om ${babyNavn} ✨`);
         setLaster(false);
-      };
-  
-      if (babyNavn) hentInnsikt();
-    }, [bruker.id, babyNavn]);
-  
-    return (
-      <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-          <div style={{ fontSize: '20px', flexShrink: 0 }}>✨</div>
-          <div style={{ flex: 1 }}>
-            {laster ? (
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>
-                Analyserer {babyNavn}s mønstre...
-              </div>
-            ) : (
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
-                {innsikt}
-              </div>
-            )}
-            <button onClick={() => onNavigate('innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', fontWeight: 500, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-              Se alle innsikter
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
+        return;
+      }
+
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 150,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Gi ÉN kort og personlig innsikt på norsk basert på disse dataene. Maks 1-2 setninger. Bruk babyens navn ${babyNavn}. Vær varm og konkret.
+
+Søvndata siste 3 dager: ${JSON.stringify(lurer.data?.slice(0, 10))}
+Ammingdata siste 3 dager: ${JSON.stringify(amming.data?.slice(0, 10))}
+
+Svar kun med innsikten, ingen introduksjon.`
+            }],
+          }),
+        });
+        const result = await response.json();
+        const tekst = result.content?.[0]?.text || '';
+        setInnsikt(tekst);
+      } catch {
+        setInnsikt(`Registrer søvn og amming for å få personlige innsikter om ${babyNavn} ✨`);
+      }
+      setLaster(false);
+    };
+
+    if (babyNavn) hentInnsikt();
+  }, [bruker.id, babyNavn]);
+
+  return (
+    <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+        <div style={{ fontSize: '20px', flexShrink: 0 }}>✨</div>
+        <div style={{ flex: 1 }}>
+          {laster ? (
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>
+              Analyserer {babyNavn}s mønstre...
+            </div>
+          ) : (
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
+              {innsikt}
+            </div>
+          )}
+          <button onClick={() => onNavigate('innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', fontWeight: 500, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+            Se alle innsikter
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </div>
       </div>
-    );
-  };
-  
+    </div>
+  );
+};
+
 export default function Hjemskjerm({ bruker, onNavigate }: Props) {
   const [babyNavn, setBabyNavn] = useState('');
+  const [fødselsdato, setFødselsdato] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [dagensFlyt, setDagensFlyt] = useState<any[]>([]);
+  const [nesteLur, setNesteLur] = useState<{ tid: string; om: string; type: 'lur' | 'natt' } | null>(null);
 
   useEffect(() => {
     const lastProfil = async () => {
@@ -180,65 +232,53 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         .eq('id', bruker.id)
         .single();
       if (profil?.baby_navn) setBabyNavn(profil.baby_navn);
+      if (profil?.fødselsdato) setFødselsdato(profil.fødselsdato);
       const lagretBilde = localStorage.getItem('lille_babybilde');
       if (lagretBilde) setBabyBilde(lagretBilde);
     };
 
     const lastDagensFlyt = async () => {
-        const dagensdato = new Date().toISOString().split('T')[0];
-        
-        // Hent lurer
-        const { data: lurer } = await supabase
-          .from('lurer')
-          .select('*')
-          .eq('profil_id', bruker.id)
-          .eq('dato', dagensdato)
-          .order('start', { ascending: false });
-      
-        // Hent amming
-        const { data: amming } = await supabase
-          .from('amming')
-          .select('*')
-          .eq('profil_id', bruker.id)
-          .eq('dato', dagensdato)
-          .order('start', { ascending: false });
-      
-        const lurItems = (lurer || []).map((l: any) => ({
-          tid: l.start,
-          tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.tekst || l.type,
-          type: l.type,
-          varighet: l.varighet ? `${l.varighet} min` : null,
-        }));
-      
-        const ammingItems = (amming || []).map((a: any) => ({
-          tid: a.start,
-          tekst: `Amming · ${a.bryst === 'venstre' ? 'venstre' : 'høyre'} bryst`,
-          type: 'amming',
-          varighet: a.varighet ? `${a.varighet} min` : null,
-        }));
+      const dagensdato = new Date().toISOString().split('T')[0];
 
-        const { data: bleier } = await supabase
-  .from('bleie')
-  .select('*')
-  .eq('profil_id', bruker.id)
-  .eq('dato', dagensdato)
-  .order('tidspunkt', { ascending: false });
+      const [lurRes, ammingRes, bleieRes] = await Promise.all([
+        supabase.from('lurer').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('amming').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('bleie').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
+      ]);
 
-const bleieItems = (bleier || []).map((b: any) => ({
-  tid: b.tidspunkt,
-  tekst: `Bleie · ${b.type}`,
-  type: 'bleie',
-  varighet: null,
-}));
-      
-        // Slå sammen og sorter på tid
-        const alle = [...lurItems, ...ammingItems, ...bleieItems].sort((a, b) => {
-            if (!a.tid || !b.tid) return 0;
-            return b.tid.localeCompare(a.tid);
-          });
-      
-        setDagensFlyt(alle);
-      };
+      const lurItems = (lurRes.data || []).map((l: any) => ({
+        tid: l.start,
+        tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.tekst || l.type,
+        type: l.type,
+        varighet: l.varighet ? `${l.varighet} min` : null,
+      }));
+
+      const ammingItems = (ammingRes.data || []).map((a: any) => ({
+        tid: a.start,
+        tekst: `Amming · ${a.bryst === 'venstre' ? 'venstre' : 'høyre'} bryst`,
+        type: 'amming',
+        varighet: a.varighet ? `${a.varighet} min` : null,
+      }));
+
+      const bleieItems = (bleieRes.data || []).map((b: any) => ({
+        tid: b.tidspunkt,
+        tekst: `Bleie · ${b.type}`,
+        type: 'bleie',
+        varighet: null,
+      }));
+
+      const alle = [...lurItems, ...ammingItems, ...bleieItems].sort((a, b) => {
+        if (!a.tid || !b.tid) return 0;
+        return b.tid.localeCompare(a.tid);
+      });
+
+      setDagensFlyt(alle);
+
+      // Beregn neste lur
+      const { data: profil } = await supabase.from('profiler').select('*').eq('id', bruker.id).single();
+      const lurResult = beregnNesteLur(profil?.fødselsdato || '', lurRes.data || []);
+      setNesteLur(lurResult);
+    };
 
     lastProfil();
     lastDagensFlyt();
@@ -246,11 +286,11 @@ const bleieItems = (bleier || []).map((b: any) => ({
     return () => clearInterval(interval);
   }, [bruker]);
 
-  const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string; blobFarge: string }> = {
-    rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2', blobFarge: 'radial-gradient(ellipse at 40% 40%, #D6E5DF 0%, #EBC8B4 60%, #F7F3EC 100%)' },
-    trøtt: { tekst: 'Virker trøtt', undertekst: 'Kanskje tid for en lur snart?', farge: '#C7BDD8', blobFarge: 'radial-gradient(ellipse at 40% 40%, #C7BDD8 0%, #DCCFC0 60%, #F7F3EC 100%)' },
-    urolig: { tekst: 'Litt urolig', undertekst: 'Trenger ro og regulering', farge: '#C48E7B', blobFarge: 'radial-gradient(ellipse at 40% 40%, #EBC8B4 0%, #DCCFC0 50%, #F7F3EC 100%)' },
-    sover: { tekst: 'Sover nå', undertekst: 'Hvil deg du også 🌙', farge: '#A8B5A2', blobFarge: 'radial-gradient(ellipse at 40% 40%, #D6E5DF 0%, #C7BDD8 55%, #F7F3EC 100%)' },
+  const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
+    rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2' },
+    trøtt: { tekst: 'Virker trøtt', undertekst: 'Kanskje tid for en lur snart?', farge: '#C7BDD8' },
+    urolig: { tekst: 'Litt urolig', undertekst: 'Trenger ro og regulering', farge: '#C48E7B' },
+    sover: { tekst: 'Sover nå', undertekst: 'Hvil deg du også 🌙', farge: '#A8B5A2' },
   };
 
   const valgtTilstand = tilstandConfig[babyTilstand] || tilstandConfig.rolig;
@@ -272,8 +312,6 @@ const bleieItems = (bleier || []).map((b: any) => ({
       svg: (
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
           <path d="M22 15C21.2 19 17.5 22 13 22C8 22 4 18 4 13C4 8.5 7.2 4.8 11.5 4C9 6.8 9 11.5 12 14.5C15 17.5 19.5 17.5 22 15Z" fill="#A8B5A2" opacity="0.85"/>
-          <circle cx="20" cy="6" r="1.2" fill="#A8B5A2" opacity="0.4"/>
-          <circle cx="23" cy="10" r="0.8" fill="#A8B5A2" opacity="0.3"/>
         </svg>
       ),
     },
@@ -372,6 +410,45 @@ const bleieItems = (bleier || []).map((b: any) => ({
         ))}
       </div>
 
+      {/* Neste lur-kort */}
+      {nesteLur && (
+        <div style={{ padding: '0 24px 16px' }}>
+          <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
+            {nesteLur.type === 'natt' ? (
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+                </svg>
+              </div>
+            ) : (
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+                  <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+            )}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
+                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
+              </div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
+                {nesteLur.om}
+              </div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+                Vindu ca. {nesteLur.tid}
+              </div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Snarveier */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '28px' }}>
         {snarveier.map(item => (
@@ -382,57 +459,55 @@ const bleieItems = (bleier || []).map((b: any) => ({
         ))}
       </div>
 
-{/* AI-innsikt kort */}
-<div style={{ padding: '0 24px 16px' }}>
-  <AIInnsiktKort bruker={bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
-</div>
-
-  {/* Dagens flyt */}
-<div style={{ padding: '0 24px 32px' }}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
-    <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
-  </div>
-
-  <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
-    {dagensFlyt.length === 0 ? (
-      <div style={{ padding: '28px 24px', textAlign: 'center' }}>
-        <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>Ingen registreringer ennå i dag</div>
-        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>Trykk + for å begynne</div>
+      {/* AI-innsikt kort */}
+      <div style={{ padding: '0 24px 16px' }}>
+        <AIInnsiktKort bruker={bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
       </div>
-    ) : (
-      <>
-        {dagensFlyt.slice(0, 5).map((item: any, i) => (
-          <div key={i} style={{ position: 'relative' }}>
-            {i < Math.min(dagensFlyt.length, 5) - 1 && (
-              <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
-            )}
-            <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <IkonKomponent type={item.type} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>{item.tid}</div>
-              </div>
-              {item.varighet && (
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
+
+      {/* Dagens flyt */}
+      <div style={{ padding: '0 24px 32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
+          <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
+        </div>
+
+        <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
+          {dagensFlyt.length === 0 ? (
+            <div style={{ padding: '28px 24px', textAlign: 'center' }}>
+              <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>Ingen registreringer ennå i dag</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>Trykk + for å begynne</div>
+            </div>
+          ) : (
+            <>
+              {dagensFlyt.slice(0, 5).map((item: any, i) => (
+                <div key={i} style={{ position: 'relative' }}>
+                  {i < Math.min(dagensFlyt.length, 5) - 1 && (
+                    <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
+                  )}
+                  <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <IkonKomponent type={item.type} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
+                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>{item.tid}</div>
+                    </div>
+                    {item.varighet && (
+                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {dagensFlyt.length > 5 && (
+                <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
+                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
+                    +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag<br/>
+                    Se dagbok for full oversikt
+                  </div>
+                </div>
               )}
-            </div>
-          </div>
-        ))}
- {dagensFlyt.length > 5 && (
-          <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
-           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-  +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag<br/>
-  Se dagbok for full oversikt
-
-            </div>
-          </div>
-        )}
-      </>
-    )}
-  </div>
-</div>
-
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
