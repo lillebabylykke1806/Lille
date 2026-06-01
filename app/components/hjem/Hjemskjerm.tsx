@@ -88,6 +88,84 @@ const IkonKomponent = ({ type }: { type: string }) => {
   );
 };
 
+const AIInnsiktKort = ({ bruker, babyNavn, onNavigate }: { bruker: any; babyNavn: string; onNavigate: (side: string) => void }) => {
+    const [innsikt, setInnsikt] = useState('');
+    const [laster, setLaster] = useState(false);
+  
+    useEffect(() => {
+      const hentInnsikt = async () => {
+        setLaster(true);
+        const fraDate = new Date();
+        fraDate.setDate(fraDate.getDate() - 3);
+        const fra = fraDate.toISOString().split('T')[0];
+  
+        const [lurer, amming] = await Promise.all([
+          supabase.from('lurer').select('*').eq('profil_id', bruker.id).gte('dato', fra),
+          supabase.from('amming').select('*').eq('profil_id', bruker.id).gte('dato', fra),
+        ]);
+  
+        if (!lurer.data?.length && !amming.data?.length) {
+          setInnsikt(`Begynn å registrere for å få personlige innsikter om ${babyNavn} ✨`);
+          setLaster(false);
+          return;
+        }
+  
+        try {
+          const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 150,
+              messages: [{
+                role: 'user',
+                content: `Du er en varm babyekspert i appen Lille. Gi ÉN kort og personlig innsikt på norsk basert på disse dataene. Maks 1-2 setninger. Bruk babyens navn ${babyNavn}. Vær varm og konkret.
+  
+  Søvndata siste 3 dager: ${JSON.stringify(lurer.data?.slice(0, 10))}
+  Ammingdata siste 3 dager: ${JSON.stringify(amming.data?.slice(0, 10))}
+  
+  Svar kun med innsikten, ingen introduksjon.`
+              }],
+            }),
+          });
+          const result = await response.json();
+          const tekst = result.content?.[0]?.text || '';
+          setInnsikt(tekst);
+        } catch {
+          setInnsikt(`Registrer søvn og amming for å få personlige innsikter om ${babyNavn} ✨`);
+        }
+        setLaster(false);
+      };
+  
+      if (babyNavn) hentInnsikt();
+    }, [bruker.id, babyNavn]);
+  
+    return (
+      <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+          <div style={{ fontSize: '20px', flexShrink: 0 }}>✨</div>
+          <div style={{ flex: 1 }}>
+            {laster ? (
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>
+                Analyserer {babyNavn}s mønstre...
+              </div>
+            ) : (
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
+                {innsikt}
+              </div>
+            )}
+            <button onClick={() => onNavigate('innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', fontWeight: 500, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+              Se alle innsikter
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
 export default function Hjemskjerm({ bruker, onNavigate }: Props) {
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
@@ -303,6 +381,11 @@ const bleieItems = (bleier || []).map((b: any) => ({
           </button>
         ))}
       </div>
+
+{/* AI-innsikt kort */}
+<div style={{ padding: '0 24px 16px' }}>
+  <AIInnsiktKort bruker={bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
+</div>
 
   {/* Dagens flyt */}
 <div style={{ padding: '0 24px 32px' }}>
