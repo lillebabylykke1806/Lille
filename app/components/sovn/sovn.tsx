@@ -18,9 +18,6 @@ const SIGNALER = [
   { id: 'hodet', label: 'Vendte hodet' },
 ];
 
-const [visEgetSignal, setVisEgetSignal] = useState(false);
-const [egetSignalTekst, setEgetSignalTekst] = useState('');
-
 const GlitterOvergang = ({ onDone }: { onDone: () => void }) => {
   const partikler = Array.from({ length: 80 }, (_, i) => ({
     id: i, x: Math.random() * 100, y: Math.random() * 100,
@@ -112,6 +109,8 @@ export default function Sovn({ bruker }: Props) {
   const [visPust, setVisPust] = useState(false);
   const [visManeAnimasjon, setVisManeAnimasjon] = useState(false);
   const [nattMinutter, setNattMinutter] = useState(0);
+  const [visEgetSignal, setVisEgetSignal] = useState(false);
+  const [egetSignalTekst, setEgetSignalTekst] = useState('');
 
   const lastTidslinje = useCallback(async () => {
     const { data } = await supabase
@@ -610,7 +609,7 @@ export default function Sovn({ bruker }: Props) {
 </div>
     );
   }
-  
+
   // NATT AKTIV
   if (visning === 'nattAktiv') {
     return (
