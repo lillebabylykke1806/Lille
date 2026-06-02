@@ -212,7 +212,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
 
   useEffect(() => {
     if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
-    const lagretBilde = localStorage.getItem(`lille_babybilde_${aktivtBarn?.id}`);
+    const lagretBilde = localStorage.getItem(`lille_babybilde_${aktivtBarn?.id}`) || localStorage.getItem('lille_babybilde');
     if (lagretBilde) setBabyBilde(lagretBilde);
     else setBabyBilde(null);
   }, [aktivtBarn]);
@@ -317,19 +317,19 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     <div style={{ backgroundColor: '#F7F3EC', minHeight: '100vh', overflowX: 'hidden' }}>
 
       {/* Header */}
-      <div style={{ padding: '20px 24px 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
-              {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
-            </div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>
-              {valgtTilstand.tekst}
-            </div>
-          </div>
-          <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
-        </div>
+<div style={{ padding: '20px 24px 0' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+    <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
+    <div style={{ textAlign: 'right' }}>
+      <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
+        {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
       </div>
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>
+        {valgtTilstand.tekst}
+      </div>
+    </div>
+  </div>
+</div>
 
       {/* AI Innsikt-kort */}
       <div style={{ padding: '16px 24px 0' }}>
