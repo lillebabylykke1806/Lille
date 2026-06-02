@@ -166,30 +166,33 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Velg opptil 6 ting du vil ha rask tilgang til</div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '20px' }}>{alleFavoritter.length}/6 valgt</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-            {Object.entries(ALLE_SIDER).map(([id, info]) => {
-              const valgt = alleFavoritter.includes(id);
-              const deaktivert = alleFavoritter.length >= 6 && !valgt;
-              return (
-                <div key={id} style={{ padding: '14px 16px', backgroundColor: valgt ? `${farger.grønn}18` : farger.bakgrunn, border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
-                    <IkonKomponent id={id} />
-                    <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: valgt ? farger.grønn : farger.tekst, fontWeight: valgt ? '600' : '400', flex: 1 }}>
-                      {info.label}
-                      {!info.bygget && <span style={{ fontSize: '10px', color: farger.tekstLys }}> · kommer snart</span>}
-                    </span>
-                  </div>
-                  <div onClick={() => !deaktivert && toggleFavoritt(id)} style={{ cursor: deaktivert ? 'not-allowed' : 'pointer', opacity: deaktivert ? 0.4 : 1, flexShrink: 0 }}>
-                    <div style={{ width: '22px', height: '22px', borderRadius: '50%', border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, backgroundColor: valgt ? farger.grønn : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {valgt && (
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                          <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          {Object.entries(ALLE_SIDER).map(([id, info]) => {
+  const valgt = alleFavoritter.includes(id);
+  const deaktivert = alleFavoritter.length >= 6 && !valgt;
+  return (
+    <div key={id} style={{ padding: '14px 16px', backgroundColor: valgt ? `${farger.grønn}18` : farger.bakgrunn, border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+      <button
+        onClick={() => { if (info.bygget) { onNavigate(id); onLukk(); } }}
+        style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, background: 'none', border: 'none', cursor: info.bygget ? 'pointer' : 'default', padding: 0, textAlign: 'left' }}
+      >
+        <IkonKomponent id={id} />
+        <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: valgt ? farger.grønn : farger.tekst, fontWeight: valgt ? '600' : '400', flex: 1 }}>
+          {info.label}
+          {!info.bygget && <span style={{ fontSize: '10px', color: farger.tekstLys }}> · kommer snart</span>}
+        </span>
+      </button>
+      <div onClick={() => !deaktivert && toggleFavoritt(id)} style={{ cursor: deaktivert ? 'not-allowed' : 'pointer', opacity: deaktivert ? 0.4 : 1, flexShrink: 0 }}>
+        <div style={{ width: '22px', height: '22px', borderRadius: '50%', border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, backgroundColor: valgt ? farger.grønn : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {valgt && (
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+})}
           </div>
           <button onClick={lagreFavoritter} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
             Lagre
