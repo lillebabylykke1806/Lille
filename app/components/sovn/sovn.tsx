@@ -355,14 +355,40 @@ export default function Sovn({ bruker }: Props) {
           </div>
         </div>
 
+        
         {/* Knapper */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', animation: 'fadeOpp 0.8s 0.7s ease-out both' }}>
-  <button onClick={() => { registrerOppvåkning(); setVisning('velg'); lastTidslinje(); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+<div style={{ display: 'flex', flexDirection: 'column', gap: '10px', animation: 'fadeOpp 0.8s 0.7s ease-out both' }}>
+  <button onClick={() => { setVisning('velg'); lastTidslinje(); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
     Start dagen 🌿
   </button>
-  <button onClick={() => setVisning('etterregistrer')} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
+  <button onClick={() => { setNyTidStr(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })); setVisJusterTid(true); }} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
     Ikke riktig tidspunkt? Juster oppvåkning
   </button>
+  {visJusterTid && (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisJusterTid(false)}>
+      <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+        <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+        <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Når våknet babyen?</div>
+        <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
+        <button onClick={async () => {
+          await supabase.from('lurer').insert({
+            profil_id: bruker?.id,
+            dato: dagensdato(),
+            type: 'oppvåkning',
+            start: nyTidStr,
+            slutt: null,
+            varighet: 0,
+            signaler: '',
+          });
+          setVisJusterTid(false);
+          setVisning('velg');
+          lastTidslinje();
+        }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+          Lagre oppvåkning
+        </button>
+      </div>
+    </div>
+  )}
 </div>
       </div>
     );
@@ -718,13 +744,14 @@ export default function Sovn({ bruker }: Props) {
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A5580', border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              Avslutt natta
-            </button>
-           
-           
-          </div>
-        </div>
+  <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A5580', border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    Avslutt natta
+  </button>
+  <button onClick={registrerOppvåkning} style={{ flex: 1, padding: '16px', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '28px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#C4A882', cursor: 'pointer', textAlign: 'center' }}>
+    Nattlig<br/>oppvåkning
+  </button>
+  </div>
+  </div>
 
         {visLydPanel && <LydPanel onLukk={() => setVisLydPanel(false)} />}
         {visNattlys && <NattlysPanel onLukk={() => setVisNattlys(false)} />}
