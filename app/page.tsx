@@ -13,6 +13,7 @@ import Innsikt from './components/innsikt/Innsikt';
 import Medisin from './components/medisin/Medisin';
 import Notat from './components/notat/Notat';
 import Aktivitet from './components/aktivitet/Aktivitet';
+import Vekt from './components/vekt/Vekt';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -135,6 +136,7 @@ export default function Home() {
         {aktivSide === 'innsikt' && <Innsikt bruker={aktivtBarn || bruker} />}
         {aktivSide === 'medisin' && <Medisin bruker={aktivtBarn || bruker} />}
         {aktivSide === 'notat' && <Notat bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'vekt' && <Vekt bruker={aktivtBarn || bruker} />}
         {aktivSide === 'aktivitet' && <Aktivitet bruker={aktivtBarn || bruker} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>

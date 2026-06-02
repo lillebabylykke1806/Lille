@@ -21,7 +21,7 @@ const ALLE_SIDER: Record<string, { label: string; bygget: boolean }> = {
   aktivitet: { label: 'Aktivitet', bygget: true },
   notat: { label: 'Notat', bygget: true },
   temperatur: { label: 'Temperatur', bygget: false },
-  vekt: { label: 'Vekt / lengde', bygget: false },
+  vekt: { label: 'Vekt / lengde', bygget: true },
 };
 
 const ANBEFALTE_ETTER_ALDER = (alder: number): string[] => {
