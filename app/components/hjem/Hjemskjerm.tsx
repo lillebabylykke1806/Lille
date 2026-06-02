@@ -2,10 +2,13 @@
 import { farger } from '../../lib/farger';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import BarnVelger from './BarnVelger';
 
 type Props = {
   bruker: any;
+  aktivtBarn: any;
   onNavigate: (side: string) => void;
+  onByttBarn: (barn: any) => void;
 };
 
 const tidspunkt = () => {
@@ -41,10 +44,6 @@ const IkonKomponent = ({ type }: { type: string }) => {
         <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
         <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
         <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-        <line x1="4.9" y1="4.9" x2="7" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-        <line x1="17" y1="17" x2="19.1" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-        <line x1="19.1" y1="4.9" x2="17" y2="7" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
-        <line x1="7" y1="17" x2="4.9" y2="19.1" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     </div>
   );
@@ -59,7 +58,6 @@ const IkonKomponent = ({ type }: { type: string }) => {
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#E8EFF8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M6 15C4.3 15 3 13.7 3 12C3 10.5 4 9.2 5.5 9C5.8 7.3 7.2 6 9 6C10.1 6 11 6.5 11.7 7.3C12.1 7.1 12.5 7 13 7C14.7 7 16 8.3 16 10C16 10.2 16 10.3 15.9 10.5C17.1 10.9 18 12 18 13.3C18 14.8 16.8 16 15.3 16H6V15Z" fill="#A8B5A2" opacity="0.7"/>
-        <text x="8" y="13" fontSize="5" fill="#5C7A6B" fontFamily="sans-serif" fontWeight="bold">zzz</text>
       </svg>
     </div>
   );
@@ -109,9 +107,7 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   else if (alder < 12) våkenvindu = 180;
   else våkenvindu = 210;
 
-  const sisteOppvåkning = [...(lurer || [])]
-  .sort((a: any, b: any) => b.start?.localeCompare(a.start))[0];
-
+  const sisteOppvåkning = [...(lurer || [])].sort((a: any, b: any) => b.start?.localeCompare(a.start))[0];
   if (!sisteOppvåkning?.start) return null;
 
   const [timer, minutter] = sisteOppvåkning.start.split(':').map(Number);
@@ -121,17 +117,14 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   const nesteLurTid = new Date(oppvåkningTid.getTime() + våkenvindu * 60000);
   const nå = new Date();
   const omMinutter = Math.round((nesteLurTid.getTime() - nå.getTime()) / 60000);
-
   if (omMinutter < -30) return null;
 
   const klokkeslett = nesteLurTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
   const nåTimer = nå.getHours();
   const erLeggetid = nåTimer >= 18 || nesteLurTid.getHours() >= 18;
 
-  const omTekst = omMinutter <= 0
-    ? 'Nå!'
-    : omMinutter < 60
-    ? `Om ca. ${omMinutter} min`
+  const omTekst = omMinutter <= 0 ? 'Nå!'
+    : omMinutter < 60 ? `Om ca. ${omMinutter} min`
     : `Om ca. ${Math.floor(omMinutter / 60)}t ${omMinutter % 60 > 0 ? `${omMinutter % 60}min` : ''}`;
 
   return { tid: klokkeslett, om: omTekst, type: erLeggetid ? 'natt' as const : 'lur' as const };
@@ -178,8 +171,7 @@ Svar kun med innsikten, ingen introduksjon.`
           }),
         });
         const result = await response.json();
-        const tekst = result.content?.[0]?.text || '';
-        setInnsikt(tekst);
+        setInnsikt(result.content?.[0]?.text || '');
       } catch {
         setInnsikt(`Registrer søvn og amming for å få personlige innsikter om ${babyNavn} ✨`);
       }
@@ -195,13 +187,9 @@ Svar kun med innsikten, ingen introduksjon.`
         <div style={{ fontSize: '20px', flexShrink: 0 }}>✨</div>
         <div style={{ flex: 1 }}>
           {laster ? (
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>
-              Analyserer {babyNavn}s mønstre...
-            </div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>Analyserer {babyNavn}s mønstre...</div>
           ) : (
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
-              {innsikt}
-            </div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{innsikt}</div>
           )}
           <button onClick={() => onNavigate('innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', fontWeight: 500, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
             Se alle innsikter
@@ -215,34 +203,28 @@ Svar kun med innsikten, ingen introduksjon.`
   );
 };
 
-export default function Hjemskjerm({ bruker, onNavigate }: Props) {
+export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn }: Props) {
   const [babyNavn, setBabyNavn] = useState('');
-  const [fødselsdato, setFødselsdato] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [dagensFlyt, setDagensFlyt] = useState<any[]>([]);
   const [nesteLur, setNesteLur] = useState<{ tid: string; om: string; type: 'lur' | 'natt' } | null>(null);
 
   useEffect(() => {
-    const lastProfil = async () => {
-      const { data: profil } = await supabase
-        .from('profiler')
-        .select('*')
-        .eq('id', bruker.id)
-        .single();
-      if (profil?.baby_navn) setBabyNavn(profil.baby_navn);
-      if (profil?.fødselsdato) setFødselsdato(profil.fødselsdato);
-      const lagretBilde = localStorage.getItem('lille_babybilde');
-      if (lagretBilde) setBabyBilde(lagretBilde);
-    };
+    if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
+    const lagretBilde = localStorage.getItem(`lille_babybilde_${aktivtBarn?.id}`);
+    if (lagretBilde) setBabyBilde(lagretBilde);
+    else setBabyBilde(null);
+  }, [aktivtBarn]);
 
+  useEffect(() => {
     const lastDagensFlyt = async () => {
       const dagensdato = new Date().toISOString().split('T')[0];
 
       const [lurRes, ammingRes, bleieRes] = await Promise.all([
-        supabase.from('lurer').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('amming').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('bleie').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
+        supabase.from('lurer').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('amming').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('bleie').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
       ]);
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
@@ -273,17 +255,14 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
       setDagensFlyt(alle);
 
-      // Beregn neste lur
-      const { data: profil } = await supabase.from('profiler').select('*').eq('id', bruker.id).single();
-      const lurResult = beregnNesteLur(profil?.fødselsdato || '', lurRes.data || []);
+      const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || []);
       setNesteLur(lurResult);
     };
 
-    lastProfil();
     lastDagensFlyt();
     const interval = setInterval(lastDagensFlyt, 60000);
     return () => clearInterval(interval);
-  }, [bruker]);
+  }, [bruker, aktivtBarn]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
     rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2' },
@@ -348,12 +327,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
               {valgtTilstand.tekst}
             </div>
           </div>
-          <button style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', border: '1px solid rgba(220,207,192,0.5)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" fill="#7B746D" opacity="0.7"/>
-              <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#7B746D" strokeWidth="1.8" strokeLinecap="round" opacity="0.7"/>
-            </svg>
-          </button>
+          <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
         </div>
       </div>
 
@@ -409,7 +383,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
         ))}
       </div>
 
-   
       {/* Neste lur-kort */}
       {nesteLur && (
         <div style={{ padding: '0 24px 16px' }}>
@@ -461,7 +434,7 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
 
       {/* AI-innsikt kort */}
       <div style={{ padding: '0 24px 16px' }}>
-        <AIInnsiktKort bruker={bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
+        <AIInnsiktKort bruker={aktivtBarn || bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
       </div>
 
       {/* Dagens flyt */}
@@ -470,7 +443,6 @@ export default function Hjemskjerm({ bruker, onNavigate }: Props) {
           <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
           <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
         </div>
-
         <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
           {dagensFlyt.length === 0 ? (
             <div style={{ padding: '28px 24px', textAlign: 'center' }}>

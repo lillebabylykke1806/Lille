@@ -24,14 +24,28 @@ export default function Home() {
   const [innloggingFeil, setInnloggingFeil] = useState('');
   const [visRegistrer, setVisRegistrer] = useState(false);
   const [visOnboarding, setVisOnboarding] = useState(false);
+  const [aktivtBarn, setAktivtBarn] = useState<any>(null);
 
   useEffect(() => {
     const lastData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setBruker(session.user);
-        const { data: profil } = await supabase.from('profiler').select('*').eq('id', session.user.id).single();
-        if (!profil?.baby_navn) setVisOnboarding(true);
+
+        const { data: barn } = await supabase
+          .from('barn')
+          .select('*')
+          .eq('bruker_id', session.user.id)
+          .order('opprettet', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (barn) {
+          setAktivtBarn(barn);
+        } else {
+          setVisOnboarding(true);
+        }
+
         const lagretType = localStorage.getItem('lille_sovtype');
         if (lagretType === 'natt') setAktivSide('sovn');
       }
@@ -44,8 +58,12 @@ export default function Home() {
   const loggInn = async () => {
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
-    if (error) setInnloggingFeil('Feil e-post eller passord. Prøv igjen.');
-    else setBruker(data.user);
+    if (error) {
+      setInnloggingFeil('Feil e-post eller passord. Prøv igjen.');
+    } else {
+      localStorage.removeItem('lille_babybilde');
+      setBruker(data.user);
+    }
   };
 
   const registrer = async () => {
@@ -64,6 +82,7 @@ export default function Home() {
   const loggUt = async () => {
     await supabase.auth.signOut();
     setBruker(null);
+    setAktivtBarn(null);
   };
 
   if (laster) {
@@ -76,7 +95,11 @@ export default function Home() {
     );
   }
 
-  if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={() => setVisOnboarding(false)} />;
+  if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={async () => {
+    const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker.id).order('opprettet', { ascending: true }).limit(1).single();
+    if (barn) setAktivtBarn(barn);
+    setVisOnboarding(false);
+  }} />;
 
   if (!bruker) {
     return (
@@ -104,15 +127,15 @@ export default function Home() {
   return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
       <div style={{ overflowY: 'auto' }}>
-        {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} onNavigate={setAktivSide} />}
-        {aktivSide === 'sovn' && <Sovn bruker={bruker} />}
-        {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
-{aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
-        {aktivSide === 'amming' && <Amming bruker={bruker} />}
-        {aktivSide === 'innsikt' && <Innsikt bruker={bruker} />}
-        {aktivSide === 'medisin' && <Medisin bruker={bruker} />}
-        {aktivSide === 'notat' && <Notat bruker={bruker} />}
-        {aktivSide === 'aktivitet' && <Aktivitet bruker={bruker} />}
+        {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} onByttBarn={setAktivtBarn} />}
+        {aktivSide === 'sovn' && <Sovn bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'bleie' && <Bleie bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
+        {aktivSide === 'amming' && <Amming bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'innsikt' && <Innsikt bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'medisin' && <Medisin bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'notat' && <Notat bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'aktivitet' && <Aktivitet bruker={aktivtBarn || bruker} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 
@@ -160,7 +183,7 @@ export default function Home() {
 
       {visRegistrer && (
         <Viftemeny
-          bruker={bruker}
+          bruker={aktivtBarn || bruker}
           onNavigate={setAktivSide}
           onLukk={() => setVisRegistrer(false)}
         />
