@@ -182,12 +182,13 @@ export default function Home() {
       </div>
 
       {visRegistrer && (
-        <Viftemeny
-          bruker={aktivtBarn || bruker}
-          onNavigate={setAktivSide}
-          onLukk={() => setVisRegistrer(false)}
-        />
-      )}
+  <Viftemeny
+    bruker={bruker}
+    aktivtBarn={aktivtBarn}
+    onNavigate={setAktivSide}
+    onLukk={() => setVisRegistrer(false)}
+  />
+)}
     </div>
   );
 }
