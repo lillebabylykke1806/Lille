@@ -118,7 +118,7 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
 
   useEffect(() => {
     const lastFavoritter = async () => {
-      const { data } = await supabase.from('profiler').select('favoritter').eq('id', bruker.id).single();
+      const { data } = await supabase.from('barn').select('favoritter').eq('bruker_id', bruker.id).order('opprettet', { ascending: false }).limit(1).single();
       if (data?.favoritter) {
         setFavoritter(data.favoritter.split(','));
         setAlleFavoritter(data.favoritter.split(','));
@@ -128,7 +128,7 @@ export default function Viftemeny({ bruker, onNavigate, onLukk }: Props) {
   }, [bruker]);
 
   const lagreFavoritter = async () => {
-    await supabase.from('profiler').update({ favoritter: alleFavoritter.join(',') }).eq('id', bruker.id);
+    await supabase.from('barn').update({ favoritter: alleFavoritter.join(',') }).eq('bruker_id', bruker.id);
     setFavoritter(alleFavoritter);
     setVisVelgFavoritter(false);
   };
