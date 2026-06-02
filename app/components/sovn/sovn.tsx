@@ -357,13 +357,13 @@ export default function Sovn({ bruker }: Props) {
 
         {/* Knapper */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', animation: 'fadeOpp 0.8s 0.7s ease-out both' }}>
-          <button onClick={() => { setVisning('velg'); lastTidslinje(); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            Start dagen 🌿
-          </button>
-          <button onClick={registrerOppvåkning} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            Registrer oppvåkning
-          </button>
-        </div>
+  <button onClick={() => { registrerOppvåkning(); setVisning('velg'); lastTidslinje(); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+    Start dagen 🌿
+  </button>
+  <button onClick={() => setVisning('etterregistrer')} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
+    Ikke riktig tidspunkt? Juster oppvåkning
+  </button>
+</div>
       </div>
     );
   }
