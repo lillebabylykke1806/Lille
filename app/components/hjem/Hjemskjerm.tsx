@@ -75,13 +75,6 @@ const IkonKomponent = ({ type }: { type: string }) => {
       <img src="/bleie.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
     </div>
   );
-  if (type === 'uro') return (
-    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#FFE8E8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-        <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="#C48E7B" strokeWidth="1.3"/>
-      </svg>
-    </div>
-  );
   return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -212,6 +205,8 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [lurPågår, setLurPågår] = useState(false);
   const [lurStartTid, setLurStartTid] = useState<string | null>(null);
   const [lurType, setLurType] = useState<'lur' | 'natt'>('lur');
+  const [visDagbok, setVisDagbok] = useState(false);
+  const [alleDagensHendelser, setAlleDagensHendelser] = useState<any[]>([]);
 
   useEffect(() => {
     if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
@@ -257,29 +252,28 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       });
 
       setDagensFlyt(alle);
+      setAlleDagensHendelser(alle);
 
       const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || []);
       setNesteLur(lurResult);
     };
 
-   // Sjekk om lur pågår
-const lagretType = localStorage.getItem('lille_sovtype');
-const lagretStartTid = localStorage.getItem('lille_starttid');
-if (lagretType && lagretStartTid) {
-  setLurPågår(true);
-  setLurType(lagretType as 'lur' | 'natt');
-  const start = new Date(lagretStartTid);
-  setLurStartTid(start.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
-} else {
-  setLurPågår(false);
-  setLurStartTid(null);
-}
+    const lagretType = localStorage.getItem('lille_sovtype');
+    const lagretStartTid = localStorage.getItem('lille_starttid');
+    if (lagretType && lagretStartTid) {
+      setLurPågår(true);
+      setLurType(lagretType as 'lur' | 'natt');
+      const start = new Date(lagretStartTid);
+      setLurStartTid(start.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
+    } else {
+      setLurPågår(false);
+      setLurStartTid(null);
+    }
 
-lastDagensFlyt();
-const interval = setInterval(lastDagensFlyt, 60000);
-return () => clearInterval(interval);
-}, [bruker, aktivtBarn]);
-
+    lastDagensFlyt();
+    const interval = setInterval(lastDagensFlyt, 60000);
+    return () => clearInterval(interval);
+  }, [bruker, aktivtBarn]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
     rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2' },
@@ -330,23 +324,28 @@ return () => clearInterval(interval);
     },
   ];
 
+  const formatDato = () => {
+    const d = new Date();
+    return d.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long' });
+  };
+
   return (
     <div style={{ backgroundColor: '#F7F3EC', minHeight: '100vh', overflowX: 'hidden' }}>
 
       {/* Header */}
-<div style={{ padding: '20px 24px 0' }}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-    <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
-    <div style={{ textAlign: 'right' }}>
-      <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
-        {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
+      <div style={{ padding: '20px 24px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
+              {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
+            </div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>
+              {valgtTilstand.tekst}
+            </div>
+          </div>
+        </div>
       </div>
-      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>
-        {valgtTilstand.tekst}
-      </div>
-    </div>
-  </div>
-</div>
 
       {/* AI Innsikt-kort */}
       <div style={{ padding: '16px 24px 0' }}>
@@ -400,76 +399,77 @@ return () => clearInterval(interval);
         ))}
       </div>
 
+      {/* Lur pågår / Neste lur */}
       {lurPågår ? (
-  <div style={{ padding: '0 24px 16px' }}>
-    <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
-      <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: lurType === 'natt' ? '#D6E5DF' : '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        {lurType === 'natt' ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
-          </svg>
-        ) : (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="5" fill="#F4A853"/>
-            <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-        )}
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-          {lurType === 'natt' ? 'Sover nå 🌙' : 'Lur pågår'}
+        <div style={{ padding: '0 24px 16px' }}>
+          <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: lurType === 'natt' ? '#D6E5DF' : '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              {lurType === 'natt' ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+                  <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              )}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
+                {lurType === 'natt' ? 'Sover nå 🌙' : 'Lur pågår'}
+              </div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
+                Siden {lurStartTid}
+              </div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+                Trykk for å se søvnskjermen
+              </div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </div>
-        <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
-          Siden {lurStartTid}
+      ) : nesteLur && (
+        <div style={{ padding: '0 24px 16px' }}>
+          <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
+            {nesteLur.type === 'natt' ? (
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+                </svg>
+              </div>
+            ) : (
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+                  <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+            )}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
+                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
+              </div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
+                {nesteLur.om}
+              </div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+                Vindu ca. {nesteLur.tid}
+              </div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </div>
-        <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
-          Trykk for å se søvnskjermen
-        </div>
-      </div>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </button>
-  </div>
-) : nesteLur && (
-  <div style={{ padding: '0 24px 16px' }}>
-    <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
-      {nesteLur.type === 'natt' ? (
-        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
-          </svg>
-        </div>
-      ) : (
-        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="5" fill="#F4A853"/>
-            <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-        </div>
-      )}
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-          {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
-        </div>
-        <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
-          {nesteLur.om}
-        </div>
-        <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
-          Vindu ca. {nesteLur.tid}
-        </div>
-      </div>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </button>
-  </div>
       )}
 
       {/* Snarveier */}
@@ -491,7 +491,7 @@ return () => clearInterval(interval);
       <div style={{ padding: '0 24px 32px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
-          <button style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
+          <button onClick={() => setVisDagbok(true)} style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
         </div>
         <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
           {dagensFlyt.length === 0 ? (
@@ -520,16 +520,54 @@ return () => clearInterval(interval);
               ))}
               {dagensFlyt.length > 5 && (
                 <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
-                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-                    +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag<br/>
-                    Se dagbok for full oversikt
-                  </div>
+                  <button onClick={() => setVisDagbok(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
+                    +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag – Se dagbok
+                  </button>
                 </div>
               )}
             </>
           )}
         </div>
       </div>
+
+      {/* DAGBOK MODAL */}
+      {visDagbok && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisDagbok(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '85vh', overflowY: 'auto' }}>
+            <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Dagbok</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{formatDato()}</div>
+              </div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+                {alleDagensHendelser.length} hendelser
+              </div>
+            </div>
+
+            {alleDagensHendelser.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '32px', color: farger.tekstLys, fontFamily: 'var(--font-inter)', fontSize: '14px', fontStyle: 'italic' }}>
+                Ingen registreringer i dag ennå
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {alleDagensHendelser.map((item: any, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', backgroundColor: farger.bakgrunn, borderRadius: '14px' }}>
+                    <IkonKomponent type={item.type} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>{item.tekst}</div>
+                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{item.tid}</div>
+                    </div>
+                    {item.varighet && (
+                      <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '600' }}>{item.varighet}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
