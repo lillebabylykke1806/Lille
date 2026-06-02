@@ -24,6 +24,7 @@ export default function Amming({ bruker }: Props) {
   const [sekunder, setSekunder] = useState(0);
   const [logg, setLogg] = useState<AmmingLogg[]>([]);
   const [laster, setLaster] = useState(false);
+  const [lasterLogg, setLasterLogg] = useState(true);
   const [byttAnimasjon, setByttAnimasjon] = useState(false);
 
   const lastLogg = useCallback(async () => {
@@ -34,6 +35,7 @@ export default function Amming({ bruker }: Props) {
       .eq('dato', dagensdato())
       .order('start', { ascending: false });
     if (data) setLogg(data);
+    setLasterLogg(false);
   }, [bruker?.id]);
 
   useEffect(() => { lastLogg(); }, [lastLogg]);
@@ -96,7 +98,9 @@ export default function Amming({ bruker }: Props) {
   const totalMinutter = logg.reduce((sum, l) => sum + (l.varighet || 0), 0);
   const sisteAmming = logg[0];
   const anbefalingBryst = logg.length > 0 ? motattBryst(logg[0].bryst) as 'venstre' | 'høyre' : 'høyre';
-
+  
+  if (lasterLogg) return null;
+  
   return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '24px 24px 100px' }}>
       <style>{`
