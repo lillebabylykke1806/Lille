@@ -18,10 +18,6 @@ const tidspunkt = () => {
   return 'God kveld';
 };
 
-const [lurPågår, setLurPågår] = useState(false);
-const [lurStartTid, setLurStartTid] = useState<string | null>(null);
-const [lurType, setLurType] = useState<'lur' | 'natt'>('lur');
-
 const BlomstIllustrasjon = () => (
   <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
     <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.7" transform="rotate(0 26 26)"/>
@@ -213,6 +209,9 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [dagensFlyt, setDagensFlyt] = useState<any[]>([]);
   const [nesteLur, setNesteLur] = useState<{ tid: string; om: string; type: 'lur' | 'natt' } | null>(null);
+  const [lurPågår, setLurPågår] = useState(false);
+  const [lurStartTid, setLurStartTid] = useState<string | null>(null);
+  const [lurType, setLurType] = useState<'lur' | 'natt'>('lur');
 
   useEffect(() => {
     if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
