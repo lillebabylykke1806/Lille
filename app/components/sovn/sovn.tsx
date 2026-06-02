@@ -167,14 +167,11 @@ export default function Sovn({ bruker }: Props) {
     }).select();
     if (data?.[0]) setLurId(data[0].id);
     if (type === 'natt') {
-      setVisGlitter(true);
       setVisManeAnimasjon(true);
-      setTimeout(() => {
-        setVisGlitter(false);
-        setVisning('nattAktiv');
-        lastTidslinje();
-        setTimeout(() => setVisManeAnimasjon(false), 2000);
-      }, 2500);
+      setVisning('nattAktiv');
+      lastTidslinje();
+      setTimeout(() => setVisManeAnimasjon(false), 2000);
+  
     } else {
       setVisning('lurAktiv');
       lastTidslinje();
@@ -262,7 +259,7 @@ export default function Sovn({ bruker }: Props) {
   const timerTekst = timer > 0 ? `${timer} t ${sek} m` : `${sek} m`;
   const antallOppvåkninger = tidslinje.filter(t => t.type === 'oppvåkning').length;
 
-  if (visGlitter) return <GlitterOvergang onDone={() => {}} />;
+  // fjernet glitter
 
   // MORGEN-SKJERM
   if (visning === 'morgen') {
