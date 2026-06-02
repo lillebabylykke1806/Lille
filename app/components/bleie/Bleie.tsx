@@ -13,7 +13,6 @@ type BleieLogg = {
 };
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
-const [tidspunkt, setTidspunkt] = useState(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
 
 const BLEIE_TYPER = [
   { id: 'våt', label: 'Våt' },
@@ -41,6 +40,9 @@ const BleieIkon = ({ type, aktiv }: { type: string; aktiv: boolean }) => {
 };
 
 export default function Bleie({ bruker }: Props) {
+  const [tidspunkt, setTidspunkt] = useState(() =>
+    new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })
+  );
   const [logg, setLogg] = useState<BleieLogg[]>([]);
   const [valgt, setValgt] = useState<string | null>(null);
   const [notat, setNotat] = useState('');
