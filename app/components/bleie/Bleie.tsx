@@ -13,6 +13,7 @@ type BleieLogg = {
 };
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
+const [tidspunkt, setTidspunkt] = useState(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
 
 const BLEIE_TYPER = [
   { id: 'våt', label: 'Våt' },
@@ -63,7 +64,6 @@ export default function Bleie({ bruker }: Props) {
   const registrerBleie = async () => {
     if (!valgt) return;
     setLagrer(true);
-    const tidspunkt = new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
     await supabase.from('bleie').insert({
       profil_id: bruker?.id,
       dato: dagensdato(),
@@ -75,6 +75,7 @@ export default function Bleie({ bruker }: Props) {
     setVisBekreftet(true);
     setValgt(null);
     setNotat('');
+    setTidspunkt(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
     setTimeout(() => setVisBekreftet(false), 2000);
     lastLogg();
   };
@@ -166,12 +167,16 @@ export default function Bleie({ bruker }: Props) {
         </div>
 
         {/* Tidspunkt */}
-        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Tidspunkt</div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: farger.bakgrunn, borderRadius: '12px', marginBottom: '20px' }}>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Nå</div>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
-            {new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}
-          </div>
+        {/* Tidspunkt */}
+<div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Tidspunkt</div>
+<div style={{ marginBottom: '20px' }}>
+  <input
+    type="time"
+    value={tidspunkt}
+    onChange={e => setTidspunkt(e.target.value)}
+    style={{ width: '100%', padding: '12px 16px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
+  />
+
         </div>
 
         {/* Notat */}
