@@ -18,6 +18,10 @@ const tidspunkt = () => {
   return 'God kveld';
 };
 
+const [lurPågår, setLurPågår] = useState(false);
+const [lurStartTid, setLurStartTid] = useState<string | null>(null);
+const [lurType, setLurType] = useState<'lur' | 'natt'>('lur');
+
 const BlomstIllustrasjon = () => (
   <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
     <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.7" transform="rotate(0 26 26)"/>
@@ -259,10 +263,24 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       setNesteLur(lurResult);
     };
 
-    lastDagensFlyt();
-    const interval = setInterval(lastDagensFlyt, 60000);
-    return () => clearInterval(interval);
-  }, [bruker, aktivtBarn]);
+   // Sjekk om lur pågår
+const lagretType = localStorage.getItem('lille_sovtype');
+const lagretStartTid = localStorage.getItem('lille_starttid');
+if (lagretType && lagretStartTid) {
+  setLurPågår(true);
+  setLurType(lagretType as 'lur' | 'natt');
+  const start = new Date(lagretStartTid);
+  setLurStartTid(start.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
+} else {
+  setLurPågår(false);
+  setLurStartTid(null);
+}
+
+lastDagensFlyt();
+const interval = setInterval(lastDagensFlyt, 60000);
+return () => clearInterval(interval);
+}, [bruker, aktivtBarn]);
+
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
     rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2' },
@@ -383,43 +401,76 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
         ))}
       </div>
 
-      {/* Neste lur-kort */}
-      {nesteLur && (
-        <div style={{ padding: '0 24px 16px' }}>
-          <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
-            {nesteLur.type === 'natt' ? (
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
-                </svg>
-              </div>
-            ) : (
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="5" fill="#F4A853"/>
-                  <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-            )}
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
-              </div>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
-                {nesteLur.om}
-              </div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
-                Vindu ca. {nesteLur.tid}
-              </div>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+      {lurPågår ? (
+  <div style={{ padding: '0 24px 16px' }}>
+    <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
+      <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: lurType === 'natt' ? '#D6E5DF' : '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {lurType === 'natt' ? (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+          </svg>
+        ) : (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+            <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        )}
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
+          {lurType === 'natt' ? 'Sover nå 🌙' : 'Lur pågår'}
         </div>
+        <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
+          Siden {lurStartTid}
+        </div>
+        <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+          Trykk for å se søvnskjermen
+        </div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </button>
+  </div>
+) : nesteLur && (
+  <div style={{ padding: '0 24px 16px' }}>
+    <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
+      {nesteLur.type === 'natt' ? (
+        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+          </svg>
+        </div>
+      ) : (
+        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" fill="#F4A853"/>
+            <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="12" y1="19" x2="12" y2="22" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="2" y1="12" x2="5" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+      )}
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
+          {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
+        </div>
+        <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
+          {nesteLur.om}
+        </div>
+        <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+          Vindu ca. {nesteLur.tid}
+        </div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </button>
+  </div>
       )}
 
       {/* Snarveier */}
