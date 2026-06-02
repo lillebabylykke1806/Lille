@@ -1,6 +1,2 @@
-const nextConfig = {
-    experimental: {
-      serverComponentsExternalPackages: ['stripe'],
-    },
-  };
-  export default nextConfig;
+const nextConfig = {};
+export default nextConfig;
