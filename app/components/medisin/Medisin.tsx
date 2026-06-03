@@ -268,7 +268,7 @@ export default function Medisin({ bruker }: Props) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <MedisinIkon farge={farger.grønn} />
+                  <img src="/medisinflaske.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
                   </div>
                   <div>
                     <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>{nestePåminnelse.navn}</div>
@@ -290,7 +290,7 @@ export default function Medisin({ bruker }: Props) {
                 <div key={m.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: farger.bakgrunn, borderRadius: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <MedisinIkon farge={farger.grønn} />
+                    <img src="/medisinflaske.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
                     </div>
                     <div>
                       <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>{m.navn}</div>
