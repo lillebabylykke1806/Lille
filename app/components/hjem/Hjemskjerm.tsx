@@ -227,18 +227,21 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
         tid: l.start,
-        tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.tekst || l.type,
+        tekst: l.type === 'lur'
+          ? `Lur · ${l.start}${l.slutt ? `–${l.slutt}` : ''}`
+          : l.type === 'natt' ? 'Sovnet'
+          : l.type === 'oppvåkning' ? 'Våknet'
+          : l.tekst || l.type,
         type: l.type,
         varighet: l.varighet ? `${l.varighet} min` : null,
       }));
-
+      
       const ammingItems = (ammingRes.data || []).map((a: any) => ({
         tid: a.start,
-        tekst: `Amming · ${a.bryst === 'venstre' ? 'venstre' : 'høyre'} bryst`,
+        tekst: `Amming · ${a.bryst === 'venstre' ? 'venstre' : 'høyre'} bryst · ${a.start}${a.slutt ? `–${a.slutt}` : ''}`,
         type: 'amming',
         varighet: a.varighet ? `${a.varighet} min` : null,
       }));
-
       const bleieItems = (bleieRes.data || []).map((b: any) => ({
         tid: b.tidspunkt,
         tekst: `Bleie · ${b.type}`,
