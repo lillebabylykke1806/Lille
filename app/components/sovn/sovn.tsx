@@ -309,6 +309,18 @@ export default function Sovn({ bruker }: Props) {
               <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
                 {Math.floor(nattMinutter / 60)}t {nattMinutter % 60}m
               </div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '6px' }}>
+  {(() => {
+    const sisteOppvåkning = [...tidslinje].reverse().find(t => t.type === 'oppvåkning');
+    if (!sisteOppvåkning?.tid) return null;
+    const [h, m] = sisteOppvåkning.tid.split(':').map(Number);
+    const oppvåkningTid = new Date();
+    oppvåkningTid.setHours(h, m, 0, 0);
+    const våkenMinutter = Math.floor((Date.now() - oppvåkningTid.getTime()) / 60000);
+    if (våkenMinutter < 0) return null;
+    return `Våken i ${våkenMinutter} min`;
+  })()}
+</div>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Total søvntid</div>
             </div>
             <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
