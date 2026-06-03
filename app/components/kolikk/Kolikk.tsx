@@ -363,7 +363,7 @@ Svar KUN med de 3 punktene, én per linje.`
   <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '160px', height: '160px' }}>
     <div style={{ position: 'absolute', width: '160px', height: '160px', background: 'radial-gradient(ellipse, #E8B49A 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(20px)', opacity: 0.6 }} />
     <div style={{ position: 'absolute', width: '130px', height: '130px', background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(14px)', opacity: 0.5 }} />
-    <img src="/sky.png" alt="sky" style={{ position: 'relative', zIndex: 1, width: '100px', height: '100px', objectFit: 'contain' }} />
+    <img src="/sky.png" alt="sky" style={{ position: 'relative', zIndex: 1, width: '160px', height: '160px', objectFit: 'contain' }} />
   </div>
 </div>
       <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>
