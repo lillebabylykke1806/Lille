@@ -295,9 +295,7 @@ Svar KUN med de 3 punktene, én per linje.`
         )}
 
         {/* Registrer knapp */}
-        <button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '20px' }}>
-          + Registrer uro-episode
-        </button>
+        
 
         {/* Historikk */}
         {logg.length > 0 && (
@@ -361,29 +359,13 @@ Svar KUN med de 3 punktene, én per linje.`
   <div style={{ padding: '0 16px' }}>
     {/* Sky-illustrasjon */}
     <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '32px 24px', textAlign: 'center', marginBottom: '16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-        <div style={{ position: 'relative', width: '120px', height: '100px' }}>
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'radial-gradient(ellipse, #E8D5F5 0%, transparent 70%)', filter: 'blur(12px)' }} />
-          <svg viewBox="0 0 120 90" width="120" height="90" style={{ position: 'relative', zIndex: 1 }}>
-            <ellipse cx="60" cy="58" rx="38" ry="22" fill="white" filter="url(#shadow)"/>
-            <ellipse cx="45" cy="50" rx="22" ry="22" fill="white"/>
-            <ellipse cx="68" cy="45" rx="26" ry="26" fill="white"/>
-            <defs>
-              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#00000015"/>
-              </filter>
-            </defs>
-            {/* Ansikt */}
-            <circle cx="52" cy="52" r="2.5" fill="#C4A8D4"/>
-            <circle cx="64" cy="50" r="2.5" fill="#C4A8D4"/>
-            <path d="M54 58 Q58 62 64 58" stroke="#C4A8D4" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-            {/* Stjerner */}
-            <path d="M28 28 L29 31 L32 32 L29 33 L28 36 L27 33 L24 32 L27 31Z" fill="#E8C87A" opacity="0.8"/>
-            <path d="M88 20 L89 22 L91 23 L89 24 L88 26 L87 24 L85 23 L87 22Z" fill="#E8C87A" opacity="0.6"/>
-            <circle cx="95" cy="35" r="2" fill="#E8C87A" opacity="0.5"/>
-          </svg>
-        </div>
-      </div>
+    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+  <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '160px', height: '160px' }}>
+    <div style={{ position: 'absolute', width: '160px', height: '160px', background: 'radial-gradient(ellipse, #E8B49A 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(20px)', opacity: 0.6 }} />
+    <div style={{ position: 'absolute', width: '130px', height: '130px', background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(14px)', opacity: 0.5 }} />
+    <img src="/sky.png" alt="sky" style={{ position: 'relative', zIndex: 1, width: '100px', height: '100px', objectFit: 'contain' }} />
+  </div>
+</div>
       <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>
         Velkommen til Uro & Ro
       </div>
