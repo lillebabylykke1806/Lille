@@ -357,15 +357,152 @@ Svar KUN med de 3 punktene, én per linje.`
           </>
         )}
 
-        {logg.length === 0 && (
-          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '32px', textAlign: 'center', marginTop: '8px' }}>
-            <div style={{ fontSize: '32px', marginBottom: '12px' }}>🌙</div>
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Ingen episoder registrert</div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-              Registrer uro-episoder for å se mønstre og hva som hjelper {babyNavn}
+{logg.length === 0 && (
+  <div style={{ padding: '0 16px' }}>
+    {/* Sky-illustrasjon */}
+    <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '32px 24px', textAlign: 'center', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <div style={{ position: 'relative', width: '120px', height: '100px' }}>
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'radial-gradient(ellipse, #E8D5F5 0%, transparent 70%)', filter: 'blur(12px)' }} />
+          <svg viewBox="0 0 120 90" width="120" height="90" style={{ position: 'relative', zIndex: 1 }}>
+            <ellipse cx="60" cy="58" rx="38" ry="22" fill="white" filter="url(#shadow)"/>
+            <ellipse cx="45" cy="50" rx="22" ry="22" fill="white"/>
+            <ellipse cx="68" cy="45" rx="26" ry="26" fill="white"/>
+            <defs>
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#00000015"/>
+              </filter>
+            </defs>
+            {/* Ansikt */}
+            <circle cx="52" cy="52" r="2.5" fill="#C4A8D4"/>
+            <circle cx="64" cy="50" r="2.5" fill="#C4A8D4"/>
+            <path d="M54 58 Q58 62 64 58" stroke="#C4A8D4" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+            {/* Stjerner */}
+            <path d="M28 28 L29 31 L32 32 L29 33 L28 36 L27 33 L24 32 L27 31Z" fill="#E8C87A" opacity="0.8"/>
+            <path d="M88 20 L89 22 L91 23 L89 24 L88 26 L87 24 L85 23 L87 22Z" fill="#E8C87A" opacity="0.6"/>
+            <circle cx="95" cy="35" r="2" fill="#E8C87A" opacity="0.5"/>
+          </svg>
+        </div>
+      </div>
+      <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>
+        Velkommen til Uro & Ro
+      </div>
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '20px' }}>
+        Vi hjelper deg å forstå uroen og hva som kan hjelpe {babyNavn}. Jo mer du registrerer, desto bedre kan vi finne mønstre og gi deg innsikt.
+      </div>
+      <button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="8" stroke="#FDFAF6" strokeWidth="1.5" fill="none"/>
+          <line x1="9" y1="5" x2="9" y2="13" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="5" y1="9" x2="13" y2="9" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+        Registrer første uroperiode
+      </button>
+    </div>
+
+    {/* Her vil du etter hvert få innsikt om */}
+    <div style={{ marginBottom: '16px' }}>
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'center', marginBottom: '12px' }}>
+        ✨ Her vil du etter hvert få innsikt om:
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px' }}>
+        {[
+          {
+            icon: (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="#C7BDD8" strokeWidth="1.5" fill="none"/>
+                <path d="M12 7V12L15 15" stroke="#C7BDD8" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            ),
+            bg: '#F0EBF8',
+            label: 'Når uroen pleier å komme'
+          },
+          {
+            icon: (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 21C12 21 3 15 3 9C3 6.5 5 4.5 7.5 4.5C9.2 4.5 10.7 5.4 12 7C13.3 5.4 14.8 4.5 16.5 4.5C19 4.5 21 6.5 21 9C21 15 12 21 12 21Z" stroke="#F4A8A8" strokeWidth="1.5" fill="none"/>
+              </svg>
+            ),
+            bg: '#FFF0F0',
+            label: 'Tegn før uro'
+          },
+          {
+            icon: (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2C9.2 2 7 4.2 7 7C7 9.2 8.3 11.1 10 11.8V13H14V11.8C15.7 11.1 17 9.2 17 7C17 4.2 14.8 2 12 2Z" stroke="#F4D080" strokeWidth="1.5" fill="none"/>
+                <rect x="10" y="13" width="4" height="3" rx="1" stroke="#F4D080" strokeWidth="1.5" fill="none"/>
+                <line x1="12" y1="16" x2="12" y2="18" stroke="#F4D080" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            ),
+            bg: '#FFFBEC',
+            label: 'Tiltak som kan hjelpe'
+          },
+          {
+            icon: (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="4" y="14" width="3" height="6" rx="1" fill="#A8C4A2"/>
+                <rect x="9" y="10" width="3" height="10" rx="1" fill="#A8C4A2"/>
+                <rect x="14" y="6" width="3" height="14" rx="1" fill="#A8C4A2"/>
+                <rect x="19" y="3" width="3" height="17" rx="1" fill="#A8C4A2"/>
+              </svg>
+            ),
+            bg: '#E8F0E8',
+            label: 'Mønstre over tid'
+          },
+        ].map((item, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
+            <div style={{ width: '52px', height: '52px', borderRadius: '16px', backgroundColor: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {item.icon}
             </div>
+            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.3, fontWeight: '500' }}>{item.label}</div>
           </div>
-        )}
+        ))}
+      </div>
+    </div>
+
+    {/* Kom i gang */}
+    <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 14C8 14 2 10 2 6C2 4 3.5 2.5 5.5 2.5C6.6 2.5 7.5 3.1 8 4C8.5 3.1 9.4 2.5 10.5 2.5C12.5 2.5 14 4 14 6C14 10 8 14 8 14Z" fill={farger.grønn}/>
+          </svg>
+        </div>
+        <div>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Kom i gang</div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Når du registrerer uroperioder, hjelper du oss å forstå {babyNavn} bedre.</div>
+        </div>
+      </div>
+      {['Registrer når uroen starter', 'Legg til hvilke signaler du ser', 'Noter hva dere prøvde og hvordan det gikk'].map((punkt, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="8" fill={farger.grønnLys} stroke={farger.grønn} strokeWidth="1"/>
+            <path d="M5.5 9L7.5 11L12.5 6.5" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>{punkt}</div>
+        </div>
+      ))}
+    </div>
+
+    {/* Påminnelse */}
+    <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+      <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#F0EBF8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C8.7 2 6 4.7 6 8V13L4 15V16H20V15L18 13V8C18 4.7 15.3 2 12 2Z" stroke="#C7BDD8" strokeWidth="1.5" fill="none"/>
+          <path d="M10 16V17C10 18.1 10.9 19 12 19C13.1 19 14 18.1 14 17V16" stroke="#C7BDD8" strokeWidth="1.5" fill="none"/>
+        </svg>
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.5 }}>
+          Du kan varsling 45 min før uroen vanligvis starter. Dette kan du slå på senere.
+        </div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M6 4L10 8L6 12" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </div>
+  </div>
+)}
       </div>
 
       {/* Modal: Registrer uro */}
