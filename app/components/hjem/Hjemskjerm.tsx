@@ -324,7 +324,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     {
       label: 'Signaler', side: 'signaler',
       svg: (
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <svg width="48" height="48" viewBox="0 0 28 28" fill="none">
           <path d="M14 23C14 23 4 17 4 10.5C4 7.5 6.7 5 10 5C11.8 5 13.2 5.9 14 7.2C14.8 5.9 16.2 5 18 5C21.3 5 24 7.5 24 10.5C24 17 14 23 14 23Z" fill="none" stroke="#A8B5A2" strokeWidth="1.7" strokeLinejoin="round"/>
         </svg>
       ),
