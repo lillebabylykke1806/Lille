@@ -19,13 +19,13 @@ export default function Innsikt({ bruker }: Props) {
   const [data, setData] = useState<any>({});
 
   const lastData = useCallback(async () => {
-    const { data: profil } = await supabase
-      .from('profiler')
-      .select('*')
-      .eq('id', bruker?.id)
-      .single();
-    if (profil?.baby_navn) setBabyNavn(profil.baby_navn);
-    if (profil?.fødselsdato) setFødselsdato(profil.fødselsdato);
+    const { data: barn } = await supabase
+  .from('barn')
+  .select('*')
+  .eq('bruker_id', bruker?.id)
+  .single();
+if (barn?.navn) setBabyNavn(barn.navn);
+if (barn?.fødselsdato) setFødselsdato(barn.fødselsdato);
 
     const syvDagerSiden = new Date();
     syvDagerSiden.setDate(syvDagerSiden.getDate() - 7);
