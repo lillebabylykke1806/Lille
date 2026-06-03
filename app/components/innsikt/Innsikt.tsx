@@ -3,9 +3,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; };
+type Props = { bruker: any; aktivtBarn?: any; };
 
-export default function Innsikt({ bruker }: Props) {
+export default function Innsikt({ bruker, aktivtBarn }: Props) {
   const [aktivFane, setAktivFane] = useState<'språk' | 'innsikt'>('språk');
   const [innsikter, setInnsikter] = useState<string[]>([]);
   const [språkInnsikter, setSpråkInnsikter] = useState<string[]>([]);
@@ -24,8 +24,21 @@ export default function Innsikt({ bruker }: Props) {
   .select('*')
   .eq('bruker_id', bruker?.id)
   .single();
-if (barn?.navn) setBabyNavn(barn.navn);
-if (barn?.fødselsdato) setFødselsdato(barn.fødselsdato);
+  if (aktivtBarn?.navn) {
+    setBabyNavn(aktivtBarn.navn);
+    if (aktivtBarn?.fødselsdato) setFødselsdato(aktivtBarn.fødselsdato);
+  } else {
+    const { data: barn } = await supabase
+      .from('barn')
+      .select('*')
+      .eq('bruker_id', bruker?.id)
+      .order('opprettet', { ascending: true })
+      .limit(1)
+      .single();
+    if (barn?.navn) setBabyNavn(barn.navn);
+    if (barn?.fødselsdato) setFødselsdato(barn.fødselsdato);
+  }
+  
 
     const syvDagerSiden = new Date();
     syvDagerSiden.setDate(syvDagerSiden.getDate() - 7);
