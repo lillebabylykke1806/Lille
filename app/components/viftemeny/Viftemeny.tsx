@@ -60,11 +60,7 @@ const IkonKomponent = ({ id }: { id: string }) => {
     </svg>
   );
   if (id === 'medisin') return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <rect x="8" y="4" width="8" height="14" rx="4" stroke={farge} strokeWidth="1.5" fill="none"/>
-      <line x1="12" y1="8" x2="12" y2="14" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="9" y1="11" x2="15" y2="11" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
+    <img src="/medisin.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   if (id === 'signaler') return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -72,11 +68,7 @@ const IkonKomponent = ({ id }: { id: string }) => {
     </svg>
   );
   if (id === 'mat') return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <ellipse cx="12" cy="15" rx="7" ry="4" stroke={farge} strokeWidth="1.5" fill="none"/>
-      <path d="M5 15C5 15 5 12 12 12C19 12 19 15 19 15" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="12" y1="12" x2="12" y2="7" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
+    <img src="/mat.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   if (id === 'aktivitet') return (
     <img src="/blad.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
@@ -89,18 +81,14 @@ const IkonKomponent = ({ id }: { id: string }) => {
       <line x1="8" y1="16" x2="13" y2="16" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
     </svg>
   );
+  if (id === 'pumping') return (
+    <img src="/pumping.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
+  );
   if (id === 'temperatur') return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <rect x="9" y="3" width="6" height="13" rx="3" stroke={farge} strokeWidth="1.5" fill="none"/>
-      <circle cx="12" cy="17" r="3" stroke={farge} strokeWidth="1.5" fill="none"/>
-    </svg>
+    <img src="/temperatur.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   if (id === 'vekt') return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <rect x="3" y="10" width="18" height="10" rx="2" stroke={farge} strokeWidth="1.5" fill="none"/>
-      <path d="M8 10C8 7.8 9.8 6 12 6C14.2 6 16 7.8 16 10" stroke={farge} strokeWidth="1.5" fill="none"/>
-      <line x1="12" y1="13" x2="12" y2="16" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
+    <img src="/vekt.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
