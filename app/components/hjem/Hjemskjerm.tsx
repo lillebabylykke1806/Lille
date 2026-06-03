@@ -258,7 +258,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       }));
 
       const milepælItems = (milepælRes.data || []).map((m: any) => ({
-        tid: '00:00',
+        tid: m.opprettet ? new Date(m.opprettet).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) : '00:00',
         slutt: null,
         tekst: `🏆 ${m.navn}`,
         type: 'milepæl',

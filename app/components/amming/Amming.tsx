@@ -45,8 +45,19 @@ export default function Amming({ bruker }: Props) {
     setLasterLogg(false);
   }, [bruker?.id]);
 
-  useEffect(() => { lastLogg(); }, [lastLogg]);
-
+  useEffect(() => {
+    const lagretStart = localStorage.getItem('lille_amming_start');
+    const lagretBryst = localStorage.getItem('lille_amming_bryst');
+    if (lagretStart && lagretBryst) {
+      const start = new Date(lagretStart);
+      setStartTid(start);
+      setStartTidStr(start.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
+      setValgtBryst(lagretBryst as 'venstre' | 'høyre');
+      setSekunder(Math.floor((Date.now() - start.getTime()) / 1000));
+      setAktiv(true);
+    }
+    lastLogg();
+  }, [lastLogg]);
   useEffect(() => {
     if (logg.length > 0) {
       setValgtBryst(motattBryst(logg[0].bryst) as 'venstre' | 'høyre');
@@ -70,6 +81,8 @@ export default function Amming({ bruker }: Props) {
     setStartTidStr(nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
     setSekunder(0);
     setAktiv(true);
+    localStorage.setItem('lille_amming_start', nå.toISOString());
+    localStorage.setItem('lille_amming_bryst', bryst);
   };
 
   const justerStartTid = (nyTid: string) => {
