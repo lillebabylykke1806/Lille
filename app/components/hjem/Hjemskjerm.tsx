@@ -318,14 +318,6 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
 
   const snarveier = [
     {
-      label: 'Søvn', side: 'sovn',
-      svg: (
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <path d="M22 15C21.2 19 17.5 22 13 22C8 22 4 18 4 13C4 8.5 7.2 4.8 11.5 4C9 6.8 9 11.5 12 14.5C15 17.5 19.5 17.5 22 15Z" fill="#A8B5A2" opacity="0.85"/>
-        </svg>
-      ),
-    },
-    {
       label: 'Amming', side: 'amming',
       svg: (
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -336,10 +328,20 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       ),
     },
     {
-      label: 'Signal & uro', side: 'kolikk',
+      label: 'Signaler', side: 'signaler',
       svg: (
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
           <path d="M14 23C14 23 4 17 4 10.5C4 7.5 6.7 5 10 5C11.8 5 13.2 5.9 14 7.2C14.8 5.9 16.2 5 18 5C21.3 5 24 7.5 24 10.5C24 17 14 23 14 23Z" fill="none" stroke="#A8B5A2" strokeWidth="1.7" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Kolikk & uro', side: 'kolikk',
+      svg: (
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="9" stroke="#A8B5A2" strokeWidth="1.6" fill="none"/>
+          <path d="M14 9V15" stroke="#A8B5A2" strokeWidth="1.8" strokeLinecap="round"/>
+          <circle cx="14" cy="18" r="1" fill="#A8B5A2"/>
         </svg>
       ),
     },
@@ -423,6 +425,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     </div>
   </div>
 </div>
+
       {/* Tilstandsvelger */}
       <div style={{ display: 'flex', gap: '8px', padding: '0 24px 16px', overflowX: 'auto' }}>
         {Object.entries(tilstandConfig).map(([key, val]) => (
