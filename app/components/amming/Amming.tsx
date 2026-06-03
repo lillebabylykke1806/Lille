@@ -48,14 +48,36 @@ export default function Amming({ bruker }: Props) {
   useEffect(() => {
     const lagretStart = localStorage.getItem('lille_amming_start');
     const lagretBryst = localStorage.getItem('lille_amming_bryst');
-    if (lagretStart && lagretBryst) {
-      const start = new Date(lagretStart);
-      setStartTid(start);
-      setStartTidStr(start.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
-      setValgtBryst(lagretBryst as 'venstre' | 'høyre');
-      setSekunder(Math.floor((Date.now() - start.getTime()) / 1000));
-      setAktiv(true);
-    }
+  
+    const sjekkAktivAmming = async () => {
+      if (lagretStart && lagretBryst) {
+        const startTidStr = new Date(lagretStart).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+        const { data } = await supabase
+          .from('amming')
+          .select('*')
+          .eq('profil_id', bruker?.id)
+          .eq('start', startTidStr)
+          .not('slutt', 'is', null)
+          .limit(1);
+  
+        if (data && data.length > 0) {
+          localStorage.removeItem('lille_amming_start');
+          localStorage.removeItem('lille_amming_bryst');
+        } else {
+          const start = new Date(lagretStart);
+          setStartTid(start);
+          setStartTidStr(startTidStr);
+          setValgtBryst(lagretBryst as 'venstre' | 'høyre');
+          setSekunder(Math.floor((Date.now() - start.getTime()) / 1000));
+          setAktiv(true);
+        }
+      }
+      lastLogg();
+    };
+  
+    sjekkAktivAmming();
+  
+    
     lastLogg();
   }, [lastLogg]);
   useEffect(() => {
