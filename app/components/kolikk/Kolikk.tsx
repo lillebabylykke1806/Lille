@@ -360,10 +360,11 @@ Svar KUN med de 3 punktene, én per linje.`
     {/* Sky-illustrasjon */}
     <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '32px 24px', textAlign: 'center', marginBottom: '16px' }}>
     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-  <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '160px', height: '160px' }}>
-    <div style={{ position: 'absolute', width: '160px', height: '160px', background: 'radial-gradient(ellipse, #E8B49A 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(20px)', opacity: 0.6 }} />
-    <div style={{ position: 'absolute', width: '130px', height: '130px', background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(14px)', opacity: 0.5 }} />
-    <img src="/sky.png" alt="sky" style={{ position: 'relative', zIndex: 1, width: '320px', height: '320px', objectFit: 'contain' }} />
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '300px' }}>
+  <div style={{ position: 'absolute', width: '280px', height: '280px', background: 'radial-gradient(ellipse, #E8B49A 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(24px)', opacity: 0.6 }} />
+  <div style={{ position: 'absolute', width: '240px', height: '240px', background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(16px)', opacity: 0.5 }} />
+  <img src="/sky.png" alt="sky" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain' }} />
+
   </div>
 </div>
       <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>
