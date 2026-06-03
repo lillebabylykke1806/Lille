@@ -390,9 +390,22 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
 
       {/* Stor blob med babybilde */}
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '520px' }}>
-        <div style={{ position: 'absolute', width: '380px', height: '360px', background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)', borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%', opacity: 0.35, filter: 'blur(22px)', transform: 'translate(50px, -30px)' }} />
-        <div style={{ position: 'absolute', width: '360px', height: '340px', background: 'radial-gradient(ellipse, #C7BDD8 0%, transparent 70%)', borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%', opacity: 0.25, filter: 'blur(20px)', transform: 'translate(-50px, 20px)' }} />
-        <div style={{ position: 'absolute', width: '340px', height: '340px', background: 'radial-gradient(ellipse at 50% 50%, #A8B5A2 0%, transparent 70%)', borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%', opacity: 0.7, filter: 'blur(16px)', transform: 'translate(0px, 10px)' }} />
+      {(() => {
+  const auraFarger: Record<string, { c1: string; c2: string; c3: string }> = {
+    rolig:  { c1: '#A8C4A2', c2: '#C7D8C0', c3: '#A8B5A2' },
+    trøtt:  { c1: '#C7BDD8', c2: '#D8D0E8', c3: '#B8A8CC' },
+    urolig: { c1: '#E8B49A', c2: '#EBC8B4', c3: '#C48E7B' },
+    sover:  { c1: '#8AAEE0', c2: '#6B7FC4', c3: '#3D5A9E' },
+  };
+  const f = auraFarger[babyTilstand] || auraFarger.rolig;
+  return (
+    <>
+      <div style={{ position: 'absolute', width: '380px', height: '360px', background: `radial-gradient(ellipse, ${f.c1} 0%, transparent 70%)`, borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%', opacity: 0.35, filter: 'blur(22px)', transform: 'translate(50px, -30px)', transition: 'all 1s ease' }} />
+      <div style={{ position: 'absolute', width: '360px', height: '340px', background: `radial-gradient(ellipse, ${f.c2} 0%, transparent 70%)`, borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%', opacity: 0.25, filter: 'blur(20px)', transform: 'translate(-50px, 20px)', transition: 'all 1s ease' }} />
+      <div style={{ position: 'absolute', width: '340px', height: '340px', background: `radial-gradient(ellipse at 50% 50%, ${f.c3} 0%, transparent 70%)`, borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%', opacity: 0.7, filter: 'blur(16px)', transform: 'translate(0px, 10px)', transition: 'all 1s ease' }} />
+    </>
+  );
+})()}
         <div style={{ position: 'absolute', width: '240px', height: '240px', background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(6px)' }} />
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           {babyBilde ? (
