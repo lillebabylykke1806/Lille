@@ -336,7 +336,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       ),
     },
     {
-      label: 'Kolikk & uro', side: 'kolikk',
+      label: 'Uro & ro',
       svg: (
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
           <circle cx="14" cy="14" r="9" stroke="#A8B5A2" strokeWidth="1.6" fill="none"/>
