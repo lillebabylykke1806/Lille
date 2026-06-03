@@ -319,7 +319,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const snarveier = [
     {
       label: 'Amming', side: 'amming',
-      svg: <img src="/tateflaske-mork.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
+      svg: <img src="/tateflaske-mork.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />
     },
     {
       label: 'Signaler', side: 'signaler',
@@ -331,7 +331,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     },
     {
       label: 'Uro & ro', side: 'kolikk',
-      svg: <img src="/uro.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
+      svg: <img src="/uro.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />
     },
   ];
 
@@ -499,10 +499,12 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       {/* Snarveier */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '28px' }}>
         {snarveier.map(item => (
-          <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '18px 8px 14px', background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', transition: 'all 0.3s ease' }}>
+          <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '14px 8px', background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', transition: 'all 0.3s ease', height: '90px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
             {item.svg}
-            <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>{item.label}</span>
-          </button>
+          </div>
+          <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', textAlign: 'center', lineHeight: 1.2 }}>{item.label}</span>
+        </button>
         ))}
       </div>
 
