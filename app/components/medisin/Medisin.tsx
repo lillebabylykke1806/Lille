@@ -350,7 +350,7 @@ export default function Medisin({ bruker }: Props) {
                 <div key={v.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: farger.bakgrunn, borderRadius: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: v.tatt ? farger.grønnLys : farger.kremMørk, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <VaksineIkon farge={v.tatt ? farger.grønn : farger.tekstLys} />
+                    <img src="/vaksine.png" style={{ width: 24, height: 24, objectFit: 'contain', opacity: v.tatt ? 1 : 0.5 }} />
                     </div>
                     <div>
                       <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>{v.navn}</div>
@@ -372,7 +372,7 @@ export default function Medisin({ bruker }: Props) {
                     <button key={i} onClick={() => leggTilVaksine(v.navn, v.beskrivelse)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: farger.bakgrunn, border: `1px dashed ${farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.kremMørk, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <VaksineIkon farge={farger.tekstLys} />
+                        <img src="/vaksine.png" style={{ width: 24, height: 24, objectFit: 'contain', opacity: 0.5 }} />
                         </div>
                         <div>
                           <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{v.navn}</div>
