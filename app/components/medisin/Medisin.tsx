@@ -313,7 +313,7 @@ export default function Medisin({ bruker }: Props) {
                     <button key={i} onClick={() => leggTilMedisin(s)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: farger.bakgrunn, border: `1px dashed ${farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.kremMørk, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <MedisinIkon farge={farger.tekstLys} />
+                        <img src="/medisinflaske.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
                         </div>
                         <div>
                           <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{s.navn}</div>
