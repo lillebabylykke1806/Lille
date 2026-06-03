@@ -319,13 +319,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const snarveier = [
     {
       label: 'Amming', side: 'amming',
-      svg: (
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <rect x="8" y="13" width="12" height="11" rx="3.5" stroke="#A8B5A2" strokeWidth="1.6" fill="none"/>
-          <path d="M10 13V11.5C10 9.8 11 9 12 9H16C17 9 18 9.8 18 11.5V13" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-          <path d="M13 9C13 9 13 7.5 14 6.5C15 7.5 15 9 15 9" stroke="#A8B5A2" strokeWidth="1.3" strokeLinecap="round"/>
-        </svg>
-      ),
+      svg: <img src="/tateflaske.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />,
     },
     {
       label: 'Signaler', side: 'signaler',
@@ -337,13 +331,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     },
     {
       label: 'Uro & ro', side: 'kolikk',
-      svg: (
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <circle cx="14" cy="14" r="9" stroke="#A8B5A2" strokeWidth="1.6" fill="none"/>
-          <path d="M14 9V15" stroke="#A8B5A2" strokeWidth="1.8" strokeLinecap="round"/>
-          <circle cx="14" cy="18" r="1" fill="#A8B5A2"/>
-        </svg>
-      ),
+      svg: <img src="/uro.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />,
     },
   ];
 
