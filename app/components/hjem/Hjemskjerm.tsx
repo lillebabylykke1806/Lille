@@ -72,16 +72,23 @@ const IkonKomponent = ({ type }: { type: string }) => {
   );
   if (type === 'bleie') return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#E8F0E8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <img src="/bleie.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
-    </div>
+    <img src="/bleie.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+  </div>
   );
-  return (
-    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-        <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="#8A7060" strokeWidth="1.3"/>
+  if (type === 'milepæl') return (
+    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" fill="#F4A853"/>
       </svg>
     </div>
   );
+  return (
+  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+      <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="#8A7060" strokeWidth="1.3"/>
+    </svg>
+  </div>
+);
 };
 
 const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
@@ -219,10 +226,11 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     const lastDagensFlyt = async () => {
       const dagensdato = new Date().toISOString().split('T')[0];
 
-      const [lurRes, ammingRes, bleieRes] = await Promise.all([
+      const [lurRes, ammingRes, bleieRes, milepælRes] = await Promise.all([
         supabase.from('lurer').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
         supabase.from('amming').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
         supabase.from('bleie').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
+        supabase.from('milepæler').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato),
       ]);
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
@@ -249,7 +257,17 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
         varighet: null,
       }));
 
-      const alle = [...lurItems, ...ammingItems, ...bleieItems].sort((a, b) => {
+      const milepælItems = (milepælRes.data || []).map((m: any) => ({
+        tid: '00:00',
+        slutt: null,
+        tekst: `🏆 ${m.navn}`,
+        type: 'milepæl',
+        varighet: null,
+      }));
+      
+      const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems].sort((a, b) => {
+
+    
         if (!a.tid || !b.tid) return 0;
         return b.tid.localeCompare(a.tid);
       });
