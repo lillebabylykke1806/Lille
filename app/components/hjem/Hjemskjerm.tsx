@@ -1,6 +1,6 @@
 'use client';
 import { farger } from '../../lib/farger';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import BarnVelger from './BarnVelger';
 
@@ -63,17 +63,13 @@ const IkonKomponent = ({ type }: { type: string }) => {
   );
   if (type === 'amming') return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <rect x="7" y="11" width="10" height="9" rx="3" stroke="#C48E7B" strokeWidth="1.6" fill="none"/>
-        <path d="M9 11V9.5C9 8 10 7 11 7H13C14 7 15 8 15 9.5V11" stroke="#C48E7B" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-        <path d="M11 7C11 7 11 5.5 12 4.5C13 5.5 13 7 13 7" stroke="#C48E7B" strokeWidth="1.3" strokeLinecap="round"/>
-      </svg>
+      <img src="/tateflaske.png" style={{ width: 24, height: 24, objectFit: 'contain' }} />
     </div>
   );
   if (type === 'bleie') return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#E8F0E8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-    <img src="/bleie.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
-  </div>
+      <img src="/bleie.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+    </div>
   );
   if (type === 'milepæl') return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#FFF3D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -83,12 +79,12 @@ const IkonKomponent = ({ type }: { type: string }) => {
     </div>
   );
   return (
-  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-      <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="#8A7060" strokeWidth="1.3"/>
-    </svg>
-  </div>
-);
+    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="#8A7060" strokeWidth="1.3"/>
+      </svg>
+    </div>
+  );
 };
 
 const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
@@ -214,6 +210,49 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [lurType, setLurType] = useState<'lur' | 'natt'>('lur');
   const [visDagbok, setVisDagbok] = useState(false);
   const [alleDagensHendelser, setAlleDagensHendelser] = useState<any[]>([]);
+  const [auraObservasjon, setAuraObservasjon] = useState('');
+
+  const hentAuraObservasjon = async () => {
+    if (!aktivtBarn?.id && !bruker?.id) return;
+    const fraDate = new Date();
+    fraDate.setDate(fraDate.getDate() - 7);
+    const fra = fraDate.toISOString().split('T')[0];
+
+    const { data: lurer } = await supabase
+      .from('lurer')
+      .select('*')
+      .eq('profil_id', aktivtBarn?.id || bruker.id)
+      .gte('dato', fra)
+      .not('signaler', 'is', null);
+
+    if (!lurer || lurer.length < 3) {
+      setAuraObservasjon('');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 100,
+          messages: [{
+            role: 'user',
+            content: `Du er en varm babyekspert. Gi ÉN kort observasjon på norsk om ${babyNavn}s overganger basert på søvnsignalene. Maks 1 setning. Bruk babyens navn. Vær konkret og varm.
+
+Data: ${JSON.stringify(lurer.slice(0, 10))}
+
+Svar KUN med observasjonen.`
+          }],
+        }),
+      });
+      const result = await response.json();
+      setAuraObservasjon(result.content?.[0]?.text || '');
+    } catch {
+      setAuraObservasjon('');
+    }
+  };
 
   useEffect(() => {
     if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
@@ -240,7 +279,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
         type: l.type,
         varighet: l.varighet ? `${l.varighet} min` : null,
       }));
-      
+
       const ammingItems = (ammingRes.data || []).map((a: any) => ({
         tid: a.start,
         slutt: a.slutt || null,
@@ -248,7 +287,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
         type: 'amming',
         varighet: a.varighet ? `${a.varighet} min` : null,
       }));
-      
+
       const bleieItems = (bleieRes.data || []).map((b: any) => ({
         tid: b.tidspunkt,
         slutt: null,
@@ -264,10 +303,8 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
         type: 'milepæl',
         varighet: null,
       }));
-      
-      const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems].sort((a, b) => {
 
-    
+      const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems].sort((a, b) => {
         if (!a.tid || !b.tid) return 0;
         return b.tid.localeCompare(a.tid);
       });
@@ -292,6 +329,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     }
 
     lastDagensFlyt();
+    hentAuraObservasjon();
     const interval = setInterval(lastDagensFlyt, 60000);
     return () => clearInterval(interval);
   }, [bruker, aktivtBarn]);
@@ -319,7 +357,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const snarveier = [
     {
       label: 'Amming', side: 'amming',
-      svg: <img src="/tateflaske-mork.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+      svg: <img src="/tateflaske-mork.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
     },
     {
       label: 'Signaler', side: 'signaler',
@@ -331,7 +369,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     },
     {
       label: 'Uro & ro', side: 'kolikk',
-      svg: <img src="/uro.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+      svg: <img src="/uro.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
     },
   ];
 
@@ -379,40 +417,40 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       </div>
 
       {/* Stor blob med babybilde */}
-<div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '320px' }}>
-  {(() => {
-    const auraFarger: Record<string, { c1: string; c2: string; c3: string }> = {
-      rolig:  { c1: '#A8C4A2', c2: '#C7D8C0', c3: '#A8B5A2' },
-      trøtt:  { c1: '#C7BDD8', c2: '#D8D0E8', c3: '#B8A8CC' },
-      urolig: { c1: '#E8B49A', c2: '#EBC8B4', c3: '#C48E7B' },
-      sover:  { c1: '#8AAEE0', c2: '#6B7FC4', c3: '#3D5A9E' },
-    };
-    const f = auraFarger[babyTilstand] || auraFarger.rolig;
-    return (
-      <>
-        <div style={{ position: 'absolute', width: '300px', height: '280px', background: `radial-gradient(ellipse, ${f.c1} 0%, transparent 70%)`, borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%', opacity: 0.35, filter: 'blur(22px)', transform: 'translate(40px, -20px)', transition: 'all 1s ease' }} />
-        <div style={{ position: 'absolute', width: '280px', height: '260px', background: `radial-gradient(ellipse, ${f.c2} 0%, transparent 70%)`, borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%', opacity: 0.25, filter: 'blur(20px)', transform: 'translate(-40px, 10px)', transition: 'all 1s ease' }} />
-        <div style={{ position: 'absolute', width: '260px', height: '260px', background: `radial-gradient(ellipse at 50% 50%, ${f.c3} 0%, transparent 70%)`, borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%', opacity: 0.7, filter: 'blur(16px)', transition: 'all 1s ease' }} />
-      </>
-    );
-  })()}
-  <div style={{ position: 'absolute', width: '200px', height: '200px', background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(6px)' }} />
-  <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-    {babyBilde ? (
-      <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(255,255,255,0.9)', boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}>
-        <img src={babyBilde} alt="baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '320px' }}>
+        {(() => {
+          const auraFarger: Record<string, { c1: string; c2: string; c3: string }> = {
+            rolig:  { c1: '#A8C4A2', c2: '#C7D8C0', c3: '#A8B5A2' },
+            trøtt:  { c1: '#C7BDD8', c2: '#D8D0E8', c3: '#B8A8CC' },
+            urolig: { c1: '#E8B49A', c2: '#EBC8B4', c3: '#C48E7B' },
+            sover:  { c1: '#8AAEE0', c2: '#6B7FC4', c3: '#3D5A9E' },
+          };
+          const f = auraFarger[babyTilstand] || auraFarger.rolig;
+          return (
+            <>
+              <div style={{ position: 'absolute', width: '300px', height: '280px', background: `radial-gradient(ellipse, ${f.c1} 0%, transparent 70%)`, borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%', opacity: 0.35, filter: 'blur(22px)', transform: 'translate(40px, -20px)', transition: 'all 1s ease' }} />
+              <div style={{ position: 'absolute', width: '280px', height: '260px', background: `radial-gradient(ellipse, ${f.c2} 0%, transparent 70%)`, borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%', opacity: 0.25, filter: 'blur(20px)', transform: 'translate(-40px, 10px)', transition: 'all 1s ease' }} />
+              <div style={{ position: 'absolute', width: '260px', height: '260px', background: `radial-gradient(ellipse at 50% 50%, ${f.c3} 0%, transparent 70%)`, borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%', opacity: 0.7, filter: 'blur(16px)', transition: 'all 1s ease' }} />
+            </>
+          );
+        })()}
+        <div style={{ position: 'absolute', width: '200px', height: '200px', background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(6px)' }} />
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          {babyBilde ? (
+            <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(255,255,255,0.9)', boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}>
+              <img src={babyBilde} alt="baby" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          ) : (
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid rgba(255,255,255,0.8)' }}>
+              <img src="/baby-ansikt.png" alt="baby" style={{ width: '56px', height: '56px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+            </div>
+          )}
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '17px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
+            <div style={{ fontSize: '12.5px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>{valgtTilstand.undertekst}</div>
+          </div>
+        </div>
       </div>
-    ) : (
-      <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid rgba(255,255,255,0.8)' }}>
-        <img src="/baby-ansikt.png" alt="baby" style={{ width: '56px', height: '56px', objectFit: 'contain', mixBlendMode: 'multiply' }} />
-      </div>
-    )}
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: '17px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '4px' }}>{valgtTilstand.tekst}</div>
-      <div style={{ fontSize: '12.5px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>{valgtTilstand.undertekst}</div>
-    </div>
-  </div>
-</div>
 
       {/* Tilstandsvelger */}
       <div style={{ display: 'flex', gap: '8px', padding: '0 24px 16px', overflowX: 'auto' }}>
@@ -422,6 +460,16 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
           </button>
         ))}
       </div>
+
+      {/* AI aura-observasjon */}
+      {auraObservasjon && (
+        <div style={{ padding: '0 24px 16px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '16px', padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <span style={{ fontSize: '14px', flexShrink: 0 }}>✨</span>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{auraObservasjon}</div>
+          </div>
+        </div>
+      )}
 
       {/* Lur pågår / Neste lur */}
       {lurPågår ? (
@@ -500,11 +548,11 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '28px' }}>
         {snarveier.map(item => (
           <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '14px 8px', background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', transition: 'all 0.3s ease', height: '90px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-            {item.svg}
-          </div>
-          <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', textAlign: 'center', lineHeight: 1.2 }}>{item.label}</span>
-        </button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+              {item.svg}
+            </div>
+            <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', textAlign: 'center', lineHeight: 1.2 }}>{item.label}</span>
+          </button>
         ))}
       </div>
 
@@ -513,50 +561,51 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
         <AIInnsiktKort bruker={aktivtBarn || bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
       </div>
 
-    {/* Dagens flyt */}
-<div style={{ padding: '0 24px 32px' }}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
-    <button onClick={() => setVisDagbok(true)} style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
-  </div>
-  <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
-    {dagensFlyt.length === 0 ? (
-      <div style={{ padding: '28px 24px', textAlign: 'center' }}>
-        <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>Ingen registreringer ennå i dag</div>
-        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>Trykk + for å begynne</div>
-      </div>
-    ) : (
-      <>
-        {dagensFlyt.slice(0, 5).map((item: any, i) => (
-          <div key={i} style={{ position: 'relative' }}>
-            {i < Math.min(dagensFlyt.length, 5) - 1 && (
-              <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
-            )}
-            <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <IkonKomponent type={item.type} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>
-                  {item.slutt ? `${item.tid}–${item.slutt}` : item.tid}
-                </div>
-              </div>
-              {item.varighet && (
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
-              )}
+      {/* Dagens flyt */}
+      <div style={{ padding: '0 24px 32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
+          <button onClick={() => setVisDagbok(true)} style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
+          {dagensFlyt.length === 0 ? (
+            <div style={{ padding: '28px 24px', textAlign: 'center' }}>
+              <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>Ingen registreringer ennå i dag</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>Trykk + for å begynne</div>
             </div>
-          </div>
-        ))}
-        {dagensFlyt.length > 5 && (
-          <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
-            <button onClick={() => setVisDagbok(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-              +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag – Se dagbok
-            </button>
-          </div>
-        )}
-      </>
-    )}
-  </div>
-</div>
+          ) : (
+            <>
+              {dagensFlyt.slice(0, 5).map((item: any, i) => (
+                <div key={i} style={{ position: 'relative' }}>
+                  {i < Math.min(dagensFlyt.length, 5) - 1 && (
+                    <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
+                  )}
+                  <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <IkonKomponent type={item.type} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
+                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>
+                        {item.slutt ? `${item.tid}–${item.slutt}` : item.tid}
+                      </div>
+                    </div>
+                    {item.varighet && item.varighet !== '0 min' && (
+                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {dagensFlyt.length > 5 && (
+                <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
+                  <button onClick={() => setVisDagbok(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
+                    +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag – Se dagbok
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
       {/* DAGBOK MODAL */}
       {visDagbok && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisDagbok(false)}>
@@ -571,7 +620,6 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
                 {alleDagensHendelser.length} hendelser
               </div>
             </div>
-
             {alleDagensHendelser.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '32px', color: farger.tekstLys, fontFamily: 'var(--font-inter)', fontSize: '14px', fontStyle: 'italic' }}>
                 Ingen registreringer i dag ennå
@@ -583,9 +631,11 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
                     <IkonKomponent type={item.type} />
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>{item.tekst}</div>
-                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{item.tid}</div>
+                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+                        {item.slutt ? `${item.tid}–${item.slutt}` : item.tid}
+                      </div>
                     </div>
-                    {item.varighet && (
+                    {item.varighet && item.varighet !== '0 min' && (
                       <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '600' }}>{item.varighet}</div>
                     )}
                   </div>
