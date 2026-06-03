@@ -238,21 +238,15 @@ export default function Amming({ bruker }: Props) {
               </>
             ) : (
               <>
-                <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '14px', textAlign: 'center' }}>Velg bryst for å starte</div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <button onClick={() => startAmming('venstre')} style={{ flex: 1, padding: '20px 12px', backgroundColor: farger.bakgrunn, border: `1.5px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#FFE8D6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src="/tateflaske-mork.png" style={{ width: 28, height: 28, objectFit: 'contain', transform: 'scaleX(-1)' }} />
-                    </div>
-                    <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>Venstre</div>
-                  </button>
-                  <button onClick={() => startAmming('høyre')} style={{ flex: 1, padding: '20px 12px', backgroundColor: farger.bakgrunn, border: `1.5px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                    <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#FFE8D6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src="/tateflaske-mork.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
-                    </div>
-                    <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>Høyre</div>
-                  </button>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px', textAlign: 'center' }}>
+                  Anbefalt neste bryst
                 </div>
+                <button onClick={() => startAmming('høyre')} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
+                  🤍 Start med høyre bryst
+                </button>
+                <button onClick={() => startAmming('venstre')} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '13px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+                  Eller start med venstre bryst
+                </button>
               </>
             )}
           </>
