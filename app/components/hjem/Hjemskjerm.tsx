@@ -319,7 +319,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const snarveier = [
     {
       label: 'Amming', side: 'amming',
-      svg: <img src="/tateflaske.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />,
+      svg: <img src="/tateflaske-mork.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
     },
     {
       label: 'Signaler', side: 'signaler',
@@ -331,7 +331,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     },
     {
       label: 'Uro & ro', side: 'kolikk',
-      svg: <img src="/uro.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />,
+      svg: <img src="/uro.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
     },
   ];
 
