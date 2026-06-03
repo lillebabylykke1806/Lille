@@ -74,12 +74,7 @@ const IkonKomponent = ({ id }: { id: string }) => {
     <img src="/blad.png" style={{ width: 28, height: 28, objectFit: 'contain' }} />
   );
   if (id === 'notat') return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-      <rect x="5" y="3" width="14" height="18" rx="2" stroke={farge} strokeWidth="1.5" fill="none"/>
-      <line x1="8" y1="8" x2="16" y2="8" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
-      <line x1="8" y1="12" x2="16" y2="12" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
-      <line x1="8" y1="16" x2="13" y2="16" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
-    </svg>
+    <img src="/notater.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   if (id === 'pumping') return (
     <img src="/pumping.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
@@ -89,6 +84,9 @@ const IkonKomponent = ({ id }: { id: string }) => {
   );
   if (id === 'vekt') return (
     <img src="/vekt.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
+  );
+  if (id === 'kolikk') return (
+    <img src="/uro.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
