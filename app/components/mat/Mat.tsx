@@ -236,6 +236,34 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
             </div>
           </div>
 
+{/* Snart kommer dette */}
+<div style={{ background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF0D6 100%)', border: '1px solid #F4D9A0', borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+    <span style={{ fontSize: '20px' }}>💡</span>
+    <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#8B6340', fontWeight: '700' }}>Snart kommer dette</div>
+  </div>
+  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#6B5040', marginBottom: '12px' }}>
+    Når du har registrert noen måltider vil du få:
+  </div>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+    {[
+      { ikon: '💛', tekst: `${babyNavn} sitt matspråk` },
+      { ikon: '❤️', tekst: 'Favorittsmaker' },
+      { ikon: '😕', tekst: 'Mat som ikke falt i smak' },
+      { ikon: '✨', tekst: 'Personlige AI-innsikter' },
+    ].map((item, i) => (
+      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#FFF0D6', border: '1px solid #F4D9A0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 5L4 7L8 3" stroke="#8B6340" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#6B5040' }}>{item.tekst}</div>
+      </div>
+    ))}
+  </div>
+</div>
+
           {/* Tips */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
             <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '16px' }}>🌿 Tips til første måltider</div>
