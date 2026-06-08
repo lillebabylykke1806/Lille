@@ -16,6 +16,7 @@ import Aktivitet from './components/aktivitet/Aktivitet';
 import Vekt from './components/vekt/Vekt';
 import Signaler from './components/signaler/Signaler';
 import Kolikk from './components/kolikk/Kolikk';
+import Mat from './components/mat/Mat';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -142,6 +143,8 @@ export default function Home() {
         {aktivSide === 'aktivitet' && <Aktivitet bruker={aktivtBarn || bruker} />}
         {aktivSide === 'signaler' && <Signaler bruker={aktivtBarn || bruker} />}
         {aktivSide === 'kolikk' && <Kolikk bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'signaler' && <Signaler bruker={aktivtBarn || bruker} onNavigate={setAktivSide} />}
+        {aktivSide === 'mat' && <Mat bruker={aktivtBarn || bruker} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 
