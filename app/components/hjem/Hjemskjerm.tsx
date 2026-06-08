@@ -255,7 +255,10 @@ Svar KUN med observasjonen.`
   };
 
   useEffect(() => {
-    if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
+    if (aktivtBarn?.navn) {
+      setBabyNavn(aktivtBarn.navn);
+      hentAuraObservasjon();
+    }
     const lagretBilde = localStorage.getItem(`lille_babybilde_${aktivtBarn?.id}`) || localStorage.getItem('lille_babybilde');
     if (lagretBilde) setBabyBilde(lagretBilde);
     else setBabyBilde(null);
