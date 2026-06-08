@@ -400,24 +400,8 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
     ))}
   </div>
 </div>
-                  {/* Info */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '2px' }}>{m.matvare}</div>
-                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                      {getReaksjonIkon(m.reaksjon)} {getReaksjonLabel(m.reaksjon)}
-                    </div>
-                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{MENGDER.find(x => x.id === m.mengde)?.label}</div>
-                  </div>
-                  {/* Klokkeslett */}
-                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flexShrink: 0 }}>{m.klokkeslett.slice(0, 5)}</div>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M6 4L10 8L6 12" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              ))}
-            </div>
-          </div>
 
+                
           {/* Smakskart */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
