@@ -365,26 +365,41 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
             </div>
           )}
 
-          {/* Siste måltider */}
-          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Siste måltider</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600' }}>Se alle</div>
+        {/* Siste måltider */}
+<div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+    <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Siste måltider</div>
+    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600' }}>Se alle</div>
+  </div>
+  <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '16px', overflow: 'hidden', padding: '8px 0' }}>
+    {matreg.slice(0, 5).map((m, i) => (
+      <div key={i} style={{ position: 'relative' }}>
+        {i < Math.min(matreg.length, 5) - 1 && (
+          <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
+        )}
+        <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: KATEGORIER.find(k => k.id === m.kategori)?.farge || farger.bakgrunn, border: `1px solid ${KATEGORIER.find(k => k.id === m.kategori)?.border || farger.kremMørk}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0, zIndex: 1 }}>
+            {getKategoriIkon(m.kategori)}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: i === 0 ? 600 : 400 }}>
+              {m.matvare}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {matreg.slice(0, 5).map((m, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: i < Math.min(matreg.length, 5) - 1 ? `1px solid ${farger.kremMørk}` : 'none' }}>
-                  {/* Dato-boks */}
-                  <div style={{ width: '40px', textAlign: 'center', flexShrink: 0 }}>
-                    <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1 }}>{new Date(m.dato).getDate()}</div>
-                    <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textTransform: 'uppercase' }}>
-                      {['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'][new Date(m.dato).getMonth()]}
-                    </div>
-                  </div>
-                  {/* Ikon */}
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: KATEGORIER.find(k => k.id === m.kategori)?.farge || farger.bakgrunn, border: `1px solid ${KATEGORIER.find(k => k.id === m.kategori)?.border || farger.kremMørk}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>
-                    {getKategoriIkon(m.kategori)}
-                  </div>
+            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '2px' }}>
+              {getReaksjonIkon(m.reaksjon)} {getReaksjonLabel(m.reaksjon)} · {MENGDER.find(x => x.id === m.mengde)?.label}
+            </div>
+          </div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flexShrink: 0, textAlign: 'right' }}>
+            <div>{m.klokkeslett.slice(0, 5)}</div>
+            <div style={{ fontSize: '10px', marginTop: '2px' }}>
+              {new Date(m.dato).getDate()}. {['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'][new Date(m.dato).getMonth()]}
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
                   {/* Info */}
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '2px' }}>{m.matvare}</div>
