@@ -135,7 +135,7 @@ export default function Home() {
         {aktivSide === 'bleie' && <Bleie bruker={aktivtBarn || bruker} />}
         {aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
         {aktivSide === 'amming' && <Amming bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} />}
+        {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
         {aktivSide === 'medisin' && <Medisin bruker={aktivtBarn || bruker} />}
         {aktivSide === 'notat' && <Notat bruker={aktivtBarn || bruker} />}
         {aktivSide === 'vekt' && <Vekt bruker={aktivtBarn || bruker} />}
