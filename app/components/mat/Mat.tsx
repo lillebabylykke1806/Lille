@@ -70,6 +70,7 @@ export default function Mat({ bruker }: Props) {
     if (barn?.navn) setBabyNavn(barn.navn);
 
     const { data } = await supabase.from('mat').select('*').eq('profil_id', bruker?.id).order('dato', { ascending: false }).order('klokkeslett', { ascending: false });
+console.log('Mat data:', data, 'bruker id:', bruker?.id);
     setMatreg(data || []);
     setLaster(false);
   }, [bruker?.id]);
