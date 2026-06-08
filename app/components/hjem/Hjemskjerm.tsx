@@ -332,7 +332,7 @@ Svar KUN med observasjonen.`
     hentAuraObservasjon();
     const interval = setInterval(lastDagensFlyt, 60000);
     return () => clearInterval(interval);
-  }, [bruker, aktivtBarn]);
+  }, [bruker, aktivtBarn, babyNavn]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
     rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2' },
