@@ -310,9 +310,17 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
         <div style={{ background: 'linear-gradient(135deg, #F5F0FF 0%, #EDE8FF 100%)', border: '1px solid #D8D0FF', borderRadius: '20px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: '12px', top: '12px', fontSize: '56px', opacity: 0.2 }}>☁️</div>
           <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7C3AED', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>✦ AI-OBSERVASJON</div>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3B0764', fontWeight: '700', marginBottom: '16px', lineHeight: 1.4, paddingRight: '60px' }}>
-            {babyNavn} viser ofte disse signalene før han/hun blir trøtt:
-          </div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3B0764', fontWeight: '700', marginBottom: '4px', lineHeight: 1.4, paddingRight: '60px' }}>
+  {babyNavn} viser ofte disse signalene før han/hun blir trøtt:
+</div>
+{søvnOvergangTider.signalTilSøvn && (
+  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#7C3AED', marginBottom: '16px', opacity: 0.8 }}>
+    Gjennomsnitt {søvnOvergangTider.signalTilSøvn} minutter fra første signal til søvn
+  </div>
+)}
+{!søvnOvergangTider.signalTilSøvn && (
+  <div style={{ marginBottom: '16px' }} />
+)}
           {/* Horisontal signalkjede med PNG-ikoner */}
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
             {signalKjede.slice(0, 4).map((signal, i) => {
@@ -340,15 +348,28 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
             </div>
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7C3AED' }}>
-            Registrert i {signalKjedeProsent}% av lurene
-          </div>
-          <button onClick={hentSpråkInnsikter} style={{ marginTop: '10px', padding: '6px 14px', backgroundColor: 'transparent', border: '1px solid #D8D0FF', borderRadius: '20px', fontSize: '11px', color: '#7C3AED', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            Oppdater
-          </button>
+  {signalKjedeProsent >= 50
+    ? `Et av de vanligste mønstrene vi ser hos ${babyNavn}`
+    : signalKjedeProsent >= 20
+    ? `Et mønster vi ser før ${signalKjedeProsent}% av lurene`
+    : `AI-en lærer fortsatt ${babyNavn}s mønstre – registrer gjerne flere`}
+</div>
+<button onClick={hentSpråkInnsikter} style={{ marginTop: '10px', padding: '6px 14px', backgroundColor: 'transparent', border: '1px solid #D8D0FF', borderRadius: '20px', fontSize: '11px', color: '#7C3AED', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+  Oppdater analyse
+</button>
         </div>
       )}
 
-      {/* Vanligste signaler */}
+    
+      {/* Overganger */}
+      {søvnOvergangTider.signalKjede.length > 0 && (
+        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <img src="/spraak-overgang.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Overganger vi ser hos {babyNavn}</div>
+          </div>
+
+          {/* Vanligste signaler */}
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -363,8 +384,10 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
           </button>
         </div>
         <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>
-          Basert på {data.lurer?.filter((l: any) => l.signaler)?.length || 0} registreringer
-        </div>
+  {(data.lurer?.filter((l: any) => l.signaler)?.length || 0) < 5
+    ? `Registrer flere signaler for sikrere innsikt`
+    : `Basert på ${data.lurer?.filter((l: any) => l.signaler)?.length || 0} registreringer`}
+</div>
         <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
           {signalKjede.slice(0, 5).map((signal, i) => {
             const f = getSignalFarge(signal);
@@ -381,14 +404,6 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
           })}
         </div>
       </div>
-
-      {/* Overganger */}
-      {søvnOvergangTider.signalKjede.length > 0 && (
-        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <img src="/spraak-overgang.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Overganger vi ser hos {babyNavn}</div>
-          </div>
 
           {/* To kjeder side om side */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
@@ -505,8 +520,8 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
         </div>
       )}
 
-      {/* AI signalmønster */}
-      {språkInnsikter.length > 0 && (
+    {/* AI signalmønster */}
+    {språkInnsikter.length > 0 && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <img src="/spraak-monstre.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
