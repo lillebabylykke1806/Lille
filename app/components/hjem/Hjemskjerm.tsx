@@ -78,6 +78,7 @@ const IkonKomponent = ({ type }: { type: string }) => {
       </svg>
     </div>
   );
+  if (type === 'mat') return <img src="/mat.png" style={{ width: 36, height: 36, objectFit: 'contain' }} />;
   return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -268,11 +269,12 @@ Svar KUN med observasjonen.`
     const lastDagensFlyt = async () => {
       const dagensdato = new Date().toISOString().split('T')[0];
 
-      const [lurRes, ammingRes, bleieRes, milepælRes] = await Promise.all([
+      const [lurRes, ammingRes, bleieRes, milepælRes, matRes] = await Promise.all([
         supabase.from('lurer').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
         supabase.from('amming').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
         supabase.from('bleie').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
         supabase.from('milepæler').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato),
+        supabase.from('mat').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
       ]);
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
@@ -307,7 +309,15 @@ Svar KUN med observasjonen.`
         varighet: null,
       }));
 
-      const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems].sort((a, b) => {
+      const matItems = (matRes.data || []).map((m: any) => ({
+        tid: m.klokkeslett,
+        slutt: null,
+        tekst: `Mat: ${m.matvare}`,
+        type: 'mat',
+        varighet: null,
+      }));
+      
+      const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems, ...matItems].sort((a, b) => {
         if (!a.tid || !b.tid) return 0;
         return b.tid.localeCompare(a.tid);
       });
