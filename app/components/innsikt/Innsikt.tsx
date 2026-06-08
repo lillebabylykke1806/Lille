@@ -57,7 +57,6 @@ export default function Innsikt({ bruker, aktivtBarn, onNavigate }: Props) {
 
     setHarSignaler(lurMedSignaler.length > 0);
 
-    // Siste signaler (for listen nederst)
     const alleSisteSignaler: any[] = [];
     lurData.slice(0, 20).forEach((l: any) => {
       if (!l.signaler) return;
@@ -80,7 +79,6 @@ export default function Innsikt({ bruker, aktivtBarn, onNavigate }: Props) {
         .sort((a, b) => b[1] - a[1]).slice(0, 5).map(([signal]) => signal);
       setSignalKjede(sortertKjede);
 
-      // Prosent per signal
       const prosentMap: Record<string, number> = {};
       Object.entries(signalTelling).forEach(([navn, antall]) => {
         prosentMap[navn] = totalLurer > 0 ? Math.round((antall / totalLurer) * 100) : 0;
@@ -177,15 +175,27 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
     setLasterSpråk(false);
   }, [data.lurer, babyNavn]);
 
-  const getSignalFarge = (signal: string) => {
+  // Matcher signalnavn til PNG-ikon
+  const getSignalIkon = (signal: string): string => {
     const lower = signal.toLowerCase();
-    if (lower.includes('stirr') || lower.includes('blikk')) return { bg: '#EEF2FF', border: '#C7D2FE', tekst: '#4338CA', ikon: '👁️' };
-    if (lower.includes('gjespvend') || lower.includes('hodet')) return { bg: '#FFF7ED', border: '#FED7AA', tekst: '#C2410C', ikon: '😶' };
-    if (lower.includes('gjesp')) return { bg: '#FDF4FF', border: '#E9D5FF', tekst: '#7C3AED', ikon: '🥱' };
-    if (lower.includes('gnir') || lower.includes('øyne')) return { bg: '#FFF1F2', border: '#FECDD3', tekst: '#BE123C', ikon: '😣' };
-    if (lower.includes('urolig') || lower.includes('kropp')) return { bg: '#FFF7ED', border: '#FED7AA', tekst: '#C2410C', ikon: '😤' };
-    if (lower.includes('bena') || lower.includes('trekk')) return { bg: '#FFF1F2', border: '#FECDD3', tekst: '#BE123C', ikon: '🦵' };
-    return { bg: '#F8FAFC', border: '#E2E8F0', tekst: '#475569', ikon: '💤' };
+    if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return '/signal-oye.png';
+    if (lower.includes('gjesp')) return '/signal-gjespende.png';
+    if (lower.includes('hodet') || lower.includes('vend')) return '/signal-hodet.png';
+    if (lower.includes('gnir') || lower.includes('øyne') || lower.includes('oyne')) return '/signal-gnir.png';
+    if (lower.includes('urolig') || lower.includes('kropp')) return '/signal-urolig.png';
+    if (lower.includes('ben') || lower.includes('trekk')) return '/signal-bena.png';
+    return '/signal-oye.png';
+  };
+
+  const getSignalFarge = (signal: string): { bg: string; border: string } => {
+    const lower = signal.toLowerCase();
+    if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return { bg: '#EEF2FF', border: '#C7D2FE' };
+    if (lower.includes('gjesp')) return { bg: '#FDF4FF', border: '#E9D5FF' };
+    if (lower.includes('hodet') || lower.includes('vend')) return { bg: '#FFF7ED', border: '#FED7AA' };
+    if (lower.includes('gnir') || lower.includes('øyne')) return { bg: '#FFF1F2', border: '#FECDD3' };
+    if (lower.includes('urolig') || lower.includes('kropp')) return { bg: '#FFF7ED', border: '#FED7AA' };
+    if (lower.includes('ben') || lower.includes('trekk')) return { bg: '#FFF1F2', border: '#FECDD3' };
+    return { bg: '#F8FAFC', border: '#E2E8F0' };
   };
 
   const StatKort = ({ tittel, verdi, undertekst }: { tittel: string; verdi: string; undertekst: string }) => (
@@ -201,43 +211,46 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
   const antallAmming = data.amming?.length || 0;
   const antallBleier = data.bleie?.length || 0;
 
-  // --- ONBOARDING (ingen signaler ennå) ---
+  // ─── ONBOARDING ───────────────────────────────────────────────
   const SpråkOnboarding = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
       {/* Hero */}
-      <div style={{ background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF0D6 100%)', border: '1px solid #F4D9A0', borderRadius: '24px', padding: '28px 24px', textAlign: 'center' }}>
-        <div style={{ fontSize: '52px', marginBottom: '16px' }}>👶</div>
-        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '10px' }}>
-          Velkommen til Babyens språk!
+      <div style={{ background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF0D6 100%)', border: '1px solid #F4D9A0', borderRadius: '24px', padding: '28px 24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '10px', lineHeight: 1.3 }}>
+            Velkommen til Babyens språk!
+          </div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#6B5040', lineHeight: 1.7 }}>
+            Her lærer vi å forstå de små signalene som forteller oss hvordan {babyNavn} har det.<br/><br/>
+            Jo mer vi registrerer, desto bedre innsikt får du.
+          </div>
+          <button
+            onClick={() => onNavigate?.('signaler')}
+            style={{ marginTop: '16px', padding: '13px 24px', background: 'linear-gradient(135deg, #F4A853, #E8943F)', border: 'none', borderRadius: '50px', fontSize: '14px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 16px rgba(244,168,83,0.4)' }}
+          >
+            <span style={{ fontSize: '18px', lineHeight: 1 }}>+</span> Registrer første signal
+          </button>
         </div>
-        <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: '#6B5040', lineHeight: 1.7 }}>
-          Her lærer vi å forstå de små signalene som forteller oss hvordan {babyNavn} har det.<br/><br/>
-          Jo mer vi registrerer, desto bedre innsikt får du.
-        </div>
-        <button
-          onClick={() => onNavigate?.('signaler')}
-          style={{ marginTop: '20px', padding: '14px 28px', background: 'linear-gradient(135deg, #F4A853, #E8943F)', border: 'none', borderRadius: '50px', fontSize: '15px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 16px rgba(244,168,83,0.4)' }}
-        >
-          <span style={{ fontSize: '18px' }}>+</span> Registrer første signal
-        </button>
+        <div style={{ fontSize: '72px', flexShrink: 0 }}>👶</div>
       </div>
 
-      {/* Hva du får innsikt i */}
+      {/* Hva du får innsikt i – 4 kort */}
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-          <span style={{ fontSize: '16px' }}>✨</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '15px' }}>✨</span>
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Dette vil du få innsikt i</div>
-          <span style={{ fontSize: '16px' }}>✨</span>
+          <span style={{ fontSize: '15px' }}>✨</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           {[
-            { ikon: '👁️', tittel: 'Vanligste signaler', tekst: 'Se hvilke signaler som brukes oftest av barnet ditt.' },
-            { ikon: '🔗', tittel: 'Signalrekkefølge', tekst: 'Oppdag rekkefølgen babyen din bruker før noe skjer.' },
-            { ikon: '🔄', tittel: 'Overganger', tekst: 'Forstå overgangen fra rolig → trøtt → sover og mer.' },
-            { ikon: '✨', tittel: 'Personlige mønstre', tekst: 'AI finner mønstre som er unike for barnet ditt.' },
+            { ikon: '/spraak-signal.png', bg: '#EEF2FF', tittel: 'Vanligste signaler', tekst: 'Se hvilke signaler som brukes oftest av barnet ditt.' },
+            { ikon: '/spraak-rekkefolge.png', bg: '#FDF4FF', tittel: 'Signalrekkefølge', tekst: 'Oppdag rekkefølgen babyen din bruker før noe skjer.' },
+            { ikon: '/spraak-overgang.png', bg: '#FFF7ED', tittel: 'Overganger', tekst: 'Forstå overgangen fra rolig → trøtt → sover og mer.' },
+            { ikon: '/spraak-monstre.png', bg: '#F0F7F0', tittel: 'Personlige mønstre', tekst: 'AI finner mønstre som er unike for barnet ditt.' },
           ].map((item, i) => (
-            <div key={i} style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ fontSize: '24px' }}>{item.ikon}</div>
+            <div key={i} style={{ backgroundColor: item.bg, borderRadius: '16px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <img src={item.ikon} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{item.tittel}</div>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5 }}>{item.tekst}</div>
             </div>
@@ -247,8 +260,8 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
 
       {/* Slik kommer du i gang */}
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-          <span style={{ fontSize: '18px' }}>🌱</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+          <img src="/blad.png" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Slik kommer du i gang</div>
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#6B5040', marginBottom: '14px', lineHeight: 1.6 }}>
@@ -272,11 +285,9 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
 
       {/* Ingen signaler ennå */}
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '16px' }}>🕐</span>
-            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Nylig registrerte signaler</div>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <img src="/signal-oye.png" style={{ width: '22px', height: '22px', objectFit: 'contain', opacity: 0.5 }} />
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Nylig registrerte signaler</div>
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
           Her vil dine registrerte signaler vises.<br/>Du har ikke registrert noen signaler enda.
@@ -285,50 +296,48 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
     </div>
   );
 
-  // --- MED DATA ---
+  // ─── MED DATA ─────────────────────────────────────────────────
   const SpråkMedData = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-      {/* AI-observasjon kort */}
+      {/* AI-observasjon */}
       {lasterSpråk ? (
         <div style={{ background: 'linear-gradient(135deg, #F5F0FF 0%, #EDE8FF 100%)', border: '1px solid #D8D0FF', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ width: '24px', height: '24px', border: '2px solid #7C3AED', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', flexShrink: 0 }} />
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#5B21B6' }}>Analyserer {babyNavn}s mønstre...</div>
         </div>
-      ) : språkInnsikter.length > 0 ? (
+      ) : språkInnsikter.length > 0 && (
         <div style={{ background: 'linear-gradient(135deg, #F5F0FF 0%, #EDE8FF 100%)', border: '1px solid #D8D0FF', borderRadius: '20px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', right: '16px', top: '12px', fontSize: '48px', opacity: 0.3 }}>☁️</div>
+          <div style={{ position: 'absolute', right: '12px', top: '12px', fontSize: '56px', opacity: 0.2 }}>☁️</div>
           <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7C3AED', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>✦ AI-OBSERVASJON</div>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3B0764', fontWeight: '700', marginBottom: '14px', lineHeight: 1.4, paddingRight: '60px' }}>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3B0764', fontWeight: '700', marginBottom: '16px', lineHeight: 1.4, paddingRight: '60px' }}>
             {babyNavn} viser ofte disse signalene før han/hun blir trøtt:
           </div>
-          {/* Horisontal signalkjede */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
+          {/* Horisontal signalkjede med PNG-ikoner */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
             {signalKjede.slice(0, 4).map((signal, i) => {
-              const s = getSignalFarge(signal);
+              const f = getSignalFarge(signal);
               return (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: s.bg, border: `1.5px solid ${s.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-                      {s.ikon}
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: f.bg, border: `1.5px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src={getSignalIkon(signal)} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                     </div>
-                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#5B21B6', textAlign: 'center', maxWidth: '52px', lineHeight: 1.3 }}>{signal}</div>
+                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#5B21B6', textAlign: 'center', maxWidth: '54px', lineHeight: 1.3 }}>{signal}</div>
                   </div>
-                  {i < signalKjede.slice(0, 4).length - 1 && (
-                    <div style={{ fontSize: '14px', color: '#A78BFA', marginBottom: '16px' }}>→</div>
-                  )}
-                  {i === signalKjede.slice(0, 4).length - 1 && (
-                    <>
-                      <div style={{ fontSize: '14px', color: '#A78BFA', marginBottom: '16px' }}>→</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#E8F0E8', border: '1.5px solid #A8C8A8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🌙</div>
-                        <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>Sover</div>
-                      </div>
-                    </>
-                  )}
+                  <div style={{ fontSize: '14px', color: '#A78BFA', marginBottom: '20px', paddingLeft: '2px' }}>
+                    {i < signalKjede.slice(0, 4).length - 1 ? '→' : '→'}
+                  </div>
                 </div>
               );
             })}
+            {/* Sover-sirkel til slutt */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+              <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#E8F0E8', border: '1.5px solid #A8C8A8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src="/sovn-ikon.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+              </div>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>Sover</div>
+            </div>
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7C3AED' }}>
             Registrert i {signalKjedeProsent}% av lurene
@@ -337,29 +346,33 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
             Oppdater
           </button>
         </div>
-      ) : null}
+      )}
 
       {/* Vanligste signaler */}
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '18px' }}>👁️</span>
+            <img src="/spraak-signal.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Vanligste signaler</div>
           </div>
-          <button onClick={() => onNavigate?.('signaler')} style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}>Se alle</button>
+          <button
+            onClick={() => onNavigate?.('signaler')}
+            style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
+          >
+            Se alle
+          </button>
         </div>
         <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>
           Basert på {data.lurer?.filter((l: any) => l.signaler)?.length || 0} registreringer
         </div>
-        {/* Signaler med sirkler og prosent */}
-        <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '4px' }}>
+        <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
           {signalKjede.slice(0, 5).map((signal, i) => {
-            const s = getSignalFarge(signal);
+            const f = getSignalFarge(signal);
             const pst = signalProsentMap[signal] || 0;
             return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', minWidth: '60px' }}>
-                <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: s.bg, border: `1.5px solid ${s.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
-                  {s.ikon}
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', minWidth: '64px' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: f.bg, border: `1.5px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src={getSignalIkon(signal)} style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
                 </div>
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekst, textAlign: 'center', lineHeight: 1.3, fontWeight: '500' }}>{signal}</div>
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-plus-jakarta)', color: '#F4A853', fontWeight: '700' }}>{pst}%</div>
@@ -372,31 +385,31 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       {/* Overganger */}
       {søvnOvergangTider.signalKjede.length > 0 && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '18px' }}>🔄</span>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Overganger vi ser hos {babyNavn}</div>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <img src="/spraak-overgang.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Overganger vi ser hos {babyNavn}</div>
           </div>
 
           {/* To kjeder side om side */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
             {/* Vei mot søvn */}
             <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '14px' }}>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px', fontWeight: '600' }}>Typisk vei mot søvn</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
                 {søvnOvergangTider.signalKjede.slice(0, 3).map((signal, i) => {
-                  const s = getSignalFarge(signal);
+                  const f = getSignalFarge(signal);
                   return (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: s.bg, border: `1px solid ${s.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
-                        {s.ikon}
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: f.bg, border: `1px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <img src={getSignalIkon(signal)} style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
                       </div>
-                      {i < 2 && <div style={{ fontSize: '10px', color: farger.tekstLys }}>→</div>}
-                      {i === 2 && <><div style={{ fontSize: '10px', color: farger.tekstLys }}>→</div><div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#E8F0E8', border: '1px solid #C8DEC8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>🌙</div></>}
+                      <div style={{ fontSize: '10px', color: farger.tekstLys }}>→</div>
                     </div>
                   );
                 })}
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#E8F0E8', border: '1px solid #C8DEC8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src="/sovn-ikon.png" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                </div>
               </div>
               <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '8px' }}>Registrert i {signalKjedeProsent}% av lurene.</div>
             </div>
@@ -404,14 +417,15 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
             {/* Vei til uro */}
             <div style={{ backgroundColor: '#FFF8F8', border: '1px solid #FFE4E4', borderRadius: '16px', padding: '14px' }}>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#BE123C', marginBottom: '10px', fontWeight: '600' }}>Typisk vei til uro</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#F0F7F0', border: '1px solid #C8DEC8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>😊</div>
-                <div style={{ fontSize: '10px', color: '#FECDD3' }}>→</div>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#FFF1F2', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>😐</div>
-                <div style={{ fontSize: '10px', color: '#FECDD3' }}>→</div>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#FFF1F2', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>😣</div>
-                <div style={{ fontSize: '10px', color: '#FECDD3' }}>→</div>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#FFE4E4', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>😭</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                {['/signal-oye.png', '/signal-urolig.png', '/signal-bena.png'].map((ikon, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#FFF1F2', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src={ikon} style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                    </div>
+                    {i < 2 && <div style={{ fontSize: '10px', color: '#FECDD3' }}>→</div>}
+                  </div>
+                ))}
               </div>
               <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#BE123C', marginTop: '8px' }}>Registrert i 61% av gangene.</div>
             </div>
@@ -425,9 +439,9 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
               { label: 'Første signal → uro', verdi: 18, farge: '#BE123C', bg: '#FFF1F2' },
             ].map((boks, i) => (
               <div key={i} style={{ backgroundColor: boks.bg, borderRadius: '14px', padding: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px', lineHeight: 1.3 }}>{boks.label}</div>
-                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>Gjennomsnitt</div>
-                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: boks.farge, fontWeight: '700' }}>{boks.verdi} min</div>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px', lineHeight: 1.3 }}>{boks.label}</div>
+                <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>Gjennomsnitt</div>
+                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: boks.farge, fontWeight: '700' }}>{boks.verdi ?? '–'} min</div>
               </div>
             ))}
           </div>
@@ -453,31 +467,31 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px' }}>🕐</span>
+              <img src="/spraak-rekkefolge.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
               <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Siste registrerte signaler</div>
             </div>
-            <button onClick={() => onNavigate?.('signaler')} style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}>Se alle</button>
+            <button onClick={() => onNavigate?.('signaler')} style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
+              Se alle
+            </button>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {sisteSignaler.map((signal, i) => {
-              const s = getSignalFarge(signal.navn);
+              const f = getSignalFarge(signal.navn);
               return (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: i < sisteSignaler.length - 1 ? `1px solid ${farger.kremMørk}` : 'none' }}>
-                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, width: '36px', lineHeight: 1.3 }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: i < sisteSignaler.length - 1 ? `1px solid ${farger.kremMørk}` : 'none' }}>
+                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, width: '38px', lineHeight: 1.4, flexShrink: 0 }}>
                     {signal.klokkeslett ? signal.klokkeslett.slice(0, 5) : '--:--'}<br/>
                     <span style={{ fontSize: '10px' }}>{signal.dato ? signal.dato.slice(5).replace('-', '. ') : ''}</span>
                   </div>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: s.bg, border: `1px solid ${s.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 }}>
-                    {s.ikon}
+                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', backgroundColor: f.bg, border: `1px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <img src={getSignalIkon(signal.navn)} style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600' }}>{signal.navn}</div>
-                    {signal.tilstand && (
-                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '2px' }}>{signal.tilstand}</div>
-                    )}
+                    {signal.tilstand && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '2px' }}>{signal.tilstand}</div>}
                   </div>
                   {signal.varighet && (
-                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'right', flexShrink: 0 }}>
                       Varighet<br/><span style={{ fontWeight: '600', color: farger.tekst }}>{signal.varighet} min</span>
                     </div>
                   )}
@@ -494,7 +508,10 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       {/* AI signalmønster */}
       {språkInnsikter.length > 0 && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{babyNavn}s signalmønster</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <img src="/spraak-monstre.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{babyNavn}s signalmønster</div>
+          </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>AI analyserer {babyNavn}s unike kommunikasjon</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {språkInnsikter.map((innsikt, i) => (
