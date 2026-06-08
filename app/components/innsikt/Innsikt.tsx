@@ -334,7 +334,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
             {/* Sover-sirkel til slutt */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
               <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#E8F0E8', border: '1.5px solid #A8C8A8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src="/sovn-ikon.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+              <img src="/mane-natt.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
               </div>
               <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>Sover</div>
             </div>
@@ -408,7 +408,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                   );
                 })}
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#E8F0E8', border: '1px solid #C8DEC8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src="/sovn-ikon.png" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                <img src="/mane-natt.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                 </div>
               </div>
               <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '8px' }}>Registrert i {signalKjedeProsent}% av lurene.</div>
