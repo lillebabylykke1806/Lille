@@ -281,9 +281,17 @@ Svar KUN med observasjonen.`
       setBabyNavn(aktivtBarn.navn);
       hentAuraObservasjon();
     }
-    const lagretBilde = localStorage.getItem(`lille_babybilde_${aktivtBarn?.id}`) || localStorage.getItem('lille_babybilde');
-    if (lagretBilde) setBabyBilde(lagretBilde);
-    else setBabyBilde(null);
+    const hentBilde = async () => {
+      const { data } = supabase.storage
+        .from('babybilde')
+        .getPublicUrl(`${bruker.id}/profil.jpg`);
+      if (data?.publicUrl) {
+        const res = await fetch(data.publicUrl, { method: 'HEAD' });
+        if (res.ok) setBabyBilde(data.publicUrl + '?t=' + Date.now());
+        else setBabyBilde(null);
+      }
+    };
+    hentBilde();
   }, [aktivtBarn]);
 
   useEffect(() => {
