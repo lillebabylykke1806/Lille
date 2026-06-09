@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; };
+type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string, fane?: string) => void; };
 
 type RegistertSignal = {
   navn: string;
@@ -423,9 +423,9 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '12px' }}>
                 Registrert {topp3[0]?.antall} {topp3[0]?.antall === 1 ? 'gang' : 'ganger'}
               </div>
-              <button onClick={() => onNavigate?.('innsikt')} style={{ width: '100%', padding: '12px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '50px', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                Se {babyNavn} sin innsikt ›
-              </button>
+              <button onClick={() => onNavigate?.('innsikt', 'innsikt')} style={{ width: '100%', padding: '12px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '50px', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+  Se {babyNavn} sin innsikt ›
+</button>
             </div>
           )}
 
