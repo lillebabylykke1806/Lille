@@ -11,6 +11,12 @@ type Props = {
   onByttBarn: (barn: any) => void;
 };
 
+/** Auth user id used as profil_id in all activity tables (e.g. pumping, mat). */
+const hentProfilId = async (aktivtBarn: any, bruker: any) => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.user?.id ?? aktivtBarn?.bruker_id ?? bruker?.id;
+};
+
 const tidspunkt = () => {
   const h = new Date().getHours();
   if (h < 12) return 'God morgen';
@@ -137,20 +143,23 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   return { tid: klokkeslett, om: omTekst, type: erLeggetid ? 'natt' as const : 'lur' as const };
 };
 
-const AIInnsiktKort = ({ bruker, babyNavn, onNavigate }: { bruker: any; babyNavn: string; onNavigate: (side: string) => void }) => {
+const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: any; aktivtBarn: any; babyNavn: string; onNavigate: (side: string) => void }) => {
   const [innsikt, setInnsikt] = useState('');
   const [laster, setLaster] = useState(false);
 
   useEffect(() => {
     const hentInnsikt = async () => {
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (!profilId) return;
+
       setLaster(true);
       const fraDate = new Date();
       fraDate.setDate(fraDate.getDate() - 3);
       const fra = fraDate.toISOString().split('T')[0];
 
       const [lurer, amming] = await Promise.all([
-        supabase.from('lurer').select('*').eq('profil_id', bruker.id).gte('dato', fra),
-        supabase.from('amming').select('*').eq('profil_id', bruker.id).gte('dato', fra),
+        supabase.from('lurer').select('*').eq('profil_id', profilId).gte('dato', fra),
+        supabase.from('amming').select('*').eq('profil_id', profilId).gte('dato', fra),
       ]);
 
       if (!lurer.data?.length && !amming.data?.length) {
@@ -186,7 +195,7 @@ Svar kun med innsikten, ingen introduksjon.`
     };
 
     if (babyNavn) hentInnsikt();
-  }, [bruker.id, babyNavn]);
+  }, [bruker, aktivtBarn, babyNavn]);
 
   return (
     <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
@@ -224,7 +233,9 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [auraObservasjon, setAuraObservasjon] = useState('');
 
   const hentAuraObservasjon = async () => {
-    if (!aktivtBarn?.id && !bruker?.id) return;
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+
     const fraDate = new Date();
     fraDate.setDate(fraDate.getDate() - 7);
     const fra = fraDate.toISOString().split('T')[0];
@@ -232,7 +243,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     const { data: lurer } = await supabase
       .from('lurer')
       .select('*')
-      .eq('profil_id', bruker.id)
+      .eq('profil_id', profilId)
       .gte('dato', fra)
       .not('signaler', 'is', null);
 
@@ -277,15 +288,18 @@ Svar KUN med observasjonen.`
 
   useEffect(() => {
     const lastDagensFlyt = async () => {
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (!profilId) return;
+
       const dagensdato = new Date().toISOString().split('T')[0];
 
       const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes] = await Promise.all([
-        supabase.from('lurer').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('amming').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('bleie').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
-        supabase.from('milepæler').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato),
-        supabase.from('mat').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
-        supabase.from('pumping').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('lurer').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('amming').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('bleie').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
+        supabase.from('milepæler').select('*').eq('profil_id', profilId).eq('dato', dagensdato),
+        supabase.from('mat').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
+        supabase.from('pumping').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
       ]);
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
@@ -592,7 +606,7 @@ Svar KUN med observasjonen.`
 
       {/* AI-innsikt kort */}
       <div style={{ padding: '0 24px 16px' }}>
-        <AIInnsiktKort bruker={bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
+        <AIInnsiktKort bruker={bruker} aktivtBarn={aktivtBarn} babyNavn={babyNavn} onNavigate={onNavigate} />
       </div>
 
       {/* Dagens flyt */}
