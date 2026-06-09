@@ -143,7 +143,7 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   return { tid: klokkeslett, om: omTekst, type: erLeggetid ? 'natt' as const : 'lur' as const };
 };
 
-const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: any; aktivtBarn: any; babyNavn: string; onNavigate: (side: string) => void }) => {
+const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: any; aktivtBarn: any; babyNavn: string; onNavigate: (side: string, fane?: string) => void }) => {
   const [innsikt, setInnsikt] = useState('');
   const [laster, setLaster] = useState(false);
 
@@ -207,8 +207,8 @@ Svar kun med innsikten, ingen introduksjon.`
           ) : (
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{innsikt}</div>
           )}
-          <button onClick={() => onNavigate('innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', fontWeight: 500, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-            Se alle innsikter
+          <button onClick={() => onNavigate('innsikt', 'innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', fontWeight: 500, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+          Se alle innsikter
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
