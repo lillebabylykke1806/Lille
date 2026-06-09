@@ -31,6 +31,8 @@ export default function Home() {
   const [visRegistrer, setVisRegistrer] = useState(false);
   const [visOnboarding, setVisOnboarding] = useState(false);
   const [visGlemtPopup, setVisGlemtPopup] = useState(false);
+  const [åpneEtterregistrer, setÅpneEtterregistrer] = useState(false);
+const [åpneMorgen, setÅpneMorgen] = useState(false);
   const [aktivtBarn, setAktivtBarn] = useState<any>(null);
 
   useEffect(() => {
@@ -160,7 +162,7 @@ export default function Home() {
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
       <div style={{ overflowY: 'auto' }}>
         {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} onByttBarn={setAktivtBarn} />}
-        {aktivSide === 'sovn' && <Sovn bruker={bruker} />}
+        {aktivSide === 'sovn' && <Sovn bruker={bruker} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} />}
         {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
         {aktivSide === 'amming' && <Amming bruker={bruker} />}
         {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
@@ -229,13 +231,13 @@ export default function Home() {
         Ingen stress – du kan registrere nattøkten i etterkant hvis du vil ha den med i oversikten.
       </div>
       <button
-        onClick={() => { setVisGlemtPopup(false); setAktivSide('sovn'); }}
+        onClick={() => { setVisGlemtPopup(false); setÅpneEtterregistrer(true); setÅpneMorgen(false); setAktivSide('sovn'); }}
         style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}
       >
         Registrer leggetid
       </button>
       <button
-        onClick={() => setVisGlemtPopup(false)}
+        onClick={() => { setVisGlemtPopup(false); setÅpneMorgen(true); setÅpneEtterregistrer(false); setAktivSide('sovn'); }}
         style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
       >
         Start ny dag
