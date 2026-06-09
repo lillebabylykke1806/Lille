@@ -79,6 +79,11 @@ const IkonKomponent = ({ type }: { type: string }) => {
     </div>
   );
   if (type === 'mat') return <img src="/mat.png" style={{ width: 36, height: 36, objectFit: 'contain' }} />;
+  if (type === 'pumping') return (
+    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/pumping.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+    </div>
+  );
   return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -86,7 +91,7 @@ const IkonKomponent = ({ type }: { type: string }) => {
       </svg>
     </div>
   );
-};
+  };
 
 const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   const alderIMnd = () => {
@@ -269,12 +274,13 @@ Svar KUN med observasjonen.`
     const lastDagensFlyt = async () => {
       const dagensdato = new Date().toISOString().split('T')[0];
 
-      const [lurRes, ammingRes, bleieRes, milepælRes, matRes] = await Promise.all([
+      const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes] = await Promise.all([
         supabase.from('lurer').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
         supabase.from('amming').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
         supabase.from('bleie').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
         supabase.from('milepæler').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato),
         supabase.from('mat').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
+        supabase.from('pumping').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
       ]);
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
@@ -316,11 +322,21 @@ Svar KUN med observasjonen.`
         type: 'mat',
         varighet: null,
       }));
+
+      const pumpingItems = (pumpingRes.data || []).map((p: any) => ({
+        tid: p.klokkeslett,
+        slutt: null,
+        tekst: `Pumping: ${p.mengde} ml`,
+        type: 'pumping',
+        varighet: p.varighet ? `${p.varighet} min` : null,
+      }));
       
-      const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems, ...matItems].sort((a, b) => {
+     const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems, ...matItems, ...pumpingItems].sort((a, b) => {
         if (!a.tid || !b.tid) return 0;
         return b.tid.localeCompare(a.tid);
       });
+
+      
 
       setDagensFlyt(alle);
       setAlleDagensHendelser(alle);
