@@ -100,6 +100,7 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
   };
 
   const lagreMatregistrering = async () => {
+    alert(`bruker.id: ${bruker?.id}, aktivtBarn?.id: ${aktivtBarn?.id}`);
     if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
     setLagrer(true);
     await supabase.from('mat').insert({
