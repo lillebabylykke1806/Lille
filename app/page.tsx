@@ -145,7 +145,7 @@ export default function Home() {
         {aktivSide === 'kolikk' && <Kolikk bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'mat' && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
-        {aktivSide === 'pumping' && <Pumping bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'pumping' && <Pumping bruker={bruker} />}
       </div>
 
       {/* Navigasjon */}
