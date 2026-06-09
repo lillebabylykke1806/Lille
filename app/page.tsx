@@ -218,6 +218,31 @@ export default function Home() {
         </button>
       </div>
 
+      {visGlemtPopup && (
+  <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+    <div style={{ backgroundColor: farger.hvit, borderRadius: '24px', padding: '28px 24px', width: '100%', maxWidth: '380px', textAlign: 'center' }}>
+      <div style={{ fontSize: '40px', marginBottom: '16px' }}>🌙</div>
+      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '10px' }}>
+        Glemte du å logge leggetiden?
+      </div>
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '24px' }}>
+        Ingen stress – du kan registrere nattøkten i etterkant hvis du vil ha den med i oversikten.
+      </div>
+      <button
+        onClick={() => { setVisGlemtPopup(false); setAktivSide('sovn'); }}
+        style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}
+      >
+        Registrer leggetid
+      </button>
+      <button
+        onClick={() => setVisGlemtPopup(false)}
+        style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
+      >
+        Start ny dag
+      </button>
+    </div>
+  </div>
+)}
       {visRegistrer && (
   <Viftemeny
     bruker={bruker}
