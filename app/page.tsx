@@ -17,6 +17,7 @@ import Vekt from './components/vekt/Vekt';
 import Signaler from './components/signaler/Signaler';
 import Kolikk from './components/kolikk/Kolikk';
 import Mat from './components/mat/Mat';
+import Pumping from './components/pumping/Pumping';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
@@ -144,6 +145,7 @@ export default function Home() {
         {aktivSide === 'kolikk' && <Kolikk bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'mat' && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
+        {aktivSide === 'pumping' && <Pumping bruker={aktivtBarn || bruker} />}
       </div>
 
       {/* Navigasjon */}
