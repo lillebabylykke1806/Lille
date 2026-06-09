@@ -7,7 +7,7 @@ import BarnVelger from './BarnVelger';
 type Props = {
   bruker: any;
   aktivtBarn: any;
-  onNavigate: (side: string) => void;
+  onNavigate: (side: string, fane?: string) => void;
   onByttBarn: (barn: any) => void;
 };
 
@@ -451,7 +451,7 @@ Svar KUN med observasjonen.`
             <div style={{ fontSize: '13.5px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', lineHeight: '1.4', marginBottom: '6px' }}>
               {aiInnsikt[babyTilstand]}
             </div>
-            <button onClick={() => onNavigate('innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
+            <button onClick={() => onNavigate('innsikt', 'innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
               Se innsikt
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

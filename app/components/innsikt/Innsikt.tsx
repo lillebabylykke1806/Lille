@@ -3,10 +3,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; };
+type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; startFane?: 'språk' | 'innsikt'; };
 
-export default function Innsikt({ bruker, aktivtBarn, onNavigate }: Props) {
-  const [aktivFane, setAktivFane] = useState<'språk' | 'innsikt'>('språk');
+export default function Innsikt({ bruker, aktivtBarn, onNavigate, startFane }: Props) {
+  const [aktivFane, setAktivFane] = useState<'språk' | 'innsikt'>(startFane || 'språk');
   const [innsikter, setInnsikter] = useState<string[]>([]);
   const [språkInnsikter, setSpråkInnsikter] = useState<string[]>([]);
   const [signalKjede, setSignalKjede] = useState<string[]>([]);

@@ -34,6 +34,7 @@ export default function Home() {
   const [åpneEtterregistrer, setÅpneEtterregistrer] = useState(false);
 const [åpneMorgen, setÅpneMorgen] = useState(false);
   const [aktivtBarn, setAktivtBarn] = useState<any>(null);
+  const [innsiktStartFane, setInnsiktStartFane] = useState<'språk' | 'innsikt'>('språk');
 
   useEffect(() => {
     const lastData = async () => {
@@ -161,11 +162,11 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
       <div style={{ overflowY: 'auto' }}>
-        {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} onByttBarn={setAktivtBarn} />}
+      {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(side, fane) => { setAktivSide(side); if (fane === 'innsikt') setInnsiktStartFane('innsikt'); else setInnsiktStartFane('språk'); }} onByttBarn={setAktivtBarn} />}
         {aktivSide === 'sovn' && <Sovn bruker={bruker} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} />}
         {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
         {aktivSide === 'amming' && <Amming bruker={bruker} />}
-        {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
+        {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} startFane={innsiktStartFane} />}
         {aktivSide === 'medisin' && <Medisin bruker={bruker} />}
         {aktivSide === 'notat' && <Notat bruker={bruker} />}
         {aktivSide === 'vekt' && <Vekt bruker={bruker} />}
