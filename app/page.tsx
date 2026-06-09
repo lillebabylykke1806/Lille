@@ -144,7 +144,7 @@ export default function Home() {
         {aktivSide === 'signaler' && <Signaler bruker={aktivtBarn || bruker} />}
         {aktivSide === 'kolikk' && <Kolikk bruker={aktivtBarn || bruker} />}
         {aktivSide === 'signaler' && <Signaler bruker={aktivtBarn || bruker} onNavigate={setAktivSide} />}
-        {aktivSide === 'mat' && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
+        {aktivSide === 'mat' && <Mat bruker={aktivtBarn || bruker} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 

@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; aktivtBarn?: any; };
+type Props = { bruker: any; };
 
 type MatRegistrering = {
   id: number;
@@ -46,7 +46,7 @@ const TIPS = [
   { ikon: '😊', tittel: 'Tålmodighet', tekst: 'Noen smaker trenger tid. Prøv igjen senere.' },
 ];
 
-export default function Mat({ bruker, aktivtBarn }: Props) {
+export default function Mat({ bruker }: Props) {
   const [matreg, setMatreg] = useState<MatRegistrering[]>([]);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [laster, setLaster] = useState(true);
@@ -69,10 +69,10 @@ export default function Mat({ bruker, aktivtBarn }: Props) {
     const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker?.id).single();
     if (barn?.navn) setBabyNavn(barn.navn);
 
-    const { data } = await supabase.from('mat').select('*').eq('profil_id', aktivtBarn?.id || bruker?.id).order('dato', { ascending: false }).order('klokkeslett', { ascending: false });
+    const { data } = await supabase.from('mat').select('*').eq('profil_id', bruker?.id).order('dato', { ascending: false }).order('klokkeslett', { ascending: false });
     setMatreg(data || []);
     setLaster(false);
-    }, [bruker?.id, aktivtBarn?.id]);
+}, [bruker?.id]);
 
   useEffect(() => { lastData(); }, [lastData]);
 
@@ -103,7 +103,7 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
     if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
     setLagrer(true);
     await supabase.from('mat').insert({
-        profil_id: aktivtBarn?.id || bruker?.id,
+        profil_id: bruker?.id,
       dato, klokkeslett, matvare: matvare.trim(), kategori, reaksjon, mengde, notater: notater.trim() || null,
     });
     setMatvare(''); setKategori(''); setReaksjon(''); setMengde(''); setNotater('');
