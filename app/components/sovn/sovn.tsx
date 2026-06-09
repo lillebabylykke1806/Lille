@@ -233,14 +233,32 @@ export default function Sovn({ bruker }: Props) {
   };
 
   const lagreEtterregistrert = async () => {
-    if (!nyStart || !nySlutt) return;
+    if (!nyStart) return;
     const [sh, sm] = nyStart.split(':').map(Number);
-    const [eh, em] = nySlutt.split(':').map(Number);
-    const varighet = (eh * 60 + em) - (sh * 60 + sm);
-    if (varighet <= 0) return;
+    
+    let varighet = 0;
+    let sluttDato = nyDato;
+    
+    if (nySlutt) {
+      const [eh, em] = nySlutt.split(':').map(Number);
+      varighet = (eh * 60 + em) - (sh * 60 + sm);
+      // Hvis sluttid er mindre enn starttid, er det neste dag
+      if (varighet < 0) {
+        varighet += 24 * 60;
+        const neste = new Date(nyDato);
+        neste.setDate(neste.getDate() + 1);
+        sluttDato = neste.toISOString().split('T')[0];
+      }
+    }
+  
     await supabase.from('lurer').insert({
-      profil_id: bruker?.id, dato: nyDato, type: nyType,
-      start: nyStart, slutt: nySlutt, varighet, signaler: '',
+      profil_id: bruker?.id,
+      dato: nyDato,
+      type: nyType,
+      start: nyStart,
+      slutt: nySlutt || null,
+      varighet,
+      signaler: '',
     });
     setNyStart(''); setNySlutt('');
     setVisning('velg'); lastTidslinje();
@@ -468,12 +486,15 @@ export default function Sovn({ bruker }: Props) {
           <input type="date" value={nyDato} onChange={e => setNyDato(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '14px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
           <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Starttid</div>
+            <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Starttid</div>
               <input type="time" value={nyStart} onChange={e => setNyStart(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Sluttid</div>
               <input type="time" value={nySlutt} onChange={e => setNySlutt(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '6px' }}>
+                Sover babyen fortsatt? La sluttid stå tom.
+              </div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -484,7 +505,6 @@ export default function Sovn({ bruker }: Props) {
       </div>
     );
   }
-
   // LUR AKTIV
   if (visning === 'lurAktiv') {
     return (
