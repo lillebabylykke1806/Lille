@@ -30,6 +30,7 @@ export default function Home() {
   const [innloggingFeil, setInnloggingFeil] = useState('');
   const [visRegistrer, setVisRegistrer] = useState(false);
   const [visOnboarding, setVisOnboarding] = useState(false);
+  const [visGlemtPopup, setVisGlemtPopup] = useState(false);
   const [aktivtBarn, setAktivtBarn] = useState<any>(null);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function Home() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setBruker(session.user);
-
+  
         const { data: barn } = await supabase
           .from('barn')
           .select('*')
@@ -45,13 +46,13 @@ export default function Home() {
           .order('opprettet', { ascending: true })
           .limit(1)
           .single();
-
+  
         if (barn) {
           setAktivtBarn(barn);
         } else {
           setVisOnboarding(true);
         }
-
+  
         const lagretType = localStorage.getItem('lille_sovtype');
         if (lagretType === 'natt') setAktivSide('sovn');
       }
@@ -60,6 +61,31 @@ export default function Home() {
     setTimeout(() => setLaster(false), 5000);
     lastData();
   }, []);
+  
+  useEffect(() => {
+    if (!bruker) return;
+    const sjekkGlemtLeggetid = async () => {
+      const nå = new Date();
+      const timer = nå.getHours();
+      if (timer < 6 || timer > 11) return;
+  
+      const igår = new Date();
+      igår.setDate(igår.getDate() - 1);
+      const igårDato = igår.toISOString().split('T')[0];
+  
+      const { data } = await supabase
+        .from('lurer')
+        .select('*')
+        .eq('profil_id', bruker.id)
+        .eq('dato', igårDato)
+        .eq('type', 'natt');
+  
+      if (!data || data.length === 0) {
+        setVisGlemtPopup(true);
+      }
+    };
+    sjekkGlemtLeggetid();
+  }, [bruker]);
 
   const loggInn = async () => {
     setInnloggingFeil('');
