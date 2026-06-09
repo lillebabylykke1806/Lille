@@ -6,7 +6,7 @@ import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 
-type Props = { bruker: any; };
+type Props = { bruker: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; };
 type TidslinjeItem = { tid: string; tekst: string; type: string; };
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
@@ -88,7 +88,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
 };
 
-export default function Sovn({ bruker }: Props) {
+export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props) {
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
   const [lurId, setLurId] = useState<number | null>(null);
@@ -143,6 +143,22 @@ export default function Sovn({ bruker }: Props) {
     }
     lastTidslinje();
   }, [lastTidslinje]);
+
+  useEffect(() => {
+    if (åpneEtterregistrer) {
+      const igår = new Date();
+      igår.setDate(igår.getDate() - 1);
+      setNyDato(igår.toISOString().split('T')[0]);
+      setNyType('natt');
+      setVisning('etterregistrer');
+    }
+  }, [åpneEtterregistrer]);
+  
+  useEffect(() => {
+    if (åpneMorgen) {
+      setVisning('morgen');
+    }
+  }, [åpneMorgen]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
