@@ -176,7 +176,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         {aktivSide === 'mat' && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
         {aktivSide === 'pumping' && <Pumping bruker={bruker} />}
-        {aktivSide === 'temperatur' && <Temperatur bruker={bruker} aktivtBarn={aktivtBarn} />}
+        {aktivSide === 'temperatur' && <Temperatur bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
       </div>
 
       {/* Navigasjon */}

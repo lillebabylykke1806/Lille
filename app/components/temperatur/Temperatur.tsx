@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; aktivtBarn?: any; };
+type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; };
 
 type TemperaturRegistrering = {
   id: number;
@@ -24,7 +24,7 @@ const getFeberstatus = (temp: number) => {
   return { label: 'Lavt', farge: '#4338CA', bg: '#EEF2FF', border: '#C7D2FE' };
 };
 
-export default function Temperatur({ bruker, aktivtBarn }: Props) {
+export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
   const [målinger, setMålinger] = useState<TemperaturRegistrering[]>([]);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [laster, setLaster] = useState(true);
@@ -225,14 +225,20 @@ export default function Temperatur({ bruker, aktivtBarn }: Props) {
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '10px' }}>Temperaturutvikling</div>
               <GrafKomponent />
             </div>
-            {/* Siste medisin – placeholder */}
-            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '10px' }}>Siste medisin</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5 }}>
-                Se medisin-siden for oversikt over medisiner og doser.
-              </div>
-            </div>
-          </div>
+           {/* Siste medisin */}
+<button
+  onClick={() => onNavigate?.('medisin')}
+  style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px', textAlign: 'left', cursor: 'pointer', width: '100%' }}
+>
+  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '6px' }}>Siste medisin</div>
+  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5, marginBottom: '8px' }}>
+    Se medisin-siden for oversikt over medisiner og doser.
+  </div>
+  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>
+    Gå til medisin →
+  </div>
+</button>
+</div>
 
           {/* Symptomer */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
