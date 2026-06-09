@@ -67,7 +67,7 @@ export default function Home() {
     const sjekkGlemtLeggetid = async () => {
       const nå = new Date();
       const timer = nå.getHours();
-      if (timer < 6 || timer > 11) return;
+     // if (timer < 6 || timer > 11) return;
   
       const igår = new Date();
       igår.setDate(igår.getDate() - 1);
@@ -243,6 +243,7 @@ export default function Home() {
     </div>
   </div>
 )}
+
       {visRegistrer && (
   <Viftemeny
     bruker={bruker}
