@@ -285,7 +285,7 @@ Svar KUN med observasjonen.`
         supabase.from('bleie').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
         supabase.from('milepæler').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato),
         supabase.from('mat').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
-        supabase.from('pumping').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('pumping').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
       ]);
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
