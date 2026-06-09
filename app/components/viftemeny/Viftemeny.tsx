@@ -20,7 +20,7 @@ const ALLE_SIDER: Record<string, { label: string; bygget: boolean }> = {
   mat: { label: 'Mat', bygget: true },
   aktivitet: { label: 'Aktivitet', bygget: true },
   notat: { label: 'Notat', bygget: true },
-  temperatur: { label: 'Temperatur', bygget: false },
+  temperatur: { label: 'Temperatur', bygget: true },
   vekt: { label: 'Vekt / lengde', bygget: true },
   kolikk: { label: 'Uro & ro', bygget: true },
 };
