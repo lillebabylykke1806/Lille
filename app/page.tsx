@@ -18,6 +18,7 @@ import Signaler from './components/signaler/Signaler';
 import Kolikk from './components/kolikk/Kolikk';
 import Mat from './components/mat/Mat';
 import Pumping from './components/pumping/Pumping';
+import Temperatur from './components/temperatur/Temperatur';
 
 export default function Home() {
   const [aktivSide, setAktivSide] = useState('hjem');
