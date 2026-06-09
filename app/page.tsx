@@ -132,19 +132,17 @@ export default function Home() {
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
       <div style={{ overflowY: 'auto' }}>
         {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} onByttBarn={setAktivtBarn} />}
-        {aktivSide === 'sovn' && <Sovn bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'bleie' && <Bleie bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'kolikk' && <div style={{ padding: '20px 24px' }}><p style={{ color: farger.tekst }}>Uro/kolikk kommer her</p></div>}
-        {aktivSide === 'amming' && <Amming bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'sovn' && <Sovn bruker={bruker} />}
+        {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
+        {aktivSide === 'amming' && <Amming bruker={bruker} />}
         {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
-        {aktivSide === 'medisin' && <Medisin bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'notat' && <Notat bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'vekt' && <Vekt bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'aktivitet' && <Aktivitet bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'signaler' && <Signaler bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'kolikk' && <Kolikk bruker={aktivtBarn || bruker} />}
-        {aktivSide === 'signaler' && <Signaler bruker={aktivtBarn || bruker} onNavigate={setAktivSide} />}
-        {aktivSide === 'mat' && <Mat bruker={aktivtBarn || bruker} />}
+        {aktivSide === 'medisin' && <Medisin bruker={bruker} />}
+        {aktivSide === 'notat' && <Notat bruker={bruker} />}
+        {aktivSide === 'vekt' && <Vekt bruker={bruker} />}
+        {aktivSide === 'aktivitet' && <Aktivitet bruker={bruker} />}
+        {aktivSide === 'signaler' && <Signaler bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
+        {aktivSide === 'kolikk' && <Kolikk bruker={bruker} aktivtBarn={aktivtBarn} />}
+        {aktivSide === 'mat' && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} />}
       </div>
 

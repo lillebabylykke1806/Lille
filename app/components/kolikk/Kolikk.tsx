@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; };
+type Props = { bruker: any; aktivtBarn?: any; };
 
 type UroLogg = {
   id: number;
@@ -19,7 +19,7 @@ type UroLogg = {
 const TILTAK = ['Babymassasje', 'Bæresjal', 'Amming', 'Flaske', 'Hud mot hud', 'Mørkt rom', 'Vugging', 'Hvit støy', 'Smokk'];
 const SIGNALER_URO = ['Trekker bena opp', 'Bøyer ryggen', 'Vrir seg', 'Klynker', 'Høy gråt', 'Vil bæres', 'Vanskelig å legge ned', 'Mye luft', 'Slår med armer og ben'];
 
-export default function Kolikk({ bruker }: Props) {
+export default function Kolikk({ bruker, aktivtBarn }: Props) {
   const [logg, setLogg] = useState<UroLogg[]>([]);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [visRegistrer, setVisRegistrer] = useState(false);
@@ -38,8 +38,11 @@ export default function Kolikk({ bruker }: Props) {
   const [lagrer, setLagrer] = useState(false);
 
   const lastData = useCallback(async () => {
-    const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker?.id).single();
-    if (barn?.navn) setBabyNavn(barn.navn);
+    if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
+    else {
+      const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker?.id).single();
+      if (barn?.navn) setBabyNavn(barn.navn);
+    }
 
     const { data } = await supabase
       .from('uro_logg')
@@ -58,7 +61,7 @@ export default function Kolikk({ bruker }: Props) {
       beregnStatistikk(parsed);
       beregnNesteUro(parsed);
     }
-  }, [bruker?.id]);
+  }, [bruker?.id, aktivtBarn?.navn]);
 
   const beregnStatistikk = (data: UroLogg[]) => {
     // Tiltak

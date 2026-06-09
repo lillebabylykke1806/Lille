@@ -222,7 +222,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
     const { data: lurer } = await supabase
       .from('lurer')
       .select('*')
-      .eq('profil_id', aktivtBarn?.id || bruker.id)
+      .eq('profil_id', bruker.id)
       .gte('dato', fra)
       .not('signaler', 'is', null);
 
@@ -270,11 +270,11 @@ Svar KUN med observasjonen.`
       const dagensdato = new Date().toISOString().split('T')[0];
 
       const [lurRes, ammingRes, bleieRes, milepælRes, matRes] = await Promise.all([
-        supabase.from('lurer').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('amming').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('bleie').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
-        supabase.from('milepæler').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato),
-        supabase.from('mat').select('*').eq('profil_id', aktivtBarn?.id || bruker.id).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
+        supabase.from('lurer').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('amming').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('start', { ascending: false }),
+        supabase.from('bleie').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
+        supabase.from('milepæler').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato),
+        supabase.from('mat').select('*').eq('profil_id', bruker.id).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
       ]);
 
       const lurItems = (lurRes.data || []).map((l: any) => ({
@@ -571,7 +571,7 @@ Svar KUN med observasjonen.`
 
       {/* AI-innsikt kort */}
       <div style={{ padding: '0 24px 16px' }}>
-        <AIInnsiktKort bruker={aktivtBarn || bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
+        <AIInnsiktKort bruker={bruker} babyNavn={babyNavn} onNavigate={onNavigate} />
       </div>
 
       {/* Dagens flyt */}

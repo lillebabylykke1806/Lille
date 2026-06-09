@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; onNavigate?: (side: string) => void; };
+type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; };
 
 type RegistertSignal = {
   navn: string;
@@ -101,7 +101,7 @@ const KATEGORIER: Kategori[] = [
 
 const VISSTE_DU = 'Et signal alene betyr sjelden noe. Det er ofte kombinasjonen av flere signaler som forteller hva babyen trenger.';
 
-export default function Signaler({ bruker, onNavigate }: Props) {
+export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
   const [registrerteSignaler, setRegistrerteSignaler] = useState<RegistertSignal[]>([]);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [laster, setLaster] = useState(true);
@@ -110,8 +110,11 @@ export default function Signaler({ bruker, onNavigate }: Props) {
 
   const lastData = useCallback(async () => {
     setLaster(true);
-    const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker?.id).single();
-    if (barn?.navn) setBabyNavn(barn.navn);
+    if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
+    else {
+      const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker?.id).single();
+      if (barn?.navn) setBabyNavn(barn.navn);
+    }
 
     const { data: lurer } = await supabase.from('lurer').select('*').eq('profil_id', bruker?.id).eq('type', 'lur').not('signaler', 'is', null);
 
@@ -138,7 +141,7 @@ export default function Signaler({ bruker, onNavigate }: Props) {
 
     setRegistrerteSignaler(liste);
     setLaster(false);
-  }, [bruker?.id]);
+  }, [bruker?.id, aktivtBarn?.navn]);
 
   useEffect(() => { lastData(); }, [lastData]);
 
