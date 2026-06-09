@@ -84,6 +84,11 @@ const IkonKomponent = ({ type }: { type: string }) => {
       <img src="/pumping.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
     </div>
   );
+  if (type === 'pumping') return (
+    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#FFE8D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/pumping.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+    </div>
+  );
   return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F0EBE3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
