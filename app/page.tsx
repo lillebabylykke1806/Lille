@@ -71,11 +71,13 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       const nå = new Date();
       const timer = nå.getHours();
       if (timer < 6 || timer > 11) return;
-  
-      // Sjekk om popup allerede er vist i dag
+    
       const dagensdato = nå.toISOString().split('T')[0];
       const sistVist = localStorage.getItem('lille_glemt_popup_dato');
-      if (sistVist === dagensdato) return;
+      if (sistVist === dagensdato) {
+        setVisGlemtPopup(false);
+        return;
+      }
   
       const igår = new Date();
       igår.setDate(igår.getDate() - 1);
@@ -87,11 +89,11 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         .eq('profil_id', bruker.id)
         .eq('dato', igårDato)
         .eq('type', 'natt');
-  
-      if (!data || data.length === 0) {
-        setVisGlemtPopup(true);
-        localStorage.setItem('lille_glemt_popup_dato', dagensdato);
-      }
+
+        if (!data || data.length === 0) {
+          localStorage.setItem('lille_glemt_popup_dato', dagensdato);
+          setVisGlemtPopup(true);
+        }
     };
     sjekkGlemtLeggetid();
   }, [bruker]);
