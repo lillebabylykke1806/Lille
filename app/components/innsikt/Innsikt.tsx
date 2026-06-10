@@ -3,6 +3,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
+const HjerteIkon = ({ farge = '#8B6340', størrelse = 24 }: { farge?: string; størrelse?: number }) => (
+  <svg width={størrelse} height={størrelse} viewBox="0 0 24 24" fill="none">
+    <path d="M12 21C12 21 3 15 3 9C3 6.5 5 4.5 7.5 4.5C9.2 4.5 10.7 5.4 12 7C13.3 5.4 14.8 4.5 16.5 4.5C19 4.5 21 6.5 21 9C21 15 12 21 12 21Z" stroke={farge} strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; startFane?: 'språk' | 'innsikt'; };
 
 export default function Innsikt({ bruker, aktivtBarn, onNavigate, startFane }: Props) {
@@ -175,27 +181,15 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
     setLasterSpråk(false);
   }, [data.lurer, babyNavn]);
 
-  // Matcher signalnavn til PNG-ikon
-  const getSignalIkon = (signal: string): string => {
+  const getSignalFarge = (signal: string): { bg: string; border: string; farge: string } => {
     const lower = signal.toLowerCase();
-    if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return '/signal-oye.png';
-    if (lower.includes('gjesp')) return '/signal-gjespende.png';
-    if (lower.includes('hodet') || lower.includes('vend')) return '/signal-hodet.png';
-    if (lower.includes('gnir') || lower.includes('øyne') || lower.includes('oyne')) return '/signal-gnir.png';
-    if (lower.includes('urolig') || lower.includes('kropp')) return '/signal-urolig.png';
-    if (lower.includes('ben') || lower.includes('trekk')) return '/signal-bena.png';
-    return '/signal-oye.png';
-  };
-
-  const getSignalFarge = (signal: string): { bg: string; border: string } => {
-    const lower = signal.toLowerCase();
-    if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return { bg: '#EEF2FF', border: '#C7D2FE' };
-    if (lower.includes('gjesp')) return { bg: '#FDF4FF', border: '#E9D5FF' };
-    if (lower.includes('hodet') || lower.includes('vend')) return { bg: '#FFF7ED', border: '#FED7AA' };
-    if (lower.includes('gnir') || lower.includes('øyne')) return { bg: '#FFF1F2', border: '#FECDD3' };
-    if (lower.includes('urolig') || lower.includes('kropp')) return { bg: '#FFF7ED', border: '#FED7AA' };
-    if (lower.includes('ben') || lower.includes('trekk')) return { bg: '#FFF1F2', border: '#FECDD3' };
-    return { bg: '#F8FAFC', border: '#E2E8F0' };
+    if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return { bg: '#EEF2FF', border: '#C7D2FE', farge: '#4338CA' };
+    if (lower.includes('gjesp')) return { bg: '#FDF4FF', border: '#E9D5FF', farge: '#7C3AED' };
+    if (lower.includes('hodet') || lower.includes('vend')) return { bg: '#FFF7ED', border: '#FED7AA', farge: '#EA580C' };
+    if (lower.includes('gnir') || lower.includes('øyne')) return { bg: '#FFF1F2', border: '#FECDD3', farge: '#BE123C' };
+    if (lower.includes('urolig') || lower.includes('kropp')) return { bg: '#FFF7ED', border: '#FED7AA', farge: '#EA580C' };
+    if (lower.includes('ben') || lower.includes('trekk')) return { bg: '#FFF1F2', border: '#FECDD3', farge: '#BE123C' };
+    return { bg: '#F8FAFC', border: '#E2E8F0', farge: '#64748B' };
   };
 
   const StatKort = ({ tittel, verdi, undertekst }: { tittel: string; verdi: string; undertekst: string }) => (
@@ -329,7 +323,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: f.bg, border: `1.5px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src={getSignalIkon(signal)} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                      <HjerteIkon farge={f.farge} størrelse={28} />
                     </div>
                     <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#5B21B6', textAlign: 'center', maxWidth: '54px', lineHeight: 1.3 }}>{signal}</div>
                   </div>
@@ -395,7 +389,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
             return (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', minWidth: '64px' }}>
                 <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: f.bg, border: `1.5px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src={getSignalIkon(signal)} style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+                  <HjerteIkon farge={f.farge} størrelse={30} />
                 </div>
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekst, textAlign: 'center', lineHeight: 1.3, fontWeight: '500' }}>{signal}</div>
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-plus-jakarta)', color: '#F4A853', fontWeight: '700' }}>{pst}%</div>
@@ -416,7 +410,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                   return (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                       <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: f.bg, border: `1px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <img src={getSignalIkon(signal)} style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                        <HjerteIkon farge={f.farge} størrelse={18} />
                       </div>
                       <div style={{ fontSize: '10px', color: farger.tekstLys }}>→</div>
                     </div>
@@ -433,10 +427,10 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
             <div style={{ backgroundColor: '#FFF8F8', border: '1px solid #FFE4E4', borderRadius: '16px', padding: '14px' }}>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#BE123C', marginBottom: '10px', fontWeight: '600' }}>Typisk vei til uro</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                {['/signal-oye.png', '/signal-urolig.png', '/signal-bena.png'].map((ikon, i) => (
+                {[0, 1, 2].map((i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#FFF1F2', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src={ikon} style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                      <HjerteIkon farge="#BE123C" størrelse={18} />
                     </div>
                     {i < 2 && <div style={{ fontSize: '10px', color: '#FECDD3' }}>→</div>}
                   </div>
@@ -499,7 +493,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                     <span style={{ fontSize: '10px' }}>{signal.dato ? signal.dato.slice(5).replace('-', '. ') : ''}</span>
                   </div>
                   <div style={{ width: '38px', height: '38px', borderRadius: '50%', backgroundColor: f.bg, border: `1px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <img src={getSignalIkon(signal.navn)} style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+                    <HjerteIkon farge={f.farge} størrelse={20} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600' }}>{signal.navn}</div>
