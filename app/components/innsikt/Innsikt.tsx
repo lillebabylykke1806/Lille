@@ -183,13 +183,13 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
 
   const getSignalFarge = (signal: string): { bg: string; border: string; farge: string } => {
     const lower = signal.toLowerCase();
-    if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return { bg: '#EEF2FF', border: '#C7D2FE', farge: '#4338CA' };
-    if (lower.includes('gjesp')) return { bg: '#FDF4FF', border: '#E9D5FF', farge: '#7C3AED' };
-    if (lower.includes('hodet') || lower.includes('vend')) return { bg: '#FFF7ED', border: '#FED7AA', farge: '#EA580C' };
-    if (lower.includes('gnir') || lower.includes('øyne')) return { bg: '#FFF1F2', border: '#FECDD3', farge: '#BE123C' };
-    if (lower.includes('urolig') || lower.includes('kropp')) return { bg: '#FFF7ED', border: '#FED7AA', farge: '#EA580C' };
-    if (lower.includes('ben') || lower.includes('trekk')) return { bg: '#FFF1F2', border: '#FECDD3', farge: '#BE123C' };
-    return { bg: '#F8FAFC', border: '#E2E8F0', farge: '#64748B' };
+    if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return { bg: '#FFF8EC', border: '#F4D9A0', farge: '#8B6340' };
+    if (lower.includes('gjesp')) return { bg: '#FFF8EC', border: '#F4D9A0', farge: farger.terrakotta };
+    if (lower.includes('hodet') || lower.includes('vend')) return { bg: '#FFF8EC', border: '#F4D9A0', farge: '#8B6340' };
+    if (lower.includes('gnir') || lower.includes('øyne')) return { bg: farger.terrakottaLys, border: '#D4A090', farge: farger.terrakotta };
+    if (lower.includes('urolig') || lower.includes('kropp')) return { bg: farger.grønnLys, border: '#A8C8A8', farge: farger.grønn };
+    if (lower.includes('ben') || lower.includes('trekk')) return { bg: farger.terrakottaLys, border: '#D4A090', farge: farger.terrakotta };
+    return { bg: '#FFF8EC', border: '#F4D9A0', farge: '#8B6340' };
   };
 
   const StatKort = ({ tittel, verdi, undertekst }: { tittel: string; verdi: string; undertekst: string }) => (
@@ -238,8 +238,8 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           {[
-            { ikon: '/spraak-signal.png', bg: '#EEF2FF', tittel: 'Vanligste signaler', tekst: 'Se hvilke signaler som brukes oftest av barnet ditt.' },
-            { ikon: '/spraak-rekkefolge.png', bg: '#FDF4FF', tittel: 'Signalrekkefølge', tekst: 'Oppdag rekkefølgen babyen din bruker før noe skjer.' },
+            { ikon: '/spraak-signal.png', bg: '#FFF8EC', tittel: 'Vanligste signaler', tekst: 'Se hvilke signaler som brukes oftest av barnet ditt.' },
+            { ikon: '/spraak-rekkefolge.png', bg: farger.terrakottaLys, tittel: 'Signalrekkefølge', tekst: 'Oppdag rekkefølgen babyen din bruker før noe skjer.' },
             { ikon: '/spraak-overgang.png', bg: '#FFF7ED', tittel: 'Overganger', tekst: 'Forstå overgangen fra rolig → trøtt → sover og mer.' },
             { ikon: '/spraak-monstre.png', bg: '#F0F7F0', tittel: 'Personlige mønstre', tekst: 'AI finner mønstre som er unike for barnet ditt.' },
           ].map((item, i) => (
@@ -296,19 +296,19 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
 
       {/* AI-observasjon */}
       {lasterSpråk ? (
-        <div style={{ background: 'linear-gradient(135deg, #F5F0FF 0%, #EDE8FF 100%)', border: '1px solid #D8D0FF', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '24px', height: '24px', border: '2px solid #7C3AED', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', flexShrink: 0 }} />
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#5B21B6' }}>Analyserer {babyNavn}s mønstre...</div>
+        <div style={{ background: `linear-gradient(135deg, #FFF8EC 0%, ${farger.terrakottaLys} 100%)`, border: '1px solid #F4D9A0', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ width: '24px', height: '24px', border: `2px solid ${farger.terrakotta}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', flexShrink: 0 }} />
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta }}>Analyserer {babyNavn}s mønstre...</div>
         </div>
       ) : språkInnsikter.length > 0 && (
-        <div style={{ background: 'linear-gradient(135deg, #F5F0FF 0%, #EDE8FF 100%)', border: '1px solid #D8D0FF', borderRadius: '20px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ backgroundColor: farger.terrakottaLys, border: `1px solid ${farger.terrakotta}`, borderRadius: '20px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: '12px', top: '12px', fontSize: '56px', opacity: 0.2 }}>☁️</div>
-          <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7C3AED', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>✦ AI-OBSERVASJON</div>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3B0764', fontWeight: '700', marginBottom: '4px', lineHeight: 1.4, paddingRight: '60px' }}>
+          <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>✦ AI-OBSERVASJON</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#8B6340', fontWeight: '700', marginBottom: '4px', lineHeight: 1.4, paddingRight: '60px' }}>
   {babyNavn} viser ofte disse signalene før han/hun blir trøtt:
 </div>
 {søvnOvergangTider.signalTilSøvn && (
-  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#7C3AED', marginBottom: '16px', opacity: 0.8 }}>
+  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '16px', opacity: 0.8 }}>
     Gjennomsnitt {søvnOvergangTider.signalTilSøvn} minutter fra første signal til søvn
   </div>
 )}
@@ -325,9 +325,9 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                     <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: f.bg, border: `1.5px solid ${f.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <HjerteIkon farge={f.farge} størrelse={28} />
                     </div>
-                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#5B21B6', textAlign: 'center', maxWidth: '54px', lineHeight: 1.3 }}>{signal}</div>
+                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, textAlign: 'center', maxWidth: '54px', lineHeight: 1.3 }}>{signal}</div>
                   </div>
-                  <div style={{ fontSize: '14px', color: '#A78BFA', marginBottom: '20px', paddingLeft: '2px' }}>
+                  <div style={{ fontSize: '14px', color: farger.terrakotta, marginBottom: '20px', paddingLeft: '2px' }}>
                     {i < signalKjede.slice(0, 4).length - 1 ? '→' : '→'}
                   </div>
                 </div>
@@ -341,14 +341,14 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
               <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>Sover</div>
             </div>
           </div>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7C3AED' }}>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta }}>
   {signalKjedeProsent >= 50
     ? `Et av de vanligste mønstrene vi ser hos ${babyNavn}`
     : signalKjedeProsent >= 20
     ? `Et mønster vi ser før ${signalKjedeProsent}% av lurene`
     : `AI-en lærer fortsatt ${babyNavn}s mønstre – registrer gjerne flere`}
 </div>
-<button onClick={hentSpråkInnsikter} style={{ marginTop: '10px', padding: '6px 14px', backgroundColor: 'transparent', border: '1px solid #D8D0FF', borderRadius: '20px', fontSize: '11px', color: '#7C3AED', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+<button onClick={hentSpråkInnsikter} style={{ marginTop: '10px', padding: '6px 14px', backgroundColor: 'transparent', border: '1px solid #F4D9A0', borderRadius: '20px', fontSize: '11px', color: farger.terrakotta, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
   Oppdater analyse
 </button>
         </div>
@@ -444,7 +444,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
             {[
               { label: 'Rolig → første signal', verdi: søvnOvergangTider.roligTilSignal, farge: farger.grønn, bg: farger.grønnLys },
-              { label: 'Første signal → søvn', verdi: søvnOvergangTider.signalTilSøvn, farge: '#7C3AED', bg: '#F5F0FF' },
+              { label: 'Første signal → søvn', verdi: søvnOvergangTider.signalTilSøvn, farge: farger.terrakotta, bg: '#FFF8EC' },
               { label: 'Første signal → uro', verdi: 18, farge: '#BE123C', bg: '#FFF1F2' },
             ].map((boks, i) => (
               <div key={i} style={{ backgroundColor: boks.bg, borderRadius: '14px', padding: '12px', textAlign: 'center' }}>
