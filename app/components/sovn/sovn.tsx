@@ -112,6 +112,8 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
   const [nattMinutter, setNattMinutter] = useState(0);
   const [visEgetSignal, setVisEgetSignal] = useState(false);
   const [egetSignalTekst, setEgetSignalTekst] = useState('');
+  const [visJusterSlutt, setVisJusterSlutt] = useState(false);
+const [justerSluttTid, setJusterSluttTid] = useState('');
 
   const lastTidslinje = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -509,6 +511,62 @@ if (type === 'natt') {
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
         </div>
+        {tidslinje.length > 0 && (
+  <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px', textAlign: 'left' }}>
+    <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px' }}>Siste registrering</div>
+    {tidslinje.slice(-1).map((item, i) => (
+      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+        <TidslinjeIkon type={item.type} />
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>{item.tekst}</div>
+          <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{item.tid}</div>
+        </div>
+      </div>
+    ))}
+    <button
+      onClick={() => setVisJusterSlutt(true)}
+      style={{ width: '100%', padding: '10px', backgroundColor: farger.bakgrunn, border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer' }}
+    >
+      Juster sluttid på siste lur
+    </button>
+  </div>
+)}
+
+{visJusterSlutt && (
+  <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisJusterSlutt(false)}>
+    <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+      <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Juster sluttid</div>
+      <input type="time" value={justerSluttTid} onChange={e => setJusterSluttTid(e.target.value)} style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
+      <button onClick={async () => {
+        if (!justerSluttTid) return;
+        const sisteLur = await supabase
+          .from('lurer')
+          .select('*')
+          .eq('profil_id', await hentProfilId(aktivtBarn, bruker))
+          .eq('dato', dagensdato())
+          .eq('type', 'lur')
+          .order('start', { ascending: false })
+          .limit(1)
+          .single();
+        
+        if (sisteLur.data) {
+          const [sh, sm] = sisteLur.data.start.split(':').map(Number);
+          const [eh, em] = justerSluttTid.split(':').map(Number);
+          const varighet = (eh * 60 + em) - (sh * 60 + sm);
+          await supabase.from('lurer').update({
+            slutt: justerSluttTid,
+            varighet: varighet > 0 ? varighet : 0,
+          }).eq('id', sisteLur.data.id);
+        }
+        setVisJusterSlutt(false);
+        lastTidslinje();
+      }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+        Lagre
+      </button>
+    </div>
+  </div>
+)}
         <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start', textAlign: 'left' }}>
           <span style={{ fontSize: '18px' }}>💡</span>
           <div>
