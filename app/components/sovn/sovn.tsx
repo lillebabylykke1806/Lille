@@ -2,11 +2,12 @@
 import { farger } from '../../lib/farger';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { hentProfilId } from '../../lib/profilId';
 import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 
-type Props = { bruker: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; };
+type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; };
 type TidslinjeItem = { tid: string; tekst: string; type: string; };
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
@@ -88,7 +89,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
 };
 
-export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props) {
+export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen }: Props) {
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
   const [lurId, setLurId] = useState<number | null>(null);
@@ -113,10 +114,13 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
   const [egetSignalTekst, setEgetSignalTekst] = useState('');
 
   const lastTidslinje = useCallback(async () => {
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+
     const { data } = await supabase
       .from('lurer')
       .select('*')
-      .eq('profil_id', bruker?.id)
+      .eq('profil_id', profilId)
       .eq('dato', dagensdato())
       .order('start', { ascending: true });
     if (!data) return;
@@ -131,7 +135,7 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
     else if (oppvåkninger <= 2) setSøvnkvalitet('God');
     else if (oppvåkninger <= 4) setSøvnkvalitet('Ok');
     else setSøvnkvalitet('Urolig');
-  }, [bruker?.id]);
+  }, [bruker, aktivtBarn]);
 
   useEffect(() => {
     const lagretStartTid = localStorage.getItem('lille_starttid');
@@ -174,6 +178,9 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
   }, [startTid, visning]);
 
   const startSøvn = async (type: 'lur' | 'natt') => {
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+
     const nå = new Date();
     setStartTid(nå);
     setSøvnType(type);
@@ -181,7 +188,7 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
     localStorage.setItem('lille_starttid', nå.toISOString());
 localStorage.setItem('lille_sovtype', type);
 const { data } = await supabase.from('lurer').insert({
-  profil_id: bruker?.id, dato: dagensdato(), type,
+  profil_id: profilId, dato: dagensdato(), type,
   start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
   slutt: null, varighet: 0, signaler: '',
 }).select();
@@ -202,9 +209,12 @@ if (type === 'natt') {
   };
 
   const registrerOppvåkning = async () => {
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+
     const nå = new Date();
     await supabase.from('lurer').insert({
-      profil_id: bruker?.id, dato: dagensdato(), type: 'oppvåkning',
+      profil_id: profilId, dato: dagensdato(), type: 'oppvåkning',
       start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
       slutt: null, varighet: 0, signaler: '',
     });
@@ -256,6 +266,10 @@ if (type === 'natt') {
 
   const lagreEtterregistrert = async () => {
     if (!nyStart) return;
+
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+
     const [sh, sm] = nyStart.split(':').map(Number);
     
     let varighet = 0;
@@ -273,7 +287,7 @@ if (type === 'natt') {
     }
   
     await supabase.from('lurer').insert({
-      profil_id: bruker?.id,
+      profil_id: profilId,
       dato: nyDato,
       type: nyType,
       start: nyStart,
@@ -285,7 +299,7 @@ if (type === 'natt') {
     // Registrer sluttid som oppvåkning på riktig dato
     if (nySlutt) {
       await supabase.from('lurer').insert({
-        profil_id: bruker?.id,
+        profil_id: profilId,
         dato: sluttDato,
         type: 'oppvåkning',
         start: nySlutt,
@@ -428,8 +442,11 @@ if (type === 'natt') {
         <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Når våknet babyen?</div>
         <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
         <button onClick={async () => {
+          const profilId = await hentProfilId(aktivtBarn, bruker);
+          if (!profilId) return;
+
           await supabase.from('lurer').insert({
-            profil_id: bruker?.id,
+            profil_id: profilId,
             dato: dagensdato(),
             type: 'oppvåkning',
             start: nyTidStr,

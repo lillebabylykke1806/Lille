@@ -2,6 +2,7 @@
 import { farger } from '../../lib/farger';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import { hentProfilId } from '../../lib/profilId';
 import BarnVelger from './BarnVelger';
 
 type Props = {
@@ -9,12 +10,6 @@ type Props = {
   aktivtBarn: any;
   onNavigate: (side: string, fane?: string) => void;
   onByttBarn: (barn: any) => void;
-};
-
-/** Auth user id used as profil_id in all activity tables (e.g. pumping, mat). */
-const hentProfilId = async (aktivtBarn: any, bruker: any) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.user?.id ?? aktivtBarn?.bruker_id ?? bruker?.id;
 };
 
 const tidspunkt = () => {

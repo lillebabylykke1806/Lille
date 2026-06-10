@@ -171,7 +171,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
       <div style={{ overflowY: 'auto' }}>
       {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(side, fane) => { setAktivSide(side); if (fane === 'innsikt') setInnsiktStartFane('innsikt'); else setInnsiktStartFane('språk'); }} onByttBarn={setAktivtBarn} />}
-        {aktivSide === 'sovn' && <Sovn bruker={bruker} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} />}
+        {aktivSide === 'sovn' && <Sovn bruker={bruker} aktivtBarn={aktivtBarn} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} />}
         {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
         {aktivSide === 'amming' && <Amming bruker={bruker} />}
         {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} startFane={innsiktStartFane} />}
