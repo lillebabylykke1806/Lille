@@ -136,10 +136,12 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
   useEffect(() => {
     const lagretStartTid = localStorage.getItem('lille_starttid');
     const lagretType = localStorage.getItem('lille_sovtype');
+    const lagretLurId = localStorage.getItem('lille_lurid');
     if (lagretStartTid && lagretType) {
       setStartTid(new Date(lagretStartTid));
       setSøvnType(lagretType as 'lur' | 'natt');
       setVisning(lagretType === 'natt' ? 'nattAktiv' : 'lurAktiv');
+      if (lagretLurId) setLurId(parseInt(lagretLurId));
     }
     lastTidslinje();
   }, [lastTidslinje]);
@@ -177,18 +179,21 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
     setSøvnType(type);
     setValgteSignaler([]);
     localStorage.setItem('lille_starttid', nå.toISOString());
-    localStorage.setItem('lille_sovtype', type);
-    const { data } = await supabase.from('lurer').insert({
-      profil_id: bruker?.id, dato: dagensdato(), type,
-      start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      slutt: null, varighet: 0, signaler: '',
-    }).select();
-    if (data?.[0]) setLurId(data[0].id);
-    if (type === 'natt') {
-      setVisManeAnimasjon(true);
-      setVisning('nattAktiv');
-      lastTidslinje();
-      setTimeout(() => setVisManeAnimasjon(false), 2000);
+localStorage.setItem('lille_sovtype', type);
+const { data } = await supabase.from('lurer').insert({
+  profil_id: bruker?.id, dato: dagensdato(), type,
+  start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+  slutt: null, varighet: 0, signaler: '',
+}).select();
+if (data?.[0]) {
+  setLurId(data[0].id);
+  localStorage.setItem('lille_lurid', data[0].id.toString());
+}
+if (type === 'natt') {
+  setVisManeAnimasjon(true);
+  setVisning('nattAktiv');
+  lastTidslinje();
+  setTimeout(() => setVisManeAnimasjon(false), 2000);
   
     } else {
       setVisning('lurAktiv');
@@ -238,6 +243,7 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
     }
     localStorage.removeItem('lille_starttid');
     localStorage.removeItem('lille_sovtype');
+    localStorage.removeItem('lille_lurid');
     setNattMinutter(varighetMinutter);
     setStartTid(null); setSøvnType(null); setLurId(null);
     if (søvnType === 'natt') {
@@ -292,6 +298,7 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
     setNyStart(''); setNySlutt('');
     setVisning('velg'); lastTidslinje();
   };
+
   const søvnmelding = () => {
     if (minutter < 60) return 'Baby sover 🌙 Natta har så vidt begynt – la ro senke seg.';
     if (søvnkvalitet === 'Utmerket') return 'Fantastisk natt! ✨ Baby sover godt og sammenhengende.';
