@@ -105,9 +105,10 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
       if (!aktivtBarn?.id) return;
 
       const { data } = await supabase
-        .from('barn')
-        .select('*')
-        .single();
+  .from('barn')
+  .select('*')
+  .eq('id', aktivtBarn.id)
+  .single();
 
       if (data?.favoritter) {
         const liste = data.favoritter.split(',').filter(Boolean);
