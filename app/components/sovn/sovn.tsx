@@ -258,7 +258,6 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
     if (nySlutt) {
       const [eh, em] = nySlutt.split(':').map(Number);
       varighet = (eh * 60 + em) - (sh * 60 + sm);
-      // Hvis sluttid er mindre enn starttid, er det neste dag
       if (varighet < 0) {
         varighet += 24 * 60;
         const neste = new Date(nyDato);
@@ -276,10 +275,23 @@ export default function Sovn({ bruker, åpneEtterregistrer, åpneMorgen }: Props
       varighet,
       signaler: '',
     });
+  
+    // Registrer sluttid som oppvåkning på riktig dato
+    if (nySlutt) {
+      await supabase.from('lurer').insert({
+        profil_id: bruker?.id,
+        dato: sluttDato,
+        type: 'oppvåkning',
+        start: nySlutt,
+        slutt: null,
+        varighet: 0,
+        signaler: '',
+      });
+    }
+  
     setNyStart(''); setNySlutt('');
     setVisning('velg'); lastTidslinje();
   };
-
   const søvnmelding = () => {
     if (minutter < 60) return 'Baby sover 🌙 Natta har så vidt begynt – la ro senke seg.';
     if (søvnkvalitet === 'Utmerket') return 'Fantastisk natt! ✨ Baby sover godt og sammenhengende.';
