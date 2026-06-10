@@ -93,7 +93,8 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
   const [redigerLur, setRedigerLur] = useState<TidslinjeItem | null>(null);
   const [redigerStart, setRedigerStart] = useState('');
   const [redigerSlutt, setRedigerSlutt] = useState('');
-  
+  const [lurFerdig, setLurFerdig] = useState(false);
+
   const lastTidslinje = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
     if (!profilId) return;
@@ -149,14 +150,14 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
-    if (startTid && (visning === 'lurAktiv' || visning === 'nattAktiv')) {
+    if (startTid && !lurFerdig && (visning === 'lurAktiv' || visning === 'nattAktiv')) {
       interval = setInterval(() => {
         const diff = Math.floor((Date.now() - startTid.getTime()) / 1000);
         setMinutter(Math.floor(diff / 60));
       }, 1000);
     }
     return () => { if (interval) clearInterval(interval); };
-  }, [startTid, visning]);
+  }, [startTid, visning, lurFerdig]);
 
   const startSøvn = async (type: 'lur' | 'natt') => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -165,6 +166,7 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
     setStartTid(nå);
     setSøvnType(type);
     setValgteSignaler([]);
+    setLurFerdig(false);
     localStorage.setItem('lille_starttid', nå.toISOString());
     localStorage.setItem('lille_sovtype', type);
     const { data } = await supabase.from('lurer').insert({
@@ -234,8 +236,11 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
     localStorage.removeItem('lille_lurid');
     setNattMinutter(varighetMinutter);
     setStartTid(null); setSøvnType(null); setLurId(null);
-    if (søvnType === 'natt') setVisning('morgen');
-else setVisning('lurAktiv');
+    if (søvnType === 'natt') {
+      setVisning('morgen');
+    } else {
+      setLurFerdig(true);
+    }
     lastTidslinje();
   };
 
@@ -303,7 +308,6 @@ else setVisning('lurAktiv');
   const timerTekst = timer > 0 ? `${timer} t ${sek} m` : `${sek} m`;
   const antallOppvåkninger = tidslinje.filter(t => t.type === 'oppvåkning').length;
 
-  // Redigeringsmodal
   const RedigerModal = () => (
     <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setRedigerLur(null)}>
       <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
@@ -470,7 +474,6 @@ else setVisning('lurAktiv');
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Ved å registrere riktig søvntype får du mer treffsikre innsikter.</div>
           </div>
         </div>
-        {redigerLur && <RedigerModal />}
       </div>
     );
   }
@@ -513,84 +516,111 @@ else setVisning('lurAktiv');
 
   // LUR AKTIV
   if (visning === 'lurAktiv') {
+    const sisteLurFerdig = lurFerdig ? tidslinje.filter(t => t.type === 'lur').slice(-1)[0] : null;
     return (
       <div style={{ backgroundColor: '#F8F3EE', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         <Bølger />
         <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 120px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: farger.tekstLys, cursor: 'pointer', fontSize: '24px' }}>‹</button>
+            <button onClick={() => { setLurFerdig(false); setVisning('velg'); }} style={{ background: 'none', border: 'none', color: farger.tekstLys, cursor: 'pointer', fontSize: '24px' }}>‹</button>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '0.08em' }}>LUR</div>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '0.08em' }}>{lurFerdig ? 'LUR AVSLUTTET' : 'LUR'}</div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Dagtidssøvn</div>
             </div>
             <div style={{ width: '32px' }} />
           </div>
-          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px', zIndex: 1 }}>
-            <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', width: '220px', height: '220px' }}>
-              <svg width="220" height="220" viewBox="0 0 220 220">
-                <defs>
-                  <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#A8B5A2"/>
-                    <stop offset="50%" stopColor="#EBC8B4"/>
-                    <stop offset="100%" stopColor="#A8B5A2"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="110" cy="110" r="95" fill="#F5EFE6"/>
-                <circle cx="110" cy="110" r="95" fill="none" stroke="#EDE5D8" strokeWidth="12"/>
-                <circle cx="110" cy="110" r="95" fill="none" stroke="url(#lurGrad)" strokeWidth="12" strokeLinecap="round"
-                  strokeDasharray={circumference} strokeDashoffset={circumference - progress * circumference}
-                  transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
-              </svg>
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Luren pågår</div>
-                <div style={{ fontSize: '40px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
-                  {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
+
+          {lurFerdig ? (
+            <div style={{ textAlign: 'center', padding: '32px 0' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Lur registrert!</div>
+              {sisteLurFerdig && (
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '24px' }}>
+                  {sisteLurFerdig.tid}{sisteLurFerdig.slutt ? ` – ${sisteLurFerdig.slutt}` : ''} · {sisteLurFerdig.varighet} min
                 </div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px', textDecoration: 'underline' }}>Trykk for å justere tid</div>
-              </div>
-            </button>
-          </div>
-          {visJusterTid && (
-            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Sett starttid:</div>
-              <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '6px 10px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '8px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)' }} />
-              <button onClick={justerStartTidManuelt} style={{ padding: '6px 14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
-            </div>
-          )}
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#A8B5A2', border: 'none', borderRadius: '28px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer' }}>
-              Avslutt lur
-            </button>
-          </div>
-
-          {/* Signaler */}
-          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '12px' }}>
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-              {SIGNALER.map(signal => (
-                <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? farger.grønn : 'none'} stroke={valgteSignaler.includes(signal.id) ? farger.grønn : '#8A7060'} strokeWidth="1.3"/>
-                  </svg>
-                  <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? farger.grønn : farger.tekstLys, textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
+              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <button onClick={() => { setLurFerdig(false); setVisning('velg'); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+                  Tilbake 🌿
                 </button>
-              ))}
+                {sisteLurFerdig && (
+                  <button onClick={() => { setRedigerLur(sisteLurFerdig); setRedigerStart(sisteLurFerdig.tid); setRedigerSlutt(sisteLurFerdig.slutt || ''); }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+                    Juster tidspunkt
+                  </button>
+                )}
+              </div>
             </div>
-            <button onClick={() => setVisEgetSignal(true)} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1.5px dashed ${farger.kremMørk}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', marginTop: '8px' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle cx="8" cy="8" r="7" stroke="#8A7060" strokeWidth="1.3"/>
-                <line x1="8" y1="5" x2="8" y2="11" stroke="#8A7060" strokeWidth="1.3" strokeLinecap="round"/>
-                <line x1="5" y1="8" x2="11" y2="8" stroke="#8A7060" strokeWidth="1.3" strokeLinecap="round"/>
-              </svg>
-              <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Legg til eget signal</span>
-            </button>
-          </div>
+          ) : (
+            <>
+              <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px', zIndex: 1 }}>
+                <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', width: '220px', height: '220px' }}>
+                  <svg width="220" height="220" viewBox="0 0 220 220">
+                    <defs>
+                      <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#A8B5A2"/>
+                        <stop offset="50%" stopColor="#EBC8B4"/>
+                        <stop offset="100%" stopColor="#A8B5A2"/>
+                      </linearGradient>
+                    </defs>
+                    <circle cx="110" cy="110" r="95" fill="#F5EFE6"/>
+                    <circle cx="110" cy="110" r="95" fill="none" stroke="#EDE5D8" strokeWidth="12"/>
+                    <circle cx="110" cy="110" r="95" fill="none" stroke="url(#lurGrad)" strokeWidth="12" strokeLinecap="round"
+                      strokeDasharray={circumference} strokeDashoffset={circumference - progress * circumference}
+                      transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
+                  </svg>
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Luren pågår</div>
+                    <div style={{ fontSize: '40px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
+                      {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
+                    </div>
+                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px', textDecoration: 'underline' }}>Trykk for å justere tid</div>
+                  </div>
+                </button>
+              </div>
+              {visJusterTid && (
+                <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Sett starttid:</div>
+                  <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '6px 10px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '8px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)' }} />
+                  <button onClick={justerStartTidManuelt} style={{ padding: '6px 14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#A8B5A2', border: 'none', borderRadius: '28px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer' }}>
+                  Avslutt lur
+                </button>
+              </div>
 
-          {/* Tidslinje med klikk for å redigere */}
+              {/* Signaler */}
+              <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '12px' }}>
+                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  {SIGNALER.map(signal => (
+                    <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? farger.grønn : 'none'} stroke={valgteSignaler.includes(signal.id) ? farger.grønn : '#8A7060'} strokeWidth="1.3"/>
+                      </svg>
+                      <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? farger.grønn : farger.tekstLys, textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setVisEgetSignal(true)} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1.5px dashed ${farger.kremMørk}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', marginTop: '8px' }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="7" stroke="#8A7060" strokeWidth="1.3"/>
+                    <line x1="8" y1="5" x2="8" y2="11" stroke="#8A7060" strokeWidth="1.3" strokeLinecap="round"/>
+                    <line x1="5" y1="8" x2="11" y2="8" stroke="#8A7060" strokeWidth="1.3" strokeLinecap="round"/>
+                  </svg>
+                  <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Legg til eget signal</span>
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Tidslinje */}
           {tidslinje.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>I dag</div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>I dag</div>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Trykk på en lur for å redigere tid</div>
               <div style={{ overflowX: 'auto' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 80}px`, paddingBottom: '8px' }}>
@@ -600,16 +630,7 @@ else setVisning('lurAktiv');
                       <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
                       <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
-                        <button
-                          onClick={() => {
-                            if (item.type === 'lur' || item.type === 'natt') {
-                              setRedigerLur(item);
-                              setRedigerStart(item.tid);
-                              setRedigerSlutt(item.slutt || '');
-                            }
-                          }}
-                          style={{ background: 'none', border: 'none', padding: 0, cursor: (item.type === 'lur' || item.type === 'natt') ? 'pointer' : 'default' }}
-                        >
+                        <button onClick={() => { if (item.type === 'lur' || item.type === 'natt') { setRedigerLur(item); setRedigerStart(item.tid); setRedigerSlutt(item.slutt || ''); } }} style={{ background: 'none', border: 'none', padding: 0, cursor: (item.type === 'lur' || item.type === 'natt') ? 'pointer' : 'default' }}>
                           <TidslinjeIkon type={item.type} />
                         </button>
                         {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
@@ -647,9 +668,6 @@ else setVisning('lurAktiv');
     );
   }
 
-      
-        
-       
   // NATT AKTIV
   if (visning === 'nattAktiv') {
     return (
@@ -754,16 +772,7 @@ else setVisning('lurAktiv');
                       <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '8px', textAlign: 'center', lineHeight: 1.2 }}>{item.tekst}</div>
                       <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />}
-                        <button
-                          onClick={() => {
-                            if (item.type === 'natt') {
-                              setRedigerLur(item);
-                              setRedigerStart(item.tid);
-                              setRedigerSlutt(item.slutt || '');
-                            }
-                          }}
-                          style={{ background: 'none', border: 'none', padding: 0, cursor: item.type === 'natt' ? 'pointer' : 'default' }}
-                        >
+                        <button onClick={() => { if (item.type === 'natt') { setRedigerLur(item); setRedigerStart(item.tid); setRedigerSlutt(item.slutt || ''); } }} style={{ background: 'none', border: 'none', padding: 0, cursor: item.type === 'natt' ? 'pointer' : 'default' }}>
                           <TidslinjeIkon type={item.type} mørk={true} />
                         </button>
                         {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />}
