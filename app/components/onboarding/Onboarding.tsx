@@ -178,19 +178,33 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
     reader.onload = () => {
       const result = reader.result as string;
       setBabyBilde(result);
-      localStorage.setItem('lille_babybilde', result);
     };
     reader.readAsDataURL(fil);
   };
 
   const lagreProfil = async () => {
     setLaster(true);
-    await supabase.from('profiler').upsert({
-      id: bruker.id,
-      baby_navn: babyNavn,
+    
+    // Lagre i barn-tabellen
+    const { data: barn } = await supabase.from('barn').insert({
+      bruker_id: bruker.id,
+      navn: babyNavn,
       fødselsdato,
       favoritter: favoritter.join(','),
-    });
+    }).select().single();
+  
+    // Last opp bilde til Supabase Storage hvis det finnes
+    if (babyBilde && barn) {
+      const base64 = babyBilde.split(',')[1];
+      const blob = await fetch(babyBilde).then(r => r.blob());
+      await supabase.storage
+        .from('babybilde')
+        .upload(`${bruker.id}/profil.jpg`, blob, {
+          upsert: true,
+          contentType: 'image/jpeg',
+        });
+    }
+  
     setLaster(false);
     onFerdig();
   };
