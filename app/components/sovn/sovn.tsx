@@ -69,8 +69,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
 };
 
 export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen }: Props) {
-  const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen' | 'lurFerdig'>('velg');
-
+  const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
   const [lurId, setLurId] = useState<number | null>(null);
   const [minutter, setMinutter] = useState(0);
@@ -236,7 +235,7 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
     setNattMinutter(varighetMinutter);
     setStartTid(null); setSøvnType(null); setLurId(null);
     if (søvnType === 'natt') setVisning('morgen');
-else setVisning('lurFerdig');
+else setVisning('lurAktiv');
     lastTidslinje();
   };
 
@@ -647,43 +646,10 @@ else setVisning('lurFerdig');
       </div>
     );
   }
-// LUR FERDIG
-if (visning === 'lurFerdig') {
-  const sisteLur = tidslinje.filter(t => t.type === 'lur').slice(-1)[0];
-  return (
-    <div style={{ backgroundColor: '#F7F3EC', minHeight: '100vh', padding: '48px 24px 100px', textAlign: 'center' }}>
-      <style>{`@keyframes fadeOpp { 0%{opacity:0;transform:translateY(10px)} 100%{opacity:1;transform:translateY(0)} }`}</style>
-      <div style={{ fontSize: '64px', marginBottom: '16px', animation: 'fadeOpp 0.6s ease-out both' }}>☀️</div>
-      <div style={{ fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px', animation: 'fadeOpp 0.6s 0.1s ease-out both' }}>
-        Lur avsluttet!
-      </div>
-      {sisteLur && (
-        <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '32px', animation: 'fadeOpp 0.6s 0.2s ease-out both' }}>
-          {sisteLur.tid}{sisteLur.slutt ? ` – ${sisteLur.slutt}` : ''} · {sisteLur.varighet} min
-        </div>
-      )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', animation: 'fadeOpp 0.6s 0.3s ease-out both' }}>
-        <button
-          onClick={() => setVisning('velg')}
-          style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
-        >
-          Tilbake 🌿
-        </button>
-        <button
-          onClick={() => {
-            const item = tidslinje.filter(t => t.type === 'lur').slice(-1)[0];
-            if (item) { setRedigerLur(item); setRedigerStart(item.tid); setRedigerSlutt(item.slutt || ''); }
-          }}
-          style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
-        >
-          Juster tidspunkt
-        </button>
-      </div>
-      {redigerLur && <RedigerModal />}
-    </div>
-  );
-}
 
+      
+        
+       
   // NATT AKTIV
   if (visning === 'nattAktiv') {
     return (
