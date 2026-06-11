@@ -237,7 +237,7 @@ export default function Amming({ bruker }: Props) {
                 </>
               ) : (
                 <>
-                  onClick<img src="/tateflaske.png" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px', mixBlendMode: 'multiply' }} />
+                <img src="/tateflaske.png" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px', mixBlendMode: 'multiply' }} />
                   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trykk for å starte</div>
                 </>
               )}
