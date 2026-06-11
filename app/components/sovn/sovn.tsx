@@ -10,6 +10,11 @@ import LydPanel from './LydPanel';
 type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; };
 type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; };
 
+const tilTidsformat = (tid: string): string => {
+  if (!tid) return '';
+  return tid.slice(0, 5); // Tar bare HH:MM
+};
+
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
 const SIGNALER = [
@@ -325,10 +330,18 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
             <input type="time" value={redigerSlutt} onChange={e => setRedigerSlutt(e.target.value)} style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => setRedigerLur(null)} style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Avbryt</button>
-          <button onClick={lagreRedigertLur} style={{ flex: 2, padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Lagre</button>
-        </div>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+  <button onClick={() => setRedigerLur(null)} style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Avbryt</button>
+  <button onClick={lagreRedigertLur} style={{ flex: 2, padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Lagre</button>
+</div>
+<button onClick={async () => {
+  if (!redigerLur?.id) return;
+  await supabase.from('lurer').delete().eq('id', redigerLur.id);
+  setRedigerLur(null);
+  lastTidslinje();
+}} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: '1px solid #C48E7B', borderRadius: '12px', fontSize: '14px', color: '#C48E7B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+  🗑️ Slett registrering
+</button>
       </div>
     </div>
   );
@@ -617,30 +630,59 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
             </>
           )}
 
-          {/* Tidslinje */}
-          {tidslinje.length > 0 && (
-            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>I dag</div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Trykk på en lur for å redigere tid</div>
-              <div style={{ overflowX: 'auto' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 80}px`, paddingBottom: '8px' }}>
-                  {tidslinje.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>{item.tid}{item.slutt ? `–${item.slutt}` : ''}</div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                        {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
-                        <button onClick={() => { if (item.type === 'lur' || item.type === 'natt') { setRedigerLur(item); setRedigerStart(item.tid); setRedigerSlutt(item.slutt || ''); } }} style={{ background: 'none', border: 'none', padding: 0, cursor: (item.type === 'lur' || item.type === 'natt') ? 'pointer' : 'default' }}>
-                          <TidslinjeIkon type={item.type} />
-                        </button>
-                        {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+     {/* Tidslinje */}
+{tidslinje.length > 0 && (
+  <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
+    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>I dag</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Trykk på en lur for å redigere tid</div>
+    <div style={{ overflowX: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 80}px`, paddingBottom: '8px' }}>
+        {tidslinje.map((item, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>{item.tid}{item.slutt ? `–${item.slutt}` : ''}</div>
+            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+              {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
+              <button
+                onClick={() => { if (item.type === 'lur' || item.type === 'natt') { setRedigerLur(item); setRedigerStart(tilTidsformat(item.tid)); setRedigerSlutt(tilTidsformat(item.slutt || '')); } }}
+                style={{ background: 'none', border: 'none', padding: 0, cursor: (item.type === 'lur' || item.type === 'natt') ? 'pointer' : 'default' }}
+              >
+                <TidslinjeIkon type={item.type} />
+              </button>
+              {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
             </div>
-          )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}{/* Tidslinje */}
+{tidslinje.length > 0 && (
+  <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
+    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>I dag</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Trykk på en lur for å redigere tid</div>
+    <div style={{ overflowX: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 80}px`, paddingBottom: '8px' }}>
+        {tidslinje.map((item, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>{item.tid}{item.slutt ? `–${item.slutt}` : ''}</div>
+            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+              {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
+              <button
+                onClick={() => { if (item.type === 'lur' || item.type === 'natt') { setRedigerLur(item); setRedigerStart(tilTidsformat(item.tid)); setRedigerSlutt(tilTidsformat(item.slutt || '')); } }}
+                style={{ background: 'none', border: 'none', padding: 0, cursor: (item.type === 'lur' || item.type === 'natt') ? 'pointer' : 'default' }}
+              >
+                <TidslinjeIkon type={item.type} />
+              </button>
+              {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
 
           {/* Eget signal modal */}
           {visEgetSignal && (
