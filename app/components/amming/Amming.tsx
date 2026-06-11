@@ -27,7 +27,6 @@ export default function Amming({ bruker }: Props) {
   const [logg, setLogg] = useState<AmmingLogg[]>([]);
   const [laster, setLaster] = useState(false);
   const [lasterLogg, setLasterLogg] = useState(true);
-  const [byttAnimasjon, setByttAnimasjon] = useState(false);
   const [visJusterStart, setVisJusterStart] = useState(false);
   const [visAvslutt, setVisAvslutt] = useState(false);
   const [visRedigerLogg, setVisRedigerLogg] = useState<AmmingLogg | null>(null);
@@ -41,32 +40,36 @@ export default function Amming({ bruker }: Props) {
       .eq('profil_id', bruker?.id)
       .eq('dato', dagensdato())
       .order('start', { ascending: false });
-    if (data) setLogg(data);
+    if (data) {
+      setLogg(data);
+      if (data.length > 0 && !aktiv) {
+        setValgtBryst(motattBryst(data[0].bryst) as 'venstre' | 'høyre');
+      }
+    }
     setLasterLogg(false);
-  }, [bruker?.id]);
+  }, [bruker?.id, aktiv]);
 
   useEffect(() => {
     const lagretStart = localStorage.getItem('lille_amming_start');
     const lagretBryst = localStorage.getItem('lille_amming_bryst');
-  
+
     const sjekkAktivAmming = async () => {
       if (lagretStart && lagretBryst) {
-        const startTidStr = new Date(lagretStart).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+        const startTidStrVal = new Date(lagretStart).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
         const { data } = await supabase
           .from('amming')
           .select('*')
           .eq('profil_id', bruker?.id)
-          .eq('start', startTidStr)
+          .eq('start', startTidStrVal)
           .not('slutt', 'is', null)
           .limit(1);
-  
         if (data && data.length > 0) {
           localStorage.removeItem('lille_amming_start');
           localStorage.removeItem('lille_amming_bryst');
         } else {
           const start = new Date(lagretStart);
           setStartTid(start);
-          setStartTidStr(startTidStr);
+          setStartTidStr(startTidStrVal);
           setValgtBryst(lagretBryst as 'venstre' | 'høyre');
           setSekunder(Math.floor((Date.now() - start.getTime()) / 1000));
           setAktiv(true);
@@ -74,17 +77,8 @@ export default function Amming({ bruker }: Props) {
       }
       lastLogg();
     };
-  
     sjekkAktivAmming();
-  
-    
-    lastLogg();
   }, [lastLogg]);
-  useEffect(() => {
-    if (logg.length > 0) {
-      setValgtBryst(motattBryst(logg[0].bryst) as 'venstre' | 'høyre');
-    }
-  }, [logg]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -137,6 +131,8 @@ export default function Amming({ bruker }: Props) {
       slutt: sluttTidStr,
       varighet,
     });
+    localStorage.removeItem('lille_amming_start');
+    localStorage.removeItem('lille_amming_bryst');
     setLaster(false);
     setAktiv(false);
     setStartTid(null);
@@ -150,11 +146,7 @@ export default function Amming({ bruker }: Props) {
     const [sh, sm] = redigerStart.split(':').map(Number);
     const [eh, em] = redigerSlutt.split(':').map(Number);
     const varighet = Math.max(0, (eh * 60 + em) - (sh * 60 + sm));
-    await supabase.from('amming').update({
-      start: redigerStart,
-      slutt: redigerSlutt,
-      varighet,
-    }).eq('id', visRedigerLogg.id);
+    await supabase.from('amming').update({ start: redigerStart, slutt: redigerSlutt, varighet }).eq('id', visRedigerLogg.id);
     setVisRedigerLogg(null);
     lastLogg();
   };
@@ -163,12 +155,6 @@ export default function Amming({ bruker }: Props) {
     await supabase.from('amming').delete().eq('id', id);
     setVisRedigerLogg(null);
     lastLogg();
-  };
-
-  const byttBryst = () => {
-    setByttAnimasjon(true);
-    setTimeout(() => setByttAnimasjon(false), 400);
-    setValgtBryst(prev => motattBryst(prev) as 'venstre' | 'høyre');
   };
 
   const formaterTid = (sek: number) => {
@@ -180,137 +166,164 @@ export default function Amming({ bruker }: Props) {
   const totalMinutter = logg.reduce((sum, l) => sum + (l.varighet || 0), 0);
   const sisteAmming = logg[0];
   const anbefalingBryst = logg.length > 0 ? motattBryst(logg[0].bryst) as 'venstre' | 'høyre' : 'høyre';
+  const circumference = 2 * Math.PI * 95;
+  const progress = Math.min((sekunder % 60) / 60, 1);
 
   if (lasterLogg) return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: '24px', height: '24px', border: `2px solid ${farger.grønn}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ width: '24px', height: '24px', border: `2px solid ${farger.grønn}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
     </div>
   );
 
   return (
-    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '24px 24px 100px' }}>
+    <div style={{ backgroundColor: '#F8F3EE', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
       <style>{`
-        @keyframes puls { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        @keyframes bytt { 0% { transform: scale(0.95); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes puls { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes fadeOpp { 0%{opacity:0;transform:translateY(8px)} 100%{opacity:1;transform:translateY(0)} }
       `}</style>
 
-      {/* Header */}
-      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>Amming</div>
-        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Registrer og følg ammingen</div>
-      </div>
+      {/* Bølger */}
+      <svg viewBox="0 0 430 200" style={{ position: 'absolute', top: '60px', left: 0, width: '100%', height: '200px', zIndex: 0 }} preserveAspectRatio="none">
+        <path d="M0 100 C60 60 120 130 180 90 C240 50 300 120 360 80 C400 55 430 70 430 70 L430 200 L0 200 Z" fill={farger.terrakotta} opacity="0.08"/>
+        <path d="M0 120 C80 85 160 145 240 110 C300 82 370 130 430 105 L430 200 L0 200 Z" fill={farger.terrakotta} opacity="0.06"/>
+      </svg>
 
-      {/* Siste amming */}
-      {sisteAmming && (
-        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px', marginBottom: '12px' }}>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>Siste amming</div>
-          <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{sisteAmming.varighet} min</div>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>
-            {sisteAmming.bryst === 'venstre' ? '← Venstre bryst' : 'Høyre bryst →'} · {sisteAmming.start}–{sisteAmming.slutt}
-          </div>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn }}>
-            Neste: {anbefalingBryst === 'venstre' ? '← venstre bryst' : 'høyre bryst →'} 🤍
-          </div>
-        </div>
-      )}
+      <div style={{ position: 'relative', zIndex: 1, padding: '16px 24px 120px' }}>
 
-      {/* Innsikt */}
-      {logg.length > 0 && (
-        <div style={{ backgroundColor: '#F5EDE8', borderRadius: '16px', padding: '16px 20px', marginBottom: '12px' }}>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>✨ Innsikt</div>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-            {logg.length >= 5
-              ? `Flott jobb! Du har ammet ${logg.length} ganger i dag – totalt ${totalMinutter} minutter. 🤍`
-              : `${logg.length} ${logg.length === 1 ? 'amming' : 'amminger'} i dag · ${totalMinutter} minutter totalt.`}
-          </div>
-        </div>
-      )}
-
-      {/* Start amming / aktiv timer */}
-      <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
-        {aktiv ? (
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8px' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Ammer på</div>
-            <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px', animation: byttAnimasjon ? 'bytt 0.4s ease' : 'none' }}>
-              {valgtBryst === 'venstre' ? '← Venstre bryst' : 'Høyre bryst →'}
+            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Amming</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+              {aktiv ? `${valgtBryst === 'venstre' ? '← Venstre' : 'Høyre →'} bryst` : `Anbefalt: ${anbefalingBryst === 'venstre' ? '← venstre' : 'høyre →'} bryst`}
             </div>
+          </div>
+        </div>
 
-            {/* Starttid – klikk for å justere */}
-            <button onClick={() => setVisJusterStart(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', marginBottom: '20px' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Startet {startTidStr}</div>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textDecoration: 'underline' }}>Trykk for å justere</div>
-            </button>
-
-            {/* Timer */}
-            <div style={{ position: 'relative', width: '160px', height: '160px', margin: '0 auto 20px' }}>
-              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `3px solid ${farger.grønn}`, animation: 'puls 2s ease-in-out infinite' }} />
-              <div style={{ position: 'absolute', inset: '8px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: '34px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700', letterSpacing: '-1px' }}>
-                  {formaterTid(sekunder)}
-                </div>
-              </div>
+        {/* Stor sirkel-timer */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', minHeight: '260px' }}>
+          <div style={{ position: 'relative', width: '220px', height: '220px' }}>
+            <svg width="220" height="220" viewBox="0 0 220 220">
+              <defs>
+                <linearGradient id="ammingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor={farger.terrakotta}/>
+                  <stop offset="50%" stopColor="#EBC8B4"/>
+                  <stop offset="100%" stopColor={farger.terrakotta}/>
+                </linearGradient>
+              </defs>
+              <circle cx="110" cy="110" r="95" fill="#FFF8EC"/>
+              <circle cx="110" cy="110" r="95" fill="none" stroke="#F4D9A0" strokeWidth="12"/>
+              {aktiv && (
+                <circle cx="110" cy="110" r="95" fill="none" stroke="url(#ammingGrad)" strokeWidth="12" strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={circumference - progress * circumference}
+                  transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
+              )}
+            </svg>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              {aktiv ? (
+                <>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Ammer nå</div>
+                  <div style={{ fontSize: '40px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
+                    {formaterTid(sekunder)}
+                  </div>
+                  <button onClick={() => setVisJusterStart(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
+                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textDecoration: 'underline' }}>
+                      Siden {startTidStr}
+                    </div>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <img src="/tateflaske.png" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px', mixBlendMode: 'multiply' }} />
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trykk for å starte</div>
+                </>
+              )}
             </div>
+          </div>
+        </div>
 
-            {/* Bytt bryst */}
-            <button onClick={byttBryst} style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto 14px', padding: '10px 20px', backgroundColor: 'transparent', border: `1.5px solid ${farger.kremMørk}`, borderRadius: '24px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, cursor: 'pointer' }}>
+        {/* Knapper */}
+        {aktiv ? (
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <button onClick={() => {
+              setValgtBryst(prev => motattBryst(prev) as 'venstre' | 'høyre');
+              localStorage.setItem('lille_amming_bryst', motattBryst(valgtBryst));
+            }} style={{ flex: 1, padding: '14px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '28px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path d="M7 16L3 12L7 8M17 8L21 12L17 16M3 12H21" stroke={farger.tekst} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              Bytt til {valgtBryst === 'venstre' ? 'høyre' : 'venstre'} bryst
+              Bytt bryst
             </button>
-
-            <button onClick={åpneAvslutt} disabled={laster} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+            <button onClick={åpneAvslutt} style={{ flex: 2, padding: '14px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer' }}>
               Avslutt amming
             </button>
           </div>
-       ) : (
-        <>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px', textAlign: 'center' }}>Anbefalt neste bryst</div>
-          <button onClick={() => startAmming(anbefalingBryst)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
-            🤍 Start med {anbefalingBryst === 'venstre' ? 'venstre' : 'høyre'} bryst
-          </button>
-          <button onClick={() => startAmming(motattBryst(anbefalingBryst) as 'venstre' | 'høyre')} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '13px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            Eller start med {motattBryst(anbefalingBryst)} bryst
-          </button>
-        </>
-      )}
-      </div>
-
-      {/* Ammelogg */}
-      {logg.length > 0 && (
-        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Ammelogg i dag</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{logg.length} {logg.length === 1 ? 'økt' : 'økter'}</div>
+        ) : (
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <button onClick={() => startAmming(motattBryst(anbefalingBryst) as 'venstre' | 'høyre')} style={{ flex: 1, padding: '14px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '28px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer' }}>
+              {motattBryst(anbefalingBryst) === 'venstre' ? '← Venstre' : 'Høyre →'}
+            </button>
+            <button onClick={() => startAmming(anbefalingBryst)} style={{ flex: 2, padding: '14px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer' }}>
+              🤍 Start {anbefalingBryst === 'venstre' ? 'venstre' : 'høyre'} bryst
+            </button>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {logg.map((l, i) => (
-              <button key={i} onClick={() => { setVisRedigerLogg(l); setRedigerStart(l.start); setRedigerSlutt(l.slutt); }}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: farger.bakgrunn, borderRadius: '12px', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: l.bryst === 'venstre' ? '#A8C4A2' : '#F4A853', flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
-                      {l.bryst === 'venstre' ? 'Venstre bryst' : 'Høyre bryst'}
-                    </div>
-                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                      {l.start}–{l.slutt}
+        )}
+
+        {/* Siste amming */}
+        {sisteAmming && (
+          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px', animation: 'fadeOpp 0.5s ease' }}>
+            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Siste amming</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{sisteAmming.varighet} min</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
+                  {sisteAmming.bryst === 'venstre' ? '← Venstre' : 'Høyre →'} · {sisteAmming.start}–{sisteAmming.slutt}
+                </div>
+              </div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'right' }}>
+                Neste:<br/>{anbefalingBryst === 'venstre' ? '← venstre' : 'høyre →'} 🤍
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Innsikt */}
+        {logg.length > 0 && (
+          <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '600', marginBottom: '4px' }}>✨ I dag</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>
+              {logg.length} {logg.length === 1 ? 'amming' : 'amminger'} · {totalMinutter} minutter totalt
+            </div>
+          </div>
+        )}
+
+        {/* Logg */}
+        {logg.length > 0 && (
+          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 18px' }}>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px' }}>Ammelogg i dag</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {logg.map((l, i) => (
+                <button key={i} onClick={() => { setVisRedigerLogg(l); setRedigerStart(l.start.slice(0,5)); setRedigerSlutt(l.slutt.slice(0,5)); }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: farger.bakgrunn, borderRadius: '12px', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: l.bryst === 'venstre' ? farger.grønn : farger.terrakotta, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
+                        {l.bryst === 'venstre' ? '← Venstre bryst' : 'Høyre bryst →'}
+                      </div>
+                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{l.start}–{l.slutt}</div>
                     </div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '600' }}>{l.varighet} min</div>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.43741 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Modal: Juster starttid */}
       {visJusterStart && (
@@ -327,7 +340,7 @@ export default function Amming({ bruker }: Props) {
         </div>
       )}
 
-      {/* Modal: Avslutt med juster slutttid */}
+      {/* Modal: Avslutt */}
       {visAvslutt && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisAvslutt(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
@@ -345,7 +358,7 @@ export default function Amming({ bruker }: Props) {
                   style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
               </div>
             </div>
-            <button onClick={avsluttAmming} disabled={laster} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+            <button onClick={avsluttAmming} disabled={laster} style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
               {laster ? 'Lagrer...' : 'Lagre amming'}
             </button>
           </div>
@@ -376,7 +389,7 @@ export default function Amming({ bruker }: Props) {
             <button onClick={lagreRedigertLogg} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
               Lagre endringer
             </button>
-            <button onClick={() => slettLogg(visRedigerLogg.id)} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid #FFB3B3`, borderRadius: '16px', fontSize: '14px', color: '#C0392B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+            <button onClick={() => slettLogg(visRedigerLogg.id)} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: '1px solid #FFB3B3', borderRadius: '16px', fontSize: '14px', color: '#C0392B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
               Slett amming
             </button>
           </div>
