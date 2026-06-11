@@ -222,7 +222,7 @@ export default function Amming({ bruker }: Props) {
                   transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
               )}
             </svg>
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div onClick={!aktiv ? () => startAmming(anbefalingBryst) : undefined} style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: !aktiv ? 'pointer' : 'default' }}>
               {aktiv ? (
                 <>
                   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Ammer nå</div>
@@ -237,7 +237,7 @@ export default function Amming({ bruker }: Props) {
                 </>
               ) : (
                 <>
-                  <img src="/tateflaske.png" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px', mixBlendMode: 'multiply' }} />
+                  onClick<img src="/tateflaske.png" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px', mixBlendMode: 'multiply' }} />
                   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trykk for å starte</div>
                 </>
               )}
