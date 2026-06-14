@@ -143,6 +143,22 @@ export default function Profil({ bruker, onLoggUt }: Props) {
         </button>
       </div>
 
+      {/* Administrer abonnement */}
+<button
+  onClick={async () => {
+    const res = await fetch('/api/portal-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bruker_id: bruker.id }),
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
+  }}
+  style={{ width: '100%', padding: '10px', backgroundColor: 'transparent', border: 'none', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif', textDecoration: 'underline', marginBottom: '8px' }}
+>
+  Administrer abonnementet
+</button>
+
       {/* Logg ut */}
       <button
         onClick={onLoggUt}
