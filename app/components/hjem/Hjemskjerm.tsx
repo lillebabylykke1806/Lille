@@ -19,8 +19,6 @@ const tidspunkt = () => {
   return 'God kveld';
 };
 
-const [visDelModal, setVisDelModal] = useState(false);
-const [kopiert, setKopiert] = useState(false);
 
 const BlomstIllustrasjon = () => (
   <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
@@ -229,6 +227,8 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [visDagbok, setVisDagbok] = useState(false);
   const [alleDagensHendelser, setAlleDagensHendelser] = useState<any[]>([]);
   const [auraObservasjon, setAuraObservasjon] = useState('');
+  const [visDelModal, setVisDelModal] = useState(false);
+const [kopiert, setKopiert] = useState(false);
 
   const hentAuraObservasjon = async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
