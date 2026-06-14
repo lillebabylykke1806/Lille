@@ -19,6 +19,9 @@ const tidspunkt = () => {
   return 'God kveld';
 };
 
+const [visDelModal, setVisDelModal] = useState(false);
+const [kopiert, setKopiert] = useState(false);
+
 const BlomstIllustrasjon = () => (
   <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
     <ellipse cx="26" cy="14" rx="5" ry="9" fill="#EBC8B4" opacity="0.7" transform="rotate(0 26 26)"/>
@@ -432,20 +435,25 @@ Svar KUN med observasjonen.`
   return (
     <div style={{ backgroundColor: '#F7F3EC', minHeight: '100vh', overflowX: 'hidden' }}>
 
-      {/* Header */}
-      <div style={{ padding: '20px 24px 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
-              {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
-            </div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>
-              {valgtTilstand.tekst}
-            </div>
-          </div>
+     {/* Header */}
+<div style={{ padding: '20px 24px 0' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+    <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <button onClick={() => setVisDelModal(true)} style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+        🎁
+      </button>
+      <div style={{ textAlign: 'right' }}>
+        <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
+          {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
+        </div>
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>
+          {valgtTilstand.tekst}
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       {/* AI Innsikt-kort */}
       <div style={{ padding: '16px 24px 0' }}>
@@ -657,8 +665,8 @@ Svar KUN med observasjonen.`
         </div>
       </div>
 
-      {/* DAGBOK MODAL */}
-      {visDagbok && (
+   {/* DAGBOK MODAL */}
+   {visDagbok && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisDagbok(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
@@ -693,6 +701,33 @@ Svar KUN med observasjonen.`
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* DEL MODAL */}
+      {visDelModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisDelModal(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+            <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎁</div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Del Lille med en venn</div>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
+                Del koden med en venn og dere får begge <strong>20% rabatt de første 2 månedene</strong> 🤍
+              </div>
+            </div>
+            <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '20px', marginBottom: '16px', textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Din rabattkode</div>
+              <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '4px', marginBottom: '4px' }}>VENN20</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>20% rabatt i 2 måneder</div>
+            </div>
+            <button onClick={() => { navigator.clipboard.writeText('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); setKopiert(true); setTimeout(() => setKopiert(false), 3000); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
+              {kopiert ? '✅ Kopiert!' : '📋 Kopier delingstekst'}
+            </button>
+            <button onClick={() => { const tekst = encodeURIComponent('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); window.open(`sms:?body=${tekst}`); }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+              📱 Send som SMS
+            </button>
           </div>
         </div>
       )}
