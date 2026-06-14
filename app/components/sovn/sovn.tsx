@@ -272,7 +272,7 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
     });
     if (nySlutt) {
       await supabase.from('lurer').insert({
-        profil_id: profilId, dato: sluttDato, type: 'oppvåkning',
+        profil_id: profilId, dato: dagensdato(), type: 'oppvåkning',
         start: nySlutt, slutt: null, varighet: 0, signaler: '',
       });
     }
@@ -630,33 +630,7 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
             </>
           )}
 
-     {/* Tidslinje */}
-{tidslinje.length > 0 && (
-  <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
-    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>I dag</div>
-    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Trykk på en lur for å redigere tid</div>
-    <div style={{ overflowX: 'auto' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 80}px`, paddingBottom: '8px' }}>
-        {tidslinje.map((item, i) => (
-          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>{item.tid}{item.slutt ? `–${item.slutt}` : ''}</div>
-            <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textAlign: 'center' }}>{item.tekst}</div>
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-              {i > 0 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
-              <button
-                onClick={() => { if (item.type === 'lur' || item.type === 'natt') { setRedigerLur(item); setRedigerStart(tilTidsformat(item.tid)); setRedigerSlutt(tilTidsformat(item.slutt || '')); } }}
-                style={{ background: 'none', border: 'none', padding: 0, cursor: (item.type === 'lur' || item.type === 'natt') ? 'pointer' : 'default' }}
-              >
-                <TidslinjeIkon type={item.type} />
-              </button>
-              {i < tidslinje.length - 1 && <div style={{ flex: 1, height: '1px', backgroundColor: farger.kremMørk }} />}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-)}{/* Tidslinje */}
+   {/* Tidslinje */}
 {tidslinje.length > 0 && (
   <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
     <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>I dag</div>
