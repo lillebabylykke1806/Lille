@@ -586,16 +586,31 @@ Svar KUN med observasjonen.`
               </div>
             )}
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
-              </div>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
-                {nesteLur.om}
-              </div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
-                Vindu ca. {nesteLur.tid}
-              </div>
-            </div>
+  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
+    {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
+  </div>
+  <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
+    {nesteLur.om}
+  </div>
+  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+    Vindu ca. {nesteLur.tid}
+  </div>
+  {(() => {
+    const sisteOppvåkning = dagensFlyt.filter(h => h.type === 'oppvåkning').slice(-1)[0];
+    if (!sisteOppvåkning?.tid) return null;
+    const [h, m] = sisteOppvåkning.tid.split(':').map(Number);
+    const oppvåkningTid = new Date();
+    oppvåkningTid.setHours(h, m, 0, 0);
+    const våkentMinutter = Math.round((new Date().getTime() - oppvåkningTid.getTime()) / 60000);
+    if (våkentMinutter < 0) return null;
+    const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
+    return (
+      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
+        ⭐ Våkent siden: {våkentTekst}
+      </div>
+    );
+  })()}
+</div>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
