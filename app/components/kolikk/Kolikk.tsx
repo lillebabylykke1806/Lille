@@ -316,6 +316,14 @@ Svar KUN med de 3 punktene, én per linje.`
         )}
 
         {/* Registrer knapp */}
+<button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <circle cx="9" cy="9" r="8" stroke="#FDFAF6" strokeWidth="1.5" fill="none"/>
+    <line x1="9" y1="5" x2="9" y2="13" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
+    <line x1="5" y1="9" x2="13" y2="9" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+  Registrer uroperiode
+</button>
         
 
         {/* Historikk */}
