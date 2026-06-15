@@ -29,7 +29,6 @@ export default function Kolikk({ bruker, aktivtBarn }: Props) {
   const [nesteUro, setNesteUro] = useState<{ om: string; tidspunkt: string } | null>(null);
   const [tiltakStatistikk, setTiltakStatistikk] = useState<{ tiltak: string; fungerte: number; total: number }[]>([]);
   const [signalStatistikk, setSignalStatistikk] = useState<{ signal: string; prosent: number }[]>([]);
-
   const [nyTidspunkt, setNyTidspunkt] = useState(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
   const [nySignaler, setNySignaler] = useState<string[]>([]);
   const [nyTiltak, setNyTiltak] = useState<string[]>([]);
@@ -167,7 +166,6 @@ Svar KUN med de 3 punktene, én per linje.`
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '0 0 100px' }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } } @keyframes fadeOpp { 0%{opacity:0;transform:translateY(8px)} 100%{opacity:1;transform:translateY(0)} }`}</style>
 
-      {/* Header */}
       <div style={{ padding: '24px 24px 16px', textAlign: 'center' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>🌙 Uro & Ro</div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Forstå mønstrene bak de vanskelige stundene</div>
@@ -175,7 +173,6 @@ Svar KUN med de 3 punktene, én per linje.`
 
       <div style={{ padding: '0 16px' }}>
 
-        {/* PÅ VEI INN I UROPERIODE */}
         {nesteUro && parseInt(nesteUro.om.replace(/\D/g, '')) <= 60 && (
           <div style={{ backgroundColor: '#FFF3EE', border: '1px solid #F4C4A8', borderRadius: '20px', padding: '20px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'radial-gradient(circle, #F4A85340, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', flexShrink: 0 }}>😟</div>
@@ -187,7 +184,6 @@ Svar KUN med de 3 punktene, én per linje.`
           </div>
         )}
 
-        {/* DETTE HJELPER OFTEST */}
         {tiltakStatistikk.length >= 1 && (
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '16px 20px', marginBottom: '12px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>Dette hjelper oftest</div>
@@ -203,7 +199,6 @@ Svar KUN med de 3 punktene, én per linje.`
           </div>
         )}
 
-        {/* STATISTIKK – kun hvis nok logg */}
         {logg.length >= 3 && (
           <>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
@@ -269,7 +264,65 @@ Svar KUN med de 3 punktene, én per linje.`
           </>
         )}
 
-        {/* REGISTRER KNAPP – kun når det finnes data */}
+        {logg.length === 0 && (
+          <>
+            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '32px 24px', textAlign: 'center', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '180px' }}>
+                  <div style={{ position: 'absolute', width: '160px', height: '160px', background: 'radial-gradient(ellipse, #E8B49A 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(24px)', opacity: 0.6 }} />
+                  <div style={{ position: 'absolute', width: '130px', height: '130px', background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(16px)', opacity: 0.5 }} />
+                  <img src="/sky.png" alt="sky" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain' }} />
+                </div>
+              </div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Velkommen til Uro & Ro</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '20px' }}>
+                Vi hjelper deg å forstå uroen og hva som kan hjelpe {babyNavn}. Jo mer du registrerer, desto bedre kan vi finne mønstre og gi deg innsikt.
+              </div>
+              <button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <circle cx="9" cy="9" r="8" stroke="#FDFAF6" strokeWidth="1.5" fill="none"/>
+                  <line x1="9" y1="5" x2="9" y2="13" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
+                  <line x1="5" y1="9" x2="13" y2="9" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                Registrer første uroperiode
+              </button>
+            </div>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'center', marginBottom: '12px' }}>✨ Her vil du etter hvert få innsikt om:</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px' }}>
+                {[
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#C7BDD8" strokeWidth="1.5" fill="none"/><path d="M12 7V12L15 15" stroke="#C7BDD8" strokeWidth="1.5" strokeLinecap="round"/></svg>, bg: '#F0EBF8', label: 'Når uroen pleier å komme' },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 3 15 3 9C3 6.5 5 4.5 7.5 4.5C9.2 4.5 10.7 5.4 12 7C13.3 5.4 14.8 4.5 16.5 4.5C19 4.5 21 6.5 21 9C21 15 12 21 12 21Z" stroke="#F4A8A8" strokeWidth="1.5" fill="none"/></svg>, bg: '#FFF0F0', label: 'Tegn før uro' },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.2 2 7 4.2 7 7C7 9.2 8.3 11.1 10 11.8V13H14V11.8C15.7 11.1 17 9.2 17 7C17 4.2 14.8 2 12 2Z" stroke="#F4D080" strokeWidth="1.5" fill="none"/><rect x="10" y="13" width="4" height="3" rx="1" stroke="#F4D080" strokeWidth="1.5" fill="none"/><line x1="12" y1="16" x2="12" y2="18" stroke="#F4D080" strokeWidth="1.5" strokeLinecap="round"/></svg>, bg: '#FFFBEC', label: 'Tiltak som kan hjelpe' },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="14" width="3" height="6" rx="1" fill="#A8C4A2"/><rect x="9" y="10" width="3" height="10" rx="1" fill="#A8C4A2"/><rect x="14" y="6" width="3" height="14" rx="1" fill="#A8C4A2"/><rect x="19" y="3" width="3" height="17" rx="1" fill="#A8C4A2"/></svg>, bg: '#E8F0E8', label: 'Mønstre over tid' },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
+                    <div style={{ width: '52px', height: '52px', borderRadius: '16px', backgroundColor: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</div>
+                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.3, fontWeight: '500' }}>{item.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14C8 14 2 10 2 6C2 4 3.5 2.5 5.5 2.5C6.6 2.5 7.5 3.1 8 4C8.5 3.1 9.4 2.5 10.5 2.5C12.5 2.5 14 4 14 6C14 10 8 14 8 14Z" fill={farger.grønn}/></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Kom i gang</div>
+                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Når du registrerer uroperioder, hjelper du oss å forstå {babyNavn} bedre.</div>
+                </div>
+              </div>
+              {['Registrer når uroen starter', 'Legg til hvilke signaler du ser', 'Noter hva dere prøvde og hvordan det gikk'].map((punkt, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" fill={farger.grønnLys} stroke={farger.grønn} strokeWidth="1"/><path d="M5.5 9L7.5 11L12.5 6.5" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>{punkt}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
         {logg.length > 0 && (
           <button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -281,7 +334,6 @@ Svar KUN med de 3 punktene, én per linje.`
           </button>
         )}
 
-        {/* HISTORIKK KNAPP */}
         {logg.length > 0 && (
           <button onClick={() => setVisHistorikk(true)} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '12px' }}>
             Se historikk ({logg.length} episoder)
@@ -289,7 +341,6 @@ Svar KUN med de 3 punktene, én per linje.`
         )}
       </div>
 
-      {/* HISTORIKK MODAL */}
       {visHistorikk && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisHistorikk(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -330,7 +381,6 @@ Svar KUN med de 3 punktene, én per linje.`
         </div>
       )}
 
-      {/* REGISTRER MODAL */}
       {visRegistrer && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisRegistrer(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -344,10 +394,7 @@ Svar KUN med de 3 punktene, én per linje.`
               <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Hva ser du nå?</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {SIGNALER_URO.map(s => (
-                  <button key={s} onClick={() => setNySignaler(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])}
-                    style={{ padding: '8px 14px', borderRadius: '20px', border: `1.5px solid ${nySignaler.includes(s) ? farger.grønn : farger.kremMørk}`, backgroundColor: nySignaler.includes(s) ? farger.grønnLys : farger.bakgrunn, color: nySignaler.includes(s) ? farger.grønn : farger.tekst, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nySignaler.includes(s) ? '600' : '400' }}>
-                    {s}
-                  </button>
+                  <button key={s} onClick={() => setNySignaler(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])} style={{ padding: '8px 14px', borderRadius: '20px', border: `1.5px solid ${nySignaler.includes(s) ? farger.grønn : farger.kremMørk}`, backgroundColor: nySignaler.includes(s) ? farger.grønnLys : farger.bakgrunn, color: nySignaler.includes(s) ? farger.grønn : farger.tekst, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nySignaler.includes(s) ? '600' : '400' }}>{s}</button>
                 ))}
               </div>
             </div>
@@ -355,10 +402,7 @@ Svar KUN med de 3 punktene, én per linje.`
               <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Hva prøvde dere?</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {TILTAK.map(t => (
-                  <button key={t} onClick={() => setNyTiltak(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])}
-                    style={{ padding: '8px 14px', borderRadius: '20px', border: `1.5px solid ${nyTiltak.includes(t) ? farger.grønn : farger.kremMørk}`, backgroundColor: nyTiltak.includes(t) ? farger.grønnLys : farger.bakgrunn, color: nyTiltak.includes(t) ? farger.grønn : farger.tekst, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyTiltak.includes(t) ? '600' : '400' }}>
-                    {t}
-                  </button>
+                  <button key={t} onClick={() => setNyTiltak(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])} style={{ padding: '8px 14px', borderRadius: '20px', border: `1.5px solid ${nyTiltak.includes(t) ? farger.grønn : farger.kremMørk}`, backgroundColor: nyTiltak.includes(t) ? farger.grønnLys : farger.bakgrunn, color: nyTiltak.includes(t) ? farger.grønn : farger.tekst, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyTiltak.includes(t) ? '600' : '400' }}>{t}</button>
                 ))}
               </div>
             </div>
@@ -366,10 +410,7 @@ Svar KUN med de 3 punktene, én per linje.`
               <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Hvordan gikk det?</div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {[{ id: 'bra', label: '😊 Hjalp godt' }, { id: 'delvis', label: '😐 Hjalp litt' }, { id: 'ikke', label: '😔 Hjalp ikke' }].map(r => (
-                  <button key={r.id} onClick={() => setNyResultat(r.id as any)}
-                    style={{ flex: 1, padding: '10px 8px', borderRadius: '12px', border: `1.5px solid ${nyResultat === r.id ? farger.grønn : farger.kremMørk}`, backgroundColor: nyResultat === r.id ? farger.grønnLys : farger.bakgrunn, color: nyResultat === r.id ? farger.grønn : farger.tekst, fontSize: '12px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyResultat === r.id ? '600' : '400' }}>
-                    {r.label}
-                  </button>
+                  <button key={r.id} onClick={() => setNyResultat(r.id as any)} style={{ flex: 1, padding: '10px 8px', borderRadius: '12px', border: `1.5px solid ${nyResultat === r.id ? farger.grønn : farger.kremMørk}`, backgroundColor: nyResultat === r.id ? farger.grønnLys : farger.bakgrunn, color: nyResultat === r.id ? farger.grønn : farger.tekst, fontSize: '12px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyResultat === r.id ? '600' : '400' }}>{r.label}</button>
                 ))}
               </div>
             </div>
