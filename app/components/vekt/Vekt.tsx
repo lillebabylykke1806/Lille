@@ -119,6 +119,102 @@ export default function Vekt({ bruker }: Props) {
         </div>
       )}
 
+      {/* Vekstkurve */}
+      {logg.length >= 2 && (
+        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>Vekstkurve</div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>Basert på dine registreringer</div>
+
+          {/* Vekt-graf */}
+          {logg.some(l => l.vekt) && (() => {
+            const vektData = [...logg].filter(l => l.vekt).reverse();
+            const maks = Math.max(...vektData.map(l => l.vekt!));
+            const min = Math.min(...vektData.map(l => l.vekt!));
+            const range = maks - min || 1;
+            const width = 320;
+            const height = 120;
+            const padding = 20;
+            const punkter = vektData.map((l, i) => ({
+              x: padding + (i / Math.max(vektData.length - 1, 1)) * (width - padding * 2),
+              y: height - padding - ((l.vekt! - min) / range) * (height - padding * 2),
+              vekt: l.vekt,
+              dato: l.dato,
+            }));
+            const path = punkter.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+            return (
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '8px' }}>⚖️ Vekt (kg)</div>
+                <svg width="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
+                  <defs>
+                    <linearGradient id="vektGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={farger.grønn} stopOpacity="0.2"/>
+                      <stop offset="100%" stopColor={farger.grønn} stopOpacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d={`${path} L ${punkter[punkter.length-1].x} ${height} L ${punkter[0].x} ${height} Z`} fill="url(#vektGrad)"/>
+                  <path d={path} fill="none" stroke={farger.grønn} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  {punkter.map((p, i) => (
+                    <g key={i}>
+                      <circle cx={p.x} cy={p.y} r="5" fill={farger.hvit} stroke={farger.grønn} strokeWidth="2"/>
+                      <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{p.vekt} kg</text>
+                      {i === 0 || i === punkter.length - 1 ? (
+                        <text x={p.x} y={height - 2} textAnchor="middle" fontSize="8" fill={farger.tekstLys} fontFamily="var(--font-inter)">
+                          {new Date(p.dato).getDate()}.{new Date(p.dato).getMonth() + 1}
+                        </text>
+                      ) : null}
+                    </g>
+                  ))}
+                </svg>
+              </div>
+            );
+          })()}
+
+          {/* Lengde-graf */}
+          {logg.some(l => l.lengde) && (() => {
+            const lengdeData = [...logg].filter(l => l.lengde).reverse();
+            const maks = Math.max(...lengdeData.map(l => l.lengde!));
+            const min = Math.min(...lengdeData.map(l => l.lengde!));
+            const range = maks - min || 1;
+            const width = 320;
+            const height = 120;
+            const padding = 20;
+            const punkter = lengdeData.map((l, i) => ({
+              x: padding + (i / Math.max(lengdeData.length - 1, 1)) * (width - padding * 2),
+              y: height - padding - ((l.lengde! - min) / range) * (height - padding * 2),
+              lengde: l.lengde,
+              dato: l.dato,
+            }));
+            const path = punkter.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+            return (
+              <div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600', marginBottom: '8px' }}>📏 Lengde (cm)</div>
+                <svg width="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
+                  <defs>
+                    <linearGradient id="lengdeGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={farger.terrakotta} stopOpacity="0.2"/>
+                      <stop offset="100%" stopColor={farger.terrakotta} stopOpacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d={`${path} L ${punkter[punkter.length-1].x} ${height} L ${punkter[0].x} ${height} Z`} fill="url(#lengdeGrad)"/>
+                  <path d={path} fill="none" stroke={farger.terrakotta} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  {punkter.map((p, i) => (
+                    <g key={i}>
+                      <circle cx={p.x} cy={p.y} r="5" fill={farger.hvit} stroke={farger.terrakotta} strokeWidth="2"/>
+                      <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{p.lengde} cm</text>
+                      {i === 0 || i === punkter.length - 1 ? (
+                        <text x={p.x} y={height - 2} textAnchor="middle" fontSize="8" fill={farger.tekstLys} fontFamily="var(--font-inter)">
+                          {new Date(p.dato).getDate()}.{new Date(p.dato).getMonth() + 1}
+                        </text>
+                      ) : null}
+                    </g>
+                  ))}
+                </svg>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
       {/* Legg til knapp */}
       <button onClick={() => setVisLeggTil(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '20px' }}>
         + Registrer ny måling
