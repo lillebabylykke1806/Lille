@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { hentProfilId } from '../../lib/profilId';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -15,7 +16,7 @@ type VektLogg = {
   notat: string | null;
 };
 
-export default function Vekt({ bruker }: Props) {
+export default function Vekt({ bruker, aktivtBarn }: Props) {
   const [logg, setLogg] = useState<VektLogg[]>([]);
   const [visLeggTil, setVisLeggTil] = useState(false);
   const [lagrer, setLagrer] = useState(false);
@@ -28,25 +29,27 @@ export default function Vekt({ bruker }: Props) {
   const [notat, setNotat] = useState('');
 
   const lastLogg = useCallback(async () => {
-    if (!bruker?.id) return;
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
 
     const { data } = await supabase
       .from('vekt')
       .select('*')
-      .eq('profil_id', bruker.id)
+      .eq('profil_id', profilId)
       .order('dato', { ascending: false });
     if (data) setLogg(data);
-  }, [bruker?.id]);
+  }, [bruker, aktivtBarn]);
 
   useEffect(() => { lastLogg(); }, [lastLogg]);
 
   const lagre = async () => {
     if (!vekt && !lengde && !klaer && !sko) return;
-    if (!bruker?.id) return;
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
     setLagrer(true);
 
     await supabase.from('vekt').insert({
-      profil_id: bruker.id,
+      profil_id: profilId,
       dato,
       vekt: vekt ? parseFloat(vekt) : null,
       lengde: lengde ? parseFloat(lengde) : null,
