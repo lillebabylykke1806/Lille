@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
-import { hentProfilId } from '../../lib/profilId';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -18,6 +17,7 @@ type VektLogg = {
 
 export default function Vekt({ bruker, aktivtBarn }: Props) {
   const [logg, setLogg] = useState<VektLogg[]>([]);
+  const [laster, setLaster] = useState(true);
   const [visLeggTil, setVisLeggTil] = useState(false);
   const [lagrer, setLagrer] = useState(false);
 
@@ -28,28 +28,26 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
   const [sko, setSko] = useState('');
   const [notat, setNotat] = useState('');
 
-  const lastLogg = useCallback(async () => {
-    const profilId = await hentProfilId(aktivtBarn, bruker);
-    if (!profilId) return;
+  const lastData = useCallback(async () => {
+    setLaster(true);
 
     const { data } = await supabase
       .from('vekt')
       .select('*')
-      .eq('profil_id', profilId)
+      .eq('profil_id', bruker?.id)
       .order('dato', { ascending: false });
-    if (data) setLogg(data);
-  }, [bruker, aktivtBarn]);
+    setLogg(data || []);
+    setLaster(false);
+  }, [bruker?.id, aktivtBarn?.navn]);
 
-  useEffect(() => { lastLogg(); }, [lastLogg]);
+  useEffect(() => { lastData(); }, [lastData]);
 
   const lagre = async () => {
     if (!vekt && !lengde && !klaer && !sko) return;
-    const profilId = await hentProfilId(aktivtBarn, bruker);
-    if (!profilId) return;
     setLagrer(true);
 
     await supabase.from('vekt').insert({
-      profil_id: profilId,
+      profil_id: bruker?.id,
       dato,
       vekt: vekt ? parseFloat(vekt) : null,
       lengde: lengde ? parseFloat(lengde) : null,
@@ -60,8 +58,8 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
     setVekt(''); setLengde(''); setKlaer(''); setSko(''); setNotat('');
     setDato(new Date().toISOString().split('T')[0]);
     setVisLeggTil(false);
+    await lastData();
     setLagrer(false);
-    lastLogg();
   };
 
   const sisteLogg = logg[0];
@@ -69,6 +67,13 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
   const formatDato = (dato: string) => {
     return new Date(dato).toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' });
   };
+
+  if (laster) return (
+    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ width: '28px', height: '28px', border: `2px solid ${farger.grønn}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+    </div>
+  );
 
   return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '24px 24px 100px' }}>
