@@ -216,12 +216,11 @@ Svar KUN med de 3 punktene, én per linje.`
               <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1, marginBottom: '4px' }}>{nesteUro?.om || '—'}</div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>Vanlig start: {nesteUro?.tidspunkt}</div>
               <button onClick={() => setVarslingPå(!varslingPå)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px', backgroundColor: farger.bakgrunn, borderRadius: '10px', border: 'none', cursor: 'pointer', width: '100%' }}>
-  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flex: 1, textAlign: 'left' }}>Varsle meg 45 min før</div>
-  <div style={{ width: '32px', height: '18px', borderRadius: '9px', backgroundColor: varslingPå ? farger.grønn : farger.kremMørk, position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
-    <div style={{ position: 'absolute', right: varslingPå ? '2px' : '14px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#fff', transition: 'right 0.3s' }} />
-  </div>
-</button>
-              </div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flex: 1, textAlign: 'left' }}>Varsle meg 45 min før</div>
+                <div style={{ width: '32px', height: '18px', borderRadius: '9px', backgroundColor: varslingPå ? farger.grønn : farger.kremMørk, position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
+                  <div style={{ position: 'absolute', right: varslingPå ? '2px' : '14px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#fff', transition: 'right 0.3s' }} />
+                </div>
+              </button>
             </div>
 
             {/* Vanlige signaler */}
