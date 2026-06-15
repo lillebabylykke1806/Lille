@@ -285,9 +285,7 @@ Svar KUN med de 3 punktene, én per linje.`
           Registrer uroperiode
         </button>
 
-        {/* ONBOARDING – vises alltid når ingen logg */}
-        {logg.length === 0 && (
-          <>
+        
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '32px 24px', textAlign: 'center', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '180px' }}>
