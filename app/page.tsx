@@ -177,7 +177,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} startFane={innsiktStartFane} />}
         {aktivSide === 'medisin' && <Medisin bruker={bruker} />}
         {aktivSide === 'notat' && <Notat bruker={bruker} />}
-        {aktivSide === 'vekt' && <Vekt bruker={bruker} />}
+        {aktivSide === 'vekt' && <Vekt bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'aktivitet' && <Aktivitet bruker={bruker} />}
         {aktivSide === 'signaler' && <Signaler bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
         {aktivSide === 'kolikk' && <Kolikk bruker={bruker} aktivtBarn={aktivtBarn} />}
