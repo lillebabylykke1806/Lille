@@ -269,68 +269,6 @@ Svar KUN med de 3 punktene, én per linje.`
           </>
         )}
 
-        {/* ONBOARDING – kun når ingen data */}
-        {logg.length === 0 && (
-          <>
-            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '32px 24px', textAlign: 'center', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-                <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '180px' }}>
-                  <div style={{ position: 'absolute', width: '160px', height: '160px', background: 'radial-gradient(ellipse, #E8B49A 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(24px)', opacity: 0.6 }} />
-                  <div style={{ position: 'absolute', width: '130px', height: '130px', background: 'radial-gradient(ellipse, #EBC8B4 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(16px)', opacity: 0.5 }} />
-                  <img src="/sky.png" alt="sky" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain' }} />
-                </div>
-              </div>
-              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Velkommen til Uro & Ro</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '20px' }}>
-                Vi hjelper deg å forstå uroen og hva som kan hjelpe {babyNavn}. Jo mer du registrerer, desto bedre kan vi finne mønstre og gi deg innsikt.
-              </div>
-              <button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <circle cx="9" cy="9" r="8" stroke="#FDFAF6" strokeWidth="1.5" fill="none"/>
-                  <line x1="9" y1="5" x2="9" y2="13" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
-                  <line x1="5" y1="9" x2="13" y2="9" stroke="#FDFAF6" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                Registrer første uroperiode
-              </button>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'center', marginBottom: '12px' }}>✨ Her vil du etter hvert få innsikt om:</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px' }}>
-                {[
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#C7BDD8" strokeWidth="1.5" fill="none"/><path d="M12 7V12L15 15" stroke="#C7BDD8" strokeWidth="1.5" strokeLinecap="round"/></svg>, bg: '#F0EBF8', label: 'Når uroen pleier å komme' },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 3 15 3 9C3 6.5 5 4.5 7.5 4.5C9.2 4.5 10.7 5.4 12 7C13.3 5.4 14.8 4.5 16.5 4.5C19 4.5 21 6.5 21 9C21 15 12 21 12 21Z" stroke="#F4A8A8" strokeWidth="1.5" fill="none"/></svg>, bg: '#FFF0F0', label: 'Tegn før uro' },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.2 2 7 4.2 7 7C7 9.2 8.3 11.1 10 11.8V13H14V11.8C15.7 11.1 17 9.2 17 7C17 4.2 14.8 2 12 2Z" stroke="#F4D080" strokeWidth="1.5" fill="none"/><rect x="10" y="13" width="4" height="3" rx="1" stroke="#F4D080" strokeWidth="1.5" fill="none"/><line x1="12" y1="16" x2="12" y2="18" stroke="#F4D080" strokeWidth="1.5" strokeLinecap="round"/></svg>, bg: '#FFFBEC', label: 'Tiltak som kan hjelpe' },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="14" width="3" height="6" rx="1" fill="#A8C4A2"/><rect x="9" y="10" width="3" height="10" rx="1" fill="#A8C4A2"/><rect x="14" y="6" width="3" height="14" rx="1" fill="#A8C4A2"/><rect x="19" y="3" width="3" height="17" rx="1" fill="#A8C4A2"/></svg>, bg: '#E8F0E8', label: 'Mønstre over tid' },
-                ].map((item, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
-                    <div style={{ width: '52px', height: '52px', borderRadius: '16px', backgroundColor: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</div>
-                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.3, fontWeight: '500' }}>{item.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14C8 14 2 10 2 6C2 4 3.5 2.5 5.5 2.5C6.6 2.5 7.5 3.1 8 4C8.5 3.1 9.4 2.5 10.5 2.5C12.5 2.5 14 4 14 6C14 10 8 14 8 14Z" fill={farger.grønn}/></svg>
-                </div>
-                <div>
-                  <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Kom i gang</div>
-                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Når du registrerer uroperioder, hjelper du oss å forstå {babyNavn} bedre.</div>
-                </div>
-              </div>
-              {['Registrer når uroen starter', 'Legg til hvilke signaler du ser', 'Noter hva dere prøvde og hvordan det gikk'].map((punkt, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" fill={farger.grønnLys} stroke={farger.grønn} strokeWidth="1"/><path d="M5.5 9L7.5 11L12.5 6.5" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>{punkt}</div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
         {/* REGISTRER KNAPP – kun når det finnes data */}
         {logg.length > 0 && (
           <button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
