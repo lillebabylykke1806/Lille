@@ -376,16 +376,29 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px', animation: 'fadeOpp 0.8s 0.5s ease-out both' }}>
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '16px' }}>Nattens sammendrag</div>
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-            <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
-              <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>{Math.floor(nattMinutter / 60)}t {nattMinutter % 60}m</div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Total søvntid</div>
-            </div>
-            <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
-              <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: antallOppvåkninger > 3 ? '#C48E7B' : farger.grønn, fontWeight: '700' }}>{antallOppvåkninger}</div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Oppvåkninger</div>
-            </div>
-          </div>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+  <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
+    <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>{Math.floor(nattMinutter / 60)}t {nattMinutter % 60}m</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Total søvntid</div>
+  </div>
+  <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
+    <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: antallOppvåkninger > 3 ? '#C48E7B' : farger.grønn, fontWeight: '700' }}>{antallOppvåkninger}</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Oppvåkninger</div>
+  </div>
+  <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
+    <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
+      {(() => {
+        const nattLurer = tidslinje.filter(t => t.type === 'natt' || t.type === 'lur');
+        if (nattLurer.length === 0) return '—';
+        let lengst = 0;
+        nattLurer.forEach(l => { if (l.varighet && l.varighet > lengst) lengst = l.varighet; });
+        if (lengst === 0) return '—';
+        return `${Math.floor(lengst / 60)}t ${lengst % 60}m`;
+      })()}
+    </div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Lengste strekk</div>
+  </div>
+</div>
           {tidslinje.length > 0 && (
             <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 70}px`, paddingBottom: '8px' }}>
