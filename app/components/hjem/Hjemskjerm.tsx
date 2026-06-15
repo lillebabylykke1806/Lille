@@ -596,18 +596,18 @@ Svar KUN med observasjonen.`
     Vindu ca. {nesteLur.tid}
   </div>
   {(() => {
-    const sisteOppvåkning = dagensFlyt.filter(h => h.type === 'oppvåkning').slice(-1)[0];
-    if (!sisteOppvåkning?.tid) return null;
-    const [h, m] = sisteOppvåkning.tid.split(':').map(Number);
-    const oppvåkningTid = new Date();
-    oppvåkningTid.setHours(h, m, 0, 0);
-    const våkentMinutter = Math.round((new Date().getTime() - oppvåkningTid.getTime()) / 60000);
-    if (våkentMinutter < 0) return null;
-    const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
-    return (
-      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
-        ⭐ Våkent siden: {våkentTekst}
-      </div>
+  const sisteOppvåkningEllerLur = dagensFlyt.filter(h => h.type === 'oppvåkning' || h.type === 'lur').slice(-1)[0];
+  if (!sisteOppvåkningEllerLur?.tid) return null;
+  const [h, m] = sisteOppvåkningEllerLur.tid.split(':').map(Number);
+  const tid = new Date();
+  tid.setHours(h, m, 0, 0);
+  const våkentMinutter = Math.round((new Date().getTime() - tid.getTime()) / 60000);
+  if (våkentMinutter < 0) return null;
+  const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
+  return (
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
+      ⭐ Våkent siden: {våkentTekst}
+    </div>
     );
   })()}
 </div>
