@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
-import { hentProfilId } from '../../lib/profilId';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -16,7 +15,7 @@ type VektLogg = {
   notat: string | null;
 };
 
-export default function Vekt({ bruker, aktivtBarn }: Props) {
+export default function Vekt({ bruker }: Props) {
   const [logg, setLogg] = useState<VektLogg[]>([]);
   const [visLeggTil, setVisLeggTil] = useState(false);
   const [lagrer, setLagrer] = useState(false);
@@ -29,42 +28,25 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
   const [notat, setNotat] = useState('');
 
   const lastLogg = useCallback(async () => {
-    const profilId = await hentProfilId(aktivtBarn, bruker);
-    if (!profilId) return;
+    if (!bruker?.id) return;
 
     const { data } = await supabase
       .from('vekt')
       .select('*')
-      .eq('profil_id', profilId)
+      .eq('profil_id', bruker.id)
       .order('dato', { ascending: false });
     if (data) setLogg(data);
-  }, [bruker, aktivtBarn]);
+  }, [bruker?.id]);
 
   useEffect(() => { lastLogg(); }, [lastLogg]);
 
   const lagre = async () => {
     if (!vekt && !lengde && !klaer && !sko) return;
+    if (!bruker?.id) return;
     setLagrer(true);
 
-    let profilId = aktivtBarn?.bruker_id;
-    if (!profilId && bruker?.id) {
-      const { data: barn } = await supabase
-        .from('barn')
-        .select('bruker_id')
-        .eq('bruker_id', bruker.id)
-        .order('opprettet', { ascending: true })
-        .limit(1)
-        .single();
-      profilId = barn?.bruker_id;
-    }
-    if (!profilId) profilId = await hentProfilId(aktivtBarn, bruker);
-    if (!profilId) {
-      setLagrer(false);
-      return;
-    }
-
     await supabase.from('vekt').insert({
-      profil_id: profilId,
+      profil_id: bruker.id,
       dato,
       vekt: vekt ? parseFloat(vekt) : null,
       lengde: lengde ? parseFloat(lengde) : null,
