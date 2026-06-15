@@ -3,16 +3,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 
-type Props = { bruker: any; };
+type Props = { bruker: any; aktivtBarn?: any; };
 
 type Notat = {
-  id: number;
-  tekst: string;
-  kategori: string;
-  dato: string;
-  tidspunkt: string;
-  opprettet: string;
-};
+    id: number;
+    tekst: string;
+    kategori: string;
+    dato: string;
+    tidspunkt: string;
+    opprettet: string;
+    bilde_url?: string | null;
+  };
 
 const KATEGORIER = [
   { id: 'generelt', label: 'Generelt', farge: '#A8B5A2', bgFarge: '#E8F0E8' },
@@ -64,7 +65,7 @@ const KategoriIkon = ({ kategori }: { kategori: string }) => {
   );
 };
 
-export default function Notat({ bruker }: Props) {
+export default function Notat({ bruker, aktivtBarn }: Props) {
   const [notater, setNotater] = useState<Notat[]>([]);
   const [visNytt, setVisNytt] = useState(false);
   const [visNotat, setVisNotat] = useState<Notat | null>(null);
@@ -74,6 +75,43 @@ export default function Notat({ bruker }: Props) {
 
   const [nyTekst, setNyTekst] = useState('');
   const [nyKategori, setNyKategori] = useState('generelt');
+  const [nyBilde, setNyBilde] = useState<string | null>(null);
+const [lasterBilde, setLasterBilde] = useState(false);
+
+const alderIMåneder = () => {
+  const fødselsdato = aktivtBarn?.fødselsdato;
+  if (!fødselsdato) return 0;
+  const nå = new Date();
+  const født = new Date(fødselsdato);
+  return (nå.getFullYear() - født.getFullYear()) * 12 + (nå.getMonth() - født.getMonth());
+};
+
+const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const fil = e.target.files?.[0];
+  if (!fil) return;
+  setLasterBilde(true);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.onload = async () => {
+    const maks = 800;
+    let b = img.width, h = img.height;
+    if (b > h) { h = Math.round(h * maks / b); b = maks; } else { b = Math.round(b * maks / h); h = maks; }
+    canvas.width = b; canvas.height = h;
+    ctx?.drawImage(img, 0, 0, b, h);
+    canvas.toBlob(async (blob) => {
+      if (!blob) { setLasterBilde(false); return; }
+      const filnavn = `${bruker.id}/milepæl-${Date.now()}.jpg`;
+      const { error } = await supabase.storage.from('babybilde').upload(filnavn, blob, { upsert: true, contentType: 'image/jpeg' });
+      if (!error) {
+        const { data } = supabase.storage.from('babybilde').getPublicUrl(filnavn);
+        setNyBilde(data.publicUrl + '?t=' + Date.now());
+      }
+      setLasterBilde(false);
+    }, 'image/jpeg', 0.8);
+  };
+  img.src = URL.createObjectURL(fil);
+};
 
   const lastNotater = useCallback(async () => {
     const { data } = await supabase
@@ -93,12 +131,14 @@ export default function Notat({ bruker }: Props) {
     setLagrer(true);
     const nå = new Date();
     await supabase.from('notater').insert({
-      profil_id: bruker?.id,
-      tekst: nyTekst,
-      kategori: nyKategori,
-      dato: nå.toISOString().split('T')[0],
-      tidspunkt: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-    });
+        profil_id: bruker?.id,
+        tekst: nyTekst,
+        kategori: nyKategori,
+        dato: nå.toISOString().split('T')[0],
+        tidspunkt: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+        bilde_url: nyBilde || null,
+      });
+      setNyBilde(null);
     setNyTekst('');
     setNyKategori('generelt');
     setVisNytt(false);
@@ -249,6 +289,46 @@ export default function Notat({ bruker }: Props) {
               </div>
             </div>
 
+            {nyKategori === 'milepæl' && (
+  <div style={{ marginBottom: '16px' }}>
+    <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Alder-milepæler</div>
+    <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+      {[1,2,3,4,5,6,7,8,9,10,11,12].map(mnd => (
+        <button key={mnd} onClick={() => setNyTekst(`${mnd} måned${mnd > 1 ? 'er' : ''}! 🎉`)}
+          style={{ flexShrink: 0, padding: '6px 14px', borderRadius: '20px', border: `1px solid ${farger.kremMørk}`, backgroundColor: farger.bakgrunn, fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, cursor: 'pointer' }}>
+          {mnd} mnd
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
+{nyKategori === 'milepæl' && (
+  <div style={{ marginBottom: '16px' }}>
+    <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Legg til bilde</div>
+    <label style={{ cursor: 'pointer', display: 'block' }}>
+      <div style={{ border: `2px dashed ${farger.kremMørk}`, borderRadius: '16px', padding: '20px', textAlign: 'center', backgroundColor: farger.bakgrunn }}>
+        {lasterBilde ? (
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Laster opp...</div>
+        ) : nyBilde ? (
+          <img src={nyBilde} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '12px' }} />
+        ) : (
+          <>
+            <div style={{ fontSize: '24px', marginBottom: '8px' }}>📷</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trykk for å legge til bilde</div>
+          </>
+        )}
+      </div>
+      <input type="file" accept="image/*" onChange={håndterBilde} style={{ display: 'none' }} />
+    </label>
+    {nyBilde && (
+      <button onClick={() => setNyBilde(null)} style={{ marginTop: '8px', width: '100%', padding: '8px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+        Fjern bilde
+      </button>
+    )}
+  </div>
+)}
+
             {/* Tekst */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Notat</div>
@@ -286,9 +366,12 @@ export default function Notat({ bruker }: Props) {
               </div>
             </div>
 
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.7, marginBottom: '32px', whiteSpace: 'pre-wrap' }}>
-              {visNotat.tekst}
-            </div>
+            {visNotat.kategori === 'milepæl' && (visNotat as any).bilde_url && (
+  <img src={(visNotat as any).bilde_url} style={{ width: '100%', borderRadius: '16px', marginBottom: '16px', objectFit: 'cover', maxHeight: '300px' }} />
+)}
+<div style={{ fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.7, marginBottom: '32px', whiteSpace: 'pre-wrap' }}>
+  {visNotat.tekst}
+</div>
 
             <button onClick={() => slettNotat(visNotat.id)} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid #FFB3B3`, borderRadius: '14px', fontSize: '14px', color: '#C0392B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
               Slett notat
