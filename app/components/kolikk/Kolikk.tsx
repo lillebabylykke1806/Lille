@@ -201,7 +201,7 @@ Svar KUN med de 3 punktene, én per linje.`
         )}
 
         {/* To kolonner: Neste uro + Signaler */}
-        {logg.length >= 3 && (
+        {logg.length >= 1 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
 
             {/* Neste forventede uro */}
@@ -247,7 +247,7 @@ Svar KUN med de 3 punktene, én per linje.`
         )}
 
         {/* To kolonner: Tiltak + Mønstre */}
-        {logg.length >= 3 && (
+        {logg.length >= 1 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
 
             {/* Tiltak */}
