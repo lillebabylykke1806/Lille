@@ -6,15 +6,16 @@ import { farger } from '../../lib/farger';
 type Props = { bruker: any; aktivtBarn?: any; };
 
 type MatRegistrering = {
-  id: number;
-  dato: string;
-  klokkeslett: string;
-  matvare: string;
-  kategori: string;
-  reaksjon: string;
-  mengde: string;
-  notater?: string;
-};
+    id: number;
+    dato: string;
+    klokkeslett: string;
+    matvare: string;
+    kategori: string;
+    reaksjon: string;
+    mengde: string;
+    notater?: string;
+    allergi_status?: string | null;
+  };
 
 const KATEGORIER = [
   { id: 'frukt', label: 'Frukt', ikon: '🍎', farge: '#FFF1F2', border: '#FECDD3', tekstFarge: '#BE123C' },
@@ -40,6 +41,12 @@ const MENGDER = [
   { id: 'meste', label: 'Det meste' },
 ];
 
+const ALLERGI_STATUS = [
+    { id: 'grønn', label: 'Ingen reaksjon', farge: '#2D5C45', bg: '#E8F0E8', ikon: '🟢' },
+    { id: 'oransje', label: 'Usikker reaksjon', farge: '#C48E7B', bg: '#FFF3D6', ikon: '🟡' },
+    { id: 'rød', label: 'Tydelig reaksjon', farge: '#BE123C', bg: '#FFF1F2', ikon: '🔴' },
+  ];
+
 const TIPS = [
   { ikon: '🪑', tittel: 'Rolig stemning', tekst: 'Skap en hyggelig atmosfære rundt måltidet.' },
   { ikon: '🥄', tittel: 'Små mengder', tekst: 'Det viktigste er å utforske, ikke å spise mye.' },
@@ -63,6 +70,7 @@ export default function Mat({ bruker, aktivtBarn }: Props) {
   const [dato, setDato] = useState(new Date().toISOString().split('T')[0]);
   const [klokkeslett, setKlokkeslett] = useState(new Date().toTimeString().slice(0, 5));
   const [lagrer, setLagrer] = useState(false);
+  const [allergiStatus, setAllergiStatus] = useState('');
 
   const lastData = useCallback(async () => {
     setLaster(true);
@@ -103,10 +111,9 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
     setLagrer(true);
     await supabase.from('mat').insert({
         profil_id: bruker?.id,
-      dato, klokkeslett, matvare: matvare.trim(), kategori, reaksjon, mengde, notater: notater.trim() || null,
-    });
-    setMatvare(''); setKategori(''); setReaksjon(''); setMengde(''); setNotater('');
-    setVisSkjema(false);
+        dato, klokkeslett, matvare: matvare.trim(), kategori, reaksjon, mengde, notater: notater.trim() || null, allergi_status: allergiStatus || null,
+      });
+      setMatvare(''); setKategori(''); setReaksjon(''); setMengde(''); setNotater(''); setAllergiStatus('');
     await lastData();
     setLagrer(false);
   };
@@ -385,8 +392,16 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
               {m.matvare}
             </div>
             <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '2px' }}>
-              {getReaksjonIkon(m.reaksjon)} {getReaksjonLabel(m.reaksjon)} · {MENGDER.find(x => x.id === m.mengde)?.label}
-            </div>
+  {getReaksjonIkon(m.reaksjon)} {getReaksjonLabel(m.reaksjon)} · {MENGDER.find(x => x.id === m.mengde)?.label}
+</div>
+{m.allergi_status && (
+  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px', padding: '2px 8px', backgroundColor: ALLERGI_STATUS.find(a => a.id === m.allergi_status)?.bg, borderRadius: '20px' }}>
+    <span style={{ fontSize: '10px' }}>{ALLERGI_STATUS.find(a => a.id === m.allergi_status)?.ikon}</span>
+    <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: ALLERGI_STATUS.find(a => a.id === m.allergi_status)?.farge, fontWeight: '600' }}>
+      {ALLERGI_STATUS.find(a => a.id === m.allergi_status)?.label}
+    </span>
+  </div>
+)}
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flexShrink: 0, textAlign: 'right' }}>
             <div>{m.klokkeslett.slice(0, 5)}</div>
@@ -498,6 +513,21 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
                 ))}
               </div>
             </div>
+
+            {/* Allergivarsel */}
+<div style={{ marginBottom: '16px' }}>
+  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>Allergireaksjon (valgfritt)</div>
+  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Viste babyen tegn på reaksjon etter måltidet?</div>
+  <div style={{ display: 'flex', gap: '8px' }}>
+    {ALLERGI_STATUS.map(a => (
+      <button key={a.id} onClick={() => setAllergiStatus(allergiStatus === a.id ? '' : a.id)}
+        style={{ flex: 1, padding: '12px 8px', backgroundColor: allergiStatus === a.id ? a.bg : farger.bakgrunn, border: `1.5px solid ${allergiStatus === a.id ? a.farge : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+        <span style={{ fontSize: '18px' }}>{a.ikon}</span>
+        <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: allergiStatus === a.id ? a.farge : farger.tekstLys, fontWeight: allergiStatus === a.id ? '600' : '400', textAlign: 'center', lineHeight: 1.3 }}>{a.label}</span>
+      </button>
+    ))}
+  </div>
+</div>
 
             {/* Dato og tid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
