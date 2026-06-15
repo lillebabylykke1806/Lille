@@ -246,6 +246,24 @@ Svar KUN med de 3 punktene, én per linje.`
           </div>
         )}
 
+        {/* Dette hjelper oftest */}
+{tiltakStatistikk.length >= 3 && (
+  <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '16px 20px', marginBottom: '12px' }}>
+    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>Dette hjelper oftest</div>
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      {tiltakStatistikk.slice(0, 3).map((t, i) => (
+        <div key={t.tiltak} style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: farger.bakgrunn, borderRadius: '20px', padding: '8px 14px' }}>
+          <span style={{ fontSize: '14px' }}>{medalje(i)}</span>
+          <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>{t.tiltak}</span>
+        </div>
+      ))}
+    </div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '8px' }}>
+      Basert på egne data 🤍
+    </div>
+  </div>
+)}
+
         {/* To kolonner: Tiltak + Mønstre */}
         {logg.length >= 3 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
