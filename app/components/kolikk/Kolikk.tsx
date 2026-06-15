@@ -36,6 +36,9 @@ export default function Kolikk({ bruker, aktivtBarn }: Props) {
   const [nyVarighet, setNyVarighet] = useState('');
   const [nyNotat, setNyNotat] = useState('');
   const [lagrer, setLagrer] = useState(false);
+  const [varslingPå, setVarslingPå] = useState(false);
+const [visSignalHistorikk, setVisSignalHistorikk] = useState(false);
+const [visAlleTiltak, setVisAlleTiltak] = useState(false);
 
   const lastData = useCallback(async () => {
     if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
@@ -212,11 +215,12 @@ Svar KUN med de 3 punktene, én per linje.`
               </div>
               <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1, marginBottom: '4px' }}>{nesteUro?.om || '—'}</div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>Vanlig start: {nesteUro?.tidspunkt}</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px', backgroundColor: farger.bakgrunn, borderRadius: '10px' }}>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flex: 1 }}>Varsle meg 45 min før</div>
-                <div style={{ width: '32px', height: '18px', borderRadius: '9px', backgroundColor: farger.grønn, position: 'relative' }}>
-  <div style={{ position: 'absolute', right: '2px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#fff' }} />
-</div>
+              <button onClick={() => setVarslingPå(!varslingPå)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px', backgroundColor: farger.bakgrunn, borderRadius: '10px', border: 'none', cursor: 'pointer', width: '100%' }}>
+  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flex: 1, textAlign: 'left' }}>Varsle meg 45 min før</div>
+  <div style={{ width: '32px', height: '18px', borderRadius: '9px', backgroundColor: varslingPå ? farger.grønn : farger.kremMørk, position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
+    <div style={{ position: 'absolute', right: varslingPå ? '2px' : '14px', top: '2px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#fff', transition: 'right 0.3s' }} />
+  </div>
+</button>
               </div>
             </div>
 
@@ -235,9 +239,9 @@ Svar KUN med de 3 punktene, én per linje.`
                       <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>{s.prosent}%</div>
                     </div>
                   ))}
-                  <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'left', padding: 0, marginTop: '4px' }}>
-                    Se signalhistorikk →
-                  </button>
+                 <button onClick={() => setVisSignalHistorikk(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'left', padding: 0, marginTop: '4px' }}>
+  Se signalhistorikk →
+</button>
                 </div>
               ) : (
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Registrer episoder for å se mønstre</div>
@@ -268,9 +272,9 @@ Svar KUN med de 3 punktene, én per linje.`
                   </div>
                 </div>
               ))}
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, padding: 0, marginTop: '4px' }}>
-                Se alle tiltak →
-              </button>
+             <button onClick={() => setVisAlleTiltak(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, padding: 0, marginTop: '4px' }}>
+  Se alle tiltak →
+</button>
             </div>
 
             {/* Mønstre */}
@@ -555,6 +559,66 @@ Svar KUN med de 3 punktene, én per linje.`
           </div>
         </div>
       )}
+      {/* SIGNAL HISTORIKK MODAL */}
+{visSignalHistorikk && (
+  <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisSignalHistorikk(false)}>
+    <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '85vh', overflowY: 'auto' }}>
+      <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Signalhistorikk</div>
+      {logg.flatMap(l => l.signaler).length === 0 ? (
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'center', padding: '24px' }}>Ingen signaler registrert ennå</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {Object.entries(
+            logg.flatMap(l => l.signaler).reduce((acc: Record<string, number>, s) => {
+              acc[s] = (acc[s] || 0) + 1;
+              return acc;
+            }, {})
+          ).sort((a, b) => b[1] - a[1]).map(([signal, antall], i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', backgroundColor: farger.bakgrunn, borderRadius: '14px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', color: farger.grønn, flexShrink: 0 }}>{i + 1}</div>
+              <div style={{ flex: 1, fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>{signal}</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>{antall}x</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{Math.round((antall / logg.length) * 100)}%</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+{/* ALLE TILTAK MODAL */}
+{visAlleTiltak && (
+  <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisAlleTiltak(false)}>
+    <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '85vh', overflowY: 'auto' }}>
+      <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>Alle tiltak</div>
+      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px' }}>Rangert etter effekt</div>
+      {tiltakStatistikk.length === 0 ? (
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'center', padding: '24px' }}>Ingen tiltak registrert ennå</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {tiltakStatistikk.map((t, i) => (
+            <div key={t.tiltak} style={{ padding: '14px 16px', backgroundColor: farger.bakgrunn, borderRadius: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '16px' }}>{medalje(i)}</div>
+                <div style={{ flex: 1, fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600' }}>{t.tiltak}</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t.fungerte}/{t.total} ganger</div>
+              </div>
+              <div style={{ height: '6px', backgroundColor: farger.kremMørk, borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${Math.round((t.fungerte / t.total) * 100)}%`, backgroundColor: farger.grønn, borderRadius: '3px' }} />
+              </div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginTop: '4px' }}>
+                {Math.round((t.fungerte / t.total) * 100)}% effekt
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
     </div>
   );
 }
