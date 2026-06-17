@@ -294,84 +294,83 @@ Svar KUN med observasjonen.`
     hentBilde();
   }, [aktivtBarn]);
 
+  const lastDagensFlyt = useCallback(async () => {
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+
+    const dagensdato = new Date().toISOString().split('T')[0];
+
+    const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes] = await Promise.all([
+      supabase.from('lurer').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
+      supabase.from('amming').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
+      supabase.from('bleie').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
+      supabase.from('milepæler').select('*').eq('profil_id', profilId).eq('dato', dagensdato),
+      supabase.from('mat').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
+      supabase.from('pumping').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
+    ]);
+
+    const lurItems = (lurRes.data || []).map((l: any) => ({
+      id: l.id,
+      tid: l.start,
+      slutt: l.slutt || null,
+      tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.tekst || l.type,
+      type: l.type,
+      varighet: l.varighet ? `${l.varighet} min` : null,
+    }));
+
+    const ammingItems = (ammingRes.data || []).map((a: any) => ({
+      tid: a.start,
+      slutt: a.slutt || null,
+      tekst: 'Amming',
+      type: 'amming',
+      varighet: a.varighet ? `${a.varighet} min` : null,
+    }));
+
+    const bleieItems = (bleieRes.data || []).map((b: any) => ({
+      tid: b.tidspunkt,
+      slutt: null,
+      tekst: 'Bleie',
+      type: 'bleie',
+      varighet: null,
+    }));
+
+    const milepælItems = (milepælRes.data || []).map((m: any) => ({
+      tid: m.opprettet ? new Date(m.opprettet).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) : '00:00',
+      slutt: null,
+      tekst: `🏆 ${m.navn}`,
+      type: 'milepæl',
+      varighet: null,
+    }));
+
+    const matItems = (matRes.data || []).map((m: any) => ({
+      tid: m.klokkeslett,
+      slutt: null,
+      tekst: `Mat: ${m.matvare}`,
+      type: 'mat',
+      varighet: null,
+    }));
+
+    const pumpingItems = (pumpingRes.data || []).map((p: any) => ({
+      tid: p.klokkeslett,
+      slutt: null,
+      tekst: `Pumping: ${p.mengde} ml`,
+      type: 'pumping',
+      varighet: p.varighet ? `${p.varighet} min` : null,
+    }));
+
+    const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems, ...matItems, ...pumpingItems].sort((a, b) => {
+      if (!a.tid || !b.tid) return 0;
+      return b.tid.localeCompare(a.tid);
+    });
+
+    setDagensFlyt(alle);
+    setAlleDagensHendelser(alle);
+
+    const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || []);
+    setNesteLur(lurResult);
+  }, [aktivtBarn, bruker]);
+
   useEffect(() => {
-    const lastDagensFlyt = async () => {
-      const profilId = await hentProfilId(aktivtBarn, bruker);
-      if (!profilId) return;
-
-      const dagensdato = new Date().toISOString().split('T')[0];
-
-      const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes] = await Promise.all([
-        supabase.from('lurer').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('amming').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
-        supabase.from('bleie').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
-        supabase.from('milepæler').select('*').eq('profil_id', profilId).eq('dato', dagensdato),
-        supabase.from('mat').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
-        supabase.from('pumping').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
-      ]);
-
-      const lurItems = (lurRes.data || []).map((l: any) => ({
-        tid: l.start,
-        slutt: l.slutt || null,
-        tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.tekst || l.type,
-        type: l.type,
-        varighet: l.varighet ? `${l.varighet} min` : null,
-      }));
-
-      const ammingItems = (ammingRes.data || []).map((a: any) => ({
-        tid: a.start,
-        slutt: a.slutt || null,
-        tekst: 'Amming',
-        type: 'amming',
-        varighet: a.varighet ? `${a.varighet} min` : null,
-      }));
-
-      const bleieItems = (bleieRes.data || []).map((b: any) => ({
-        tid: b.tidspunkt,
-        slutt: null,
-        tekst: 'Bleie',
-        type: 'bleie',
-        varighet: null,
-      }));
-
-      const milepælItems = (milepælRes.data || []).map((m: any) => ({
-        tid: m.opprettet ? new Date(m.opprettet).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) : '00:00',
-        slutt: null,
-        tekst: `🏆 ${m.navn}`,
-        type: 'milepæl',
-        varighet: null,
-      }));
-
-      const matItems = (matRes.data || []).map((m: any) => ({
-        tid: m.klokkeslett,
-        slutt: null,
-        tekst: `Mat: ${m.matvare}`,
-        type: 'mat',
-        varighet: null,
-      }));
-
-      const pumpingItems = (pumpingRes.data || []).map((p: any) => ({
-        tid: p.klokkeslett,
-        slutt: null,
-        tekst: `Pumping: ${p.mengde} ml`,
-        type: 'pumping',
-        varighet: p.varighet ? `${p.varighet} min` : null,
-      }));
-      
-     const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems, ...matItems, ...pumpingItems].sort((a, b) => {
-        if (!a.tid || !b.tid) return 0;
-        return b.tid.localeCompare(a.tid);
-      });
-
-      
-
-      setDagensFlyt(alle);
-      setAlleDagensHendelser(alle);
-
-      const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || []);
-      setNesteLur(lurResult);
-    };
-
     const lagretType = localStorage.getItem('lille_sovtype');
     const lagretStartTid = localStorage.getItem('lille_starttid');
     if (lagretType && lagretStartTid) {
@@ -388,7 +387,7 @@ Svar KUN med observasjonen.`
     hentAuraObservasjon();
     const interval = setInterval(lastDagensFlyt, 60000);
     return () => clearInterval(interval);
-  }, [bruker, aktivtBarn, babyNavn]);
+  }, [bruker, aktivtBarn, babyNavn, lastDagensFlyt]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
     rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2' },
@@ -681,6 +680,26 @@ Svar KUN med observasjonen.`
           )}
         </div>
       </div>
+
+      {/* REDIGER OPPVÅKNING MODAL */}
+{redigerOppvåkning && (
+  <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setRedigerOppvåkning(null)}>
+    <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+      <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Endre oppvåkningstid</div>
+      <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Tidspunkt</div>
+      <input type="time" value={nyOppvåkningTid} onChange={e => setNyOppvåkningTid(e.target.value)} style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
+      <button onClick={async () => {
+        if (!redigerOppvåkning?.id) return;
+        await supabase.from('lurer').update({ start: nyOppvåkningTid }).eq('id', redigerOppvåkning.id);
+        setRedigerOppvåkning(null);
+        lastDagensFlyt();
+      }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+        Lagre
+      </button>
+    </div>
+  </div>
+)}
 
    {/* DAGBOK MODAL */}
    {visDagbok && (
