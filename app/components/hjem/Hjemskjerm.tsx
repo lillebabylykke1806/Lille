@@ -672,25 +672,35 @@ Svar KUN med observasjonen.`
             </div>
           ) : (
             <>
-              {dagensFlyt.slice(0, 5).map((item: any, i) => (
-                <div key={i} style={{ position: 'relative' }}>
-                  {i < Math.min(dagensFlyt.length, 5) - 1 && (
-                    <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
-                  )}
-                  <div onClick={() => { if (item.type === 'oppvåkning') { setRedigerOppvåkning(item); setNyOppvåkningTid(item.tid); } }} style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px', cursor: item.type === 'oppvåkning' ? 'pointer' : 'default' }}>
-                  <IkonKomponent type={item.type} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
-                      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>
-                        {item.slutt ? `${item.tid}–${item.slutt}` : item.tid}
-                      </div>
-                    </div>
-                    {item.varighet && item.varighet !== '0 min' && (
-                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
-                    )}
-                  </div>
-                </div>
-              ))}
+             {dagensFlyt.slice(0, 5).map((item: any, i) => (
+  <div key={i} style={{ position: 'relative' }}>
+    {i < Math.min(dagensFlyt.length, 5) - 1 && (
+      <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
+    )}
+    <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div onClick={() => { if (item.type === 'oppvåkning') { setRedigerOppvåkning(item); setNyOppvåkningTid(item.tid); } }} style={{ cursor: item.type === 'oppvåkning' ? 'pointer' : 'default' }}>
+        <IkonKomponent type={item.type} />
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
+        <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>
+          {item.slutt ? `${item.tid}–${item.slutt}` : item.tid}
+        </div>
+      </div>
+      {item.varighet && item.varighet !== '0 min' && (
+        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
+      )}
+      <button onClick={async () => {
+        if (!item.id) return;
+        const tabell = item.type === 'amming' ? 'amming' : item.type === 'bleie' ? 'bleie' : item.type === 'mat' ? 'mat' : item.type === 'pumping' ? 'pumping' : 'lurer';
+        await supabase.from(tabell).delete().eq('id', item.id);
+        lastDagensFlyt();
+      }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#C4B8A8', fontSize: '16px', flexShrink: 0 }}>
+        🗑️
+      </button>
+    </div>
+  </div>
+))}
               {dagensFlyt.length > 5 && (
                 <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
                   <button onClick={() => setVisDagbok(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
