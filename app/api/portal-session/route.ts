@@ -10,14 +10,20 @@ export async function POST(req: Request) {
 
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    const { customer_id } = await req.json();
+    const { email } = await req.json();
 
-    if (!customer_id) {
-      return NextResponse.json({ error: 'Ingen kunde-ID' }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ error: 'Ingen e-post' }, { status: 400 });
+    }
+
+    const customers = await stripe.customers.list({ email, limit: 1 });
+    
+    if (!customers.data.length) {
+      return NextResponse.json({ error: 'Ingen kunde funnet' }, { status: 404 });
     }
 
     const session = await stripe.billingPortal.sessions.create({
-      customer: customer_id,
+      customer: customers.data[0].id,
       return_url: 'https://lilleapp.no',
     });
 

@@ -149,7 +149,7 @@ export default function Profil({ bruker, onLoggUt }: Props) {
     const res = await fetch('/api/portal-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bruker_id: bruker.id }),
+      body: JSON.stringify({ email: bruker.email }),
     });
     const { url } = await res.json();
     if (url) window.location.href = url;
