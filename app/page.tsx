@@ -35,13 +35,26 @@ export default function Home() {
 const [åpneMorgen, setÅpneMorgen] = useState(false);
   const [aktivtBarn, setAktivtBarn] = useState<any>(null);
   const [innsiktStartFane, setInnsiktStartFane] = useState<'språk' | 'innsikt'>('språk');
+  const [harAbonnement, setHarAbonnement] = useState<boolean | null>(null);
 
   useEffect(() => {
     const lastData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
+        const res = await fetch('/api/sjekk-abonnement', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: session.user.email }),
+        });
+        const { aktiv } = await res.json();
+        if (!aktiv) {
+          await supabase.auth.signOut();
+          setLaster(false);
+          return;
+        }
+      
         setBruker(session.user);
-  
+      
         const { data: barn } = await supabase
           .from('barn')
           .select('*')
