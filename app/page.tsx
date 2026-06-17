@@ -196,7 +196,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
           <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'hjem' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'hjem' ? '600' : '400' }}>Hjem</span>
         </button>
 
-        <button onClick={() => setAktivSide('sovn')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
+        <button onClick={() => { setÅpneMorgen(false); setÅpneEtterregistrer(false); setAktivSide('sovn'); }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C14.5 21 16.76 20.01 18.43 18.4C14.1 18.17 10.5 14.43 10.5 9.9C10.5 7.3 11.72 4.98 13.62 3.45C13.09 3.16 12.56 3 12 3Z" fill={aktivSide === 'sovn' ? farger.grønn : farger.kremMørk}/>
           </svg>
