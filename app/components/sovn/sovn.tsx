@@ -99,6 +99,9 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
   const [redigerStart, setRedigerStart] = useState('');
   const [redigerSlutt, setRedigerSlutt] = useState('');
   const [lurFerdig, setLurFerdig] = useState(false);
+  const [nattligOppvåkning, setNattligOppvåkning] = useState(false);
+const [oppvåkningStart, setOppvåkningStart] = useState<Date | null>(null);
+const [oppvåkningMinutter, setOppvåkningMinutter] = useState(0);
 
   const lastTidslinje = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -155,14 +158,19 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
-    if (startTid && !lurFerdig && (visning === 'lurAktiv' || visning === 'nattAktiv')) {
+    if (visning === 'nattAktiv' && nattligOppvåkning && oppvåkningStart) {
+      interval = setInterval(() => {
+        const diff = Math.floor((Date.now() - oppvåkningStart.getTime()) / 1000);
+        setOppvåkningMinutter(Math.floor(diff / 60));
+      }, 1000);
+    } else if (startTid && !lurFerdig && (visning === 'lurAktiv' || visning === 'nattAktiv')) {
       interval = setInterval(() => {
         const diff = Math.floor((Date.now() - startTid.getTime()) / 1000);
         setMinutter(Math.floor(diff / 60));
       }, 1000);
     }
     return () => { if (interval) clearInterval(interval); };
-  }, [startTid, visning, lurFerdig]);
+  }, [startTid, visning, lurFerdig, nattligOppvåkning, oppvåkningStart]);
 
   const startSøvn = async (type: 'lur' | 'natt') => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -203,6 +211,28 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
       start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
       slutt: null, varighet: 0, signaler: '',
     });
+    setNattligOppvåkning(true);
+    setOppvåkningStart(nå);
+    setOppvåkningMinutter(0);
+    lastTidslinje();
+  };
+  
+  const startSøvnIgjen = async () => {
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+    const nå = new Date();
+    const { data } = await supabase.from('lurer').insert({
+      profil_id: profilId, dato: dagensdato(), type: 'natt',
+      start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      slutt: null, varighet: 0, signaler: '',
+    }).select();
+    if (data?.[0]) {
+      setLurId(data[0].id);
+      localStorage.setItem('lille_lurid', data[0].id.toString());
+    }
+    setNattligOppvåkning(false);
+    setOppvåkningStart(null);
+    setOppvåkningMinutter(0);
     lastTidslinje();
   };
 
@@ -747,12 +777,18 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
                   transform="rotate(-90 100 100)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '2px' }}>Baby sover</div>
-                <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: '#FDFAF6', fontWeight: '700', lineHeight: 1 }}>{timerTekst}</div>
-                <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
-                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>Siden {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
-                </button>
-              </div>
+  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: nattligOppvåkning ? '#F4A853' : '#8A8FA8', marginBottom: '2px' }}>
+    {nattligOppvåkning ? 'Våken siden' : 'Baby sover'}
+  </div>
+  <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: nattligOppvåkning ? '#F4A853' : '#FDFAF6', fontWeight: '700', lineHeight: 1 }}>
+    {nattligOppvåkning
+      ? `${String(Math.floor(oppvåkningMinutter / 60)).padStart(2, '0')}:${String(oppvåkningMinutter % 60).padStart(2, '0')}`
+      : timerTekst}
+  </div>
+  <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>Siden {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
+  </button>
+</div>
             </div>
           </div>
           {visJusterTid && (
@@ -869,9 +905,9 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
             <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A5580', border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               Avslutt natta
             </button>
-            <button onClick={registrerOppvåkning} style={{ flex: 1, padding: '16px', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '28px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#C4A882', cursor: 'pointer', textAlign: 'center' }}>
-              Nattlig<br/>oppvåkning
-            </button>
+            <button onClick={nattligOppvåkning ? startSøvnIgjen : registrerOppvåkning} style={{ flex: 1, padding: '16px', backgroundColor: nattligOppvåkning ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.06)', border: `1px solid ${nattligOppvåkning ? 'rgba(138,174,224,0.4)' : 'rgba(255,255,255,0.12)'}`, borderRadius: '28px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: nattligOppvåkning ? '#8AAEE0' : '#C4A882', cursor: 'pointer', textAlign: 'center' }}>
+  {nattligOppvåkning ? 'Start søvnen\nigjen' : 'Nattlig\noppvåkning'}
+</button>
           </div>
           {redigerLur && <RedigerModal />}
         </div>
