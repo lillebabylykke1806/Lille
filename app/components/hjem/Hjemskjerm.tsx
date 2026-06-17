@@ -566,7 +566,7 @@ Svar KUN med observasjonen.`
             </svg>
           </button>
         </div>
-      ) : nesteLur && (
+      ) : nesteLur ? (
         <div style={{ padding: '0 24px 16px' }}>
           <button onClick={() => onNavigate('sovn')} style={{ width: '100%', background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'left' }}>
             {nesteLur.type === 'natt' ? (
@@ -587,38 +587,60 @@ Svar KUN med observasjonen.`
               </div>
             )}
             <div style={{ flex: 1 }}>
-  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-    {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
-  </div>
-  <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
-    {nesteLur.om}
-  </div>
-  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
-    Vindu ca. {nesteLur.tid}
-  </div>
-  {(() => {
-    const lurData = [...(dagensFlyt || [])].filter(h => h.type === 'oppvåkning' || h.type === 'lur');
-    const siste = lurData.sort((a, b) => b.tid.localeCompare(a.tid))[0];
-    if (!siste?.tid) return null;
-    const [h, m] = siste.tid.split(':').map(Number);
-    const tid = new Date();
-    tid.setHours(h, m, 0, 0);
-    const våkentMinutter = Math.round((new Date().getTime() - tid.getTime()) / 60000);
-    if (våkentMinutter < 0 || våkentMinutter > 600) return null;
-    const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
-    return (
-      <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
-        ⭐ Våken siden: {våkentTekst}
-      </div>
-);
-})()}
-</div>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      </div>
-    )}
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
+                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
+              </div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
+                {nesteLur.om}
+              </div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+                Vindu ca. {nesteLur.tid}
+              </div>
+              {(() => {
+                const lurData = [...(dagensFlyt || [])].filter(h => h.type === 'oppvåkning' || h.type === 'lur');
+                const siste = lurData.sort((a, b) => b.tid.localeCompare(a.tid))[0];
+                if (!siste?.tid) return null;
+                const [h, m] = siste.tid.split(':').map(Number);
+                const tid = new Date();
+                tid.setHours(h, m, 0, 0);
+                const våkentMinutter = Math.round((new Date().getTime() - tid.getTime()) / 60000);
+                if (våkentMinutter < 0 || våkentMinutter > 600) return null;
+                const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
+                return (
+                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
+                    ⭐ Våken siden: {våkentTekst}
+                  </div>
+                );
+              })()}
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      ) : dagensFlyt.filter(h => h.type === 'oppvåkning').length === 0 ? (
+        <div style={{ padding: '0 24px 16px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '12px', lineHeight: 1.6 }}>
+              Registrer når {babyNavn} våknet i morges for å starte dagen 🤍
+            </div>
+            <button onClick={async () => {
+              const profilId = await hentProfilId(aktivtBarn, bruker);
+              if (!profilId) return;
+              const nå = new Date();
+              await supabase.from('lurer').insert({
+                profil_id: profilId,
+                dato: nå.toISOString().split('T')[0],
+                type: 'oppvåkning',
+                start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+                slutt: null, varighet: 0, signaler: '',
+              });
+            }} style={{ width: '100%', padding: '12px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '12px', fontSize: '13px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+              Registrer oppvåkning nå
+            </button>
+          </div>
+        </div>
+      ) : null}
       {/* Snarveier */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '28px' }}>
         {snarveier.map(item => (
