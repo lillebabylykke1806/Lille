@@ -229,6 +229,8 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [auraObservasjon, setAuraObservasjon] = useState('');
   const [visDelModal, setVisDelModal] = useState(false);
 const [kopiert, setKopiert] = useState(false);
+const [redigerOppvåkning, setRedigerOppvåkning] = useState<any>(null);
+const [nyOppvåkningTid, setNyOppvåkningTid] = useState('');
 
   const hentAuraObservasjon = async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -654,8 +656,8 @@ Svar KUN med observasjonen.`
                   {i < Math.min(dagensFlyt.length, 5) - 1 && (
                     <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
                   )}
-                  <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <IkonKomponent type={item.type} />
+                  <div onClick={() => { if (item.type === 'oppvåkning') { setRedigerOppvåkning(item); setNyOppvåkningTid(item.tid); } }} style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px', cursor: item.type === 'oppvåkning' ? 'pointer' : 'default' }}>
+                  <IkonKomponent type={item.type} />
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
                       <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>
