@@ -68,6 +68,13 @@ const IkonKomponent = ({ type }: { type: string }) => {
       <img src="/tateflaske.png" style={{ width: 24, height: 24, objectFit: 'contain' }} />
     </div>
   );
+  if (type === 'nattOppvåkning') return (
+    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#D6E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M21 12.5C20.4 15.8 17.5 18 14 18C10 18 7 15 7 11C7 8 9 5.5 12 4.5C9.5 7 9.5 11 12.5 13.5C15.5 16 19.5 15 21 12.5Z" fill="#2D5C45"/>
+      </svg>
+    </div>
+  );
   if (type === 'bleie') return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#E8F0E8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <img src="/bleie.png" style={{ width: 22, height: 22, objectFit: 'contain' }} />
