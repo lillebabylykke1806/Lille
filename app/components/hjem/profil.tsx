@@ -14,6 +14,10 @@ export default function Profil({ bruker, onLoggUt }: Props) {
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [lagret, setLagret] = useState(false);
   const [lasterBilde, setLasterBilde] = useState(false);
+  const [visTilbakemelding, setVisTilbakemelding] = useState(false);
+const [tilbakemeldingTekst, setTilbakemeldingTekst] = useState('');
+const [sendt, setSendt] = useState(false);
+const [sender, setSender] = useState(false);
 
   useEffect(() => {
     const lastProfil = async () => {
@@ -158,6 +162,58 @@ export default function Profil({ bruker, onLoggUt }: Props) {
 >
   Administrer abonnementet
 </button>
+
+{/* Tilbakemelding */}
+<button
+  onClick={() => setVisTilbakemelding(true)}
+  style={{ width: '100%', padding: '10px', backgroundColor: 'transparent', border: 'none', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif', textDecoration: 'underline', marginBottom: '8px' }}
+>
+  Send meg gjerne en tilbakemelding 🤍
+</button>
+
+{/* Tilbakemelding modal */}
+{visTilbakemelding && (
+  <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => { setVisTilbakemelding(false); setSendt(false); setTilbakemeldingTekst(''); }}>
+    <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+      <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+      {sendt ? (
+        <div style={{ textAlign: 'center', padding: '24px 0' }}>
+          <div style={{ fontSize: '40px', marginBottom: '16px' }}>🤍</div>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Tusen takk!</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7 }}>Din tilbakemelding hjelper meg å bygge Lille best mulig 🌿</div>
+        </div>
+      ) : (
+        <>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Tilbakemelding</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px', lineHeight: 1.6 }}>Hva synes du om appen? Hva savner du? Alt hjelper! 🤍</div>
+          <textarea
+            value={tilbakemeldingTekst}
+            onChange={e => setTilbakemeldingTekst(e.target.value)}
+            placeholder="Skriv din tilbakemelding her..."
+            style={{ width: '100%', padding: '14px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '120px', boxSizing: 'border-box', marginBottom: '16px' }}
+          />
+          <button
+            onClick={async () => {
+              if (!tilbakemeldingTekst.trim()) return;
+              setSender(true);
+              await fetch('/api/tilbakemelding', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ melding: tilbakemeldingTekst, epost: bruker.email }),
+              });
+              setSendt(true);
+              setSender(false);
+            }}
+            disabled={!tilbakemeldingTekst.trim() || sender}
+            style={{ width: '100%', padding: '16px', backgroundColor: tilbakemeldingTekst.trim() ? farger.grønn : farger.kremMørk, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: tilbakemeldingTekst.trim() ? '#FDFAF6' : farger.tekstLys, cursor: tilbakemeldingTekst.trim() ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}
+          >
+            {sender ? 'Sender...' : 'Send tilbakemelding'}
+          </button>
+        </>
+      )}
+    </div>
+  </div>
+)}
 
       {/* Logg ut */}
       <button
