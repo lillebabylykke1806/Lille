@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const { melding, epost } = await req.json();
 
   await resend.emails.send({
-    from: 'onboarding@resend.dev',
+    from: 'tilbakemelding@lilleapp.no',
     to: 'lillebabylykke@outlook.com',
     subject: 'Ny tilbakemelding fra Lille-appen',
     html: `
