@@ -314,8 +314,14 @@ Svar KUN med observasjonen.`
       id: l.id,
       tid: l.start,
       slutt: l.slutt || null,
-      tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.tekst || l.type,
-      type: l.type,
+      tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? (() => {
+        const time = parseInt(l.start?.split(':')[0] || '0');
+        return (time >= 21 || time < 6) ? 'Nattlig oppvåkning' : 'Våknet';
+      })() : l.tekst || l.type,
+      type: l.type === 'oppvåkning' ? (() => {
+        const time = parseInt(l.start?.split(':')[0] || '0');
+        return (time >= 21 || time < 6) ? 'nattOppvåkning' : 'oppvåkning';
+      })() : l.type,
       varighet: l.varighet ? `${l.varighet} min` : null,
     }));
 
