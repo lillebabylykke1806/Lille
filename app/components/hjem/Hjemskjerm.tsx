@@ -727,7 +727,16 @@ Svar KUN med observasjonen.`
       }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
         Lagre
       </button>
+      <button onClick={async () => {
+        if (!redigerOppvåkning?.id) return;
+        await supabase.from('lurer').delete().eq('id', redigerOppvåkning.id);
+        setRedigerOppvåkning(null);
+        lastDagensFlyt();
+      }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: '1px solid #C48E7B', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#C48E7B', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginTop: '10px' }}>
+        🗑️ Slett hendelse
+      </button>
     </div>
+    
   </div>
 )}
 
