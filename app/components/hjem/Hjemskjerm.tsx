@@ -231,6 +231,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
 const [kopiert, setKopiert] = useState(false);
 const [redigerOppvåkning, setRedigerOppvåkning] = useState<any>(null);
 const [nyOppvåkningTid, setNyOppvåkningTid] = useState('');
+const [slettHendelse, setSlettHendelse] = useState<any>(null);
 
   const hentAuraObservasjon = async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -672,15 +673,20 @@ Svar KUN med observasjonen.`
             </div>
           ) : (
             <>
-             {dagensFlyt.slice(0, 5).map((item: any, i) => (
+          {dagensFlyt.slice(0, 5).map((item: any, i) => (
   <div key={i} style={{ position: 'relative' }}>
     {i < Math.min(dagensFlyt.length, 5) - 1 && (
       <div style={{ position: 'absolute', left: '36px', top: '54px', width: '1px', height: 'calc(100% - 10px)', backgroundColor: 'rgba(220,207,192,0.5)' }} />
     )}
-    <div style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-      <div onClick={() => { if (item.type === 'oppvåkning') { setRedigerOppvåkning(item); setNyOppvåkningTid(item.tid); } }} style={{ cursor: item.type === 'oppvåkning' ? 'pointer' : 'default' }}>
-        <IkonKomponent type={item.type} />
-      </div>
+    <div onClick={() => {
+      if (item.type === 'oppvåkning') {
+        setRedigerOppvåkning(item);
+        setNyOppvåkningTid(item.tid);
+      } else {
+        setSlettHendelse(item);
+      }
+    }} style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+      <IkonKomponent type={item.type} />
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', fontWeight: i === 0 ? 600 : 400 }}>{item.tekst}</div>
         <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D', marginTop: '2px' }}>
@@ -690,14 +696,6 @@ Svar KUN med observasjonen.`
       {item.varighet && item.varighet !== '0 min' && (
         <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500 }}>{item.varighet}</div>
       )}
-      <button onClick={async () => {
-        if (!item.id) return;
-        const tabell = item.type === 'amming' ? 'amming' : item.type === 'bleie' ? 'bleie' : item.type === 'mat' ? 'mat' : item.type === 'pumping' ? 'pumping' : 'lurer';
-        await supabase.from(tabell).delete().eq('id', item.id);
-        lastDagensFlyt();
-      }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#C4B8A8', fontSize: '16px', flexShrink: 0 }}>
-        🗑️
-      </button>
     </div>
   </div>
 ))}
@@ -728,6 +726,29 @@ Svar KUN med observasjonen.`
         lastDagensFlyt();
       }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
         Lagre
+      </button>
+    </div>
+  </div>
+)}
+
+{/* SLETT HENDELSE MODAL */}
+{slettHendelse && (
+  <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setSlettHendelse(null)}>
+    <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+      <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{slettHendelse.tekst}</div>
+      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '24px' }}>{slettHendelse.tid}{slettHendelse.slutt ? ` – ${slettHendelse.slutt}` : ''}</div>
+      <button onClick={async () => {
+        if (!slettHendelse.id) return;
+        const tabell = slettHendelse.type === 'amming' ? 'amming' : slettHendelse.type === 'bleie' ? 'bleie' : slettHendelse.type === 'mat' ? 'mat' : slettHendelse.type === 'pumping' ? 'pumping' : 'lurer';
+        await supabase.from(tabell).delete().eq('id', slettHendelse.id);
+        setSlettHendelse(null);
+        lastDagensFlyt();
+      }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: '1px solid #C48E7B', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#C48E7B', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
+        🗑️ Slett hendelse
+      </button>
+      <button onClick={() => setSlettHendelse(null)} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '15px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+        Avbryt
       </button>
     </div>
   </div>
