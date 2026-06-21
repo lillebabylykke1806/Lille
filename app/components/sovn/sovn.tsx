@@ -7,7 +7,7 @@ import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 
-type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; };
+type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; onNavigate?: (side: string) => void; };
 type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; };
 
 const tilTidsformat = (tid: string): string => {
@@ -73,7 +73,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
 };
 
-export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen }: Props) {
+export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen, onNavigate }: Props) {
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
   const [lurId, setLurId] = useState<number | null>(null);
@@ -866,32 +866,11 @@ const [annetTekst, setAnnetTekst] = useState('');
                 </div>
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Våknet</div>
               </button>
-              <button onClick={async () => {
-                const profilId = await hentProfilId(aktivtBarn, bruker);
-                if (!profilId) return;
-                const nå = new Date();
-                await supabase.from('amming').insert({
-                  profil_id: profilId,
-                  dato: dagensdato(),
-                  start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-                  slutt: null, varighet: 0,
-                });
-                lastTidslinje();
-              }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+              <button onClick={() => onNavigate?.('amming')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                 <img src="/tateflaske.png" alt="amming" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Ammet</div>
               </button>
-              <button onClick={async () => {
-                const profilId = await hentProfilId(aktivtBarn, bruker);
-                if (!profilId) return;
-                const nå = new Date();
-                await supabase.from('bleie').insert({
-                  profil_id: profilId,
-                  dato: dagensdato(),
-                  tidspunkt: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-                });
-                lastTidslinje();
-              }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+              <button onClick={() => onNavigate?.('bleie')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                 <img src="/bleie.png" alt="bleie" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Bleieskift</div>
               </button>
