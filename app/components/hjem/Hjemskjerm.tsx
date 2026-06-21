@@ -3,6 +3,7 @@ import { farger } from '../../lib/farger';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { hentProfilId } from '../../lib/profilId';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
 import BarnVelger from './BarnVelger';
 
 type Props = {
@@ -12,11 +13,11 @@ type Props = {
   onByttBarn: (barn: any) => void;
 };
 
-const tidspunkt = () => {
+const tidspunkt = (t: (nøkkel: 'hjem.godMorgen' | 'hjem.godEttermiddag' | 'hjem.godKveld') => string) => {
   const h = new Date().getHours();
-  if (h < 12) return 'God morgen';
-  if (h < 18) return 'God ettermiddag';
-  return 'God kveld';
+  if (h < 12) return t('hjem.godMorgen');
+  if (h < 18) return t('hjem.godEttermiddag');
+  return t('hjem.godKveld');
 };
 
 
@@ -223,6 +224,7 @@ Svar kun med innsikten, ingen introduksjon.`
 };
 
 export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn }: Props) {
+  const { t } = useLanguage();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
@@ -460,7 +462,7 @@ Svar KUN med observasjonen.`
       </button>
       <div style={{ textAlign: 'right' }}>
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
-          {tidspunkt()}{babyNavn ? `, ${babyNavn}` : ''} ✨
+          {tidspunkt(t)}{babyNavn ? `, ${babyNavn}` : ''} ✨
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: '#7B746D' }}>
           {valgtTilstand.tekst}
@@ -566,7 +568,7 @@ Svar KUN med observasjonen.`
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-                {lurType === 'natt' ? 'Sover nå 🌙' : 'Lur pågår'}
+                {lurType === 'natt' ? 'Sover nå 🌙' : t('hjem.lurPågår')}
               </div>
               <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
                 Siden {lurStartTid}
@@ -602,7 +604,7 @@ Svar KUN med observasjonen.`
             )}
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : 'Neste lur'}
+                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : t('hjem.nesteLur')}
               </div>
               <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
                 {nesteLur.om}
@@ -685,8 +687,8 @@ Svar KUN med observasjonen.`
       {/* Dagens flyt */}
       <div style={{ padding: '0 24px 32px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-          <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>Dagens flyt</div>
-          <button onClick={() => setVisDagbok(true)} style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>Se dagbok</button>
+          <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37' }}>{t('hjem.dagensFlyt')}</div>
+          <button onClick={() => setVisDagbok(true)} style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', background: 'rgba(168,181,162,0.12)', border: '1px solid rgba(168,181,162,0.3)', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 500 }}>{t('hjem.seDagbok')}</button>
         </div>
         <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
           {dagensFlyt.length === 0 ? (
@@ -725,7 +727,7 @@ Svar KUN med observasjonen.`
               {dagensFlyt.length > 5 && (
                 <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
                   <button onClick={() => setVisDagbok(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-                    +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag – Se dagbok
+                    +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag – {t('hjem.seDagbok')}
                   </button>
                 </div>
               )}
