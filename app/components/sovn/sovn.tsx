@@ -759,8 +759,8 @@ const [annetTekst, setAnnetTekst] = useState('');
             </div>
             <div style={{ width: '32px' }} />
           </div>
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px' }}>
-            <div style={{ position: 'absolute', left: '-20px', top: '-10px', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', left: '-20px', top: '-10px', pointerEvents: 'none', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
               <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
             </div>
             <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
@@ -829,9 +829,9 @@ const [annetTekst, setAnnetTekst] = useState('');
             </button>
           </div>
           {tidslinje.length > 0 && (
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+            <div style={{ position: 'relative', backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px', overflow: 'hidden' }}>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Nattens tidslinje</div>
-              <div style={{ overflowX: 'auto' }}>
+              <div style={{ overflowX: 'auto', overflowY: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', minWidth: `${tidslinje.length * 80}px` }}>
                   {tidslinje.map((item, i) => (
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
@@ -851,11 +851,11 @@ const [annetTekst, setAnnetTekst] = useState('');
               </div>
             </div>
           )}
-          <div style={{ position: 'relative', zIndex: 2, backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Hurtigregistrering</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
               <button type="button" onClick={() => registrerOppvåkning()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-                <div style={{ width: '56px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                <div style={{ width: '56px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="5" stroke="#F4A853" strokeWidth="1.5" fill="none"/>
                     <line x1="12" y1="2" x2="12" y2="5" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
@@ -864,17 +864,17 @@ const [annetTekst, setAnnetTekst] = useState('');
                     <line x1="19" y1="12" x2="22" y2="12" stroke="#F4A853" strokeWidth="1.5" strokeLinecap="round"/>
                   </svg>
                 </div>
-                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', pointerEvents: 'none' }}>Våknet</div>
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Våknet</div>
               </button>
               <button type="button" onClick={() => onNavigate?.('amming')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-                <img src="/tateflaske.png" alt="amming" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain', pointerEvents: 'none' }} />
-                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', pointerEvents: 'none' }}>Ammet</div>
+                <img src="/tateflaske.png" alt="amming" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain' }} />
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Ammet</div>
               </button>
               <button type="button" onClick={() => onNavigate?.('bleie')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
-                <img src="/bleie.png" alt="bleie" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)', pointerEvents: 'none' }} />
-                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', pointerEvents: 'none' }}>Bleieskift</div>
+                <img src="/bleie.png" alt="bleie" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
+                <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Bleieskift</div>
               </button>
-              <button onClick={() => setVisAnnetModal(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+              <button type="button" onClick={() => setVisAnnetModal(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                 <div style={{ width: '56px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="2" fill="#8A8FA8"/>
