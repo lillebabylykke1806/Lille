@@ -73,6 +73,15 @@ export const oversettelser = {
   'hjem.kopierDelingstekst': { no: '📋 Kopier delingstekst', en: '📋 Copy share text', sv: '📋 Kopiera delningstext', da: '📋 Kopiér delingstekst', de: '📋 Teilen-Text kopieren' },
   'hjem.sendSomSMS': { no: '📱 Send som SMS', en: '📱 Send as SMS', sv: '📱 Skicka som SMS', da: '📱 Send som SMS', de: '📱 Als SMS senden' },
 
+  'hendelse.lur': { no: 'Lur', en: 'Nap', sv: 'Tupplur', da: 'Lur', de: 'Nickerchen' },
+  'hendelse.sovnet': { no: 'Sovnet', en: 'Fell asleep', sv: 'Somnade', da: 'Sovnet', de: 'Eingeschlafen' },
+  'hendelse.våknet': { no: 'Våknet', en: 'Woke up', sv: 'Vaknade', da: 'Vågnede', de: 'Aufgewacht' },
+  'hendelse.nattligOppvåkning': { no: 'Nattlig oppvåkning', en: 'Night wake-up', sv: 'Nattligt uppvaknande', da: 'Natlig opvågning', de: 'Nächtliches Aufwachen' },
+  'hendelse.amming': { no: 'Amming', en: 'Feeding', sv: 'Amning', da: 'Amning', de: 'Stillen' },
+  'hendelse.bleie': { no: 'Bleie', en: 'Diaper', sv: 'Blöja', da: 'Ble', de: 'Windel' },
+  'hendelse.mat': { no: 'Mat', en: 'Food', sv: 'Mat', da: 'Mad', de: 'Essen' },
+  'hendelse.pumping': { no: 'Pumping', en: 'Pumping', sv: 'Pumpning', da: 'Pumping', de: 'Abpumpen' },
+
   'profil.tittel': { no: 'Profil', en: 'Profile', sv: 'Profil', da: 'Profil', de: 'Profil' },
   'profil.loggUt': { no: 'Logg ut', en: 'Log out', sv: 'Logga ut', da: 'Log ud', de: 'Abmelden' },
   'profil.språk': { no: 'Språk', en: 'Language', sv: 'Språk', da: 'Sprog', de: 'Sprache' },

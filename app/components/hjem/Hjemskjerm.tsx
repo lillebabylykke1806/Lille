@@ -4,7 +4,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { hentProfilId } from '../../lib/profilId';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { Locale } from '../../lib/i18n/translations';
 import BarnVelger from './BarnVelger';
+
+const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
+  no: 'norsk',
+  en: 'English',
+  sv: 'svenska',
+  da: 'dansk',
+  de: 'Deutsch',
+};
 
 type Props = {
   bruker: any;
@@ -148,7 +157,7 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
 };
 
 const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: any; aktivtBarn: any; babyNavn: string; onNavigate: (side: string, fane?: string) => void }) => {
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
   const [innsikt, setInnsikt] = useState('');
   const [laster, setLaster] = useState(false);
 
@@ -161,6 +170,7 @@ const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: a
       const fraDate = new Date();
       fraDate.setDate(fraDate.getDate() - 3);
       const fra = fraDate.toISOString().split('T')[0];
+      const språkNavn = LOCALE_SPRÅKNAVN[locale];
 
       const [lurer, amming] = await Promise.all([
         supabase.from('lurer').select('*').eq('profil_id', profilId).gte('dato', fra),
@@ -182,12 +192,12 @@ const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: a
             max_tokens: 150,
             messages: [{
               role: 'user',
-              content: `Du er en varm babyekspert i appen Lille. Gi ÉN kort og personlig innsikt på norsk basert på disse dataene. Maks 1-2 setninger. Bruk babyens navn ${babyNavn}. Vær varm og konkret.
+              content: `Du er en varm babyekspert i appen Lille. Gi ÉN kort og personlig innsikt PÅ SPRÅKET ${språkNavn} basert på disse dataene. Maks 1-2 setninger. Bruk babyens navn ${babyNavn}. Vær varm og konkret.
 
 Søvndata siste 3 dager: ${JSON.stringify(lurer.data?.slice(0, 10))}
 Ammingdata siste 3 dager: ${JSON.stringify(amming.data?.slice(0, 10))}
 
-Svar kun med innsikten, ingen introduksjon.`
+Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`
             }],
           }),
         });
@@ -200,7 +210,7 @@ Svar kun med innsikten, ingen introduksjon.`
     };
 
     if (babyNavn) hentInnsikt();
-  }, [bruker, aktivtBarn, babyNavn, t]);
+  }, [bruker, aktivtBarn, babyNavn, locale, t]);
 
   return (
     <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
@@ -225,7 +235,7 @@ Svar kun med innsikten, ingen introduksjon.`
 };
 
 export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn }: Props) {
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
@@ -243,13 +253,14 @@ const [redigerOppvåkning, setRedigerOppvåkning] = useState<any>(null);
 const [nyOppvåkningTid, setNyOppvåkningTid] = useState('');
 const [slettHendelse, setSlettHendelse] = useState<any>(null);
 
-  const hentAuraObservasjon = async () => {
+  const hentAuraObservasjon = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
     if (!profilId) return;
 
     const fraDate = new Date();
     fraDate.setDate(fraDate.getDate() - 7);
     const fra = fraDate.toISOString().split('T')[0];
+    const språkNavn = LOCALE_SPRÅKNAVN[locale];
 
     const { data: lurer } = await supabase
       .from('lurer')
@@ -272,11 +283,11 @@ const [slettHendelse, setSlettHendelse] = useState<any>(null);
           max_tokens: 100,
           messages: [{
             role: 'user',
-            content: `Du er en varm babyekspert. Gi ÉN kort observasjon på norsk om ${babyNavn}s overganger basert på søvnsignalene. Maks 1 setning. Bruk babyens navn. Vær konkret og varm.
+            content: `Du er en varm babyekspert i appen Lille. Gi ÉN kort observasjon PÅ SPRÅKET ${språkNavn} om ${babyNavn}s overganger basert på søvnsignalene. Maks 1 setning. Bruk babyens navn. Vær konkret og varm.
 
 Data: ${JSON.stringify(lurer.slice(0, 10))}
 
-Svar KUN med observasjonen.`
+Svar KUN med observasjonen på ${språkNavn}.`
           }],
         }),
       });
@@ -285,7 +296,7 @@ Svar KUN med observasjonen.`
     } catch {
       setAuraObservasjon('');
     }
-  };
+  }, [aktivtBarn, bruker, babyNavn, locale]);
 
   useEffect(() => {
     if (aktivtBarn?.navn) {
@@ -303,7 +314,7 @@ Svar KUN med observasjonen.`
       }
     };
     hentBilde();
-  }, [aktivtBarn]);
+  }, [aktivtBarn, bruker, hentAuraObservasjon]);
 
   const lastDagensFlyt = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -324,9 +335,9 @@ Svar KUN med observasjonen.`
       id: l.id,
       tid: l.start,
       slutt: l.slutt || null,
-      tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? (() => {
+      tekst: l.type === 'lur' ? t('hendelse.lur') : l.type === 'natt' ? t('hendelse.sovnet') : l.type === 'oppvåkning' ? (() => {
         const time = parseInt(l.start?.split(':')[0] || '0');
-        return (time >= 21 || time < 6) ? 'Nattlig oppvåkning' : 'Våknet';
+        return (time >= 21 || time < 6) ? t('hendelse.nattligOppvåkning') : t('hendelse.våknet');
       })() : l.tekst || l.type,
       type: l.type === 'oppvåkning' ? (() => {
         const time = parseInt(l.start?.split(':')[0] || '0');
@@ -338,7 +349,7 @@ Svar KUN med observasjonen.`
     const ammingItems = (ammingRes.data || []).map((a: any) => ({
       tid: a.start,
       slutt: a.slutt || null,
-      tekst: 'Amming',
+      tekst: t('hendelse.amming'),
       type: 'amming',
       varighet: a.varighet ? `${a.varighet} min` : null,
     }));
@@ -346,7 +357,7 @@ Svar KUN med observasjonen.`
     const bleieItems = (bleieRes.data || []).map((b: any) => ({
       tid: b.tidspunkt,
       slutt: null,
-      tekst: 'Bleie',
+      tekst: t('hendelse.bleie'),
       type: 'bleie',
       varighet: null,
     }));
@@ -362,7 +373,7 @@ Svar KUN med observasjonen.`
     const matItems = (matRes.data || []).map((m: any) => ({
       tid: m.klokkeslett,
       slutt: null,
-      tekst: `Mat: ${m.matvare}`,
+      tekst: `${t('hendelse.mat')}: ${m.matvare}`,
       type: 'mat',
       varighet: null,
     }));
@@ -370,7 +381,7 @@ Svar KUN med observasjonen.`
     const pumpingItems = (pumpingRes.data || []).map((p: any) => ({
       tid: p.klokkeslett,
       slutt: null,
-      tekst: `Pumping: ${p.mengde} ml`,
+      tekst: `${t('hendelse.pumping')}: ${p.mengde} ml`,
       type: 'pumping',
       varighet: p.varighet ? `${p.varighet} min` : null,
     }));
@@ -385,7 +396,7 @@ Svar KUN med observasjonen.`
 
     const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || []);
     setNesteLur(lurResult);
-  }, [aktivtBarn, bruker]);
+  }, [aktivtBarn, bruker, t]);
 
   useEffect(() => {
     const lagretType = localStorage.getItem('lille_sovtype');
@@ -404,7 +415,7 @@ Svar KUN med observasjonen.`
     hentAuraObservasjon();
     const interval = setInterval(lastDagensFlyt, 60000);
     return () => clearInterval(interval);
-  }, [bruker, aktivtBarn, babyNavn, lastDagensFlyt]);
+  }, [bruker, aktivtBarn, babyNavn, lastDagensFlyt, hentAuraObservasjon]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
     rolig: { tekst: t('hjem.rolig'), undertekst: t('hjem.roligUndertekst'), farge: '#A8B5A2' },
