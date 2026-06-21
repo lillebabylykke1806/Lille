@@ -102,6 +102,8 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
   const [nattligOppvåkning, setNattligOppvåkning] = useState(false);
 const [oppvåkningStart, setOppvåkningStart] = useState<Date | null>(null);
 const [oppvåkningMinutter, setOppvåkningMinutter] = useState(0);
+const [visAnnetModal, setVisAnnetModal] = useState(false);
+const [annetTekst, setAnnetTekst] = useState('');
 
   const lastTidslinje = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -864,15 +866,36 @@ const [oppvåkningMinutter, setOppvåkningMinutter] = useState(0);
                 </div>
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Våknet</div>
               </button>
-              <button style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+              <button onClick={async () => {
+                const profilId = await hentProfilId(aktivtBarn, bruker);
+                if (!profilId) return;
+                const nå = new Date();
+                await supabase.from('amming').insert({
+                  profil_id: profilId,
+                  dato: dagensdato(),
+                  start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+                  slutt: null, varighet: 0,
+                });
+                lastTidslinje();
+              }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                 <img src="/tateflaske.png" alt="amming" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Ammet</div>
               </button>
-              <button style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+              <button onClick={async () => {
+                const profilId = await hentProfilId(aktivtBarn, bruker);
+                if (!profilId) return;
+                const nå = new Date();
+                await supabase.from('bleie').insert({
+                  profil_id: profilId,
+                  dato: dagensdato(),
+                  tidspunkt: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+                });
+                lastTidslinje();
+              }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                 <img src="/bleie.png" alt="bleie" style={{ width: '56px', height: '56px', minHeight: '56px', objectFit: 'contain', filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(220deg)' }} />
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Bleieskift</div>
               </button>
-              <button style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+              <button onClick={() => setVisAnnetModal(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                 <div style={{ width: '56px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="2" fill="#8A8FA8"/>
@@ -882,7 +905,7 @@ const [oppvåkningMinutter, setOppvåkningMinutter] = useState(0);
                 </div>
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Annet</div>
               </button>
-            </div>
+              </div>
           </div>
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
@@ -911,6 +934,37 @@ const [oppvåkningMinutter, setOppvåkningMinutter] = useState(0);
           </div>
           {redigerLur && <RedigerModal />}
         </div>
+        {visAnnetModal && (
+          <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisAnnetModal(false)}>
+            <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+              <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+              <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Registrer noe annet</div>
+              <textarea
+                value={annetTekst}
+                onChange={e => setAnnetTekst(e.target.value)}
+                placeholder="F.eks. trøstet, ga vann, skiftet pyjamas..."
+                autoFocus
+                style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '90px', boxSizing: 'border-box', marginBottom: '20px' }}
+              />
+              <button onClick={async () => {
+                if (!annetTekst.trim()) return;
+                const profilId = await hentProfilId(aktivtBarn, bruker);
+                if (!profilId) return;
+                const nå = new Date();
+                await supabase.from('lurer').insert({
+                  profil_id: profilId, dato: dagensdato(), type: 'annet',
+                  start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+                  slutt: null, varighet: 0, signaler: annetTekst.trim(),
+                });
+                setAnnetTekst('');
+                setVisAnnetModal(false);
+                lastTidslinje();
+              }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+                Lagre
+              </button>
+            </div>
+          </div>
+        )}
         {visLydPanel && <LydPanel onLukk={() => setVisLydPanel(false)} />}
         {visNattlys && <NattlysPanel onLukk={() => setVisNattlys(false)} />}
         {visPust && <PustMedMeg onLukk={() => setVisPust(false)} />}
