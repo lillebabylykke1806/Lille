@@ -148,6 +148,7 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
 };
 
 const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: any; aktivtBarn: any; babyNavn: string; onNavigate: (side: string, fane?: string) => void }) => {
+  const { t } = useLanguage();
   const [innsikt, setInnsikt] = useState('');
   const [laster, setLaster] = useState(false);
 
@@ -167,7 +168,7 @@ const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: a
       ]);
 
       if (!lurer.data?.length && !amming.data?.length) {
-        setInnsikt(`Begynn å registrere for å få personlige innsikter om ${babyNavn} ✨`);
+        setInnsikt(t('hjem.begynnRegistrereInnsikt', { navn: babyNavn }));
         setLaster(false);
         return;
       }
@@ -193,13 +194,13 @@ Svar kun med innsikten, ingen introduksjon.`
         const result = await response.json();
         setInnsikt(result.content?.[0]?.text || '');
       } catch {
-        setInnsikt(`Registrer søvn og amming for å få personlige innsikter om ${babyNavn} ✨`);
+        setInnsikt(t('hjem.begynnRegistrereInnsikt', { navn: babyNavn }));
       }
       setLaster(false);
     };
 
     if (babyNavn) hentInnsikt();
-  }, [bruker, aktivtBarn, babyNavn]);
+  }, [bruker, aktivtBarn, babyNavn, t]);
 
   return (
     <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
@@ -207,12 +208,12 @@ Svar kun med innsikten, ingen introduksjon.`
         <div style={{ fontSize: '20px', flexShrink: 0 }}>✨</div>
         <div style={{ flex: 1 }}>
           {laster ? (
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>Analyserer {babyNavn}s mønstre...</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>{t('hjem.analyserer', { navn: babyNavn })}</div>
           ) : (
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{innsikt}</div>
           )}
           <button onClick={() => onNavigate('innsikt', 'innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', fontWeight: 500, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-          Se alle innsikter
+          {t('hjem.seAlleInnsikter')}
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -406,32 +407,32 @@ Svar KUN med observasjonen.`
   }, [bruker, aktivtBarn, babyNavn, lastDagensFlyt]);
 
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
-    rolig: { tekst: 'Rolig og våken', undertekst: 'Klar for lek og samspill', farge: '#A8B5A2' },
-    trøtt: { tekst: 'Virker trøtt', undertekst: 'Kanskje tid for en lur snart?', farge: '#C7BDD8' },
-    urolig: { tekst: 'Litt urolig', undertekst: 'Trenger ro og regulering', farge: '#C48E7B' },
-    sover: { tekst: 'Sover nå', undertekst: 'Hvil deg du også 🌙', farge: '#A8B5A2' },
+    rolig: { tekst: t('hjem.rolig'), undertekst: t('hjem.roligUndertekst'), farge: '#A8B5A2' },
+    trøtt: { tekst: t('hjem.trøtt'), undertekst: t('hjem.trøttUndertekst'), farge: '#C7BDD8' },
+    urolig: { tekst: t('hjem.urolig'), undertekst: t('hjem.uroligUndertekst'), farge: '#C48E7B' },
+    sover: { tekst: t('hjem.sover'), undertekst: t('hjem.soverUndertekst'), farge: '#A8B5A2' },
   };
 
   const valgtTilstand = tilstandConfig[babyTilstand] || tilstandConfig.rolig;
 
   const aiInnsikt: Record<string, string> = {
-    rolig: 'Baby virker rolig og mottakelig nå ✦',
-    trøtt: 'Baby viser trøtthetstegn – kanskje start nedtrapping?',
-    urolig: 'Baby virker litt overstimulert i dag',
-    sover: 'Baby sover – bruk tiden til å hvile 🌙',
+    rolig: t('hjem.aiInnsiktRolig'),
+    trøtt: t('hjem.aiInnsiktTrøtt'),
+    urolig: t('hjem.aiInnsiktUrolig'),
+    sover: t('hjem.aiInnsiktSover'),
   };
 
   const tilstandLabels: Record<string, string> = {
-    rolig: 'Rolig', trøtt: 'Trøtt', urolig: 'Urolig', sover: 'Sover',
+    rolig: t('hjem.tilstandRolig'), trøtt: t('hjem.tilstandTrøtt'), urolig: t('hjem.tilstandUrolig'), sover: t('hjem.tilstandSover'),
   };
 
   const snarveier = [
     {
-      label: 'Amming', side: 'amming',
+      label: t('hjem.amming'), side: 'amming',
       svg: <img src="/tateflaske-mork.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
     },
     {
-      label: 'Signaler', side: 'signaler',
+      label: t('hjem.signaler'), side: 'signaler',
       svg: (
         <svg width="48" height="48" viewBox="0 0 28 28" fill="none">
           <path d="M14 23C14 23 4 17 4 10.5C4 7.5 6.7 5 10 5C11.8 5 13.2 5.9 14 7.2C14.8 5.9 16.2 5 18 5C21.3 5 24 7.5 24 10.5C24 17 14 23 14 23Z" fill="none" stroke="#A8B5A2" strokeWidth="1.7" strokeLinejoin="round"/>
@@ -439,7 +440,7 @@ Svar KUN med observasjonen.`
       ),
     },
     {
-      label: 'Uro & ro', side: 'kolikk',
+      label: t('hjem.uroRo'), side: 'kolikk',
       svg: <img src="/uro.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
     },
   ];
@@ -480,7 +481,7 @@ Svar KUN med observasjonen.`
               {aiInnsikt[babyTilstand]}
             </div>
             <button onClick={() => onNavigate('innsikt', 'innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
-              Se innsikt
+              {t('hjem.seInnsikt')}
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M4 2.5L7.5 6L4 9.5" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -568,13 +569,13 @@ Svar KUN med observasjonen.`
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-                {lurType === 'natt' ? 'Sover nå 🌙' : t('hjem.lurPågår')}
+                {lurType === 'natt' ? `${t('hjem.sover')} 🌙` : t('hjem.lurPågår')}
               </div>
               <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
-                Siden {lurStartTid}
+                {t('hjem.siden')} {lurStartTid}
               </div>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
-                Trykk for å se søvnskjermen
+                {t('hjem.trykkForSøvnskjerm')}
               </div>
             </div>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -604,13 +605,13 @@ Svar KUN med observasjonen.`
             )}
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '2px' }}>
-                {nesteLur.type === 'natt' ? 'Nærmer seg leggetid' : t('hjem.nesteLur')}
+                {nesteLur.type === 'natt' ? t('hjem.nærmerSegLeggetid') : t('hjem.nesteLur')}
               </div>
               <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#3F3A37', fontWeight: '600', marginBottom: '2px' }}>
                 {nesteLur.om}
               </div>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
-                Vindu ca. {nesteLur.tid}
+                {t('hjem.vindu')} {nesteLur.tid}
               </div>
               {(() => {
   // Finn siste hendelse som indikerer at babyen er våken: oppvåkning, eller en avsluttet lur
@@ -634,7 +635,7 @@ Svar KUN med observasjonen.`
   const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
   return (
     <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
-      ⭐ Våken siden: {våkentTekst}
+      ⭐ {t('hjem.våkenSiden')}: {våkentTekst}
     </div>
   );
 })()}
@@ -648,7 +649,7 @@ Svar KUN med observasjonen.`
         <div style={{ padding: '0 24px 16px' }}>
           <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '12px', lineHeight: 1.6 }}>
-              Registrer når {babyNavn} våknet i morges for å starte dagen 🤍
+              {t('hjem.registrerOppvåkning', { navn: babyNavn })}
             </div>
             <button onClick={async () => {
               const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -662,7 +663,7 @@ Svar KUN med observasjonen.`
                 slutt: null, varighet: 0, signaler: '',
               });
             }} style={{ width: '100%', padding: '12px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '12px', fontSize: '13px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Registrer oppvåkning nå
+              {t('hjem.registrerOppvåkningKnapp')}
             </button>
           </div>
         </div>
@@ -693,8 +694,8 @@ Svar KUN med observasjonen.`
         <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '20px', overflow: 'hidden', padding: '8px 0' }}>
           {dagensFlyt.length === 0 ? (
             <div style={{ padding: '28px 24px', textAlign: 'center' }}>
-              <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>Ingen registreringer ennå i dag</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>Trykk + for å begynne</div>
+              <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#7B746D', fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '6px' }}>{t('hjem.ingenRegistreringer')}</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2' }}>{t('hjem.trykkForÅBegynne')}</div>
             </div>
           ) : (
             <>
@@ -727,7 +728,7 @@ Svar KUN med observasjonen.`
               {dagensFlyt.length > 5 && (
                 <div style={{ padding: '10px 18px', textAlign: 'center', borderTop: '1px solid rgba(220,207,192,0.35)' }}>
                   <button onClick={() => setVisDagbok(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-                    +{dagensFlyt.length - 5} hendelse{dagensFlyt.length - 5 > 1 ? 'r' : ''} til i dag – {t('hjem.seDagbok')}
+                    +{dagensFlyt.length - 5} {t('hjem.hendelseTilIDag', { flertall: dagensFlyt.length - 5 > 1 ? 'r' : '' })}
                   </button>
                 </div>
               )}
@@ -795,16 +796,16 @@ Svar KUN med observasjonen.`
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div>
-                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Dagbok</div>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('hjem.dagbok')}</div>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{formatDato()}</div>
               </div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                {alleDagensHendelser.length} hendelser
+                {alleDagensHendelser.length} {t('hjem.hendelser')}
               </div>
             </div>
             {alleDagensHendelser.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '32px', color: farger.tekstLys, fontFamily: 'var(--font-inter)', fontSize: '14px', fontStyle: 'italic' }}>
-                Ingen registreringer i dag ennå
+                {t('hjem.ingenRegistreringerIDag')}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -835,21 +836,21 @@ Svar KUN med observasjonen.`
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
               <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎁</div>
-              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Del Lille med en venn</div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('hjem.delLilleMedVenn')}</div>
               <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-                Del koden med en venn og dere får begge <strong>20% rabatt de første 2 månedene</strong> 🤍
+                {t('hjem.delBeskrivelse')}
               </div>
             </div>
             <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '20px', marginBottom: '16px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Din rabattkode</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t('hjem.dinRabattkode')}</div>
               <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '4px', marginBottom: '4px' }}>VENN20</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>20% rabatt i 2 måneder</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('hjem.rabattBeskrivelse')}</div>
             </div>
             <button onClick={() => { navigator.clipboard.writeText('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); setKopiert(true); setTimeout(() => setKopiert(false), 3000); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
-              {kopiert ? '✅ Kopiert!' : '📋 Kopier delingstekst'}
+              {kopiert ? t('hjem.kopiertBekreftelse') : t('hjem.kopierDelingstekst')}
             </button>
             <button onClick={() => { const tekst = encodeURIComponent('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); window.open(`sms:?body=${tekst}`); }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              📱 Send som SMS
+              {t('hjem.sendSomSMS')}
             </button>
           </div>
         </div>
