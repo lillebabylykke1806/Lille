@@ -14,10 +14,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET(req: Request) {
-  const authHeader = req.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+    const authHeader = req.headers.get('authorization');
+    const isVercelCron = req.headers.get('x-vercel-cron') === '1' || req.headers.get('user-agent')?.includes('vercel-cron');
+    if (!isVercelCron && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
   try {
     const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
