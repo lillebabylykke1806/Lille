@@ -128,13 +128,22 @@ function getKategorier(t: TFn): Kategori[] {
   ];
 }
 
+/** Maps Sovn.tsx signal label variants to Signaler KATEGORIER navn (DB keys). */
+const SOVN_TIL_KATEGORI_NAVN: Record<string, string> = {
+  'Gned øynene': 'Gnir øynene',
+  'Gjesping': 'Gjesper',
+  'Stirret tomt': 'Stirrer tomt',
+  'Vendte hodet': 'Vender hodet bort',
+};
+
 export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
   const { t } = useLanguage();
   const KATEGORIER = getKategorier(t);
 
   const finnVisningsNavn = useCallback((dbNavn: string) => {
+    const navn = SOVN_TIL_KATEGORI_NAVN[dbNavn] ?? dbNavn;
     for (const kat of KATEGORIER) {
-      const signal = kat.signaler.find(s => s.navn === dbNavn);
+      const signal = kat.signaler.find(s => s.navn === navn);
       if (signal) return signal.visningsNavn;
     }
     return dbNavn;
