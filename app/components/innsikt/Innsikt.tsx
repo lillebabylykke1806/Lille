@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
 
 const HjerteIkon = ({ farge = '#8B6340', størrelse = 24 }: { farge?: string; størrelse?: number }) => (
   <svg width={størrelse} height={størrelse} viewBox="0 0 24 24" fill="none">
@@ -12,6 +13,7 @@ const HjerteIkon = ({ farge = '#8B6340', størrelse = 24 }: { farge?: string; st
 type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; startFane?: 'språk' | 'innsikt'; };
 
 export default function Innsikt({ bruker, aktivtBarn, onNavigate, startFane }: Props) {
+  const { t, locale } = useLanguage();
   const [aktivFane, setAktivFane] = useState<'språk' | 'innsikt'>(startFane || 'språk');
   const [innsikter, setInnsikter] = useState<string[]>([]);
   const [språkInnsikter, setSpråkInnsikter] = useState<string[]>([]);
@@ -151,7 +153,7 @@ Skriv 4-6 korte, personlige og varme innsikter om mønstre du ser. Bruk babyens 
       const result = await response.json();
       const tekst = result.content?.[0]?.text || '';
       setInnsikter(tekst.split('\n').filter((l: string) => l.trim().startsWith('✨')));
-    } catch { setInnsikter(['✨ Kunne ikke laste innsikter akkurat nå.']); }
+    } catch { setInnsikter([t('innsikt.kunneIkkeLasteInnsikter')]); }
     setLasterInnsikt(false);
   };
 
@@ -177,9 +179,9 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       const linjer = tekst.split('\n').filter((l: string) => l.trim());
       setSpråkInnsikter(linjer.filter((l: string) => l.trim().startsWith('💛')));
       setUkeInnsikter(linjer.filter((l: string) => l.trim().startsWith('✨UKE:')).map((l: string) => l.replace('✨UKE:', '✨')));
-    } catch { setSpråkInnsikter(['💛 Kunne ikke laste babyens språk akkurat nå.']); }
+    } catch { setSpråkInnsikter([t('innsikt.kunneIkkeLasteSpråk')]); }
     setLasterSpråk(false);
-  }, [data.lurer, babyNavn]);
+  }, [data.lurer, babyNavn, t]);
 
   const getSignalFarge = (signal: string): { bg: string; border: string; farge: string } => {
     const lower = signal.toLowerCase();
@@ -213,17 +215,17 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       <div style={{ background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF0D6 100%)', border: '1px solid #F4D9A0', borderRadius: '24px', padding: '28px 24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '10px', lineHeight: 1.3 }}>
-            Velkommen til Babyens språk!
+            {t('innsikt.velkommen')}
           </div>
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#6B5040', lineHeight: 1.7 }}>
-            Her lærer vi å forstå de små signalene som forteller oss hvordan {babyNavn} har det.<br/><br/>
-            Jo mer vi registrerer, desto bedre innsikt får du.
+            {t('innsikt.velkommenBeskrivelse', { navn: babyNavn })}<br/><br/>
+            {t('innsikt.joMerViRegistrerer')}
           </div>
           <button
             onClick={() => onNavigate?.('signaler')}
             style={{ marginTop: '16px', padding: '13px 24px', background: 'linear-gradient(135deg, #F4A853, #E8943F)', border: 'none', borderRadius: '50px', fontSize: '14px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 16px rgba(244,168,83,0.4)' }}
           >
-            <span style={{ fontSize: '18px', lineHeight: 1 }}>+</span> Registrer første signal
+            <span style={{ fontSize: '18px', lineHeight: 1 }}>+</span> {t('innsikt.registrerFørsteSignal')}
           </button>
         </div>
         <div style={{ fontSize: '72px', flexShrink: 0 }}>👶</div>
@@ -233,15 +235,15 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
           <span style={{ fontSize: '15px' }}>✨</span>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Dette vil du få innsikt i</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('innsikt.detteVilDuFåInnsiktI')}</div>
           <span style={{ fontSize: '15px' }}>✨</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           {[
-            { ikon: '/spraak-signal.png', bg: '#FFF8EC', tittel: 'Vanligste signaler', tekst: 'Se hvilke signaler som brukes oftest av barnet ditt.' },
-            { ikon: '/spraak-rekkefolge.png', bg: farger.terrakottaLys, tittel: 'Signalrekkefølge', tekst: 'Oppdag rekkefølgen babyen din bruker før noe skjer.' },
-            { ikon: '/spraak-overgang.png', bg: '#FFF7ED', tittel: 'Overganger', tekst: 'Forstå overgangen fra rolig → trøtt → sover og mer.' },
-            { ikon: '/spraak-monstre.png', bg: '#F0F7F0', tittel: 'Personlige mønstre', tekst: 'AI finner mønstre som er unike for barnet ditt.' },
+            { ikon: '/spraak-signal.png', bg: '#FFF8EC', tittel: t('innsikt.vanligsteSignaler'), tekst: t('innsikt.vanligsteSignalerTekst') },
+            { ikon: '/spraak-rekkefolge.png', bg: farger.terrakottaLys, tittel: t('innsikt.signalrekkefølge'), tekst: t('innsikt.signalrekkefølgeTekst') },
+            { ikon: '/spraak-overgang.png', bg: '#FFF7ED', tittel: t('innsikt.overganger'), tekst: t('innsikt.overgangerTekst') },
+            { ikon: '/spraak-monstre.png', bg: '#F0F7F0', tittel: t('innsikt.personligeMønstre'), tekst: t('innsikt.personligeMønstreTekst') },
           ].map((item, i) => (
             <div key={i} style={{ backgroundColor: item.bg, borderRadius: '16px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <img src={item.ikon} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
@@ -256,15 +258,15 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
           <img src="/blad.png" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Slik kommer du i gang</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('innsikt.slikKommerDuIGang')}</div>
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#6B5040', marginBottom: '14px', lineHeight: 1.6 }}>
-          Registrer små signaler i hverdagen. Det kan være ansiktsuttrykk, lyder, bevegelser eller kroppsspråk.
+          {t('innsikt.registrerSmåSignaler')}
         </div>
         {[
-          'Trykk på + for å registrere et signal',
-          'Velg hva du observerte',
-          'Vi lærer og finner mønstre sammen',
+          t('innsikt.stegTrykkPlus'),
+          t('innsikt.stegVelgHvaDuObserverte'),
+          t('innsikt.stegViLærer'),
         ].map((tekst, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
             <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: farger.grønnLys, border: `1.5px solid ${farger.grønn}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -281,10 +283,10 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
           <img src="/signal-oye.png" style={{ width: '22px', height: '22px', objectFit: 'contain', opacity: 0.5 }} />
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Nylig registrerte signaler</div>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>{t('innsikt.nyligRegistrerteSignaler')}</div>
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-          Her vil dine registrerte signaler vises.<br/>Du har ikke registrert noen signaler enda.
+          {t('innsikt.herVilDineSignalerVises')}<br/>{t('innsikt.duHarIkkeRegistrertSignaler')}
         </div>
       </div>
     </div>
@@ -298,18 +300,18 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       {lasterSpråk ? (
         <div style={{ background: `linear-gradient(135deg, #FFF8EC 0%, ${farger.terrakottaLys} 100%)`, border: '1px solid #F4D9A0', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ width: '24px', height: '24px', border: `2px solid ${farger.terrakotta}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', flexShrink: 0 }} />
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta }}>Analyserer {babyNavn}s mønstre...</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta }}>{t('innsikt.analysererMønstre', { navn: babyNavn })}</div>
         </div>
       ) : språkInnsikter.length > 0 && (
         <div style={{ backgroundColor: farger.terrakottaLys, border: `1px solid ${farger.terrakotta}`, borderRadius: '20px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: '12px', top: '12px', fontSize: '56px', opacity: 0.2 }}>☁️</div>
-          <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>✦ AI-OBSERVASJON</div>
+          <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>{t('innsikt.aiObservasjon')}</div>
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#8B6340', fontWeight: '700', marginBottom: '4px', lineHeight: 1.4, paddingRight: '60px' }}>
-  {babyNavn} viser ofte disse signalene før han/hun blir trøtt:
+  {t('innsikt.viserOfteDisseSignalene', { navn: babyNavn })}
 </div>
 {søvnOvergangTider.signalTilSøvn && (
   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '16px', opacity: 0.8 }}>
-    Gjennomsnitt {søvnOvergangTider.signalTilSøvn} minutter fra første signal til søvn
+    {t('innsikt.gjennomsnittMinutterFraSignal', { min: søvnOvergangTider.signalTilSøvn })}
   </div>
 )}
 {!søvnOvergangTider.signalTilSøvn && (
@@ -338,18 +340,18 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
               <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#E8F0E8', border: '1.5px solid #A8C8A8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <img src="/mane-natt.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
               </div>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>Sover</div>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>{t('innsikt.sover')}</div>
             </div>
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta }}>
   {signalKjedeProsent >= 50
-    ? `Et av de vanligste mønstrene vi ser hos ${babyNavn}`
+    ? t('innsikt.vanligsteMønster', { navn: babyNavn })
     : signalKjedeProsent >= 20
-    ? `Et mønster vi ser før ${signalKjedeProsent}% av lurene`
-    : `AI-en lærer fortsatt ${babyNavn}s mønstre – registrer gjerne flere`}
+    ? t('innsikt.mønsterFørProsent', { pst: signalKjedeProsent })
+    : t('innsikt.aiLærerFortsatt', { navn: babyNavn })}
 </div>
 <button onClick={hentSpråkInnsikter} style={{ marginTop: '10px', padding: '6px 14px', backgroundColor: 'transparent', border: '1px solid #F4D9A0', borderRadius: '20px', fontSize: '11px', color: farger.terrakotta, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-  Oppdater analyse
+  {t('innsikt.oppdaterAnalyse')}
 </button>
         </div>
       )}
@@ -360,7 +362,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <img src="/spraak-overgang.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Overganger vi ser hos {babyNavn}</div>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('innsikt.overgangerViSerHos', { navn: babyNavn })}</div>
           </div>
 
           {/* Vanligste signaler */}
@@ -368,19 +370,19 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src="/spraak-signal.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Vanligste signaler</div>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('innsikt.vanligsteSignaler')}</div>
           </div>
           <button
             onClick={() => onNavigate?.('signaler')}
             style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
           >
-            Se alle
+            {t('innsikt.seAlle')}
           </button>
         </div>
         <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>
   {(data.lurer?.filter((l: any) => l.signaler)?.length || 0) < 5
-    ? `Registrer flere signaler for sikrere innsikt`
-    : `Basert på ${data.lurer?.filter((l: any) => l.signaler)?.length || 0} registreringer`}
+    ? t('innsikt.registrerFlereForSikrere')
+    : t('innsikt.basertPåRegistreringer', { antall: data.lurer?.filter((l: any) => l.signaler)?.length || 0 })}
 </div>
         <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
           {signalKjede.slice(0, 5).map((signal, i) => {
@@ -403,7 +405,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
             {/* Vei mot søvn */}
             <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px', fontWeight: '600' }}>Typisk vei mot søvn</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px', fontWeight: '600' }}>{t('innsikt.typiskVeiModSøvn')}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
                 {søvnOvergangTider.signalKjede.slice(0, 3).map((signal, i) => {
                   const f = getSignalFarge(signal);
@@ -420,12 +422,12 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                 <img src="/mane-natt.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                 </div>
               </div>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '8px' }}>Registrert i {signalKjedeProsent}% av lurene.</div>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '8px' }}>{t('innsikt.registrertIProsentAvLurene', { pst: signalKjedeProsent })}</div>
             </div>
 
             {/* Vei til uro */}
             <div style={{ backgroundColor: '#FFF8F8', border: '1px solid #FFE4E4', borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#BE123C', marginBottom: '10px', fontWeight: '600' }}>Typisk vei til uro</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#BE123C', marginBottom: '10px', fontWeight: '600' }}>{t('innsikt.typiskVeiTilUro')}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                 {[0, 1, 2].map((i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
@@ -436,20 +438,20 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                   </div>
                 ))}
               </div>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#BE123C', marginTop: '8px' }}>Registrert i 61% av gangene.</div>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#BE123C', marginTop: '8px' }}>{t('innsikt.registrertI61Prosent')}</div>
             </div>
           </div>
 
           {/* Tre tidsbokser */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
             {[
-              { label: 'Rolig → første signal', verdi: søvnOvergangTider.roligTilSignal, farge: farger.grønn, bg: farger.grønnLys },
-              { label: 'Første signal → søvn', verdi: søvnOvergangTider.signalTilSøvn, farge: farger.terrakotta, bg: '#FFF8EC' },
-              { label: 'Første signal → uro', verdi: 18, farge: '#BE123C', bg: '#FFF1F2' },
+              { label: t('innsikt.roligTilFørsteSignal'), verdi: søvnOvergangTider.roligTilSignal, farge: farger.grønn, bg: farger.grønnLys },
+              { label: t('innsikt.førsteSignalTilSøvn'), verdi: søvnOvergangTider.signalTilSøvn, farge: farger.terrakotta, bg: '#FFF8EC' },
+              { label: t('innsikt.førsteSignalTilUro'), verdi: 18, farge: '#BE123C', bg: '#FFF1F2' },
             ].map((boks, i) => (
               <div key={i} style={{ backgroundColor: boks.bg, borderRadius: '14px', padding: '12px', textAlign: 'center' }}>
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px', lineHeight: 1.3 }}>{boks.label}</div>
-                <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>Gjennomsnitt</div>
+                <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '2px' }}>{t('innsikt.gjennomsnitt')}</div>
                 <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: boks.farge, fontWeight: '700' }}>{boks.verdi ?? '–'} min</div>
               </div>
             ))}
@@ -460,7 +462,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       {/* Denne uken har vi lært */}
       {ukeInnsikter.length > 0 && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '16px' }}>💛 Denne uken har vi lært</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '16px' }}>{t('innsikt.denneUkenHarViLært')}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {ukeInnsikter.map((innsikt, i) => (
               <div key={i} style={{ padding: '14px 16px', backgroundColor: farger.grønnLys, borderRadius: '14px', borderLeft: `3px solid ${farger.grønn}` }}>
@@ -477,10 +479,10 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <img src="/spraak-rekkefolge.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Siste registrerte signaler</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('innsikt.sisteRegistrerteSignaler')}</div>
             </div>
             <button onClick={() => onNavigate?.('signaler')} style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
-              Se alle
+              {t('innsikt.seAlle')}
             </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -501,7 +503,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                   </div>
                   {signal.varighet && (
                     <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'right', flexShrink: 0 }}>
-                      Varighet<br/><span style={{ fontWeight: '600', color: farger.tekst }}>{signal.varighet} min</span>
+                      {t('innsikt.varighet')}<br/><span style={{ fontWeight: '600', color: farger.tekst }}>{signal.varighet} min</span>
                     </div>
                   )}
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -519,9 +521,9 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <img src="/spraak-monstre.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{babyNavn}s signalmønster</div>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('innsikt.signalmønster', { navn: babyNavn })}</div>
           </div>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>AI analyserer {babyNavn}s unike kommunikasjon</div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>{t('innsikt.aiAnalysererKommunikasjon', { navn: babyNavn })}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {språkInnsikter.map((innsikt, i) => (
               <div key={i} style={{ padding: '16px', background: 'linear-gradient(135deg, #FFF8EC, #FFFAF0)', borderRadius: '16px', borderLeft: '3px solid #F4D9A0' }}>
@@ -540,17 +542,17 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
 
       {/* Header */}
       <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-        <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>Innsikt</div>
-        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Basert på de siste 7 dagene</div>
+        <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{t('innsikt.tittel')}</div>
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('innsikt.basertPå7Dager')}</div>
       </div>
 
       {/* Faner */}
       <div style={{ display: 'flex', backgroundColor: farger.kremMørk, borderRadius: '16px', padding: '4px', marginBottom: '20px' }}>
         <button onClick={() => setAktivFane('språk')} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', backgroundColor: aktivFane === 'språk' ? '#FFF8EC' : 'transparent', color: aktivFane === 'språk' ? '#8B6340' : farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', fontWeight: aktivFane === 'språk' ? '700' : '400', cursor: 'pointer', transition: 'all 0.2s ease' }}>
-          💛 Babyens språk
+          {t('innsikt.babyensSpråk')}
         </button>
         <button onClick={() => setAktivFane('innsikt')} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', backgroundColor: aktivFane === 'innsikt' ? farger.hvit : 'transparent', color: aktivFane === 'innsikt' ? farger.tekst : farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', fontWeight: aktivFane === 'innsikt' ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s ease' }}>
-          ✨ Innsikt
+          {t('innsikt.innsiktFane')}
         </button>
       </div>
 
@@ -570,8 +572,8 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
             const behovTimer = Math.floor(behov / 60);
             return (
               <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '24px', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>Dagens søvnbehov</div>
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px' }}>Basert på {babyNavn}s alder</div>
+                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('innsikt.dagensSøvnbehov')}</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px' }}>{t('innsikt.basertPåAlder', { navn: babyNavn })}</div>
                 <div style={{ position: 'relative', width: '200px', height: '200px', marginBottom: '16px' }}>
                   <svg width="200" height="200" viewBox="0 0 200 200">
                     <defs>
@@ -586,14 +588,18 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                       transform="rotate(-90 100 100)" style={{ transition: 'stroke-dashoffset 1s ease' }}/>
                   </svg>
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Sovet i dag</div>
+                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>{t('innsikt.sovetIDag')}</div>
                     <div style={{ fontSize: '28px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1 }}>{timer > 0 ? `${timer}t ${min}m` : `${min}m`}</div>
-                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px' }}>av {behovTimer}t behov</div>
+                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px' }}>{t('innsikt.avBehov', { timer: behovTimer })}</div>
                   </div>
                 </div>
                 <div style={{ width: '100%', padding: '12px 16px', backgroundColor: prosent >= 1 ? farger.grønnLys : farger.bakgrunn, borderRadius: '12px', textAlign: 'center', border: `1px solid ${prosent >= 1 ? farger.grønn : farger.kremMørk}` }}>
                   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: prosent >= 1 ? farger.grønn : farger.tekst, fontWeight: '500' }}>
-                    {prosent >= 1 ? `${babyNavn} har fått nok søvn i dag! 🌿` : prosent >= 0.7 ? `${Math.round(prosent * 100)}% av dagsbehovet – bra jobbet!` : `${Math.round(prosent * 100)}% av dagsbehovet så langt`}
+                    {prosent >= 1
+                      ? t('innsikt.fåttNokSøvn', { navn: babyNavn })
+                      : prosent >= 0.7
+                      ? t('innsikt.prosentAvDagsbehovetBraJobbet', { pst: Math.round(prosent * 100) })
+                      : t('innsikt.prosentAvDagsbehovetSåLangt', { pst: Math.round(prosent * 100) })}
                   </div>
                 </div>
               </div>
@@ -601,25 +607,25 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
           })()}
 
           <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
-            <StatKort tittel="Søvn siste 7 dager" verdi={`${Math.floor(totalSøvnMinutter / 60)}t`} undertekst={`${antallLurer} lurer registrert`} />
-            <StatKort tittel="Amminger" verdi={`${antallAmming}`} undertekst="siste 7 dager" />
+            <StatKort tittel={t('innsikt.søvnSiste7Dager')} verdi={`${Math.floor(totalSøvnMinutter / 60)}t`} undertekst={t('innsikt.lurerRegistrert', { antall: antallLurer })} />
+            <StatKort tittel={t('innsikt.amminger')} verdi={`${antallAmming}`} undertekst={t('innsikt.siste7Dager')} />
           </div>
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <StatKort tittel="Bleieskift" verdi={`${antallBleier}`} undertekst="siste 7 dager" />
-            <StatKort tittel="Alder" verdi={`${alderIMåneder()} mnd`} undertekst={babyNavn} />
+            <StatKort tittel={t('innsikt.bleieskift')} verdi={`${antallBleier}`} undertekst={t('innsikt.siste7Dager')} />
+            <StatKort tittel={t('innsikt.alder')} verdi={`${alderIMåneder()} ${t('innsikt.måned')}`} undertekst={babyNavn} />
           </div>
 
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>Personlige innsikter</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>AI analyserer {babyNavn}s mønstre</div>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('innsikt.personligeInnsikter')}</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>{t('innsikt.aiAnalysererMønstre', { navn: babyNavn })}</div>
             {innsikter.length === 0 && !lasterInnsikt && (
               <button onClick={hentInnsikter} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                Analyser {babyNavn}s data ✨
+                {t('innsikt.analyserData', { navn: babyNavn })}
               </button>
             )}
             {lasterInnsikt && (
               <div style={{ textAlign: 'center', padding: '20px' }}>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>Analyserer {babyNavn}s mønstre...</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>{t('innsikt.analysererMønstre', { navn: babyNavn })}</div>
                 <div style={{ width: '24px', height: '24px', border: `2px solid ${farger.grønn}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto' }} />
               </div>
             )}
@@ -631,7 +637,7 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
                   </div>
                 ))}
                 <button onClick={hentInnsikter} style={{ padding: '10px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginTop: '4px' }}>
-                  Oppdater innsikter
+                  {t('innsikt.oppdaterInnsikter')}
                 </button>
               </div>
             )}
