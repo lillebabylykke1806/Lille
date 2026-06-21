@@ -19,8 +19,10 @@ import Kolikk from './components/kolikk/Kolikk';
 import Mat from './components/mat/Mat';
 import Pumping from './components/pumping/Pumping';
 import Temperatur from './components/temperatur/Temperatur';
+import { useLanguage } from './lib/i18n/LanguageContext';
 
 export default function Home() {
+  const { t } = useLanguage();
   const [aktivSide, setAktivSide] = useState('hjem');
   const [bruker, setBruker] = useState<any>(null);
   const [laster, setLaster] = useState(true);
@@ -184,7 +186,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
       <div style={{ overflowY: 'auto' }}>
       {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(side, fane) => { setAktivSide(side); if (fane === 'innsikt') setInnsiktStartFane('innsikt'); else setInnsiktStartFane('språk'); }} onByttBarn={setAktivtBarn} />}
-        {aktivSide === 'sovn' && <Sovn bruker={bruker} aktivtBarn={aktivtBarn} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} />}
+      {aktivSide === 'sovn' && <Sovn bruker={bruker} aktivtBarn={aktivtBarn} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} onNavigate={setAktivSide} />}
         {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
         {aktivSide === 'amming' && <Amming bruker={bruker} />}
         {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} startFane={innsiktStartFane} />}
@@ -206,14 +208,14 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill={aktivSide === 'hjem' ? farger.grønn : farger.kremMørk}/>
           </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'hjem' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'hjem' ? '600' : '400' }}>Hjem</span>
+          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'hjem' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'hjem' ? '600' : '400' }}>{t('nav.hjem')}</span>
         </button>
 
         <button onClick={() => { setÅpneMorgen(false); setÅpneEtterregistrer(false); setAktivSide('sovn'); }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C14.5 21 16.76 20.01 18.43 18.4C14.1 18.17 10.5 14.43 10.5 9.9C10.5 7.3 11.72 4.98 13.62 3.45C13.09 3.16 12.56 3 12 3Z" fill={aktivSide === 'sovn' ? farger.grønn : farger.kremMørk}/>
           </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'sovn' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'sovn' ? '600' : '400' }}>Søvn</span>
+          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'sovn' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'sovn' ? '600' : '400' }}>{t('nav.søvn')}</span>
         </button>
 
         <button onClick={() => setVisRegistrer(!visRegistrer)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0' }}>
@@ -230,7 +232,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
             <rect x="10" y="7" width="4" height="14" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
             <rect x="17" y="3" width="4" height="18" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
           </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'innsikt' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'innsikt' ? '600' : '400' }}>Innsikt</span>
+          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'innsikt' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'innsikt' ? '600' : '400' }}>{t('nav.innsikt')}</span>
         </button>
 
         <button onClick={() => setAktivSide('profil')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
@@ -238,7 +240,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
             <circle cx="12" cy="8" r="4" fill={aktivSide === 'profil' ? farger.grønn : farger.kremMørk}/>
             <path d="M4 20C4 16.69 7.58 14 12 14C16.42 14 20 16.69 20 20" stroke={aktivSide === 'profil' ? farger.grønn : farger.kremMørk} strokeWidth="2" strokeLinecap="round"/>
           </svg>
-          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'profil' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'profil' ? '600' : '400' }}>Profil</span>
+          <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'profil' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'profil' ? '600' : '400' }}>{t('nav.profil')}</span>
         </button>
       </div>
 
