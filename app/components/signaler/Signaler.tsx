@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string, fane?: string) => void; };
 
@@ -14,6 +16,7 @@ type RegistertSignal = {
 
 type OppslagsSignal = {
   navn: string;
+  visningsNavn: string;
   tidlig: boolean;
   sent: boolean;
   beskrivelse: string;
@@ -31,78 +34,112 @@ type Kategori = {
   signaler: OppslagsSignal[];
 };
 
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
 const HjerteIkon = ({ farge = '#8B6340', størrelse = 24 }: { farge?: string; størrelse?: number }) => (
   <svg width={størrelse} height={størrelse} viewBox="0 0 24 24" fill="none">
     <path d="M12 21C12 21 3 15 3 9C3 6.5 5 4.5 7.5 4.5C9.2 4.5 10.7 5.4 12 7C13.3 5.4 14.8 4.5 16.5 4.5C19 4.5 21 6.5 21 9C21 15 12 21 12 21Z" stroke={farge} strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
-const KATEGORIER: Kategori[] = [
-  {
-    id: 'sovn',
-    tittel: 'Søvnsignaler',
-    undertittel: 'Signaler som vises når babyen begynner å bli trøtt.',
-    farge: '#FFF8EC',
-    border: '#F4D9A0',
-    tekstFarge: '#8B6340',
-    signaler: [
-      { navn: 'Stirrer tomt', tidlig: true, sent: false, beskrivelse: 'Babyen ser tomt ut i blikket og virker fjern.', kanBety: ['Tidlig trøtthetssignal', 'Babyen begynner å koble av', 'Tid for å starte nedtrapping'], tips: 'Begynn å roe ned miljøet når du ser dette.' },
-      { navn: 'Gjesper', tidlig: true, sent: true, beskrivelse: 'Gjesping er et vanlig tegn på tretthet.', kanBety: ['Tidlig eller sent signal avhengig av kontekst', 'Kombinert med andre signaler = søvn nærmer seg'], tips: 'Ett gjesp er ikke nok – se etter kombinasjoner.' },
-      { navn: 'Gnir øynene', tidlig: false, sent: true, beskrivelse: 'Babyen gnir eller klør seg i øynene.', kanBety: ['Sent søvnsignal', 'Babyen er overtrøtt om dette vedvarer', 'Søvn nærmer seg'], tips: 'Er dette første signal du ser, kan babyen allerede være overtrøtt.' },
-      { navn: 'Vender hodet bort', tidlig: true, sent: false, beskrivelse: 'Babyen vender hodet bort fra deg eller stimuli.', kanBety: ['Overstimulering', 'Behov for pause', 'Tidlig trøtthetssignal'], tips: 'Respekter signalet – ikke prøv å få kontakt igjen med én gang.' },
-      { navn: 'Mister interessen', tidlig: true, sent: false, beskrivelse: 'Babyen mister interessen for det som skjer rundt.', kanBety: ['Tidlig søvnsignal', 'Behov for roligere omgivelser'], tips: 'Reduser stimuli og gå til et roligere rom.' },
-      { navn: 'Tunge øyelokk', tidlig: false, sent: true, beskrivelse: 'Øyelokkene blir tunge og halvveis lukkede.', kanBety: ['Sent søvnsignal', 'Søvn er nært forestående'], tips: 'Legg ned nå – babyen er klar.' },
-    ],
-  },
-  {
-    id: 'pause',
-    tittel: 'Trenger en pause',
-    undertittel: 'Tegn på overstimulering eller behov for ro.',
-    farge: farger.grønnLys,
-    border: '#A8C8A8',
-    tekstFarge: farger.grønn,
-    signaler: [
-      { navn: 'Vender hodet bort', tidlig: true, sent: false, beskrivelse: 'Babyen vender hodet bort fra deg eller fra stimuli.', kanBety: ['Overstimulering', 'Behov for pause'], tips: 'Vent til babyen vender seg tilbake av seg selv.' },
-      { navn: 'Urolig i kroppen', tidlig: false, sent: false, beskrivelse: 'Babyen virker rastløs og urolig i kroppen.', kanBety: ['Overstimulering', 'Ubehag', 'Behov for ro og nærhet'], tips: 'Prøv å dempe lys og lyd i rommet.' },
-      { navn: 'Knytter nevene', tidlig: false, sent: false, beskrivelse: 'Babyen knytter hendene hardt.', kanBety: ['Stress eller ubehag', 'Kan komme før gråt'], tips: 'Ta babyen opp og gi ro før situasjonen eskalerer.' },
-      { navn: 'Buer ryggen bakover', tidlig: false, sent: false, beskrivelse: 'Babyen buer ryggen bakover.', kanBety: ['Ubehag', 'Protest', 'Kan være kolikk'], tips: 'Sjekk om det er luft i magen.' },
-      { navn: 'Unngår øyekontakt', tidlig: true, sent: false, beskrivelse: 'Babyen ser bort og unngår å møte blikket ditt.', kanBety: ['Trenger en pause fra stimuli', 'Overstimulering'], tips: 'Gi babyen litt tid uten press om kontakt.' },
-    ],
-  },
-  {
-    id: 'mage',
-    tittel: 'Mage og ubehag',
-    undertittel: 'Signaler knyttet til luft, mage eller uro.',
-    farge: farger.terrakottaLys,
-    border: '#D4A090',
-    tekstFarge: farger.terrakotta,
-    signaler: [
-      { navn: 'Trekker bena opp', tidlig: false, sent: false, beskrivelse: 'Babyen trekker bena opp mot magen.', kanBety: ['Luft i magen', 'Mageubehag', 'Kolikk'], tips: 'Prøv sykkelbevegelser med bena eller magemassasje.' },
-      { navn: 'Krummer ryggen', tidlig: false, sent: false, beskrivelse: 'Babyen krummer ryggen og virker anspent.', kanBety: ['Magesmerter', 'Luft i magen'], tips: 'Hold babyen oppreist etter mating.' },
-      { navn: 'Rapper mye', tidlig: false, sent: false, beskrivelse: 'Babyen rapper ofte eller har synlig oppblåst mage.', kanBety: ['Trenger å rape', 'Kolikk', 'Mageubehag'], tips: 'Klapp forsiktig på ryggen og hold oppreist.' },
-      { navn: 'Anspent ansikt', tidlig: false, sent: false, beskrivelse: 'Babyen grimaser og ser anspent ut.', kanBety: ['Smerte eller ubehag', 'Magetrøbbel'], tips: 'Kombiner med andre signaler for å tolke.' },
-      { navn: 'Gråter ved mating', tidlig: false, sent: false, beskrivelse: 'Babyen begynner å gråte under eller etter mating.', kanBety: ['Refluks', 'Luft', 'Ubehag'], tips: 'Prøv å mate i mer oppreist stilling.' },
-    ],
-  },
-  {
-    id: 'sult',
-    tittel: 'Sultsignaler',
-    undertittel: 'Tegn på at babyen ønsker mat.',
-    farge: '#FFF8EC',
-    border: '#F4D9A0',
-    tekstFarge: '#8B6340',
-    signaler: [
-      { navn: 'Suger på hendene', tidlig: true, sent: false, beskrivelse: 'Babyen suger på egne hender eller fingre.', kanBety: ['Tidlig sultsignal', 'Vil ha mat snart'], tips: 'Mat nå – ikke vent til babyen gråter.' },
-      { navn: 'Smatter med munnen', tidlig: true, sent: false, beskrivelse: 'Babyen smatter med munnen.', kanBety: ['Sultent', 'Søker suging'], tips: 'Tidlig signal – ideelt tidspunkt å mate.' },
-      { navn: 'Søker bryst eller flaske', tidlig: true, sent: false, beskrivelse: 'Babyen vrir hodet og søker etter bryst eller flaske.', kanBety: ['Sultent', 'Rooting-refleks aktiv'], tips: 'Typisk tidlig sultsignal hos nyfødte.' },
-      { navn: 'Rastløs og urolig', tidlig: false, sent: true, beskrivelse: 'Babyen beveger seg mye og virker rastløs.', kanBety: ['Sent sultsignal', 'Snart gråt om ikke matet'], tips: 'Mat snart – gråt er siste sultsignal.' },
-    ],
-  },
-];
+function byggSignal(
+  t: TFn,
+  navn: string,
+  prefix: string,
+  opts: { tidlig: boolean; sent: boolean; kanBetyAntall: number },
+): OppslagsSignal {
+  const kanBety: string[] = [];
+  for (let i = 1; i <= opts.kanBetyAntall; i++) {
+    kanBety.push(t(`signaler.${prefix}KanBety${i}` as OversettelseNøkkel));
+  }
+  return {
+    navn,
+    visningsNavn: t(`signaler.${prefix}VisningsNavn` as OversettelseNøkkel),
+    tidlig: opts.tidlig,
+    sent: opts.sent,
+    beskrivelse: t(`signaler.${prefix}Beskrivelse` as OversettelseNøkkel),
+    kanBety,
+    tips: t(`signaler.${prefix}Tips` as OversettelseNøkkel),
+  };
+}
 
-const VISSTE_DU = 'Et signal alene betyr sjelden noe. Det er ofte kombinasjonen av flere signaler som forteller hva babyen trenger.';
+function getKategorier(t: TFn): Kategori[] {
+  return [
+    {
+      id: 'sovn',
+      tittel: t('signaler.kategoriSovnTittel'),
+      undertittel: t('signaler.kategoriSovnUndertittel'),
+      farge: '#FFF8EC',
+      border: '#F4D9A0',
+      tekstFarge: '#8B6340',
+      signaler: [
+        byggSignal(t, 'Stirrer tomt', 'sovnStirrerTomt', { tidlig: true, sent: false, kanBetyAntall: 3 }),
+        byggSignal(t, 'Gjesper', 'sovnGjesper', { tidlig: true, sent: true, kanBetyAntall: 2 }),
+        byggSignal(t, 'Gnir øynene', 'sovnGnirOynene', { tidlig: false, sent: true, kanBetyAntall: 3 }),
+        byggSignal(t, 'Vender hodet bort', 'sovnVenderHodetBort', { tidlig: true, sent: false, kanBetyAntall: 3 }),
+        byggSignal(t, 'Mister interessen', 'sovnMisterInteressen', { tidlig: true, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Tunge øyelokk', 'sovnTungeOyelokk', { tidlig: false, sent: true, kanBetyAntall: 2 }),
+      ],
+    },
+    {
+      id: 'pause',
+      tittel: t('signaler.kategoriPauseTittel'),
+      undertittel: t('signaler.kategoriPauseUndertittel'),
+      farge: farger.grønnLys,
+      border: '#A8C8A8',
+      tekstFarge: farger.grønn,
+      signaler: [
+        byggSignal(t, 'Vender hodet bort', 'pauseVenderHodetBort', { tidlig: true, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Urolig i kroppen', 'pauseUroligIKroppen', { tidlig: false, sent: false, kanBetyAntall: 3 }),
+        byggSignal(t, 'Knytter nevene', 'pauseKnytterNevene', { tidlig: false, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Buer ryggen bakover', 'pauseBuerRyggenBakover', { tidlig: false, sent: false, kanBetyAntall: 3 }),
+        byggSignal(t, 'Unngår øyekontakt', 'pauseUnngarOyekontakt', { tidlig: true, sent: false, kanBetyAntall: 2 }),
+      ],
+    },
+    {
+      id: 'mage',
+      tittel: t('signaler.kategoriMageTittel'),
+      undertittel: t('signaler.kategoriMageUndertittel'),
+      farge: farger.terrakottaLys,
+      border: '#D4A090',
+      tekstFarge: farger.terrakotta,
+      signaler: [
+        byggSignal(t, 'Trekker bena opp', 'mageTrekkerBenaOpp', { tidlig: false, sent: false, kanBetyAntall: 3 }),
+        byggSignal(t, 'Krummer ryggen', 'mageKrummerRyggen', { tidlig: false, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Rapper mye', 'mageRapperMye', { tidlig: false, sent: false, kanBetyAntall: 3 }),
+        byggSignal(t, 'Anspent ansikt', 'mageAnspentAnsikt', { tidlig: false, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Gråter ved mating', 'mageGraterVedMating', { tidlig: false, sent: false, kanBetyAntall: 3 }),
+      ],
+    },
+    {
+      id: 'sult',
+      tittel: t('signaler.kategoriSultTittel'),
+      undertittel: t('signaler.kategoriSultUndertittel'),
+      farge: '#FFF8EC',
+      border: '#F4D9A0',
+      tekstFarge: '#8B6340',
+      signaler: [
+        byggSignal(t, 'Suger på hendene', 'sultSugerPaHendene', { tidlig: true, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Smatter med munnen', 'sultSmatterMedMunnen', { tidlig: true, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Søker bryst eller flaske', 'sultSokerBrystEllerFlaske', { tidlig: true, sent: false, kanBetyAntall: 2 }),
+        byggSignal(t, 'Rastløs og urolig', 'sultRastlosOgUrolig', { tidlig: false, sent: true, kanBetyAntall: 2 }),
+      ],
+    },
+  ];
+}
 
 export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
+  const { t } = useLanguage();
+  const KATEGORIER = getKategorier(t);
+
+  const finnVisningsNavn = useCallback((dbNavn: string) => {
+    for (const kat of KATEGORIER) {
+      const signal = kat.signaler.find(s => s.navn === dbNavn);
+      if (signal) return signal.visningsNavn;
+    }
+    return dbNavn;
+  }, [KATEGORIER]);
+
   const [registrerteSignaler, setRegistrerteSignaler] = useState<RegistertSignal[]>([]);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [laster, setLaster] = useState(true);
@@ -181,6 +218,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
   };
 
   const topp3 = registrerteSignaler.slice(0, 3);
+  const displayNavn = babyNavn === 'babyen' ? t('signaler.babyenFallback') : babyNavn;
 
   // Detaljvisning
   if (valgtOppslagsSignal) {
@@ -202,17 +240,17 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
               <HjerteIkon farge={kat?.tekstFarge || farger.grønn} størrelse={36} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{valgtOppslagsSignal.navn}</div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{valgtOppslagsSignal.visningsNavn}</div>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
-                {valgtOppslagsSignal.tidlig && <div style={{ padding: '3px 10px', backgroundColor: '#FFF8EC', border: '1px solid #F4D9A0', borderRadius: '20px', fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600' }}>Tidlig signal</div>}
-                {valgtOppslagsSignal.sent && <div style={{ padding: '3px 10px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>Sent signal</div>}
+                {valgtOppslagsSignal.tidlig && <div style={{ padding: '3px 10px', backgroundColor: '#FFF8EC', border: '1px solid #F4D9A0', borderRadius: '20px', fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600' }}>{t('signaler.tidligSignal')}</div>}
+                {valgtOppslagsSignal.sent && <div style={{ padding: '3px 10px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>{t('signaler.sentSignal')}</div>}
               </div>
               <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>{valgtOppslagsSignal.beskrivelse}</div>
             </div>
           </div>
 
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '12px' }}>Kan bety</div>
+            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '12px' }}>{t('signaler.kanBety')}</div>
             {valgtOppslagsSignal.kanBety.map((punkt, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px' }}>
                 <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: kat?.farge || farger.bakgrunn, border: `1px solid ${kat?.border || farger.kremMørk}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '1px' }}>
@@ -227,7 +265,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
 
           {valgtOppslagsSignal.tips && (
             <div style={{ backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700', marginBottom: '8px' }}>💡 Tips</div>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700', marginBottom: '8px' }}>{t('signaler.tips')}</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>{valgtOppslagsSignal.tips}</div>
             </div>
           )}
@@ -237,7 +275,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
             style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
             <HjerteIkon farge="#fff" størrelse={18} />
-            Registrer dette signalet nå
+            {t('signaler.registrerDetteSignaletNa')}
           </button>
         </div>
 
@@ -249,31 +287,31 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
               {lagringSuksess ? (
                 <div style={{ textAlign: 'center', padding: '20px' }}>
                   <div style={{ fontSize: '40px', marginBottom: '12px' }}>💛</div>
-                  <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Signalet er registrert!</div>
+                  <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('signaler.signaletErRegistrert')}</div>
                 </div>
               ) : (
                 <>
-                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '6px' }}>Registrer signal</div>
+                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '6px' }}>{t('signaler.registrerSignal')}</div>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', backgroundColor: kat?.farge || farger.bakgrunn, border: `1px solid ${kat?.border || farger.kremMørk}`, borderRadius: '20px', marginBottom: '20px' }}>
                     <HjerteIkon farge={kat?.tekstFarge || farger.grønn} størrelse={14} />
-                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: kat?.tekstFarge || farger.grønn, fontWeight: '600' }}>{valgtSignalNavn}</div>
+                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: kat?.tekstFarge || farger.grønn, fontWeight: '600' }}>{finnVisningsNavn(valgtSignalNavn)}</div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                     <div>
-                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Dato</div>
+                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.dato')}</div>
                       <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Tidspunkt</div>
+                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.tidspunkt')}</div>
                       <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
                     </div>
                   </div>
                   <div style={{ marginBottom: '20px' }}>
-                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Notat (valgfritt)</div>
-                    <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder="Noe spesielt du vil huske?" rows={2} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
+                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.notatValgfritt')}</div>
+                    <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder={t('signaler.notatPlaceholder')} rows={2} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
                   </div>
                   <button onClick={lagreSignal} disabled={lagrer} style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                    {lagrer ? 'Lagrer...' : 'Lagre signal'}
+                    {lagrer ? t('signaler.lagrer') : t('signaler.lagreSignal')}
                   </button>
                 </>
               )}
@@ -308,21 +346,21 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
                   <HjerteIkon farge={aktivKategori.tekstFarge} størrelse={26} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{signal.navn}</div>
+                  <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{signal.visningsNavn}</div>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    {signal.tidlig && <div style={{ padding: '2px 8px', backgroundColor: '#FFF8EC', border: '1px solid #F4D9A0', borderRadius: '20px', fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600' }}>Tidlig signal</div>}
-                    {signal.sent && <div style={{ padding: '2px 8px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>Sent signal</div>}
+                    {signal.tidlig && <div style={{ padding: '2px 8px', backgroundColor: '#FFF8EC', border: '1px solid #F4D9A0', borderRadius: '20px', fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600' }}>{t('signaler.tidligSignal')}</div>}
+                    {signal.sent && <div style={{ padding: '2px 8px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>{t('signaler.sentSignal')}</div>}
                   </div>
                 </div>
               </div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5, marginBottom: '12px' }}>{signal.beskrivelse}</div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button onClick={() => setValgtOppslagsSignal(signal)} style={{ flex: 1, padding: '10px', backgroundColor: farger.bakgrunn, border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, cursor: 'pointer', fontWeight: '500' }}>
-                  Les mer
+                  {t('signaler.lesMer')}
                 </button>
                 <button onClick={() => åpneRegistrer(signal.navn, aktivKategori.id)} style={{ flex: 1, padding: '10px', backgroundColor: aktivKategori.farge, border: `1px solid ${aktivKategori.border}`, borderRadius: '10px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: aktivKategori.tekstFarge, cursor: 'pointer', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                   <HjerteIkon farge={aktivKategori.tekstFarge} størrelse={12} />
-                  Registrer
+                  {t('signaler.registrer')}
                 </button>
               </div>
             </div>
@@ -337,31 +375,31 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
               {lagringSuksess ? (
                 <div style={{ textAlign: 'center', padding: '20px' }}>
                   <div style={{ fontSize: '40px', marginBottom: '12px' }}>💛</div>
-                  <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Signalet er registrert!</div>
+                  <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('signaler.signaletErRegistrert')}</div>
                 </div>
               ) : (
                 <>
-                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '6px' }}>Registrer signal</div>
+                  <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '6px' }}>{t('signaler.registrerSignal')}</div>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', backgroundColor: aktivKategori.farge, border: `1px solid ${aktivKategori.border}`, borderRadius: '20px', marginBottom: '20px' }}>
                     <HjerteIkon farge={aktivKategori.tekstFarge} størrelse={14} />
-                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: aktivKategori.tekstFarge, fontWeight: '600' }}>{valgtSignalNavn}</div>
+                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: aktivKategori.tekstFarge, fontWeight: '600' }}>{finnVisningsNavn(valgtSignalNavn)}</div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                     <div>
-                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Dato</div>
+                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.dato')}</div>
                       <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Tidspunkt</div>
+                      <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.tidspunkt')}</div>
                       <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
                     </div>
                   </div>
                   <div style={{ marginBottom: '20px' }}>
-                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Notat (valgfritt)</div>
-                    <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder="Noe spesielt du vil huske?" rows={2} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
+                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.notatValgfritt')}</div>
+                    <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder={t('signaler.notatPlaceholder')} rows={2} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
                   </div>
                   <button onClick={lagreSignal} disabled={lagrer} style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                    {lagrer ? 'Lagrer...' : 'Lagre signal'}
+                    {lagrer ? t('signaler.lagrer') : t('signaler.lagreSignal')}
                   </button>
                 </>
               )}
@@ -378,9 +416,9 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
       <div style={{ marginBottom: '20px' }}>
-        <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>Signaler</div>
-        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600' }}>Lær babyens språk 💛</div>
-        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '2px' }}>Forstå hva ulike signaler kan bety.</div>
+        <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{t('signaler.tittel')}</div>
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600' }}>{t('signaler.laerBabyensSprak')}</div>
+        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '2px' }}>{t('signaler.forstaHvaSignalerBetyr')}</div>
       </div>
 
       {laster ? (
@@ -394,7 +432,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
             <div style={{ backgroundColor: farger.terrakottaLys, border: `1px solid ${farger.terrakotta}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
                 <HjerteIkon farge={farger.terrakotta} størrelse={18} />
-                <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700' }}>{babyNavn} viser oftest</div>
+                <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700' }}>{t('signaler.viserOftest', { navn: displayNavn })}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginBottom: '12px' }}>
                 {topp3.map((signal, i) => (
@@ -403,7 +441,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
                       <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, border: `1.5px solid ${farger.terrakotta}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <HjerteIkon farge={farger.terrakotta} størrelse={26} />
                       </div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, textAlign: 'center', maxWidth: '56px', lineHeight: 1.3 }}>{signal.navn}</div>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, textAlign: 'center', maxWidth: '56px', lineHeight: 1.3 }}>{finnVisningsNavn(signal.navn)}</div>
                     </div>
                     {i < topp3.length - 1 && <div style={{ fontSize: '14px', color: farger.terrakotta, marginBottom: '18px' }}>→</div>}
                     {i === topp3.length - 1 && (
@@ -413,7 +451,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
                           <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønnLys, border: `1.5px solid ${farger.grønn}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <img src="/mane-natt.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                           </div>
-                          <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>Søvn</div>
+                          <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>{t('signaler.sovn')}</div>
                         </div>
                       </>
                     )}
@@ -421,10 +459,12 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
                 ))}
               </div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '12px' }}>
-                Registrert {topp3[0]?.antall} {topp3[0]?.antall === 1 ? 'gang' : 'ganger'}
+                {topp3[0]?.antall === 1
+                  ? t('signaler.registrertGang', { antall: topp3[0]?.antall })
+                  : t('signaler.registrertGanger', { antall: topp3[0]?.antall })}
               </div>
               <button onClick={() => onNavigate?.('innsikt', 'innsikt')} style={{ width: '100%', padding: '12px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '50px', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-  Se {babyNavn} sin innsikt ›
+  {t('signaler.seInnsikt', { navn: displayNavn })}
 </button>
             </div>
           )}
@@ -450,13 +490,13 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
                       <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: kat.farge, border: `1px solid ${kat.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <HjerteIkon farge={kat.tekstFarge} størrelse={22} />
                       </div>
-                      <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.tekst, textAlign: 'center', lineHeight: 1.3 }}>{signal.navn}</div>
+                      <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.tekst, textAlign: 'center', lineHeight: 1.3 }}>{signal.visningsNavn}</div>
                     </div>
                   ))}
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: kat.tekstFarge, fontWeight: '600' }}>{kat.signaler.length} signaler</div>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: kat.tekstFarge, fontWeight: '600' }}>{t('signaler.signalerAntall', { antall: kat.signaler.length })}</div>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M6 4L10 8L6 12" stroke={kat.tekstFarge} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -472,8 +512,8 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
                 <HjerteIkon farge={farger.grønn} størrelse={20} />
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '6px' }}>Visste du?</div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>{VISSTE_DU}</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '6px' }}>{t('signaler.vissteDu')}</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>{t('signaler.vissteDuTekst')}</div>
               </div>
             </div>
           </div>
@@ -488,27 +528,27 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
             {lagringSuksess ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>
                 <div style={{ fontSize: '40px', marginBottom: '12px' }}>💛</div>
-                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Signalet er registrert!</div>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('signaler.signaletErRegistrert')}</div>
               </div>
             ) : (
               <>
-                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Registrer signal</div>
+                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('signaler.registrerSignal')}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                   <div>
-                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Dato</div>
+                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.dato')}</div>
                     <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Tidspunkt</div>
+                    <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.tidspunkt')}</div>
                     <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
                   </div>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Notat (valgfritt)</div>
-                  <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder="Noe spesielt du vil huske?" rows={2} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
+                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('signaler.notatValgfritt')}</div>
+                  <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder={t('signaler.notatPlaceholder')} rows={2} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
                 </div>
                 <button onClick={lagreSignal} disabled={lagrer} style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                  {lagrer ? 'Lagrer...' : 'Lagre signal'}
+                  {lagrer ? t('signaler.lagrer') : t('signaler.lagreSignal')}
                 </button>
               </>
             )}

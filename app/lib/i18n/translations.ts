@@ -1,3 +1,5 @@
+import { signalerOversettelser } from './signaler-translations';
+
 export type Locale = 'no' | 'en' | 'sv' | 'da' | 'de';
 
 export const SPRÅK_NAVN: Record<Locale, string> = {
@@ -219,6 +221,8 @@ export const oversettelser = {
   'innsikt.oppdaterInnsikter': { no: 'Oppdater innsikter', en: 'Update insights', sv: 'Uppdatera insikter', da: 'Opdater indsigter', de: 'Einblicke aktualisieren' },
   'innsikt.kunneIkkeLasteInnsikter': { no: '✨ Kunne ikke laste innsikter akkurat nå.', en: '✨ Could not load insights right now.', sv: '✨ Kunde inte ladda insikter just nu.', da: '✨ Kunne ikke indlæse indsigter lige nu.', de: '✨ Einblicke konnten gerade nicht geladen werden.' },
   'innsikt.kunneIkkeLasteSpråk': { no: '💛 Kunne ikke laste babyens språk akkurat nå.', en: "💛 Could not load baby's language right now.", sv: '💛 Kunde inte ladda bebisens språk just nu.', da: '💛 Kunne ikke indlæse babyens sprog lige nu.', de: '💛 Konnte die Sprache des Babys gerade nicht laden.' },
+
+  ...signalerOversettelser,
 } as const;
 
 export type OversettelseNøkkel = keyof typeof oversettelser;
