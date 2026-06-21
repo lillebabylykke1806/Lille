@@ -3,6 +3,15 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { Locale } from '../../lib/i18n/translations';
+
+const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
+  no: 'norsk',
+  en: 'English',
+  sv: 'svenska',
+  da: 'dansk',
+  de: 'Deutsch',
+};
 
 const HjerteIkon = ({ farge = '#8B6340', størrelse = 24 }: { farge?: string; størrelse?: number }) => (
   <svg width={størrelse} height={størrelse} viewBox="0 0 24 24" fill="none">
@@ -109,12 +118,6 @@ export default function Innsikt({ bruker, aktivtBarn, onNavigate, startFane }: P
 
   useEffect(() => { lastData(); }, [lastData]);
 
-  useEffect(() => {
-    if (data.lurer && babyNavn && harSignaler) {
-      hentSpråkInnsikter();
-    }
-  }, [data.lurer, babyNavn, harSignaler]);
-
   const alderIMåneder = () => {
     if (!fødselsdato) return 0;
     const nå = new Date();
@@ -136,15 +139,16 @@ export default function Innsikt({ bruker, aktivtBarn, onNavigate, startFane }: P
       ?.reduce((sum: number, l: any) => sum + (l.varighet || 0), 0) || 0;
   };
 
-  const hentInnsikter = async () => {
+  const hentInnsikter = useCallback(async () => {
     setLasterInnsikt(true);
     setInnsikter([]);
-    const prompt = `Du er en varm og empatisk babyekspert i en app som heter Lille. Analyser denne babyens data fra de siste 7 dagene og gi 4-6 personlige innsikter på norsk.
+    const språkNavn = LOCALE_SPRÅKNAVN[locale];
+    const prompt = `Du er en varm og empatisk babyekspert i en app som heter Lille. Analyser denne babyens data fra de siste 7 dagene og gi 4-6 personlige innsikter på ${språkNavn}.
 Baby: ${babyNavn}, ${alderIMåneder()} måneder gammel.
 Søvndata (${data.lurer?.length || 0} registreringer): ${JSON.stringify(data.lurer?.slice(0, 20))}
 Ammingdata (${data.amming?.length || 0} registreringer): ${JSON.stringify(data.amming?.slice(0, 20))}
 Bleiedata (${data.bleie?.length || 0} registreringer): ${JSON.stringify(data.bleie?.slice(0, 10))}
-Skriv 4-6 korte, personlige og varme innsikter om mønstre du ser. Bruk babyens navn. Start hver innsikt med ✨. Fokuser på søvnmønstre, ammingsfrekvens, og daglige rytmer. Svar KUN med innsiktene, én per linje.`;
+Skriv 4-6 korte, personlige og varme innsikter om mønstre du ser. Bruk babyens navn. Start hver innsikt med ✨. Fokuser på søvnmønstre, ammingsfrekvens, og daglige rytmer. Svar KUN med innsiktene på ${språkNavn}, én per linje.`;
     try {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -155,20 +159,21 @@ Skriv 4-6 korte, personlige og varme innsikter om mønstre du ser. Bruk babyens 
       setInnsikter(tekst.split('\n').filter((l: string) => l.trim().startsWith('✨')));
     } catch { setInnsikter([t('innsikt.kunneIkkeLasteInnsikter')]); }
     setLasterInnsikt(false);
-  };
+  }, [babyNavn, data.lurer, data.amming, data.bleie, fødselsdato, locale, t]);
 
   const hentSpråkInnsikter = useCallback(async () => {
     setLasterSpråk(true);
     setSpråkInnsikter([]);
     setUkeInnsikter([]);
     const lurMedSignaler = data.lurer?.filter((l: any) => l.signaler && l.signaler.length > 0) || [];
-    const prompt = `Du er en varm babyekspert i appen Lille. Du skal analysere ${babyNavn}s signaler og søvndata og lage to seksjoner:
+    const språkNavn = LOCALE_SPRÅKNAVN[locale];
+    const prompt = `Du er en varm babyekspert i appen Lille. Du skal analysere ${babyNavn}s signaler og søvndata og lage to seksjoner. Svar på ${språkNavn}:
 Baby: ${babyNavn}, ${alderIMåneder()} måneder gammel.
 Søvndata med signaler: ${JSON.stringify(lurMedSignaler.slice(0, 20))}
 All søvndata: ${JSON.stringify(data.lurer?.slice(0, 20))}
 SEKSJON 1 - Skriv 3-4 dype, personlige observasjoner om ${babyNavn}s unike signalmønster. Dette skal føles som magi for foreldrene. Eksempel: "${babyNavn}s tidligste trøtthetssignal er å vende hodet bort. Dette kommer vanligvis 28 minutter før søvn." Start hver observasjon med 💛
 SEKSJON 2 - Skriv 3 korte AI-oppdagelser fra denne uken. Start hver oppdagelse med ✨UKE:
-Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`;
+Svar KUN med observasjonene og oppdagelsene på ${språkNavn}, én per linje. Ingen introduksjon. Behold prefiksene 💛 og ✨UKE: uendret.`;
     try {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -181,7 +186,13 @@ Svar KUN med observasjonene og oppdagelsene, én per linje. Ingen introduksjon.`
       setUkeInnsikter(linjer.filter((l: string) => l.trim().startsWith('✨UKE:')).map((l: string) => l.replace('✨UKE:', '✨')));
     } catch { setSpråkInnsikter([t('innsikt.kunneIkkeLasteSpråk')]); }
     setLasterSpråk(false);
-  }, [data.lurer, babyNavn, t]);
+  }, [data.lurer, babyNavn, fødselsdato, locale, t]);
+
+  useEffect(() => {
+    if (data.lurer && babyNavn && harSignaler) {
+      hentSpråkInnsikter();
+    }
+  }, [data.lurer, babyNavn, harSignaler, hentSpråkInnsikter]);
 
   const getSignalFarge = (signal: string): { bg: string; border: string; farge: string } => {
     const lower = signal.toLowerCase();
