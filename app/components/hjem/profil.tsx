@@ -2,6 +2,10 @@
 import { farger } from '../../lib/farger';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { SPRÅK_NAVN, SPRÅK_FLAGG, Locale } from '../../lib/i18n/translations';
+
+const SPRÅK_KODER: Locale[] = ['no', 'en', 'sv', 'da', 'de'];
 
 type Props = {
   bruker: any;
@@ -9,6 +13,7 @@ type Props = {
 };
 
 export default function Profil({ bruker, onLoggUt }: Props) {
+  const { locale, setLocale, t } = useLanguage();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyFødselsdato, setBabyFødselsdato] = useState('');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
@@ -145,6 +150,35 @@ const [sender, setSender] = useState(false);
         >
           {lagret ? '✓ Lagret!' : 'Lagre profil'}
         </button>
+        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px', marginTop: '16px' }}>{t('profil.språk')}</div>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          {SPRÅK_KODER.map((code) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => setLocale(code)}
+              style={{
+                flex: 1,
+                padding: '10px 4px',
+                borderRadius: '10px',
+                border: locale === code ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`,
+                backgroundColor: locale === code ? farger.grønnLys : farger.bakgrunn,
+                color: locale === code ? farger.grønn : farger.tekstLys,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-inter), sans-serif',
+                fontSize: '10px',
+                fontWeight: locale === code ? '600' : '400',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <span style={{ fontSize: '18px', lineHeight: 1 }}>{SPRÅK_FLAGG[code]}</span>
+              <span style={{ lineHeight: 1.2, textAlign: 'center' }}>{SPRÅK_NAVN[code]}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Administrer abonnement */}
