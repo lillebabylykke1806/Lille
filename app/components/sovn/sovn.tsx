@@ -7,6 +7,7 @@ import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import type { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; onNavigate?: (side: string) => void; };
 type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; };
@@ -18,11 +19,11 @@ const tilTidsformat = (tid: string): string => {
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
-const SIGNALER = [
-  { id: 'gned', label: 'Gned øynene' },
-  { id: 'gjesping', label: 'Gjesping' },
-  { id: 'stirret', label: 'Stirret tomt' },
-  { id: 'hodet', label: 'Vendte hodet' },
+const getSignaler = (t: (nøkkel: OversettelseNøkkel) => string) => [
+  { id: 'gned', label: t('søvn.signalGnedØynene') },
+  { id: 'gjesping', label: t('søvn.signalGjesping') },
+  { id: 'stirret', label: t('søvn.signalStirretTomt') },
+  { id: 'hodet', label: t('søvn.signalVendteHodet') },
 ];
 
 const Bølger = () => (
@@ -76,6 +77,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
 
 export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen, onNavigate }: Props) {
   const { t } = useLanguage();
+  const signaler = getSignaler(t);
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
   const [lurId, setLurId] = useState<number | null>(null);
@@ -121,7 +123,7 @@ const [annetTekst, setAnnetTekst] = useState('');
       id: l.id,
       tid: l.start,
       slutt: l.slutt,
-      tekst: l.type === 'lur' ? 'Lur' : l.type === 'natt' ? 'Sovnet' : l.type === 'oppvåkning' ? 'Våknet' : l.type === 'amming' ? 'Amming' : l.tekst || l.type,
+      tekst: l.type === 'lur' ? t('hendelse.lur') : l.type === 'natt' ? t('hendelse.sovnet') : l.type === 'oppvåkning' ? t('hendelse.våknet') : l.type === 'amming' ? t('hendelse.amming') : l.tekst || l.type,
       type: l.type,
       varighet: l.varighet,
     }));
@@ -131,7 +133,7 @@ const [annetTekst, setAnnetTekst] = useState('');
     else if (oppvåkninger <= 2) setSøvnkvalitet('God');
     else if (oppvåkninger <= 4) setSøvnkvalitet('Ok');
     else setSøvnkvalitet('Urolig');
-  }, [bruker, aktivtBarn]);
+  }, [bruker, aktivtBarn, t]);
 
   useEffect(() => {
     const lagretStartTid = localStorage.getItem('lille_starttid');
@@ -656,7 +658,7 @@ const [annetTekst, setAnnetTekst] = useState('');
                 <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>{t('søvn.signalerFørLur')}</div>
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>{t('søvn.hvaHarBabyenVist')}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                  {SIGNALER.map(signal => (
+                  {signaler.map(signal => (
                     <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? farger.grønn : 'none'} stroke={valgteSignaler.includes(signal.id) ? farger.grønn : '#8A7060'} strokeWidth="1.3"/>
@@ -812,7 +814,7 @@ const [annetTekst, setAnnetTekst] = useState('');
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>{t('søvn.signalerIKveld')}</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-              {SIGNALER.map(signal => (
+              {signaler.map(signal => (
                 <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? '1.5px solid rgba(138,174,224,0.6)' : '1px solid rgba(255,255,255,0.08)', backgroundColor: valgteSignaler.includes(signal.id) ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                   <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                     <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'none'} stroke={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'rgba(255,255,255,0.3)'} strokeWidth="1.3"/>

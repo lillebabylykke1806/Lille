@@ -143,6 +143,10 @@ export const oversettelser = {
   'søvn.soverBabyenFortsatt': { no: 'Sover babyen fortsatt? La sluttid stå tom.', en: 'Is the baby still sleeping? Leave end time empty.', sv: 'Sover bebisen fortfarande? Lämna sluttid tom.', da: 'Sover babyen stadig? Lad sluttid stå tom.', de: 'Schläft das Baby noch? Endzeit leer lassen.' },
   'søvn.registrerNoeAnnet': { no: 'Registrer noe annet', en: 'Register something else', sv: 'Registrera något annat', da: 'Registrer noget andet', de: 'Etwas anderes registrieren' },
   'søvn.annetPlaceholder': { no: 'F.eks. trøstet, ga vann, skiftet pyjamas...', en: 'E.g. comforted, gave water, changed pajamas...', sv: 'T.ex. tröstade, gav vatten, bytte pyjamas...', da: 'F.eks. trøstede, gav vand, skiftede pyjamas...', de: 'Z.B. getröstet, Wasser gegeben, Schlafanzug gewechselt...' },
+  'søvn.signalGnedØynene': { no: 'Gned øynene', en: 'Rubbed eyes', sv: 'Gnuggade ögonen', da: 'Gned øjnene', de: 'Augen gerieben' },
+  'søvn.signalGjesping': { no: 'Gjesping', en: 'Yawning', sv: 'Gäspning', da: 'Gaben', de: 'Gähnen' },
+  'søvn.signalStirretTomt': { no: 'Stirret tomt', en: 'Blank stare', sv: 'Stirrade tomt', da: 'Stirrede tomt', de: 'Leerer Blick' },
+  'søvn.signalVendteHodet': { no: 'Vendte hodet', en: 'Turned head', sv: 'Vände huvudet', da: 'Vendte hovedet', de: 'Kopf gedreht' },
 } as const;
 
 export type OversettelseNøkkel = keyof typeof oversettelser;
