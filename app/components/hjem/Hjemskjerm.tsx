@@ -611,21 +611,31 @@ Svar KUN med observasjonen.`
                 Vindu ca. {nesteLur.tid}
               </div>
               {(() => {
-                const lurData = [...(dagensFlyt || [])].filter(h => h.type === 'oppvåkning' || h.type === 'lur');
-                const siste = lurData.sort((a, b) => b.tid.localeCompare(a.tid))[0];
-                if (!siste?.tid) return null;
-                const [h, m] = siste.tid.split(':').map(Number);
-                const tid = new Date();
-                tid.setHours(h, m, 0, 0);
-                const våkentMinutter = Math.round((new Date().getTime() - tid.getTime()) / 60000);
-                if (våkentMinutter < 0 || våkentMinutter > 600) return null;
-                const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
-                return (
-                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
-                    ⭐ Våken siden: {våkentTekst}
-                  </div>
-                );
-              })()}
+  // Finn siste hendelse som indikerer at babyen er våken: oppvåkning, eller en avsluttet lur
+  const oppvåkninger = (dagensFlyt || []).filter(h => h.type === 'oppvåkning' || h.type === 'nattOppvåkning');
+  const avsluttedeLurer = (dagensFlyt || []).filter(h => h.type === 'lur' && h.slutt);
+
+  const kandidater: { tid: string }[] = [
+    ...oppvåkninger.map(h => ({ tid: h.tid })),
+    ...avsluttedeLurer.map(h => ({ tid: h.slutt })),
+  ];
+
+  if (kandidater.length === 0) return null;
+  const siste = kandidater.sort((a, b) => b.tid.localeCompare(a.tid))[0];
+  if (!siste?.tid) return null;
+
+  const [h, m] = siste.tid.split(':').map(Number);
+  const tid = new Date();
+  tid.setHours(h, m, 0, 0);
+  const våkentMinutter = Math.round((new Date().getTime() - tid.getTime()) / 60000);
+  if (våkentMinutter < 0 || våkentMinutter > 600) return null;
+  const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
+  return (
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#A8B5A2', marginTop: '4px' }}>
+      ⭐ Våken siden: {våkentTekst}
+    </div>
+  );
+})()}
             </div>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 4L10 8L6 12" stroke="#A8B5A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
