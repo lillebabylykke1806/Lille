@@ -6,6 +6,7 @@ import { hentProfilId } from '../../lib/profilId';
 import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
 
 type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; onNavigate?: (side: string) => void; };
 type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; };
@@ -74,6 +75,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
 };
 
 export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen, onNavigate }: Props) {
+  const { t } = useLanguage();
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
   const [lurId, setLurId] = useState<number | null>(null);
@@ -354,11 +356,11 @@ const [annetTekst, setAnnetTekst] = useState('');
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
           <div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Starttid</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('søvn.starttid')}</div>
             <input type="time" value={redigerStart} onChange={e => setRedigerStart(e.target.value)} style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
           </div>
           <div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>Sluttid</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px' }}>{t('søvn.sluttid')}</div>
             <input type="time" value={redigerSlutt} onChange={e => setRedigerSlutt(e.target.value)} style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
           </div>
         </div>
@@ -401,21 +403,21 @@ const [annetTekst, setAnnetTekst] = useState('');
           </svg>
         </div>
         <div style={{ textAlign: 'center', marginBottom: '32px', animation: 'fadeOpp 0.8s 0.3s ease-out both' }}>
-          <div style={{ fontSize: '28px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>God morgen! 🌿</div>
+          <div style={{ fontSize: '28px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('søvn.godMorgen')}</div>
           <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-            {nattMinutter >= 360 ? `Baby sov i ${Math.floor(nattMinutter / 60)} timer og ${nattMinutter % 60} minutter` : 'Natta er over – ny dag begynner'}
+            {nattMinutter >= 360 ? t('søvn.babySovI', { timer: Math.floor(nattMinutter / 60), minutter: nattMinutter % 60 }) : t('søvn.nattaErOver')}
           </div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px', animation: 'fadeOpp 0.8s 0.5s ease-out both' }}>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '16px' }}>Nattens sammendrag</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '16px' }}>{t('søvn.nattensSammendrag')}</div>
           <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
   <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
     <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>{Math.floor(nattMinutter / 60)}t {nattMinutter % 60}m</div>
-    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Total søvntid</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.totalSøvntid')}</div>
   </div>
   <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
     <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: antallOppvåkninger > 3 ? '#C48E7B' : farger.grønn, fontWeight: '700' }}>{antallOppvåkninger}</div>
-    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Oppvåkninger</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.oppvåkninger')}</div>
   </div>
   <div style={{ flex: 1, backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
     <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
@@ -428,7 +430,7 @@ const [annetTekst, setAnnetTekst] = useState('');
         return `${Math.floor(lengst / 60)}t ${lengst % 60}m`;
       })()}
     </div>
-    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Lengste strekk</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.lengsteStrekk')}</div>
   </div>
 </div>
           {tidslinje.length > 0 && (
@@ -460,16 +462,16 @@ const [annetTekst, setAnnetTekst] = useState('');
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', animation: 'fadeOpp 0.8s 0.7s ease-out both' }}>
           <button onClick={async () => { await registrerOppvåkning(); setVisning('velg'); lastTidslinje(); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            Start dagen 🌿
+            {t('søvn.startDagen')}
           </button>
           <button onClick={() => { setNyTidStr(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })); setVisJusterTid(true); }} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
-            Ikke riktig tidspunkt? Juster oppvåkning
+            {t('søvn.ikkeRiktigTidspunkt')}
           </button>
           {visJusterTid && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisJusterTid(false)}>
               <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
                 <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Når våknet babyen?</div>
+                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('søvn.nårVåknetBabyen')}</div>
                 <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
                 <button onClick={async () => {
                   const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -477,7 +479,7 @@ const [annetTekst, setAnnetTekst] = useState('');
                   await supabase.from('lurer').insert({ profil_id: profilId, dato: dagensdato(), type: 'oppvåkning', start: nyTidStr, slutt: null, varighet: 0, signaler: '' });
                   setVisJusterTid(false); setVisning('velg'); lastTidslinje();
                 }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                  Lagre oppvåkning
+                  {t('søvn.lagreOppvåkning')}
                 </button>
               </div>
             </div>
@@ -495,8 +497,8 @@ const [annetTekst, setAnnetTekst] = useState('');
         <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
           <img src="/mane.png" alt="måne" style={{ width: '150px', height: 'auto', maskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)', WebkitMaskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)' }} />
         </div>
-        <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>Hva slags søvn<br/>skal du registrere?</div>
-        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>Velg type for best mulig innsikt</div>
+        <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>{t('søvn.hvaSlagsSøvn')}</div>
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>{t('søvn.velgType')}</div>
         <div style={{ marginBottom: '10px' }}>
           <button onClick={() => startSøvn('lur')} style={{ width: '100%', padding: '18px 20px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left' }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -508,7 +510,7 @@ const [annetTekst, setAnnetTekst] = useState('');
             </svg>
             <div>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Lur</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Dagtidssøvn</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.dagtidssøvn')}</div>
             </div>
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
@@ -519,8 +521,8 @@ const [annetTekst, setAnnetTekst] = useState('');
               <path d="M28 20C27.1 24.6 23 28 18 28C12.5 28 8 23.5 8 18C8 13 11.4 8.9 16 8C13 11 13 16.5 16.5 20C20 23.5 25 23.5 28 20Z" fill="#6B7FC4"/>
             </svg>
             <div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Natta</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Nattesøvn</div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>{t('søvn.natta')}</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.nattesøvn')}</div>
             </div>
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
@@ -528,8 +530,8 @@ const [annetTekst, setAnnetTekst] = useState('');
         <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start', textAlign: 'left' }}>
           <span style={{ fontSize: '18px' }}>💡</span>
           <div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Tips</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Ved å registrere riktig søvntype får du mer treffsikre innsikter.</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>{t('søvn.tips')}</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>{t('søvn.tipsBeskrivelse')}</div>
           </div>
         </div>
       </div>
@@ -541,26 +543,26 @@ const [annetTekst, setAnnetTekst] = useState('');
     return (
       <div style={{ padding: '24px' }}>
         <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: farger.tekstLys, cursor: 'pointer', fontSize: '24px', marginBottom: '16px' }}>‹</button>
-        <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '24px' }}>Legg til tidligere søvn</div>
+        <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '24px' }}>{t('søvn.leggTilTidligereSøvn')}</div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '20px' }}>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-            {(['lur', 'natt'] as const).map(t => (
-              <button key={t} onClick={() => setNyType(t)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: nyType === t ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: nyType === t ? farger.grønnLys : farger.bakgrunn, color: nyType === t ? farger.grønn : farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyType === t ? '600' : '400' }}>
-                {t === 'lur' ? 'Lur' : 'Nattesøvn'}
+            {(['lur', 'natt'] as const).map(sovntype => (
+              <button key={sovntype} onClick={() => setNyType(sovntype)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: nyType === sovntype ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: nyType === sovntype ? farger.grønnLys : farger.bakgrunn, color: nyType === sovntype ? farger.grønn : farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyType === sovntype ? '600' : '400' }}>
+                {sovntype === 'lur' ? 'Lur' : t('søvn.nattesøvn')}
               </button>
             ))}
           </div>
-          <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Dato</div>
+          <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('søvn.dato')}</div>
           <input type="date" value={nyDato} onChange={e => setNyDato(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '14px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
           <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Starttid</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('søvn.starttid')}</div>
               <input type="time" value={nyStart} onChange={e => setNyStart(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Sluttid</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('søvn.sluttid')}</div>
               <input type="time" value={nySlutt} onChange={e => setNySlutt(e.target.value)} style={{ width: '100%', padding: '10px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '6px' }}>Sover babyen fortsatt? La sluttid stå tom.</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '6px' }}>{t('søvn.soverBabyenFortsatt')}</div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -583,8 +585,8 @@ const [annetTekst, setAnnetTekst] = useState('');
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <button onClick={() => { setLurFerdig(false); setVisning('velg'); }} style={{ background: 'none', border: 'none', color: farger.tekstLys, cursor: 'pointer', fontSize: '24px' }}>‹</button>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '0.08em' }}>{lurFerdig ? 'LUR AVSLUTTET' : 'LUR'}</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Dagtidssøvn</div>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '0.08em' }}>{lurFerdig ? t('søvn.lurAvsluttet') : t('søvn.lur_caps')}</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.dagtidssøvn')}</div>
             </div>
             <div style={{ width: '32px' }} />
           </div>
@@ -592,7 +594,7 @@ const [annetTekst, setAnnetTekst] = useState('');
           {lurFerdig ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
-              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Lur registrert!</div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('søvn.lurRegistrert')}</div>
               {sisteLurFerdig && (
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '24px' }}>
                   {sisteLurFerdig.tid}{sisteLurFerdig.slutt ? ` – ${sisteLurFerdig.slutt}` : ''} · {sisteLurFerdig.varighet} min
@@ -600,11 +602,11 @@ const [annetTekst, setAnnetTekst] = useState('');
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <button onClick={() => { setLurFerdig(false); setVisning('velg'); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                  Tilbake 🌿
+                  {t('søvn.tilbake')}
                 </button>
                 {sisteLurFerdig && (
                   <button onClick={() => { setRedigerLur(sisteLurFerdig); setRedigerStart(sisteLurFerdig.tid); setRedigerSlutt(sisteLurFerdig.slutt || ''); }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                    Juster tidspunkt
+                    {t('søvn.justerTidspunkt')}
                   </button>
                 )}
               </div>
@@ -628,11 +630,11 @@ const [annetTekst, setAnnetTekst] = useState('');
                       transform="rotate(-90 110 110)" style={{ transition: 'stroke-dashoffset 1s linear' }}/>
                   </svg>
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Luren pågår</div>
+                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>{t('søvn.lurenPågår')}</div>
                     <div style={{ fontSize: '40px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
                       {String(Math.floor(minutter / 60)).padStart(2, '0')}:{String(minutter % 60).padStart(2, '0')}
                     </div>
-                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px', textDecoration: 'underline' }}>Trykk for å justere tid</div>
+                    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px', textDecoration: 'underline' }}>{t('søvn.trykkForJustere')}</div>
                   </div>
                 </button>
               </div>
@@ -645,14 +647,14 @@ const [annetTekst, setAnnetTekst] = useState('');
               )}
               <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
                 <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#A8B5A2', border: 'none', borderRadius: '28px', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer' }}>
-                  Avslutt lur
+                  {t('søvn.avsluttLur')}
                 </button>
               </div>
 
               {/* Signaler */}
               <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '12px' }}>
-                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>Signaler før lur</div>
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Hva har babyen vist før luren?</div>
+                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px' }}>{t('søvn.signalerFørLur')}</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>{t('søvn.hvaHarBabyenVist')}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                   {SIGNALER.map(signal => (
                     <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? `1.5px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: valgteSignaler.includes(signal.id) ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer' }}>
@@ -669,7 +671,7 @@ const [annetTekst, setAnnetTekst] = useState('');
                     <line x1="8" y1="5" x2="8" y2="11" stroke="#8A7060" strokeWidth="1.3" strokeLinecap="round"/>
                     <line x1="5" y1="8" x2="11" y2="8" stroke="#8A7060" strokeWidth="1.3" strokeLinecap="round"/>
                   </svg>
-                  <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Legg til eget signal</span>
+                  <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.leggTilEgetSignal')}</span>
                 </button>
               </div>
             </>
@@ -678,8 +680,8 @@ const [annetTekst, setAnnetTekst] = useState('');
    {/* Tidslinje */}
 {tidslinje.length > 0 && (
   <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '16px' }}>
-    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>I dag</div>
-    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>Trykk på en lur for å redigere tid</div>
+    <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('søvn.iDag')}</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px' }}>{t('søvn.trykkForRedigereTid')}</div>
     <div style={{ overflowX: 'auto' }}>
       <div style={{ display: 'flex', alignItems: 'flex-end', minWidth: `${tidslinje.length * 80}px`, paddingBottom: '8px' }}>
         {tidslinje.map((item, i) => (
@@ -708,7 +710,7 @@ const [annetTekst, setAnnetTekst] = useState('');
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisEgetSignal(false)}>
               <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
                 <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Legg til eget signal</div>
+                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('søvn.leggTilEgetSignal')}</div>
                 <input type="text" value={egetSignalTekst} onChange={e => setEgetSignalTekst(e.target.value)} placeholder="F.eks. Klynket, Gned ansiktet..." autoFocus style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }} />
                 <button onClick={async () => {
                   if (!egetSignalTekst.trim()) return;
@@ -754,8 +756,8 @@ const [annetTekst, setAnnetTekst] = useState('');
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <button onClick={() => setVisning('velg')} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>‹</button>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '700', letterSpacing: '0.08em' }}>NATTA</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Nattesøvn</div>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '700', letterSpacing: '0.08em' }}>{t('søvn.natta_caps')}</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>{t('søvn.nattesøvn')}</div>
             </div>
             <div style={{ width: '32px' }} />
           </div>
@@ -780,7 +782,7 @@ const [annetTekst, setAnnetTekst] = useState('');
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
   <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: nattligOppvåkning ? '#F4A853' : '#8A8FA8', marginBottom: '2px' }}>
-    {nattligOppvåkning ? 'Våken siden' : 'Baby sover'}
+    {nattligOppvåkning ? t('søvn.våkenSiden') : t('søvn.babySover')}
   </div>
   <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: nattligOppvåkning ? '#F4A853' : '#FDFAF6', fontWeight: '700', lineHeight: 1 }}>
     {nattligOppvåkning
@@ -788,7 +790,7 @@ const [annetTekst, setAnnetTekst] = useState('');
       : timerTekst}
   </div>
   <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
-    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>Siden {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>{t('søvn.siden')} {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
   </button>
 </div>
             </div>
@@ -803,12 +805,12 @@ const [annetTekst, setAnnetTekst] = useState('');
           <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
               <span style={{ fontSize: '14px' }}>✨</span>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Nattens innsikt</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('søvn.nattensInnsikt')}</div>
             </div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{søvnmelding()}</div>
           </div>
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Signaler i kveld</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>{t('søvn.signalerIKveld')}</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
               {SIGNALER.map(signal => (
                 <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? '1.5px solid rgba(138,174,224,0.6)' : '1px solid rgba(255,255,255,0.08)', backgroundColor: valgteSignaler.includes(signal.id) ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
@@ -825,12 +827,12 @@ const [annetTekst, setAnnetTekst] = useState('');
                 <line x1="8" y1="5" x2="8" y2="11" stroke="rgba(255,255,255,0.4)" strokeWidth="1.3" strokeLinecap="round"/>
                 <line x1="5" y1="8" x2="11" y2="8" stroke="rgba(255,255,255,0.4)" strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
-              <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Legg til eget signal</span>
+              <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>{t('søvn.leggTilEgetSignal')}</span>
             </button>
           </div>
           {tidslinje.length > 0 && (
             <div style={{ position: 'relative', backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px', overflow: 'hidden' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Nattens tidslinje</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>{t('søvn.nattensTidslinje')}</div>
               <div style={{ overflowX: 'auto', overflowY: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', minWidth: `${tidslinje.length * 80}px` }}>
                   {tidslinje.map((item, i) => (
@@ -852,28 +854,28 @@ const [annetTekst, setAnnetTekst] = useState('');
             </div>
           )}
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>Skap ro</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>{t('søvn.skapRo')}</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
               <button onClick={() => setVisLydPanel(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px 6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
                 <img src="/lydbolge.png" alt="lyder" style={{ width: '100%', height: '50px', minHeight: '90px', objectFit: 'contain' }} />
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Lyder</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>{t('søvn.lyder')}</div>
               </button>
               <button onClick={() => setVisNattlys(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px 6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
                 <img src="/nattlampe.png" alt="nattlys" style={{ width: '70px', height: '70px', minHeight: '90px', objectFit: 'contain' }} />
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Nattlys</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>{t('søvn.nattlys')}</div>
               </button>
               <button onClick={() => setVisPust(true)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px 6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(255,255,255,0.06)', cursor: 'pointer' }}>
                 <img src="/pusteboble.png" alt="pust" style={{ width: '90px', height: '90px', minHeight: '90px', objectFit: 'contain' }} />
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>Pust med meg</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#C4A882' }}>{t('søvn.pustMedMeg')}</div>
               </button>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={stoppSøvn} style={{ flex: 2, padding: '16px', backgroundColor: '#4A5580', border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              Avslutt natta
+              {t('søvn.avsluttNatta')}
             </button>
-            <button onClick={nattligOppvåkning ? startSøvnIgjen : registrerOppvåkning} style={{ flex: 1, padding: '16px', backgroundColor: nattligOppvåkning ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.06)', border: `1px solid ${nattligOppvåkning ? 'rgba(138,174,224,0.4)' : 'rgba(255,255,255,0.12)'}`, borderRadius: '28px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: nattligOppvåkning ? '#8AAEE0' : '#C4A882', cursor: 'pointer', textAlign: 'center' }}>
-  {nattligOppvåkning ? 'Start søvnen\nigjen' : 'Nattlig\noppvåkning'}
+            <button onClick={nattligOppvåkning ? startSøvnIgjen : registrerOppvåkning} style={{ flex: 1, padding: '16px', backgroundColor: nattligOppvåkning ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.06)', border: `1px solid ${nattligOppvåkning ? 'rgba(138,174,224,0.4)' : 'rgba(255,255,255,0.12)'}`, borderRadius: '28px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: nattligOppvåkning ? '#8AAEE0' : '#C4A882', cursor: 'pointer', textAlign: 'center', whiteSpace: 'pre-line' }}>
+  {nattligOppvåkning ? t('søvn.startSøvnenIgjen') : t('søvn.nattligOppvåkningKnapp')}
 </button>
           </div>
           {redigerLur && <RedigerModal />}
@@ -882,11 +884,11 @@ const [annetTekst, setAnnetTekst] = useState('');
           <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisAnnetModal(false)}>
             <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
               <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-              <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Registrer noe annet</div>
+              <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('søvn.registrerNoeAnnet')}</div>
               <textarea
                 value={annetTekst}
                 onChange={e => setAnnetTekst(e.target.value)}
-                placeholder="F.eks. trøstet, ga vann, skiftet pyjamas..."
+                placeholder={t('søvn.annetPlaceholder')}
                 autoFocus
                 style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '90px', boxSizing: 'border-box', marginBottom: '20px' }}
               />
