@@ -397,7 +397,9 @@ Svar KUN med de 3 punktene, én per linje.`
         )}
 
         {/* Registrer knapp */}
-        
+        <button onClick={() => setVisRegistrer(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          + {t('kolikk.registrerUroEpisode')}
+        </button>
 
         {/* Historikk */}
         {logg.length > 0 && (
