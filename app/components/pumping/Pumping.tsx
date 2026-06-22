@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; };
 
@@ -15,31 +17,34 @@ type PumpingRegistrering = {
   notat?: string;
 };
 
-const PUMPING_TYPER = [
-  { id: 'dobbel', label: 'Dobbel pumping' },
-  { id: 'enkel-venstre', label: 'Enkel – venstre' },
-  { id: 'enkel-høyre', label: 'Enkel – høyre' },
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
+  no: 'norsk',
+  en: 'English',
+  sv: 'svenska',
+  da: 'dansk',
+  de: 'Deutsch',
+};
+
+const getPumpingTyper = (t: TFn) => [
+  { id: 'dobbel', label: t('pumping.typeDobbel') },
+  { id: 'enkel-venstre', label: t('pumping.typeEnkelVenstre') },
+  { id: 'enkel-høyre', label: t('pumping.typeEnkelHøyre') },
 ];
 
-const TIDSPUNKT = [
-  { id: 'morgen', label: 'Morgen', ikon: '🌅' },
-  { id: 'formiddag', label: 'Formiddag', ikon: '☀️' },
-  { id: 'ettermiddag', label: 'Ettermiddag', ikon: '🌤️' },
-  { id: 'kveld', label: 'Kveld', ikon: '🌙' },
-  { id: 'natt', label: 'Natt', ikon: '⭐' },
-];
-
-const getTidspunkt = (klokkeslett: string) => {
+const getTidspunkt = (klokkeslett: string, t: TFn) => {
   const time = parseInt(klokkeslett.slice(0, 2));
-  if (time >= 5 && time < 9) return { label: 'Morgen', ikon: '🌅' };
-  if (time >= 9 && time < 12) return { label: 'Formiddag', ikon: '☀️' };
-  if (time >= 12 && time < 17) return { label: 'Ettermiddag', ikon: '🌤️' };
-  if (time >= 17 && time < 22) return { label: 'Kveld', ikon: '🌙' };
-  return { label: 'Natt', ikon: '⭐' };
+  if (time >= 5 && time < 9) return { label: t('pumping.morgen'), ikon: '🌅' };
+  if (time >= 9 && time < 12) return { label: t('pumping.formiddag'), ikon: '☀️' };
+  if (time >= 12 && time < 17) return { label: t('pumping.ettermiddag'), ikon: '🌤️' };
+  if (time >= 17 && time < 22) return { label: t('pumping.kveld'), ikon: '🌙' };
+  return { label: t('pumping.natt'), ikon: '⭐' };
 };
 
 export default function Pumping({ bruker }: Props) {
-  const [pumpinger, setPumpinger] = useState<PumpingRegistrering[]>([]);
+  const { t, locale } = useLanguage();
+  const pumpingTyper = getPumpingTyper(t);  const [pumpinger, setPumpinger] = useState<PumpingRegistrering[]>([]);
   const [laster, setLaster] = useState(true);
   const [visSkjema, setVisSkjema] = useState(false);
   const [aiInnsikter, setAiInnsikter] = useState<string[]>([]);
@@ -63,13 +68,10 @@ export default function Pumping({ bruker }: Props) {
 
   useEffect(() => { lastData(); }, [lastData]);
 
-  useEffect(() => {
-    if (pumpinger.length >= 3) hentAiInnsikter();
-  }, [pumpinger]);
-
-  const hentAiInnsikter = async () => {
+  const hentAiInnsikter = useCallback(async () => {
     setLasterAi(true);
-    const prompt = `Du er en varm og støttende laktasjonskonsulent i appen Lille. Analyser disse pumpingregistreringene og gi 3-4 personlige innsikter på norsk.
+    const språkNavn = LOCALE_SPRÅKNAVN[locale];
+    const prompt = `Du er en varm og støttende laktasjonskonsulent i appen Lille. Analyser disse pumpingregistreringene og gi 3-4 personlige innsikter på ${språkNavn}.
 
 Pumpingdata: ${JSON.stringify(pumpinger.slice(0, 20))}
 
@@ -84,7 +86,11 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
       setAiInnsikter(tekst.split('\n').filter((l: string) => l.trim().startsWith('✦')));
     } catch { }
     setLasterAi(false);
-  };
+  }, [locale, pumpinger]);
+
+  useEffect(() => {
+    if (pumpinger.length >= 3) hentAiInnsikter();
+  }, [pumpinger, hentAiInnsikter]);
 
   const lagrePumping = async () => {
     if (!varighet || !mengde) return;
@@ -123,6 +129,20 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
     ? Math.round(pumpinger.reduce((sum, p) => sum + p.mengde, 0) / Math.max([...new Set(pumpinger.map(p => p.dato))].length, 1))
     : 0;
 
+  const formatDato = (dato: string) => {
+    const d = new Date(dato);
+    return `${d.getDate()}. ${d.toLocaleDateString(locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB', { month: 'short' })}`;
+  };
+
+  const getDatoLabel = (dato: string) => {
+    const erIDag = dato === dagensdato;
+    const erIGår = dato === new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    return erIDag ? t('pumping.iDagLabel') : erIGår ? t('pumping.iGår') : formatDato(dato);
+  };
+
+  const ukeØkter = pumpinger.filter(p => { const d = new Date(p.dato); const diff = (new Date().getTime() - d.getTime()) / (1000 * 60 * 60 * 24); return diff <= 7; }).length;
+  const økterLabel = (antall: number) => `${antall} ${t('pumping.økter').toLowerCase()}`;
+
   if (laster) return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -137,10 +157,10 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '24px' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          🍼 Pumping
+          {t('pumping.tittel')}
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-          Din tid. Din melk. Din styrke. 🧡
+          {t('pumping.undertittel')}
         </div>
       </div>
 
@@ -153,16 +173,16 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
               <div style={{ fontSize: '64px', flexShrink: 0 }}>🍼</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '10px' }}>
-                  Velkommen til Pumping! 🧡
+                  {t('pumping.velkommenTittel')}
                 </div>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '12px' }}>
-                  Her kan du følge din pumpereise og få innsikt som gjør hverdagen enklere.
+                  {t('pumping.velkommenBeskrivelse')}
                 </div>
                 {[
-                  'Registrer pumpingene dine',
-                  'Få oversikt over melkeproduksjonen',
-                  'Se mønstre og få personlige innsikter',
-                  'Bygg opp ditt melkelager',
+                  t('pumping.steg1'),
+                  t('pumping.steg2'),
+                  t('pumping.steg3'),
+                  t('pumping.steg4'),
                 ].map((tekst, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                     <div style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: farger.terrakottaLys, border: `1px solid ${farger.terrakotta}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -179,7 +199,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
               onClick={() => setVisSkjema(true)}
               style={{ width: '100%', padding: '14px', background: `linear-gradient(135deg, ${farger.terrakotta}, #8B4520)`, border: 'none', borderRadius: '50px', fontSize: '15px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: `0 4px 16px rgba(176,90,47,0.4)` }}
             >
-              <span style={{ fontSize: '18px' }}>+</span> Registrer første pumping
+              <span style={{ fontSize: '18px' }}>+</span> {t('pumping.registrerFørstePumping')}
             </button>
           </div>
 
@@ -187,15 +207,15 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
               <span style={{ fontSize: '14px' }}>✨</span>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Dette vil du få innsikt i</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('pumping.detteVilDuFåInnsiktI')}</div>
               <span style={{ fontSize: '14px' }}>✨</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               {[
-                { ikon: '💧', bg: farger.terrakottaLys, tittel: 'Mengde', tekst: 'Se hvor mye melk du pumper over tid og dine daglige mønstre.' },
-                { ikon: '🕐', bg: '#FFF8EC', tittel: 'Frekvens', tekst: 'Oppdag når på dagen du vanligvis pumper mest effektivt.' },
-                { ikon: '🧊', bg: '#EEF2FF', tittel: 'Melkelager', tekst: 'Få oversikt over lageret ditt og hvordan det vokser.' },
-                { ikon: '✨', bg: '#F5F0FF', tittel: 'Innsikt fra AI', tekst: 'AI finner mønstre og gir deg personlige anbefalinger.' },
+                { ikon: '💧', bg: farger.terrakottaLys, tittel: t('pumping.mengdeTittel'), tekst: t('pumping.mengdeTekst') },
+                { ikon: '🕐', bg: '#FFF8EC', tittel: t('pumping.frekvens'), tekst: t('pumping.frekvensTekst') },
+                { ikon: '🧊', bg: '#EEF2FF', tittel: t('pumping.melkelager'), tekst: t('pumping.melkelagerTekst') },
+                { ikon: '✨', bg: '#F5F0FF', tittel: t('pumping.aiInnsikt'), tekst: t('pumping.aiInnsiktTekst') },
               ].map((item, i) => (
                 <div key={i} style={{ backgroundColor: item.bg, borderRadius: '16px', padding: '14px' }}>
                   <div style={{ fontSize: '24px', marginBottom: '8px' }}>{item.ikon}</div>
@@ -210,16 +230,16 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
               <span style={{ fontSize: '18px' }}>✦</span>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Slik kommer du i gang</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('pumping.slikKommerDuIGang')}</div>
             </div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '14px', lineHeight: 1.6 }}>
-              Jo mer du registrerer, desto bedre innsikt får du.
+              {t('pumping.joMerDuRegistrerer')}
             </div>
             {[
-              'Registrer hver pumping du gjennomfører',
-              'Noter mengden melk du får ut',
-              'Se hvordan kroppen din responderer over tid',
-              'Få personlige tips som passer for deg',
+              t('pumping.gangSteg1'),
+              t('pumping.gangSteg2'),
+              t('pumping.gangSteg3'),
+              t('pumping.gangSteg4'),
             ].map((tekst, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                 <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: farger.terrakottaLys, border: `1px solid ${farger.terrakotta}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -235,15 +255,15 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           {/* Ingen registrerte pumpinger */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '24px', marginBottom: '16px', textAlign: 'center' }}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>📋</div>
-            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '6px' }}>Ingen registrerte pumpinger ennå</div>
+            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '6px' }}>{t('pumping.ingenRegistrert')}</div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px', lineHeight: 1.6 }}>
-              Når du har registrert pumpinger vil du se historikken din her.
+              {t('pumping.historikkHer')}
             </div>
             <button
               onClick={() => setVisSkjema(true)}
               style={{ padding: '12px 24px', background: `linear-gradient(135deg, ${farger.terrakotta}, #8B4520)`, border: 'none', borderRadius: '50px', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
-              <span>+</span> Registrer første pumping
+              <span>+</span> {t('pumping.registrerFørstePumping')}
             </button>
           </div>
 
@@ -251,15 +271,15 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
               <span style={{ fontSize: '14px' }}>✨</span>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Snart kan du se</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('pumping.snartKanDuSe')}</div>
               <span style={{ fontSize: '14px' }}>✨</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               {[
-                { ikon: '📈', tittel: 'Produksjonsgraf', tekst: 'Se utviklingen av melkeproduksjonen din over tid.' },
-                { ikon: '⏰', tittel: 'Beste tidspunkt', tekst: 'Oppdag når på dagen du får mest melk.' },
-                { ikon: '📊', tittel: 'Øker & varighet', tekst: 'Se gjennomsnittlig varighet og effektivitet på øktene dine.' },
-                { ikon: '🧊', tittel: 'Melkelager­oversikt', tekst: 'Få full oversikt over lageret ditt og forbruket.' },
+                { ikon: '📈', tittel: t('pumping.produksjonsgraf'), tekst: t('pumping.produksjonsgrafTekst') },
+                { ikon: '⏰', tittel: t('pumping.besteTidspunkt'), tekst: t('pumping.besteTidspunktTekst') },
+                { ikon: '📊', tittel: t('pumping.økterOgVarighet'), tekst: t('pumping.økterOgVarighetTekst') },
+                { ikon: '🧊', tittel: t('pumping.melkelagerOversikt'), tekst: t('pumping.melkelagerOversiktTekst') },
               ].map((item, i) => (
                 <div key={i} style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '14px', position: 'relative' }}>
                   <div style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '14px' }}>🔒</div>
@@ -276,9 +296,9 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
               <div style={{ fontSize: '22px', flexShrink: 0 }}>💡</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700', marginBottom: '6px' }}>Du gjør en fantastisk jobb! 🧡</div>
+                <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700', marginBottom: '6px' }}>{t('pumping.duGjørEnFantastiskJobb')}</div>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>
-                  Hver dråpe du pumper er verdifull for babyen din. Vi er her for å hjelpe deg hele veien!
+                  {t('pumping.duGjørEnFantastiskJobbTekst')}
                 </div>
               </div>
               <div style={{ fontSize: '40px', flexShrink: 0 }}>🐻</div>
@@ -292,33 +312,33 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>DAGENS OVERSIKT</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>{t('pumping.dagensOversikt')}</div>
                 <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-                  Du har pumpet {dagensØkter} {dagensØkter === 1 ? 'gang' : 'ganger'} i dag
+                  {t('pumping.harPumpet', { antall: dagensØkter, gang: dagensØkter === 1 ? t('pumping.gang') : t('pumping.ganger') })}
                 </div>
                 <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>
-                  Totalt {dagensMengde} ml
+                  {t('pumping.totalt', { mengde: dagensMengde })}
                 </div>
                 <div style={{ display: 'flex', gap: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{ fontSize: '16px' }}>💧</span>
                     <div>
                       <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{dagensMengde} ml</div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Total mengde</div>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('pumping.totalMengde')}</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{ fontSize: '16px' }}>🕐</span>
                     <div>
                       <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{dagensVarighet} min</div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Total tid</div>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('pumping.totalTid')}</div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{ fontSize: '16px' }}>✦</span>
                     <div>
                       <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{dagensØkter}</div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Økter</div>
+                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('pumping.økter')}</div>
                     </div>
                   </div>
                 </div>
@@ -330,10 +350,10 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           {/* 4 statistikkbokser */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px', marginBottom: '16px' }}>
             {[
-              { label: 'I DAG', verdi: `${dagensMengde} ml`, undertekst: `${dagensØkter} økter` },
-              { label: 'DENNE UKEN', verdi: `${(uketotal / 1000).toFixed(1)} l`, undertekst: `${pumpinger.filter(p => { const d = new Date(p.dato); const diff = (new Date().getTime() - d.getTime()) / (1000 * 60 * 60 * 24); return diff <= 7; }).length} økter` },
-              { label: 'GJENNOMSNITT', verdi: `${snittPerDag} ml`, undertekst: 'per dag' },
-              { label: 'MELKELAGER', verdi: '–', undertekst: 'i fryseren' },
+              { label: t('pumping.iDag'), verdi: `${dagensMengde} ml`, undertekst: økterLabel(dagensØkter) },
+              { label: t('pumping.denneUken'), verdi: `${(uketotal / 1000).toFixed(1)} l`, undertekst: økterLabel(ukeØkter) },
+              { label: t('pumping.gjennomsnitt'), verdi: `${snittPerDag} ml`, undertekst: t('pumping.perDag') },
+              { label: t('pumping.melkelagerLabel'), verdi: '–', undertekst: t('pumping.iFryseren') },
             ].map((boks, i) => (
               <div key={i} style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', padding: '12px' }}>
                 <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', marginBottom: '4px', letterSpacing: '0.05em' }}>{boks.label}</div>
@@ -347,11 +367,11 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           {(lasterAi || aiInnsikter.length > 0) && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', right: '16px', bottom: '16px', fontSize: '48px', opacity: 0.15 }}>🐻</div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>✦ AI-INNSIKT</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>{t('pumping.aiInnsiktHeader')}</div>
               {lasterAi ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '20px', height: '20px', border: `2px solid ${farger.terrakotta}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Analyserer pumpemønstre...</div>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('pumping.analysererPumpemønstre')}</div>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -366,15 +386,13 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           {/* Siste pumpingøkter – tidslinje */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase' }}>SISTE PUMPINGØKTER</div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600' }}>Se alle</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{t('pumping.sistePumpingøkter')}</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600' }}>{t('pumping.seAlle')}</div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '16px', overflow: 'hidden', padding: '8px 0' }}>
               {pumpinger.slice(0, 5).map((p, i) => {
-                const tp = getTidspunkt(p.klokkeslett);
-                const erIDag = p.dato === dagensdato;
-                const erIGår = p.dato === new Date(Date.now() - 86400000).toISOString().split('T')[0];
-                const datoLabel = erIDag ? 'I dag' : erIGår ? 'I går' : `${new Date(p.dato).getDate()}. ${['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'][new Date(p.dato).getMonth()]}`;
+                const tp = getTidspunkt(p.klokkeslett, t);
+                const datoLabel = getDatoLabel(p.dato);
                 return (
                   <div key={i} style={{ position: 'relative' }}>
                     {i < Math.min(pumpinger.length, 5) - 1 && (
@@ -394,7 +412,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
                           </div>
                         </div>
                         <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                          {p.varighet} min · {PUMPING_TYPER.find(t => t.id === p.type)?.label || p.type}
+                          {p.varighet} min · {pumpingTyper.find(pt => pt.id === p.type)?.label || p.type}
                         </div>
                       </div>
                       <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700', flexShrink: 0 }}>
@@ -415,7 +433,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
             onClick={() => setVisSkjema(true)}
             style={{ position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)', padding: '16px 32px', background: `linear-gradient(135deg, ${farger.terrakotta}, #8B4520)`, border: 'none', borderRadius: '50px', fontSize: '15px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: `0 4px 20px rgba(176,90,47,0.5)`, zIndex: 50 }}
           >
-            <span style={{ fontSize: '18px' }}>+</span> Registrer pumpingøkt
+            <span style={{ fontSize: '18px' }}>+</span> {t('pumping.registrerPumpingøkt')}
           </button>
         </>
       )}
@@ -425,15 +443,15 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisSkjema(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Ny pumpingøkt 🍼</div>
+            <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('pumping.nyPumpingøkt')}</div>
 
             {/* Type */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Type pumping</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.typePumping')}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {PUMPING_TYPER.map(t => (
-                  <button key={t.id} onClick={() => setPumpingType(t.id)} style={{ padding: '12px 16px', backgroundColor: pumpingType === t.id ? farger.terrakottaLys : farger.bakgrunn, border: `1.5px solid ${pumpingType === t.id ? farger.terrakotta : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', textAlign: 'left', fontSize: '13px', fontFamily: 'var(--font-inter)', color: pumpingType === t.id ? farger.terrakotta : farger.tekst, fontWeight: pumpingType === t.id ? '600' : '400' }}>
-                    {t.label}
+                {pumpingTyper.map(pt => (
+                  <button key={pt.id} onClick={() => setPumpingType(pt.id)} style={{ padding: '12px 16px', backgroundColor: pumpingType === pt.id ? farger.terrakottaLys : farger.bakgrunn, border: `1.5px solid ${pumpingType === pt.id ? farger.terrakotta : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', textAlign: 'left', fontSize: '13px', fontFamily: 'var(--font-inter)', color: pumpingType === pt.id ? farger.terrakotta : farger.tekst, fontWeight: pumpingType === pt.id ? '600' : '400' }}>
+                    {pt.label}
                   </button>
                 ))}
               </div>
@@ -441,24 +459,24 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
 
             {/* Mengde */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Mengde (ml)</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.mengdeML')}</div>
               <input
                 type="number"
                 value={mengde}
                 onChange={e => setMengde(e.target.value)}
-                placeholder="f.eks. 150"
+                placeholder={t('pumping.mengdePlaceholder')}
                 style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
               />
             </div>
 
             {/* Varighet */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Varighet (minutter)</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.varighetMinutter')}</div>
               <input
                 type="number"
                 value={varighet}
                 onChange={e => setVarighet(e.target.value)}
-                placeholder="f.eks. 20"
+                placeholder={t('pumping.varighetPlaceholder')}
                 style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
               />
             </div>
@@ -466,19 +484,19 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
             {/* Dato og tid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
               <div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Dato</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.dato')}</div>
                 <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Tidspunkt</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.tidspunkt')}</div>
                 <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
             </div>
 
             {/* Notat */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Notat (valgfritt)</div>
-              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder="Noe du vil huske fra denne økten?" rows={2} style={{ width: '100%', padding: '12px 14px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.notatValgfritt')}</div>
+              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder={t('pumping.notatPlaceholder')} rows={2} style={{ width: '100%', padding: '12px 14px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
             </div>
 
             <button
@@ -486,7 +504,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
               disabled={!varighet || !mengde || lagrer}
               style={{ width: '100%', padding: '16px', backgroundColor: (!varighet || !mengde) ? farger.kremMørk : farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: (!varighet || !mengde) ? farger.tekstLys : '#FDFAF6', cursor: (!varighet || !mengde) ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter)' }}
             >
-              {lagrer ? 'Lagrer...' : 'Lagre pumpingøkt'}
+              {lagrer ? t('pumping.lagrer') : t('pumping.lagrePumpingøkt')}
             </button>
           </div>
         </div>
