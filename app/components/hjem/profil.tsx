@@ -101,7 +101,7 @@ const [sender, setSender] = useState(false);
 
   return (
     <div style={{ padding: '24px' }}>
-      <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '20px' }}>Profil</div>
+      <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '20px' }}>{t('profil.tittel')}</div>
 
       {/* Babybilde */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
@@ -129,15 +129,15 @@ const [sender, setSender] = useState(false);
 
       {/* Skjema */}
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
-        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>Babyens navn</div>
+        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>{t('profil.babynsNavn')}</div>
         <input
           type="text"
           value={babyNavn}
           onChange={(e) => setBabyNavn(e.target.value)}
-          placeholder="Skriv navn her..."
+          placeholder={t('profil.skrivNavnHer')}
           style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '16px', outline: 'none', fontFamily: 'var(--font-plus-jakarta), sans-serif', boxSizing: 'border-box' }}
         />
-        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>Fødselsdato</div>
+        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px' }}>{t('profil.fødselsdato')}</div>
         <input
           type="date"
           value={babyFødselsdato}
@@ -148,7 +148,7 @@ const [sender, setSender] = useState(false);
           onClick={lagreProfil}
           style={{ width: '100%', padding: '14px', backgroundColor: lagret ? farger.grønnLys : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: lagret ? farger.grønn : '#FDFAF6', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', transition: 'all 0.3s' }}
         >
-          {lagret ? '✓ Lagret!' : 'Lagre profil'}
+          {lagret ? t('profil.lagretBekreftelse') : t('profil.lagreProfil')}
         </button>
         <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '8px', marginTop: '16px' }}>{t('profil.språk')}</div>
         <div style={{ display: 'flex', gap: '6px' }}>
@@ -194,7 +194,7 @@ const [sender, setSender] = useState(false);
   }}
   style={{ width: '100%', padding: '10px', backgroundColor: 'transparent', border: 'none', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif', textDecoration: 'underline', marginBottom: '8px' }}
 >
-  Administrer abonnementet
+  {t('profil.administrerAbonnement')}
 </button>
 
 {/* Tilbakemelding */}
@@ -202,7 +202,7 @@ const [sender, setSender] = useState(false);
   onClick={() => setVisTilbakemelding(true)}
   style={{ width: '100%', padding: '10px', backgroundColor: 'transparent', border: 'none', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif', textDecoration: 'underline', marginBottom: '8px' }}
 >
-  Send meg gjerne en tilbakemelding 🤍
+  {t('profil.sendTilbakemelding')}
 </button>
 
 {/* Tilbakemelding modal */}
@@ -213,17 +213,17 @@ const [sender, setSender] = useState(false);
       {sendt ? (
         <div style={{ textAlign: 'center', padding: '24px 0' }}>
           <div style={{ fontSize: '40px', marginBottom: '16px' }}>🤍</div>
-          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Tusen takk!</div>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7 }}>Din tilbakemelding hjelper meg å bygge Lille best mulig 🌿</div>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('profil.tusenTakk')}</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7 }}>{t('profil.tilbakemeldingHjelper')}</div>
         </div>
       ) : (
         <>
-          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Tilbakemelding</div>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px', lineHeight: 1.6 }}>Hva synes du om appen? Hva savner du? Alt hjelper! 🤍</div>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('profil.tilbakemeldingTittel')}</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px', lineHeight: 1.6 }}>{t('profil.tilbakemeldingBeskrivelse')}</div>
           <textarea
             value={tilbakemeldingTekst}
             onChange={e => setTilbakemeldingTekst(e.target.value)}
-            placeholder="Skriv din tilbakemelding her..."
+            placeholder={t('profil.tilbakemeldingPlaceholder')}
             style={{ width: '100%', padding: '14px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '120px', boxSizing: 'border-box', marginBottom: '16px' }}
           />
           <button
@@ -241,7 +241,7 @@ const [sender, setSender] = useState(false);
             disabled={!tilbakemeldingTekst.trim() || sender}
             style={{ width: '100%', padding: '16px', backgroundColor: tilbakemeldingTekst.trim() ? farger.grønn : farger.kremMørk, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: tilbakemeldingTekst.trim() ? '#FDFAF6' : farger.tekstLys, cursor: tilbakemeldingTekst.trim() ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}
           >
-            {sender ? 'Sender...' : 'Send tilbakemelding'}
+            {sender ? t('profil.sender') : t('profil.sendTilbakemeldingKnapp')}
           </button>
         </>
       )}
@@ -254,25 +254,25 @@ const [sender, setSender] = useState(false);
         onClick={onLoggUt}
         style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}
       >
-        Logg ut
+        {t('profil.loggUt')}
       </button>
 
       {babyFødselsdato && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '20px', marginTop: '16px' }}>
-          <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '12px' }}>Basert på alder</div>
+          <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, marginBottom: '12px' }}>{t('profil.basertPåAlder')}</div>
           {(() => {
             const måneder = Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 30.5));
             const uker = Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 7));
-            const alder = uker < 12 ? `${uker} uker` : måneder < 24 ? `${måneder} måneder` : `${Math.floor(måneder / 12)} år`;
-            const søvn = måneder < 3 ? { min: 14, max: 17, lurer: '4–5 lurer per dag' } :
-              måneder < 6 ? { min: 12, max: 15, lurer: '3–4 lurer per dag' } :
-              måneder < 12 ? { min: 12, max: 14, lurer: '2–3 lurer per dag' } :
-              { min: 11, max: 14, lurer: '1–2 lurer per dag' };
+            const alder = uker < 12 ? `${uker} ${t('profil.uker')}` : måneder < 24 ? `${måneder} ${t('profil.måneder')}` : `${Math.floor(måneder / 12)} ${t('profil.år')}`;
+            const søvn = måneder < 3 ? { min: 14, max: 17, lurer: t('profil.lurer45') } :
+              måneder < 6 ? { min: 12, max: 15, lurer: t('profil.lurer34') } :
+              måneder < 12 ? { min: 12, max: 14, lurer: t('profil.lurer23') } :
+              { min: 11, max: 14, lurer: t('profil.lurer12') };
             return (
               <>
-                <div style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '8px' }}>{babyNavn || 'Babyen'} er {alder} gammel</div>
+                <div style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, fontFamily: 'var(--font-plus-jakarta), sans-serif', marginBottom: '8px' }}>{t('profil.erGammel', { navn: babyNavn || t('profil.babyen'), alder })}</div>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter), sans-serif', color: farger.tekstLys, lineHeight: 1.6 }}>
-                  Anbefalt søvn: {søvn.min}–{søvn.max} timer per døgn<br />{søvn.lurer}
+                  {t('profil.anbefaltSøvn')}: {søvn.min}–{søvn.max} timer {t('profil.perDøgn')}<br />{søvn.lurer}
                 </div>
               </>
             );
