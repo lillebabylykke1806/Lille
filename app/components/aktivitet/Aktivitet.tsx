@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; };
 
@@ -22,27 +24,29 @@ type Milepæl = {
   opprettet: string;
 };
 
-const AKTIVITET_TYPER = [
-  { id: 'lek', label: 'Lek', ikon: '🌿' },
-  { id: 'tur', label: 'Tur', ikon: '🚶' },
-  { id: 'bad', label: 'Bad', ikon: '🛁' },
-  { id: 'massasje', label: 'Massasje', ikon: '🤍' },
-  { id: 'lesing', label: 'Lesing', ikon: '📖' },
-  { id: 'sang', label: 'Sang', ikon: '🎵' },
-  { id: 'annet', label: 'Annet', ikon: '✨' },
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const getAktivitetTyper = (t: TFn) => [
+  { id: 'lek', label: t('aktivitet.typeLek'), ikon: '🌿' },
+  { id: 'tur', label: t('aktivitet.typeTur'), ikon: '🚶' },
+  { id: 'bad', label: t('aktivitet.typeBad'), ikon: '🛁' },
+  { id: 'massasje', label: t('aktivitet.typeMassasje'), ikon: '🤍' },
+  { id: 'lesing', label: t('aktivitet.typeLesing'), ikon: '📖' },
+  { id: 'sang', label: t('aktivitet.typeSang'), ikon: '🎵' },
+  { id: 'annet', label: t('aktivitet.typeAnnet'), ikon: '✨' },
 ];
 
-const MILEPÆLER_FORSLAG = [
-  'Første smil',
-  'Første latter',
-  'Første ord',
-  'Første steg',
-  'Satt alene',
-  'Snudde seg',
-  'Holdt hodet oppe',
-  'Første tann',
-  'Spiste fast føde',
-  'Vinket hei/hadet',
+const getMilepælerForslag = (t: TFn) => [
+  { id: 'Første smil', label: t('aktivitet.milepælFørsteSmil') },
+  { id: 'Første latter', label: t('aktivitet.milepælFørsteLatter') },
+  { id: 'Første ord', label: t('aktivitet.milepælFørsteOrd') },
+  { id: 'Første steg', label: t('aktivitet.milepælFørsteSteg') },
+  { id: 'Satt alene', label: t('aktivitet.milepælSattAlene') },
+  { id: 'Snudde seg', label: t('aktivitet.milepælSnudde') },
+  { id: 'Holdt hodet oppe', label: t('aktivitet.milepælHoldtHodet') },
+  { id: 'Første tann', label: t('aktivitet.milepælFørsteTann') },
+  { id: 'Spiste fast føde', label: t('aktivitet.milepælSpisteFastFøde') },
+  { id: 'Vinket hei/hadet', label: t('aktivitet.milepælVinket') },
 ];
 
 const AktivitetIkon = ({ type }: { type: string }) => {
@@ -94,6 +98,9 @@ const AktivitetIkon = ({ type }: { type: string }) => {
 };
 
 export default function Aktivitet({ bruker }: Props) {
+  const { t } = useLanguage();
+  const AKTIVITET_TYPER = getAktivitetTyper(t);
+  const MILEPÆLER_FORSLAG = getMilepælerForslag(t);
   const [aktivFane, setAktivFane] = useState<'aktivitet' | 'milepæler'>('aktivitet');
   const [aktiviteter, setAktiviteter] = useState<Aktivitet[]>([]);
   const [milepæler, setMilepæler] = useState<Milepæl[]>([]);
@@ -166,10 +173,10 @@ export default function Aktivitet({ bruker }: Props) {
       {/* Header */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          Aktivitet
+          {t('aktivitet.tittel')}
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-          Registrer aktiviteter og milepæler
+          {t('aktivitet.undertittel')}
         </div>
       </div>
 
@@ -177,17 +184,17 @@ export default function Aktivitet({ bruker }: Props) {
       {visBekreftet && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', padding: '20px 32px', zIndex: 200, textAlign: 'center', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
           <div style={{ fontSize: '32px', color: farger.grønn, marginBottom: '8px' }}>✓</div>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>Registrert!</div>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>{t('aktivitet.registrert')}</div>
         </div>
       )}
 
       {/* Faner */}
       <div style={{ display: 'flex', backgroundColor: farger.kremMørk, borderRadius: '16px', padding: '4px', marginBottom: '20px' }}>
         <button onClick={() => setAktivFane('aktivitet')} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', backgroundColor: aktivFane === 'aktivitet' ? farger.hvit : 'transparent', color: aktivFane === 'aktivitet' ? farger.tekst : farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', fontWeight: aktivFane === 'aktivitet' ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }}>
-          🌿 Aktivitet
+          {t('aktivitet.faneAktivitet')}
         </button>
         <button onClick={() => setAktivFane('milepæler')} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', backgroundColor: aktivFane === 'milepæler' ? farger.hvit : 'transparent', color: aktivFane === 'milepæler' ? farger.tekst : farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', fontWeight: aktivFane === 'milepæler' ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }}>
-          ⭐ Milepæler
+          {t('aktivitet.faneMilepæler')}
         </button>
       </div>
 
@@ -199,12 +206,12 @@ export default function Aktivitet({ bruker }: Props) {
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px', marginBottom: '12px', display: 'flex', gap: '16px' }}>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>{aktiviteter.length}</div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>aktiviteter i dag</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('aktivitet.aktiviteterIDag')}</div>
               </div>
               <div style={{ width: '1px', backgroundColor: farger.kremMørk }} />
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>{totalMinutter}</div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>minutter totalt</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('aktivitet.minutterTotalt')}</div>
               </div>
             </div>
           )}
@@ -212,10 +219,10 @@ export default function Aktivitet({ bruker }: Props) {
           {/* Aktivitetslogg */}
           {aktiviteter.length > 0 && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px', marginBottom: '12px' }}>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px' }}>Aktiviteter i dag</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px' }}>{t('aktivitet.aktiviteterLoggtittel')}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {aktiviteter.map(a => {
-                  const type = AKTIVITET_TYPER.find(t => t.id === a.type);
+                  const type = AKTIVITET_TYPER.find(aktType => aktType.id === a.type);
                   return (
                     <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', backgroundColor: farger.bakgrunn, borderRadius: '12px' }}>
                       <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -246,12 +253,12 @@ export default function Aktivitet({ bruker }: Props) {
 
           {aktiviteter.length === 0 && (
             <div style={{ textAlign: 'center', padding: '32px 24px', color: farger.tekstLys, fontSize: '14px', fontStyle: 'italic', fontFamily: 'var(--font-plus-jakarta)' }}>
-              Ingen aktiviteter registrert i dag
+              {t('aktivitet.ingenAktiviteter')}
             </div>
           )}
 
           <button onClick={() => setVisNy(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            + Registrer aktivitet
+            {t('aktivitet.registrerAktivitetKnapp')}
           </button>
         </>
       )}
@@ -282,12 +289,12 @@ export default function Aktivitet({ bruker }: Props) {
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '32px 24px', color: farger.tekstLys, fontSize: '14px', fontStyle: 'italic', fontFamily: 'var(--font-plus-jakarta)', marginBottom: '16px' }}>
-              Ingen milepæler registrert ennå
+              {t('aktivitet.ingenMilepæler')}
             </div>
           )}
 
           <button onClick={() => setVisNyMilepæl(true)} style={{ width: '100%', padding: '16px', backgroundColor: '#FFF8EC', border: `1px solid #F4D9A0`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#8B6340', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            ⭐ Legg til milepæl
+            {t('aktivitet.leggTilMilepæl')}
           </button>
         </>
       )}
@@ -297,11 +304,11 @@ export default function Aktivitet({ bruker }: Props) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisNy(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Registrer aktivitet</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('aktivitet.registrerAktivitetTittel')}</div>
 
             {/* Type */}
             <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>Type aktivitet</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>{t('aktivitet.typeAktivitet')}</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                 {AKTIVITET_TYPER.map(type => (
                   <button key={type.id} onClick={() => setValgtType(type.id)} style={{ padding: '12px 6px', backgroundColor: valgtType === type.id ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${valgtType === type.id ? farger.grønn : farger.kremMørk}`, borderRadius: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
@@ -318,7 +325,7 @@ export default function Aktivitet({ bruker }: Props) {
 
             {/* Varighet */}
             <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>Varighet</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>{t('aktivitet.varighet')}</div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {[5, 10, 15, 20, 30, 45, 60].map(min => (
                   <button key={min} onClick={() => setVarighet(min)} style={{ padding: '8px 16px', backgroundColor: varighet === min ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${varighet === min ? farger.grønn : farger.kremMørk}`, borderRadius: '20px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: varighet === min ? farger.grønn : farger.tekst, cursor: 'pointer', fontWeight: varighet === min ? '600' : '400' }}>
@@ -330,12 +337,12 @@ export default function Aktivitet({ bruker }: Props) {
 
             {/* Notat */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Notat (valgfritt)</div>
-              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder="F.eks. lekte med baller i parken..." style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '80px', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('aktivitet.notatValgfritt')}</div>
+              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder={t('aktivitet.notatPlaceholder')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '80px', boxSizing: 'border-box' }} />
             </div>
 
             <button onClick={lagreAktivitet} disabled={lagrer} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              {lagrer ? 'Lagrer...' : 'Lagre aktivitet'}
+              {lagrer ? t('aktivitet.lagrer') : t('aktivitet.lagreAktivitet')}
             </button>
           </div>
         </div>
@@ -346,35 +353,35 @@ export default function Aktivitet({ bruker }: Props) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisNyMilepæl(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Legg til milepæl ⭐</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('aktivitet.leggTilMilepælTittel')}</div>
 
             {/* Forslag */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>Velg eller skriv selv</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>{t('aktivitet.velgEllerSkriv')}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-                {MILEPÆLER_FORSLAG.filter(m => !milepæler.some(mil => mil.navn === m)).slice(0, 6).map(m => (
-                  <button key={m} onClick={() => setMilepælNavn(m)} style={{ padding: '6px 14px', backgroundColor: milepælNavn === m ? '#FFF8EC' : farger.bakgrunn, border: `1.5px solid ${milepælNavn === m ? '#F4D9A0' : farger.kremMørk}`, borderRadius: '20px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: milepælNavn === m ? '#8B6340' : farger.tekst, cursor: 'pointer' }}>
-                    {m}
+                {MILEPÆLER_FORSLAG.filter(m => !milepæler.some(mil => mil.navn === m.id)).slice(0, 6).map(m => (
+                  <button key={m.id} onClick={() => setMilepælNavn(m.id)} style={{ padding: '6px 14px', backgroundColor: milepælNavn === m.id ? '#FFF8EC' : farger.bakgrunn, border: `1.5px solid ${milepælNavn === m.id ? '#F4D9A0' : farger.kremMørk}`, borderRadius: '20px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: milepælNavn === m.id ? '#8B6340' : farger.tekst, cursor: 'pointer' }}>
+                    {m.label}
                   </button>
                 ))}
               </div>
-              <input type="text" value={milepælNavn} onChange={e => setMilepælNavn(e.target.value)} placeholder="Eller skriv din egen..." style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              <input type="text" value={milepælNavn} onChange={e => setMilepælNavn(e.target.value)} placeholder={t('aktivitet.ellerSkrivEgen')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
             </div>
 
             {/* Dato */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Dato</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('aktivitet.dato')}</div>
               <input type="date" value={milepælDato} onChange={e => setMilepælDato(e.target.value)} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
             </div>
 
             {/* Notat */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Notat (valgfritt)</div>
-              <textarea value={milepælNotat} onChange={e => setMilepælNotat(e.target.value)} placeholder="F.eks. lo for første gang da vi kildret ham..." style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '80px', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('aktivitet.notatValgfritt')}</div>
+              <textarea value={milepælNotat} onChange={e => setMilepælNotat(e.target.value)} placeholder={t('aktivitet.notatMilepælPlaceholder')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '80px', boxSizing: 'border-box' }} />
             </div>
 
             <button onClick={lagreMilepæl} disabled={!milepælNavn || lagrer} style={{ width: '100%', padding: '16px', backgroundColor: milepælNavn ? '#FFF8EC' : farger.kremMørk, border: `1px solid ${milepælNavn ? '#F4D9A0' : 'transparent'}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: milepælNavn ? '#8B6340' : farger.tekstLys, cursor: milepælNavn ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}>
-              {lagrer ? 'Lagrer...' : '⭐ Lagre milepæl'}
+              {lagrer ? t('aktivitet.lagrer') : t('aktivitet.lagreMilepæl')}
             </button>
           </div>
         </div>
