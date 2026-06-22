@@ -118,6 +118,13 @@ export const oversettelser = {
   'innlogging.heiIgjen': { no: 'Hei igjen!', en: 'Hi again!', sv: 'Hej igen!', da: 'Hej igen!', de: 'Hallo wieder!' },
   'innlogging.loggInn': { no: 'Logg inn', en: 'Log in', sv: 'Logga in', da: 'Log ind', de: 'Anmelden' },
   'innlogging.opprettKonto': { no: 'Opprett konto', en: 'Create account', sv: 'Skapa konto', da: 'Opret konto', de: 'Konto erstellen' },
+  'innlogging.tagline': { no: 'Din babys språk, i dine hender', en: "Your baby's language, in your hands", sv: 'Ditt barns språk, i dina händer', da: 'Din babys sprog, i dine hænder', de: 'Die Sprache deines Babys, in deinen Händen' },
+  'innlogging.epostPlaceholder': { no: 'din@epost.no', en: 'you@email.com', sv: 'din@epost.se', da: 'din@epost.dk', de: 'deine@email.de' },
+  'innlogging.passordPlaceholder': { no: 'Minst 6 tegn', en: 'At least 6 characters', sv: 'Minst 6 tecken', da: 'Mindst 6 tegn', de: 'Mindestens 6 Zeichen' },
+  'innlogging.feilEpostPassord': { no: 'Feil e-post eller passord. Prøv igjen.', en: 'Wrong email or password. Try again.', sv: 'Fel e-post eller lösenord. Försök igen.', da: 'Forkert e-mail eller adgangskode. Prøv igen.', de: 'Falsche E-Mail oder falsches Passwort. Versuche es erneut.' },
+  'innlogging.noeGikkGalt': { no: 'Noe gikk galt. Prøv igjen.', en: 'Something went wrong. Try again.', sv: 'Något gick fel. Försök igen.', da: 'Noget gik galt. Prøv igen.', de: 'Etwas ist schiefgelaufen. Versuche es erneut.' },
+  'innlogging.harAlleredeKonto': { no: 'Har allerede konto? Logg inn', en: 'Already have an account? Log in', sv: 'Har du redan konto? Logga in', da: 'Har du allerede konto? Log ind', de: 'Bereits ein Konto? Anmelden' },
+  'innlogging.nyBruker': { no: 'Ny bruker? Opprett konto', en: 'New user? Create account', sv: 'Ny användare? Skapa konto', da: 'Ny bruger? Opret konto', de: 'Neu hier? Konto erstellen' },
 
   'søvn.hvaSlagsSøvn': { no: 'Hva slags søvn skal du registrere?', en: 'What kind of sleep do you want to register?', sv: 'Vilken typ av sömn vill du registrera?', da: 'Hvilken slags søvn vil du registrere?', de: 'Welche Art von Schlaf möchtest du registrieren?' },
   'søvn.velgType': { no: 'Velg type for best mulig innsikt', en: 'Choose type for the best insight', sv: 'Välj typ för bästa insikt', da: 'Vælg type for bedst mulig indsigt', de: 'Wähle den Typ für beste Einblicke' },

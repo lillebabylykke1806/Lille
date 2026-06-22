@@ -117,7 +117,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
     if (error) {
-      setInnloggingFeil('Feil e-post eller passord. Prøv igjen.');
+      setInnloggingFeil(t('innlogging.feilEpostPassord'));
     } else {
       localStorage.removeItem('lille_babybilde');
       setBruker(data.user);
@@ -128,7 +128,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     setInnloggingFeil('');
     const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
     if (error) {
-      setInnloggingFeil('Noe gikk galt. Prøv igjen.');
+      setInnloggingFeil(t('innlogging.noeGikkGalt'));
     } else {
       const res = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: epost }) });
       const { url } = await res.json();
@@ -164,18 +164,18 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
         <div style={{ marginBottom: '32px', textAlign: 'center' }}>
           <img src="/leep.png" alt="Lille" style={{ width: '140px', height: 'auto', marginBottom: '16px', mixBlendMode: 'multiply' }} />
-          <div style={{ fontSize: '13px', color: farger.tekstLys, fontFamily: 'var(--font-inter), sans-serif' }}>Din babys språk, i dine hender</div>
+          <div style={{ fontSize: '13px', color: farger.tekstLys, fontFamily: 'var(--font-inter), sans-serif' }}>{t('innlogging.tagline')}</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px', width: '100%' }}>
-          <p style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, margin: '0 0 20px' }}>{erNyBruker ? 'Velkommen til Lille' : 'Hei igjen!'}</p>
-          <input type="email" value={epost} onChange={(e) => setEpost(e.target.value)} placeholder="din@epost.no" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
-          <input type="password" value={passord} onChange={(e) => setPassord(e.target.value)} placeholder="Minst 6 tegn" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '20px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
+          <p style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, margin: '0 0 20px' }}>{erNyBruker ? t('innlogging.velkommen') : t('innlogging.heiIgjen')}</p>
+          <input type="email" value={epost} onChange={(e) => setEpost(e.target.value)} placeholder={t('innlogging.epostPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
+          <input type="password" value={passord} onChange={(e) => setPassord(e.target.value)} placeholder={t('innlogging.passordPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '20px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
           {innloggingFeil && <p style={{ fontSize: '13px', color: '#C0392B', fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 14px', textAlign: 'center' }}>{innloggingFeil}</p>}
           <button onClick={erNyBruker ? registrer : loggInn} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', marginBottom: '12px' }}>
-            {erNyBruker ? 'Opprett konto' : 'Logg inn'}
+            {erNyBruker ? t('innlogging.opprettKonto') : t('innlogging.loggInn')}
           </button>
           <button onClick={() => { setErNyBruker(!erNyBruker); setInnloggingFeil(''); }} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}>
-            {erNyBruker ? 'Har allerede konto? Logg inn' : 'Ny bruker? Opprett konto'}
+            {erNyBruker ? t('innlogging.harAlleredeKonto') : t('innlogging.nyBruker')}
           </button>
         </div>
       </div>
