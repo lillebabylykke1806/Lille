@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
 
 type Props = { bruker: any; };
 
@@ -18,6 +19,7 @@ const dagensdato = () => new Date().toISOString().split('T')[0];
 const motattBryst = (bryst: string) => bryst === 'venstre' ? 'høyre' : 'venstre';
 
 export default function Amming({ bruker }: Props) {
+  const { t } = useLanguage();
   const [aktiv, setAktiv] = useState(false);
   const [valgtBryst, setValgtBryst] = useState<'venstre' | 'høyre'>('høyre');
   const [startTid, setStartTid] = useState<Date | null>(null);
@@ -163,6 +165,10 @@ export default function Amming({ bruker }: Props) {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
+  const brystPil = (bryst: string) => bryst === 'venstre' ? t('amming.venstrePil') : t('amming.høyrePil');
+  const brystFull = (bryst: string) => bryst === 'venstre' ? t('amming.venstre_bryst') : t('amming.høyre_bryst');
+  const brystNavn = (bryst: string) => bryst === 'venstre' ? t('amming.venstre') : t('amming.høyre');
+
   const totalMinutter = logg.reduce((sum, l) => sum + (l.varighet || 0), 0);
   const sisteAmming = logg[0];
   const anbefalingBryst = logg.length > 0 ? motattBryst(logg[0].bryst) as 'venstre' | 'høyre' : 'høyre';
@@ -195,9 +201,11 @@ export default function Amming({ bruker }: Props) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8px' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Amming</div>
+            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('amming.tittel')}</div>
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-              {aktiv ? `${valgtBryst === 'venstre' ? '← Venstre' : 'Høyre →'} bryst` : `Anbefalt: ${anbefalingBryst === 'venstre' ? '← venstre' : 'høyre →'} bryst`}
+              {aktiv
+                ? t('amming.aktivtBryst', { retning: brystPil(valgtBryst) })
+                : t('amming.anbefalt', { bryst: brystPil(anbefalingBryst) })}
             </div>
           </div>
         </div>
@@ -225,20 +233,20 @@ export default function Amming({ bruker }: Props) {
             <div onClick={!aktiv ? () => startAmming(anbefalingBryst) : undefined} style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: !aktiv ? 'pointer' : 'default' }}>
               {aktiv ? (
                 <>
-                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>Ammer nå</div>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>{t('amming.ammerNå')}</div>
                   <div style={{ fontSize: '40px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.1 }}>
                     {formaterTid(sekunder)}
                   </div>
                   <button onClick={() => setVisJusterStart(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
                     <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textDecoration: 'underline' }}>
-                      Siden {startTidStr}
+                      {t('amming.siden', { tid: startTidStr })}
                     </div>
                   </button>
                 </>
               ) : (
                 <>
                 <img src="/tateflaske.png" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px', mixBlendMode: 'multiply' }} />
-                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trykk for å starte</div>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('amming.trykkForÅStarte')}</div>
                 </>
               )}
             </div>
@@ -255,19 +263,19 @@ export default function Amming({ bruker }: Props) {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path d="M7 16L3 12L7 8M17 8L21 12L17 16M3 12H21" stroke={farger.tekst} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              Bytt bryst
+              {t('amming.byttBryst')}
             </button>
             <button onClick={åpneAvslutt} style={{ flex: 2, padding: '14px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer' }}>
-              Avslutt amming
+              {t('amming.avsluttAmming')}
             </button>
           </div>
         ) : (
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             <button onClick={() => startAmming(motattBryst(anbefalingBryst) as 'venstre' | 'høyre')} style={{ flex: 1, padding: '14px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '28px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer' }}>
-              {motattBryst(anbefalingBryst) === 'venstre' ? '← Venstre' : 'Høyre →'}
+              {brystPil(motattBryst(anbefalingBryst))}
             </button>
             <button onClick={() => startAmming(anbefalingBryst)} style={{ flex: 2, padding: '14px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '28px', fontSize: '14px', fontWeight: '600', fontFamily: 'var(--font-inter)', color: '#FDFAF6', cursor: 'pointer' }}>
-              🤍 Start {anbefalingBryst === 'venstre' ? 'venstre' : 'høyre'} bryst
+              {t('amming.startBryst', { bryst: brystNavn(anbefalingBryst) })}
             </button>
           </div>
         )}
@@ -275,16 +283,16 @@ export default function Amming({ bruker }: Props) {
         {/* Siste amming */}
         {sisteAmming && (
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px', animation: 'fadeOpp 0.5s ease' }}>
-            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Siste amming</div>
+            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('amming.sisteAmming')}</div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{sisteAmming.varighet} min</div>
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                  {sisteAmming.bryst === 'venstre' ? '← Venstre' : 'Høyre →'} · {sisteAmming.start}–{sisteAmming.slutt}
+                  {brystPil(sisteAmming.bryst)} · {sisteAmming.start}–{sisteAmming.slutt}
                 </div>
               </div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'right' }}>
-                Neste:<br/>{anbefalingBryst === 'venstre' ? '← venstre' : 'høyre →'} 🤍
+                {t('amming.neste')}<br/>{brystPil(anbefalingBryst)} 🤍
               </div>
             </div>
           </div>
@@ -293,9 +301,9 @@ export default function Amming({ bruker }: Props) {
         {/* Innsikt */}
         {logg.length > 0 && (
           <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px' }}>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '600', marginBottom: '4px' }}>✨ I dag</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '600', marginBottom: '4px' }}>{t('amming.iDag')}</div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>
-              {logg.length} {logg.length === 1 ? 'amming' : 'amminger'} · {totalMinutter} minutter totalt
+              {logg.length} {logg.length === 1 ? t('amming.ammingEntall') : t('amming.ammingFlertall')} · {totalMinutter} {t('amming.minutterTotalt')}
             </div>
           </div>
         )}
@@ -303,7 +311,7 @@ export default function Amming({ bruker }: Props) {
         {/* Logg */}
         {logg.length > 0 && (
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 18px' }}>
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px' }}>Ammelogg i dag</div>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px' }}>{t('amming.ammeloggIDag')}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {logg.map((l, i) => (
                 <button key={i} onClick={() => { setVisRedigerLogg(l); setRedigerStart(l.start.slice(0,5)); setRedigerSlutt(l.slutt.slice(0,5)); }}
@@ -312,7 +320,7 @@ export default function Amming({ bruker }: Props) {
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: l.bryst === 'venstre' ? farger.grønn : farger.terrakotta, flexShrink: 0 }} />
                     <div>
                       <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
-                        {l.bryst === 'venstre' ? '← Venstre bryst' : 'Høyre bryst →'}
+                        {brystFull(l.bryst)}
                       </div>
                       <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{l.start}–{l.slutt}</div>
                     </div>
@@ -330,11 +338,11 @@ export default function Amming({ bruker }: Props) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisJusterStart(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Når startet ammingen?</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('amming.nårStartetAmmingen')}</div>
             <input type="time" defaultValue={startTidStr} onChange={e => setStartTidStr(e.target.value)}
               style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
             <button onClick={() => justerStartTid(startTidStr)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Lagre
+              {t('amming.lagre')}
             </button>
           </div>
         </div>
@@ -345,21 +353,21 @@ export default function Amming({ bruker }: Props) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisAvslutt(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>Avslutt amming</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('amming.avsluttAmming')}</div>
             <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Startet</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('amming.startet')}</div>
                 <input type="time" value={startTidStr} onChange={e => setStartTidStr(e.target.value)}
                   style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Sluttet</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('amming.sluttet')}</div>
                 <input type="time" value={sluttTidStr} onChange={e => setSluttTidStr(e.target.value)}
                   style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
               </div>
             </div>
             <button onClick={avsluttAmming} disabled={laster} style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              {laster ? 'Lagrer...' : 'Lagre amming'}
+              {laster ? t('amming.lagrer') : t('amming.lagreAmming')}
             </button>
           </div>
         </div>
@@ -370,27 +378,27 @@ export default function Amming({ bruker }: Props) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisRedigerLogg(null)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>Rediger amming</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('amming.redigerAmming')}</div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px' }}>
-              {visRedigerLogg.bryst === 'venstre' ? '← Venstre bryst' : 'Høyre bryst →'}
+              {brystFull(visRedigerLogg.bryst)}
             </div>
             <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Startet</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('amming.startet')}</div>
                 <input type="time" value={redigerStart} onChange={e => setRedigerStart(e.target.value)}
                   style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Sluttet</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('amming.sluttet')}</div>
                 <input type="time" value={redigerSlutt} onChange={e => setRedigerSlutt(e.target.value)}
                   style={{ width: '100%', padding: '12px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', textAlign: 'center' }} />
               </div>
             </div>
             <button onClick={lagreRedigertLogg} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
-              Lagre endringer
+              {t('amming.lagreEndringer')}
             </button>
             <button onClick={() => slettLogg(visRedigerLogg.id)} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: '1px solid #FFB3B3', borderRadius: '16px', fontSize: '14px', color: '#C0392B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Slett amming
+              {t('amming.slettAmming')}
             </button>
           </div>
         </div>
