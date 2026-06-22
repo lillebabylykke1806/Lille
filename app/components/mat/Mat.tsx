@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -17,43 +19,59 @@ type MatRegistrering = {
     allergi_status?: string | null;
   };
 
-const KATEGORIER = [
-  { id: 'frukt', label: 'Frukt', ikon: '🍎', farge: '#FFF1F2', border: '#FECDD3', tekstFarge: '#BE123C' },
-  { id: 'grønnsaker', label: 'Grønnsaker', ikon: '🥦', farge: '#F0F7F0', border: '#C8DEC8', tekstFarge: '#2D5C45' },
-  { id: 'fisk', label: 'Fisk', ikon: '🐟', farge: '#EEF2FF', border: '#C7D2FE', tekstFarge: '#4338CA' },
-  { id: 'korn', label: 'Korn', ikon: '🌾', farge: '#FFF8EC', border: '#F4D9A0', tekstFarge: '#8B6340' },
-  { id: 'bær', label: 'Bær', ikon: '🫐', farge: '#FDF4FF', border: '#E9D5FF', tekstFarge: '#7C3AED' },
-  { id: 'annet', label: 'Annet', ikon: '🍽️', farge: '#F8FAFC', border: '#E2E8F0', tekstFarge: '#475569' },
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
+  no: 'norsk',
+  en: 'English',
+  sv: 'svenska',
+  da: 'dansk',
+  de: 'Deutsch',
+};
+
+const getKategorier = (t: TFn) => [
+  { id: 'frukt', label: t('mat.kategoriFrukt'), ikon: '🍎', farge: '#FFF1F2', border: '#FECDD3', tekstFarge: '#BE123C' },
+  { id: 'grønnsaker', label: t('mat.kategoriGrønnsaker'), ikon: '🥦', farge: '#F0F7F0', border: '#C8DEC8', tekstFarge: '#2D5C45' },
+  { id: 'fisk', label: t('mat.kategoriFisk'), ikon: '🐟', farge: '#EEF2FF', border: '#C7D2FE', tekstFarge: '#4338CA' },
+  { id: 'korn', label: t('mat.kategoriKorn'), ikon: '🌾', farge: '#FFF8EC', border: '#F4D9A0', tekstFarge: '#8B6340' },
+  { id: 'bær', label: t('mat.kategoriBær'), ikon: '🫐', farge: '#FDF4FF', border: '#E9D5FF', tekstFarge: '#7C3AED' },
+  { id: 'annet', label: t('mat.kategoriAnnet'), ikon: '🍽️', farge: '#F8FAFC', border: '#E2E8F0', tekstFarge: '#475569' },
 ];
 
-const REAKSJONER = [
-  { id: 'elsket', label: 'Likte veldig godt', ikon: '😍' },
-  { id: 'likte', label: 'Likte det', ikon: '😊' },
-  { id: 'nøytral', label: 'Verken eller', ikon: '😐' },
-  { id: 'smakte', label: 'Smakte litt', ikon: '😕' },
-  { id: 'avslo', label: 'Avslo helt', ikon: '😣' },
+const getReaksjoner = (t: TFn) => [
+  { id: 'elsket', label: t('mat.reaksjonElsket'), ikon: '😍' },
+  { id: 'likte', label: t('mat.reaksjonLikte'), ikon: '😊' },
+  { id: 'nøytral', label: t('mat.reaksjonNøytral'), ikon: '😐' },
+  { id: 'smakte', label: t('mat.reaksjonSmakte'), ikon: '😕' },
+  { id: 'avslo', label: t('mat.reaksjonAvslo'), ikon: '😣' },
 ];
 
-const MENGDER = [
-  { id: 'lite', label: 'Ca. 1–2 skjeer' },
-  { id: 'middels', label: 'Ca. 3–5 skjeer' },
-  { id: 'halvparten', label: 'Halvparten' },
-  { id: 'meste', label: 'Det meste' },
+const getMengder = (t: TFn) => [
+  { id: 'lite', label: t('mat.mengdeLite') },
+  { id: 'middels', label: t('mat.mengdeMiddels') },
+  { id: 'halvparten', label: t('mat.mengdeHalvparten') },
+  { id: 'meste', label: t('mat.mengdeMeste') },
 ];
 
-const ALLERGI_STATUS = [
-    { id: 'grønn', label: 'Ingen reaksjon', farge: '#2D5C45', bg: '#E8F0E8', ikon: '🟢' },
-    { id: 'oransje', label: 'Usikker reaksjon', farge: '#C48E7B', bg: '#FFF3D6', ikon: '🟡' },
-    { id: 'rød', label: 'Tydelig reaksjon', farge: '#BE123C', bg: '#FFF1F2', ikon: '🔴' },
-  ];
+const getAllergiStatus = (t: TFn) => [
+  { id: 'grønn', label: t('mat.allergiIngenReaksjon'), farge: '#2D5C45', bg: '#E8F0E8', ikon: '🟢' },
+  { id: 'oransje', label: t('mat.allergiUsikker'), farge: '#C48E7B', bg: '#FFF3D6', ikon: '🟡' },
+  { id: 'rød', label: t('mat.allergiTydelig'), farge: '#BE123C', bg: '#FFF1F2', ikon: '🔴' },
+];
 
-const TIPS = [
-  { ikon: '🪑', tittel: 'Rolig stemning', tekst: 'Skap en hyggelig atmosfære rundt måltidet.' },
-  { ikon: '🥄', tittel: 'Små mengder', tekst: 'Det viktigste er å utforske, ikke å spise mye.' },
-  { ikon: '😊', tittel: 'Tålmodighet', tekst: 'Noen smaker trenger tid. Prøv igjen senere.' },
+const getTips = (t: TFn) => [
+  { ikon: '🪑', tittel: t('mat.tipRoligStemningTittel'), tekst: t('mat.tipRoligStemningTekst') },
+  { ikon: '🥄', tittel: t('mat.tipSmåMengderTittel'), tekst: t('mat.tipSmåMengderTekst') },
+  { ikon: '😊', tittel: t('mat.tipTålmodighet'), tekst: t('mat.tipTålmodighetTekst') },
 ];
 
 export default function Mat({ bruker, aktivtBarn }: Props) {
+  const { t, locale } = useLanguage();
+  const KATEGORIER = getKategorier(t);
+  const REAKSJONER = getReaksjoner(t);
+  const MENGDER = getMengder(t);
+  const ALLERGI_STATUS = getAllergiStatus(t);
+  const TIPS = getTips(t);
   const [matreg, setMatreg] = useState<MatRegistrering[]>([]);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [laster, setLaster] = useState(true);
@@ -83,13 +101,10 @@ export default function Mat({ bruker, aktivtBarn }: Props) {
 
   useEffect(() => { lastData(); }, [lastData]);
 
-  useEffect(() => {
-    if (matreg.length >= 3) hentAiInnsikter();
-  }, [matreg]);
-
-  const hentAiInnsikter = async () => {
+  const hentAiInnsikter = useCallback(async () => {
     setLasterAi(true);
-    const prompt = `Du er en varm babyekspert i appen Lille. Analyser ${babyNavn}s matregistreringer og gi 3-4 korte, personlige innsikter på norsk.
+    const språkNavn = LOCALE_SPRÅKNAVN[locale];
+    const prompt = `Du er en varm babyekspert i appen Lille. Analyser ${babyNavn}s matregistreringer og gi 3-4 korte, personlige innsikter på ${språkNavn}.
 
 Matdata: ${JSON.stringify(matreg.slice(0, 20))}
 
@@ -104,7 +119,11 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
       setAiInnsikter(tekst.split('\n').filter((l: string) => l.trim().startsWith('✨')));
     } catch { }
     setLasterAi(false);
-  };
+  }, [babyNavn, locale, matreg]);
+
+  useEffect(() => {
+    if (matreg.length >= 3) hentAiInnsikter();
+  }, [matreg, hentAiInnsikter]);
 
   const lagreMatregistrering = async () => {
 if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
@@ -149,10 +168,25 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
   const getReaksjonIkon = (r: string) => REAKSJONER.find(x => x.id === r)?.ikon || '😐';
   const getReaksjonLabel = (r: string) => REAKSJONER.find(x => x.id === r)?.label || '';
   const getKategoriIkon = (k: string) => KATEGORIER.find(x => x.id === k)?.ikon || '🍽️';
+  const getMengdeLabel = (m: string) => MENGDER.find(x => x.id === m)?.label || '';
+
+  const innsiktKort = [
+    { ikon: '❤️', bg: '#FFF1F2', tittel: t('mat.favorittmat'), tekst: t('mat.favorittmatTekst') },
+    { ikon: '😊', bg: '#F0F7F0', tittel: t('mat.reaksjoner'), tekst: t('mat.reaksjonerTekst') },
+    { ikon: '🌈', bg: '#FFF8EC', tittel: t('mat.smaksreise'), tekst: t('mat.smaksreiseTekst') },
+    { ikon: '✨', bg: '#F5F0FF', tittel: t('mat.personligeMønstre'), tekst: t('mat.personligeMønstreTekst') },
+  ];
+
+  const snartKommerItems = [
+    { ikon: '💛', tekst: t('mat.babyMatspråk', { navn: babyNavn }) },
+    { ikon: '❤️', tekst: t('mat.favorittsmaker') },
+    { ikon: '😕', tekst: t('mat.matSomIkkeFaltISmak') },
+    { ikon: '✨', tekst: t('mat.personligeAiInnsikter') },
+  ];
 
   const formatDato = (dato: string) => {
     const d = new Date(dato);
-    return `${d.getDate()}. ${['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'][d.getMonth()]}`;
+    return `${d.getDate()}. ${d.toLocaleDateString(locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB', { month: 'short' })}`;
   };
 
   if (laster) return (
@@ -169,10 +203,10 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '24px' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          🍽️ Mat & Smak
+          {t('mat.tittel')}
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-          Små skjeer. Store oppdagelser. 🧡
+          {t('mat.undertittel')}
         </div>
       </div>
 
@@ -184,17 +218,16 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
             <div style={{ fontSize: '72px', flexShrink: 0 }}>🐻</div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>
-                Velkommen til Mat & Smak! 🧡
+                {t('mat.velkommenTittel')}
               </div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '16px' }}>
-                {babyNavn} har ikke registrert noen måltider enda.<br/><br/>
-                Når dere begynner med fast føde vil vi hjelpe deg å følge smaker, reaksjoner og oppdage favoritter over tid.
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '16px', whiteSpace: 'pre-line' }}>
+                {t('mat.velkommenBeskrivelse', { navn: babyNavn })}
               </div>
               <button
                 onClick={() => setVisSkjema(true)}
                 style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #F4A853, #E8943F)', border: 'none', borderRadius: '50px', fontSize: '14px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 16px rgba(244,168,83,0.4)' }}
               >
-                <span style={{ fontSize: '18px' }}>+</span> Registrer første måltid
+                <span style={{ fontSize: '18px' }}>+</span> {t('mat.registrerFørsteMåltid')}
               </button>
             </div>
           </div>
@@ -203,16 +236,11 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
               <span style={{ fontSize: '14px' }}>✨</span>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Dette vil du få innsikt i</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('mat.detteVilDuFåInnsiktI')}</div>
               <span style={{ fontSize: '14px' }}>✨</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              {[
-                { ikon: '❤️', bg: '#FFF1F2', tittel: 'Favorittmat', tekst: 'Vi lærer hvilke smaker barnet ditt liker best.' },
-                { ikon: '😊', bg: '#F0F7F0', tittel: 'Reaksjoner', tekst: 'Se hvilke matvarer som gir glede, grimaser eller magevondt.' },
-                { ikon: '🌈', bg: '#FFF8EC', tittel: 'Smaksreise', tekst: 'Følg hvilke matgrupper barnet har utforsket.' },
-                { ikon: '✨', bg: '#F5F0FF', tittel: 'Personlige mønstre', tekst: 'AI finner sammenhenger og gir deg innsikt.' },
-              ].map((item, i) => (
+              {innsiktKort.map((item, i) => (
                 <div key={i} style={{ backgroundColor: item.bg, borderRadius: '16px', padding: '14px' }}>
                   <div style={{ fontSize: '24px', marginBottom: '8px' }}>{item.ikon}</div>
                   <div style={{ fontSize: '12px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{item.tittel}</div>
@@ -226,9 +254,9 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
               <span style={{ fontSize: '20px' }}>🗺️</span>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Smakskart</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('mat.smakskart')}</div>
             </div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>Utforskning starter her. Hver smak er et nytt eventyr!</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>{t('mat.smakskartBeskrivelse')}</div>
             <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
               {KATEGORIER.map(kat => (
                 <div key={kat.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', minWidth: '56px' }}>
@@ -236,7 +264,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
                     {kat.ikon}
                   </div>
                   <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekst, textAlign: 'center', fontWeight: '500' }}>{kat.label}</div>
-                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>0 prøvd</div>
+                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('mat.nullPrøvd')}</div>
                 </div>
               ))}
             </div>
@@ -246,18 +274,13 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
 <div style={{ background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF0D6 100%)', border: '1px solid #F4D9A0', borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
     <span style={{ fontSize: '20px' }}>💡</span>
-    <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#8B6340', fontWeight: '700' }}>Snart kommer dette</div>
+    <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#8B6340', fontWeight: '700' }}>{t('mat.snartKommer')}</div>
   </div>
   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#6B5040', marginBottom: '12px' }}>
-    Når du har registrert noen måltider vil du få:
+    {t('mat.snartKommerBeskrivelse')}
   </div>
   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-    {[
-      { ikon: '💛', tekst: `${babyNavn} sitt matspråk` },
-      { ikon: '❤️', tekst: 'Favorittsmaker' },
-      { ikon: '😕', tekst: 'Mat som ikke falt i smak' },
-      { ikon: '✨', tekst: 'Personlige AI-innsikter' },
-    ].map((item, i) => (
+    {snartKommerItems.map((item, i) => (
       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#FFF0D6', border: '1px solid #F4D9A0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -272,7 +295,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
 
           {/* Tips */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '16px' }}>🌿 Tips til første måltider</div>
+            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '16px' }}>{t('mat.tipsTitle')}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
               {TIPS.map((tip, i) => (
                 <div key={i} style={{ backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '12px', textAlign: 'center' }}>
@@ -291,13 +314,13 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px', display: 'flex', gap: '16px', alignItems: 'center' }}>
             <div style={{ fontSize: '56px', flexShrink: 0 }}>🍑</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>DAGENS OBSERVASJON</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>{t('mat.dagsObservasjon')}</div>
               <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.3, marginBottom: '8px' }}>
-                {babyNavn} har prøvd {unikeMatvarer.length} ulike matvarer.
+                {t('mat.harPrøvd', { navn: babyNavn, antall: unikeMatvarer.length })}
               </div>
               {topFavoritter.length > 0 && (
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>
-                  Favoritten ser ut til å være
+                  {t('mat.favorittenSerUtTilÅVære')}
                 </div>
               )}
               {topFavoritter[0] && (
@@ -313,19 +336,19 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '16px' }}>
             {/* Smaksreise */}
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>🌿 SMAKSREISE</div>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('mat.smaksreiseHeader')}</div>
               {unikeMatvarer.slice(0, 4).map((m, i) => (
                 <div key={i} style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span>{getKategoriIkon(matreg.find(r => r.matvare === m)?.kategori || '')}</span>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m}</span>
                 </div>
               ))}
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginTop: '6px' }}>{unikeMatvarer.length} totalt →</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginTop: '6px' }}>{t('mat.totalt', { antall: unikeMatvarer.length })}</div>
             </div>
 
             {/* Favoritter */}
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#BE123C', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>❤️ FAVORITTER</div>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#BE123C', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('mat.favoritterHeader')}</div>
               {topFavoritter.slice(0, 3).map(([navn], i) => (
                 <div key={i} style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span style={{ fontSize: '10px', fontWeight: '700', color: '#F4A853' }}>{i + 1}</span>
@@ -333,21 +356,21 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{navn}</span>
                 </div>
               ))}
-              {topFavoritter.length === 0 && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Ingen ennå</div>}
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#BE123C', fontWeight: '600', marginTop: '6px' }}>Se alle →</div>
+              {topFavoritter.length === 0 && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('mat.ingenEnnå')}</div>}
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#BE123C', fontWeight: '600', marginTop: '6px' }}>{t('mat.seAlle')}</div>
             </div>
 
             {/* Ikke populær */}
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>😕 IKKE SÅ POPULÆRT</div>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('mat.ikkeSåPopulærtHeader')}</div>
               {topIkkePop.slice(0, 2).map(([navn], i) => (
                 <div key={i} style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span>{getKategoriIkon(matreg.find(r => r.matvare === navn)?.kategori || '')}</span>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{navn}</span>
                 </div>
               ))}
-              {topIkkePop.length === 0 && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Ingen ennå</div>}
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600', marginTop: '6px' }}>Se mer →</div>
+              {topIkkePop.length === 0 && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('mat.ingenEnnå')}</div>}
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600', marginTop: '6px' }}>{t('mat.seMer')}</div>
             </div>
           </div>
 
@@ -355,11 +378,11 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
           {(lasterAi || aiInnsikter.length > 0) && (
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', right: '16px', bottom: '16px', fontSize: '48px', opacity: 0.15 }}>🐻</div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>✦ INNSIKT FRA AI</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>{t('mat.innsiktFraAi')}</div>
               {lasterAi ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '20px', height: '20px', border: '2px solid #F4A853', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Analyserer matmønstre...</div>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('mat.analysererMatmønstre')}</div>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -374,8 +397,8 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
         {/* Siste måltider */}
 <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-    <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Siste måltider</div>
-    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600' }}>Se alle</div>
+    <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('mat.sisteMåltider')}</div>
+    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '600' }}>{t('mat.seAlle')}</div>
   </div>
   <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '16px', overflow: 'hidden', padding: '8px 0' }}>
     {matreg.slice(0, 5).map((m, i) => (
@@ -392,7 +415,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
               {m.matvare}
             </div>
             <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '2px' }}>
-  {getReaksjonIkon(m.reaksjon)} {getReaksjonLabel(m.reaksjon)} · {MENGDER.find(x => x.id === m.mengde)?.label}
+  {getReaksjonIkon(m.reaksjon)} {getReaksjonLabel(m.reaksjon)} · {getMengdeLabel(m.mengde)}
 </div>
 {m.allergi_status && (
   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px', padding: '2px 8px', backgroundColor: ALLERGI_STATUS.find(a => a.id === m.allergi_status)?.bg, borderRadius: '20px' }}>
@@ -406,7 +429,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, flexShrink: 0, textAlign: 'right' }}>
             <div>{m.klokkeslett.slice(0, 5)}</div>
             <div style={{ fontSize: '10px', marginTop: '2px' }}>
-              {new Date(m.dato).getDate()}. {['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'][new Date(m.dato).getMonth()]}
+              {formatDato(m.dato)}
             </div>
           </div>
         </div>
@@ -421,7 +444,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '18px' }}>🗺️</span>
-                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Smakskart</div>
+                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('mat.smakskart')}</div>
               </div>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M6 4L10 8L6 12" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -435,7 +458,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
                   </div>
                   <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekst, textAlign: 'center', fontWeight: '500' }}>{kat.label}</div>
                   <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: kat.antall > 0 ? kat.tekstFarge : farger.tekstLys, fontWeight: kat.antall > 0 ? '600' : '400' }}>
-                    {kat.antall > 0 ? `${kat.antall} prøvd` : '0 prøvd'}
+                    {kat.antall > 0 ? t('mat.prøvd', { antall: kat.antall }) : t('mat.nullPrøvd')}
                   </div>
                   {/* Fremdriftslinje */}
                   {kat.antall > 0 && (
@@ -453,7 +476,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
             onClick={() => setVisSkjema(true)}
             style={{ position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)', padding: '16px 32px', background: 'linear-gradient(135deg, #F4A853, #E8943F)', border: 'none', borderRadius: '50px', fontSize: '15px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 20px rgba(244,168,83,0.5)', zIndex: 50 }}
           >
-            <span style={{ fontSize: '18px' }}>+</span> Registrer måltid
+            <span style={{ fontSize: '18px' }}>+</span> {t('mat.registrerMåltid')}
           </button>
         </>
       )}
@@ -463,22 +486,22 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisSkjema(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Nytt måltid 🍽️</div>
+            <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('mat.nyttMåltid')}</div>
 
             {/* Matvare */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Matvare</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.matvare')}</div>
               <input
                 value={matvare}
                 onChange={e => setMatvare(e.target.value)}
-                placeholder="f.eks. Avokado, Gulrot, Havregrøt..."
+                placeholder={t('mat.matvarePlaceholder')}
                 style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
               />
             </div>
 
             {/* Kategori */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Kategori</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.kategori')}</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
                 {KATEGORIER.map(kat => (
                   <button key={kat.id} onClick={() => setKategori(kat.id)} style={{ padding: '10px 8px', backgroundColor: kategori === kat.id ? kat.farge : farger.bakgrunn, border: `1.5px solid ${kategori === kat.id ? kat.border : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
@@ -491,7 +514,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
 
             {/* Reaksjon */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Reaksjon</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.reaksjon')}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {REAKSJONER.map(r => (
                   <button key={r.id} onClick={() => setReaksjon(r.id)} style={{ padding: '12px 16px', backgroundColor: reaksjon === r.id ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${reaksjon === r.id ? farger.grønn : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', textAlign: 'left' }}>
@@ -504,7 +527,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
 
             {/* Mengde */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Mengde spist</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.mengdeSpist')}</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 {MENGDER.map(m => (
                   <button key={m.id} onClick={() => setMengde(m.id)} style={{ padding: '12px', backgroundColor: mengde === m.id ? '#FFF8EC' : farger.bakgrunn, border: `1.5px solid ${mengde === m.id ? '#F4D9A0' : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: mengde === m.id ? '#8B6340' : farger.tekst, fontWeight: mengde === m.id ? '600' : '400' }}>
@@ -516,8 +539,8 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
 
             {/* Allergivarsel */}
 <div style={{ marginBottom: '16px' }}>
-  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>Allergireaksjon (valgfritt)</div>
-  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Viste babyen tegn på reaksjon etter måltidet?</div>
+  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('mat.allergiValgfritt')}</div>
+  <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('mat.allergiSpørsmål')}</div>
   <div style={{ display: 'flex', gap: '8px' }}>
     {ALLERGI_STATUS.map(a => (
       <button key={a.id} onClick={() => setAllergiStatus(allergiStatus === a.id ? '' : a.id)}
@@ -532,19 +555,19 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
             {/* Dato og tid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
               <div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Dato</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.dato')}</div>
                 <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Tidspunkt</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.tidspunkt')}</div>
                 <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
             </div>
 
             {/* Notater */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Notater (valgfritt)</div>
-              <textarea value={notater} onChange={e => setNotater(e.target.value)} placeholder="Noe spesielt du vil huske?" rows={2} style={{ width: '100%', padding: '12px 14px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.notaterValgfritt')}</div>
+              <textarea value={notater} onChange={e => setNotater(e.target.value)} placeholder={t('mat.notaterPlaceholder')} rows={2} style={{ width: '100%', padding: '12px 14px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
             </div>
 
             <button
@@ -552,7 +575,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
               disabled={!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer}
               style={{ width: '100%', padding: '16px', backgroundColor: (!matvare.trim() || !kategori || !reaksjon || !mengde) ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: (!matvare.trim() || !kategori || !reaksjon || !mengde) ? farger.tekstLys : '#FDFAF6', cursor: (!matvare.trim() || !kategori || !reaksjon || !mengde) ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter)' }}
             >
-              {lagrer ? 'Lagrer...' : 'Lagre måltid'}
+              {lagrer ? t('mat.lagrer') : t('mat.lagreMåltid')}
             </button>
           </div>
         </div>
