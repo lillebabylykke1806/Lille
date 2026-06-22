@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -15,16 +17,26 @@ type Notat = {
     bilde_url?: string | null;
   };
 
-const KATEGORIER = [
-  { id: 'generelt', label: 'Generelt', farge: '#A8B5A2', bgFarge: '#E8F0E8' },
-  { id: 'søvn', label: 'Søvn', farge: '#7B9ED9', bgFarge: '#E8EFF8' },
-  { id: 'amming', label: 'Amming', farge: '#C48E7B', bgFarge: '#F2E4D8' },
-  { id: 'milepæl', label: 'Milepæl ⭐', farge: '#F4A853', bgFarge: '#FFF3D6' },
-  { id: 'bekymring', label: 'Bekymring', farge: '#C48E7B', bgFarge: '#FFE8E8' },
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const KATEGORI_STILER = [
+  { id: 'generelt', farge: '#A8B5A2', bgFarge: '#E8F0E8' },
+  { id: 'søvn', farge: '#7B9ED9', bgFarge: '#E8EFF8' },
+  { id: 'amming', farge: '#C48E7B', bgFarge: '#F2E4D8' },
+  { id: 'milepæl', farge: '#F4A853', bgFarge: '#FFF3D6' },
+  { id: 'bekymring', farge: '#C48E7B', bgFarge: '#FFE8E8' },
+];
+
+const getKategorier = (t: TFn) => [
+  { id: 'generelt', label: t('notat.kategoriGenerelt'), farge: '#A8B5A2', bgFarge: '#E8F0E8' },
+  { id: 'søvn', label: t('notat.kategoriSøvn'), farge: '#7B9ED9', bgFarge: '#E8EFF8' },
+  { id: 'amming', label: t('notat.kategoriAmming'), farge: '#C48E7B', bgFarge: '#F2E4D8' },
+  { id: 'milepæl', label: t('notat.kategoriMilepæl'), farge: '#F4A853', bgFarge: '#FFF3D6' },
+  { id: 'bekymring', label: t('notat.kategoriBekymring'), farge: '#C48E7B', bgFarge: '#FFE8E8' },
 ];
 
 const KategoriIkon = ({ kategori }: { kategori: string }) => {
-  const k = KATEGORIER.find(k => k.id === kategori) || KATEGORIER[0];
+  const k = KATEGORI_STILER.find(ks => ks.id === kategori) || KATEGORI_STILER[0];
   if (kategori === 'søvn') return (
     <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: k.bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -66,6 +78,9 @@ const KategoriIkon = ({ kategori }: { kategori: string }) => {
 };
 
 export default function Notat({ bruker, aktivtBarn }: Props) {
+  const { t, locale } = useLanguage();
+  const kategorier = getKategorier(t);
+
   const [notater, setNotater] = useState<Notat[]>([]);
   const [visNytt, setVisNytt] = useState(false);
   const [visNotat, setVisNotat] = useState<Notat | null>(null);
@@ -163,12 +178,16 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
     return acc;
   }, {});
 
+  const dateLocale = locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB';
+
   const formatDato = (dato: string) => {
+    const dagensdato = new Date().toISOString().split('T')[0];
+    if (dato === dagensdato) return t('notat.iDag');
+    const igår = new Date();
+    igår.setDate(igår.getDate() - 1);
+    if (dato === igår.toISOString().split('T')[0]) return t('notat.iGår');
     const d = new Date(dato);
-    const i = new Date();
-    if (dato === i.toISOString().split('T')[0]) return 'I dag';
-    if (dato === new Date(i.setDate(i.getDate() - 1)).toISOString().split('T')[0]) return 'I går';
-    return d.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long' });
+    return d.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' });
   };
 
   return (
@@ -177,10 +196,10 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
       {/* Header */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          Notater
+          {t('notat.tittel')}
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-          Skriv ned tanker, milepæler og observasjoner
+          {t('notat.undertittel')}
         </div>
       </div>
 
@@ -194,7 +213,7 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
           type="text"
           value={søk}
           onChange={e => setSøk(e.target.value)}
-          placeholder="Søk i notater..."
+          placeholder={t('notat.søkPlaceholder')}
           style={{ width: '100%', padding: '12px 16px 12px 40px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.hvit, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
         />
       </div>
@@ -205,9 +224,9 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
           onClick={() => setAktivKategori(null)}
           style={{ flexShrink: 0, padding: '6px 14px', borderRadius: '20px', border: `1.5px solid ${aktivKategori === null ? farger.grønn : farger.kremMørk}`, backgroundColor: aktivKategori === null ? farger.grønnLys : 'transparent', color: aktivKategori === null ? farger.grønn : farger.tekstLys, fontSize: '12px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: aktivKategori === null ? '600' : '400' }}
         >
-          Alle
+          {t('notat.alle')}
         </button>
-        {KATEGORIER.map(k => (
+        {kategorier.map(k => (
           <button
             key={k.id}
             onClick={() => setAktivKategori(aktivKategori === k.id ? null : k.id)}
@@ -222,10 +241,10 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
       {Object.keys(gruppertPåDato).length === 0 ? (
         <div style={{ textAlign: 'center', padding: '48px 24px' }}>
           <div style={{ fontSize: '14px', fontStyle: 'italic', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekstLys, marginBottom: '8px' }}>
-            {søk || aktivKategori ? 'Ingen notater funnet' : 'Ingen notater ennå'}
+            {søk || aktivKategori ? t('notat.ingenFunnet') : t('notat.ingenEnnå')}
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-            Trykk + for å skrive ditt første notat
+            {t('notat.trykkPlus')}
           </div>
         </div>
       ) : (
@@ -236,7 +255,7 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {notatListe.map(n => {
-                const k = KATEGORIER.find(k => k.id === n.kategori) || KATEGORIER[0];
+                const k = kategorier.find(kat => kat.id === n.kategori) || kategorier[0];
                 return (
                   <button
                     key={n.id}
@@ -275,13 +294,13 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisNytt(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '16px' }}>Nytt notat</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '16px' }}>{t('notat.nyttNotat')}</div>
 
             {/* Kategori */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Kategori</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('notat.kategori')}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {KATEGORIER.map(k => (
+                {kategorier.map(k => (
                   <button key={k.id} onClick={() => setNyKategori(k.id)} style={{ padding: '6px 14px', backgroundColor: nyKategori === k.id ? k.bgFarge : farger.bakgrunn, border: `1.5px solid ${nyKategori === k.id ? k.farge : farger.kremMørk}`, borderRadius: '20px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: nyKategori === k.id ? k.farge : farger.tekst, cursor: 'pointer', fontWeight: nyKategori === k.id ? '600' : '400' }}>
                     {k.label}
                   </button>
@@ -291,12 +310,12 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
             {nyKategori === 'milepæl' && (
   <div style={{ marginBottom: '16px' }}>
-    <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Alder-milepæler</div>
+    <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('notat.alderMilepæler')}</div>
     <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
       {[1,2,3,4,5,6,7,8,9,10,11,12].map(mnd => (
-        <button key={mnd} onClick={() => setNyTekst(`${mnd} måned${mnd > 1 ? 'er' : ''}! 🎉`)}
+        <button key={mnd} onClick={() => setNyTekst(t('notat.månedMilepæl', { mnd }))}
           style={{ flexShrink: 0, padding: '6px 14px', borderRadius: '20px', border: `1px solid ${farger.kremMørk}`, backgroundColor: farger.bakgrunn, fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, cursor: 'pointer' }}>
-          {mnd} mnd
+          {mnd} {t('notat.mnd')}
         </button>
       ))}
     </div>
@@ -305,17 +324,17 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
 {nyKategori === 'milepæl' && (
   <div style={{ marginBottom: '16px' }}>
-    <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Legg til bilde</div>
+    <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('notat.leggTilBilde')}</div>
     <label style={{ cursor: 'pointer', display: 'block' }}>
       <div style={{ border: `2px dashed ${farger.kremMørk}`, borderRadius: '16px', padding: '20px', textAlign: 'center', backgroundColor: farger.bakgrunn }}>
         {lasterBilde ? (
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Laster opp...</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('notat.lasterOpp')}</div>
         ) : nyBilde ? (
           <img src={nyBilde} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '12px' }} />
         ) : (
           <>
             <div style={{ fontSize: '24px', marginBottom: '8px' }}>📷</div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trykk for å legge til bilde</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('notat.trykkForBilde')}</div>
           </>
         )}
       </div>
@@ -323,7 +342,7 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
     </label>
     {nyBilde && (
       <button onClick={() => setNyBilde(null)} style={{ marginTop: '8px', width: '100%', padding: '8px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-        Fjern bilde
+        {t('notat.fjernBilde')}
       </button>
     )}
   </div>
@@ -331,18 +350,18 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
             {/* Tekst */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Notat</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('notat.notat')}</div>
               <textarea
                 value={nyTekst}
                 onChange={e => setNyTekst(e.target.value)}
-                placeholder="Skriv her..."
+                placeholder={t('notat.skrivHer')}
                 autoFocus
                 style={{ width: '100%', padding: '14px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '140px', lineHeight: 1.6, boxSizing: 'border-box' }}
               />
             </div>
 
             <button onClick={lagreNotat} disabled={!nyTekst.trim() || lagrer} style={{ width: '100%', padding: '16px', backgroundColor: nyTekst.trim() ? farger.grønnLys : farger.kremMørk, border: `1px solid ${nyTekst.trim() ? farger.grønn : 'transparent'}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: nyTekst.trim() ? farger.grønn : farger.tekstLys, cursor: nyTekst.trim() ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}>
-              {lagrer ? 'Lagrer...' : 'Lagre notat'}
+              {lagrer ? t('notat.lagrer') : t('notat.lagreNotat')}
             </button>
           </div>
         </div>
@@ -358,7 +377,7 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
               <KategoriIkon kategori={visNotat.kategori} />
               <div>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>
-                  {KATEGORIER.find(k => k.id === visNotat.kategori)?.label}
+                  {kategorier.find(kat => kat.id === visNotat.kategori)?.label}
                 </div>
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
                   {formatDato(visNotat.dato)} · {visNotat.tidspunkt}
@@ -374,7 +393,7 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
 </div>
 
             <button onClick={() => slettNotat(visNotat.id)} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid #FFB3B3`, borderRadius: '14px', fontSize: '14px', color: '#C0392B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Slett notat
+              {t('notat.slettNotat')}
             </button>
           </div>
         </div>
