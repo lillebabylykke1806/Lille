@@ -287,6 +287,25 @@ export const oversettelser = {
   'amming.lagreEndringer': { no: 'Lagre endringer', en: 'Save changes', sv: 'Spara ändringar', da: 'Gem ændringer', de: 'Änderungen speichern' },
   'amming.slettAmming': { no: 'Slett amming', en: 'Delete feeding', sv: 'Radera amning', da: 'Slet amning', de: 'Stillen löschen' },
 
+  'bleie.tittel': { no: 'Bleie', en: 'Diaper', sv: 'Blöja', da: 'Ble', de: 'Windel' },
+  'bleie.undertittel': { no: 'Registrer bleieskift raskt og enkelt', en: 'Register diaper changes quickly and easily', sv: 'Registrera blöjbyten snabbt och enkelt', da: 'Registrer bleskift hurtigt og nemt', de: 'Windelwechsel schnell und einfach registrieren' },
+  'bleie.registrert': { no: 'Registrert!', en: 'Registered!', sv: 'Registrerat!', da: 'Registreret!', de: 'Registriert!' },
+  'bleie.sisteBleieskift': { no: 'Siste bleieskift', en: 'Last diaper change', sv: 'Senaste blöjbyte', da: 'Seneste bleskift', de: 'Letzter Windelwechsel' },
+  'bleie.innsikt': { no: '✨ Innsikt', en: '✨ Insight', sv: '✨ Insikt', da: '✨ Indsigt', de: '✨ Einblick' },
+  'bleie.innsiktFlott': { no: '{antall} bleieskift i dag – flott oversikt! 🤍', en: '{antall} diaper changes today – great overview! 🤍', sv: '{antall} blöjbyten idag – bra översikt! 🤍', da: '{antall} bleskift i dag – godt overblik! 🤍', de: '{antall} Windelwechsel heute – super Überblick! 🤍' },
+  'bleie.innsiktAntall': { no: '{antall} bleieskift registrert i dag.', en: '{antall} diaper changes registered today.', sv: '{antall} blöjbyten registrerade idag.', da: '{antall} bleskift registreret i dag.', de: '{antall} Windelwechsel heute registriert.' },
+  'bleie.type': { no: 'Type', en: 'Type', sv: 'Typ', da: 'Type', de: 'Typ' },
+  'bleie.typeVåt': { no: 'Våt', en: 'Wet', sv: 'Våt', da: 'Våd', de: 'Nass' },
+  'bleie.typeTørr': { no: 'Tørr', en: 'Dry', sv: 'Torr', da: 'Tør', de: 'Trocken' },
+  'bleie.typeAvføring': { no: 'Avføring', en: 'Soiled', sv: 'Avföring', da: 'Afføring', de: 'Stuhlgang' },
+  'bleie.tidspunkt': { no: 'Tidspunkt', en: 'Time', sv: 'Tidpunkt', da: 'Tidspunkt', de: 'Uhrzeit' },
+  'bleie.notatValgfritt': { no: 'Bleie (valgfritt)', en: 'Note (optional)', sv: 'Anteckning (valfritt)', da: 'Note (valgfri)', de: 'Notiz (optional)' },
+  'bleie.notatPlaceholder': { no: 'Skriv en liten notat...', en: 'Write a small note...', sv: 'Skriv en liten anteckning...', da: 'Skriv en lille note...', de: 'Schreibe eine kleine Notiz...' },
+  'bleie.lagrer': { no: 'Lagrer...', en: 'Saving...', sv: 'Sparar...', da: 'Gemmer...', de: 'Speichert...' },
+  'bleie.lagre': { no: 'Lagre', en: 'Save', sv: 'Spara', da: 'Gem', de: 'Speichern' },
+  'bleie.bleieskiftIDag': { no: 'Bleieskift i dag', en: "Today's diaper changes", sv: 'Blöjbyten idag', da: 'Bleskift i dag', de: 'Windelwechsel heute' },
+  'bleie.totalt': { no: '{antall} totalt', en: '{antall} total', sv: '{antall} totalt', da: '{antall} i alt', de: '{antall} gesamt' },
+
   ...signalerOversettelser,
 } as const;
 

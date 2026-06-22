@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; };
 
@@ -14,10 +16,12 @@ type BleieLogg = {
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
-const BLEIE_TYPER = [
-  { id: 'våt', label: 'Våt' },
-  { id: 'tørr', label: 'Tørr' },
-  { id: 'avføring', label: 'Avføring' },
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const getBleieTyper = (t: TFn) => [
+  { id: 'våt', label: t('bleie.typeVåt') },
+  { id: 'tørr', label: t('bleie.typeTørr') },
+  { id: 'avføring', label: t('bleie.typeAvføring') },
 ];
 
 const BleieIkon = ({ type, aktiv }: { type: string; aktiv: boolean }) => {
@@ -40,6 +44,8 @@ const BleieIkon = ({ type, aktiv }: { type: string; aktiv: boolean }) => {
 };
 
 export default function Bleie({ bruker }: Props) {
+  const { t } = useLanguage();
+  const BLEIE_TYPER = getBleieTyper(t);
   const [tidspunkt, setTidspunkt] = useState(() =>
     new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })
   );
@@ -91,10 +97,10 @@ export default function Bleie({ bruker }: Props) {
       {/* Header */}
       <div style={{ marginBottom: '24px', textAlign: 'center' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          Bleie
+          {t('bleie.tittel')}
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-          Registrer bleieskift raskt og enkelt
+          {t('bleie.undertittel')}
         </div>
       </div>
 
@@ -102,14 +108,14 @@ export default function Bleie({ bruker }: Props) {
       {visBekreftet && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', padding: '20px 32px', zIndex: 200, textAlign: 'center', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
           <div style={{ fontSize: '32px', marginBottom: '8px', color: farger.grønn }}>✓</div>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>Registrert!</div>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>{t('bleie.registrert')}</div>
         </div>
       )}
 
       {/* Siste bytte */}
       {sisteBytte && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px', marginBottom: '12px' }}>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Siste bleieskift</div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('bleie.sisteBleieskift')}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <BleieIkon type={sisteBytte.type} aktiv={true} />
             <div>
@@ -127,11 +133,11 @@ export default function Bleie({ bruker }: Props) {
       {/* Innsikt */}
       {antallBleier > 0 && (
         <div style={{ backgroundColor: '#F5EDE8', borderRadius: '16px', padding: '16px 20px', marginBottom: '16px' }}>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>✨ Innsikt</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('bleie.innsikt')}</div>
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
             {antallBleier >= 6
-              ? `${antallBleier} bleieskift i dag – flott oversikt! 🤍`
-              : `${antallBleier} bleieskift registrert i dag.`}
+              ? t('bleie.innsiktFlott', { antall: antallBleier })
+              : t('bleie.innsiktAntall', { antall: antallBleier })}
           </div>
         </div>
       )}
@@ -140,7 +146,7 @@ export default function Bleie({ bruker }: Props) {
       <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
         
         {/* Type */}
-        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>Type</div>
+        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>{t('bleie.type')}</div>
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
           {BLEIE_TYPER.map(type => (
             <button
@@ -170,7 +176,7 @@ export default function Bleie({ bruker }: Props) {
 
         {/* Tidspunkt */}
         {/* Tidspunkt */}
-<div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Tidspunkt</div>
+<div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('bleie.tidspunkt')}</div>
 <div style={{ marginBottom: '20px' }}>
   <input
     type="time"
@@ -182,11 +188,11 @@ export default function Bleie({ bruker }: Props) {
         </div>
 
         {/* Notat */}
-        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Bleie (valgfritt)</div>
+        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('bleie.notatValgfritt')}</div>
         <textarea
           value={notat}
           onChange={e => setNotat(e.target.value)}
-          placeholder="Skriv en liten notat..."
+          placeholder={t('bleie.notatPlaceholder')}
           style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '80px', boxSizing: 'border-box' }}
         />
 
@@ -196,7 +202,7 @@ export default function Bleie({ bruker }: Props) {
           disabled={!valgt || lagrer}
           style={{ width: '100%', padding: '16px', marginTop: '16px', backgroundColor: valgt ? farger.grønnLys : farger.kremMørk, border: `1px solid ${valgt ? farger.grønn : 'transparent'}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: valgt ? farger.grønn : farger.tekstLys, cursor: valgt ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}
         >
-          {lagrer ? 'Lagrer...' : 'Lagre'}
+          {lagrer ? t('bleie.lagrer') : t('bleie.lagre')}
         </button>
       </div>
 
@@ -204,8 +210,8 @@ export default function Bleie({ bruker }: Props) {
       {logg.length > 0 && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Bleieskift i dag</div>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{antallBleier} totalt</div>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>{t('bleie.bleieskiftIDag')}</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('bleie.totalt', { antall: antallBleier })}</div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {logg.map((l, i) => (
