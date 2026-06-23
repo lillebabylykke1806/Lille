@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; };
 
@@ -14,17 +16,35 @@ type TemperaturRegistrering = {
   notat?: string;
 };
 
-const SYMPTOMER = ['Feber', 'Tett nese', 'Hoste', 'Oppkast', 'Diaré', 'Slapp', 'Utslett'];
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
 
-const getFeberstatus = (temp: number) => {
-  if (temp >= 40) return { label: 'Høy feber', farge: '#BE123C', bg: '#FFF1F2', border: '#FECDD3' };
-  if (temp >= 38.5) return { label: 'Feber', farge: '#BE123C', bg: '#FFF1F2', border: '#FECDD3' };
-  if (temp >= 37.5) return { label: 'Lett forhøyet', farge: '#C2410C', bg: '#FFF7ED', border: '#FED7AA' };
-  if (temp >= 36) return { label: 'Normal', farge: farger.grønn, bg: farger.grønnLys, border: '#A8C8A8' };
-  return { label: 'Lavt', farge: '#4338CA', bg: '#EEF2FF', border: '#C7D2FE' };
+const getSymptomer = (t: TFn) => [
+  { id: 'Feber', label: t('temp.symptomFeber') },
+  { id: 'Tett nese', label: t('temp.symptomTettNese') },
+  { id: 'Hoste', label: t('temp.symptomHoste') },
+  { id: 'Oppkast', label: t('temp.symptomOppkast') },
+  { id: 'Diaré', label: t('temp.symptomDiaré') },
+  { id: 'Slapp', label: t('temp.symptomSlapp') },
+  { id: 'Utslett', label: t('temp.symptomUtslett') },
+];
+
+const getFeberstatus = (temp: number, t: TFn) => {
+  if (temp >= 40) return { label: t('temp.høyFeber'), farge: '#BE123C', bg: '#FFF1F2', border: '#FECDD3' };
+  if (temp >= 38.5) return { label: t('temp.feber'), farge: '#BE123C', bg: '#FFF1F2', border: '#FECDD3' };
+  if (temp >= 37.5) return { label: t('temp.lettForhøyet'), farge: '#C2410C', bg: '#FFF7ED', border: '#FED7AA' };
+  if (temp >= 36) return { label: t('temp.normal'), farge: farger.grønn, bg: farger.grønnLys, border: '#A8C8A8' };
+  return { label: t('temp.lavt'), farge: '#4338CA', bg: '#EEF2FF', border: '#C7D2FE' };
 };
 
 export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
+  const { t } = useLanguage();
+  const symptomer = getSymptomer(t);
+  const finnSymptomLabel = (id: string) => symptomer.find(s => s.id === id)?.label ?? id;
+  const formatNotat = (notat?: string | null) => {
+    if (!notat) return null;
+    return notat.split(', ').map(part => finnSymptomLabel(part.trim())).join(', ');
+  };
+
   const [målinger, setMålinger] = useState<TemperaturRegistrering[]>([]);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [laster, setLaster] = useState(true);
@@ -85,7 +105,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
     const siste10 = [...målinger].reverse().slice(-10);
     if (siste10.length < 2) return (
       <div style={{ height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Trenger minst 2 målinger</div>
+        <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('temp.trenger2Målinger')}</div>
       </div>
     );
     const min = 36;
@@ -99,12 +119,12 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
     }).join(' ');
     return (
       <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{ overflow: 'visible' }}>
-        {[36, 37, 38, 39, 40].map(t => {
-          const y = h - ((t - min) / (max - min)) * h;
+        {[36, 37, 38, 39, 40].map(nivå => {
+          const y = h - ((nivå - min) / (max - min)) * h;
           return (
-            <g key={t}>
+            <g key={nivå}>
               <line x1="0" y1={y} x2={w} y2={y} stroke={farger.kremMørk} strokeWidth="0.5" strokeDasharray="4,4"/>
-              <text x="-4" y={y + 4} fontSize="9" fill={farger.tekstLys} textAnchor="end">{t}°</text>
+              <text x="-4" y={y + 4} fontSize="9" fill={farger.tekstLys} textAnchor="end">{nivå}°</text>
             </g>
           );
         })}
@@ -112,7 +132,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
         {siste10.map((m, i) => {
           const x = (i / (siste10.length - 1)) * w;
           const y = h - ((m.temperatur - min) / (max - min)) * h;
-          const status = getFeberstatus(m.temperatur);
+          const status = getFeberstatus(m.temperatur, t);
           return <circle key={i} cx={x} cy={y} r="4" fill={status.farge} stroke={farger.hvit} strokeWidth="1.5"/>;
         })}
       </svg>
@@ -133,10 +153,10 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '24px' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          🌡️ Temperatur
+          {t('temp.tittel')}
         </div>
-        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5 }}>
-          Følg temperatur, sykdomsforløp<br/>og medisiner på ett sted.
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5, whiteSpace: 'pre-line' }}>
+          {t('temp.undertittel')}
         </div>
       </div>
 
@@ -146,25 +166,25 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '24px', textAlign: 'center' }}>
             <div style={{ fontSize: '56px', marginBottom: '16px' }}>🌡️</div>
             <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>
-              Ingen målinger ennå
+              {t('temp.ingenMålinger')}
             </div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '20px' }}>
-              Registrer {babyNavn}s temperatur for å følge utviklingen og få varsler om feber.
+              {t('temp.ingenMålingerBeskrivelse', { navn: babyNavn })}
             </div>
             <button
               onClick={() => setVisSkjema(true)}
               style={{ padding: '14px 28px', background: `linear-gradient(135deg, ${farger.grønn}, #1E4030)`, border: 'none', borderRadius: '50px', fontSize: '15px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 16px rgba(45,92,69,0.4)' }}
             >
-              <span style={{ fontSize: '18px' }}>+</span> Registrer første måling
+              <span style={{ fontSize: '18px' }}>+</span> {t('temp.registrerFørsteMåling')}
             </button>
           </div>
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px' }}>
-            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '14px' }}>💡 Visste du?</div>
+            <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '14px' }}>{t('temp.visstedu')}</div>
             {[
-              { temp: '< 37.5°C', label: 'Normal temperatur', farge: farger.grønn, bg: farger.grønnLys },
-              { temp: '37.5–38.4°C', label: 'Lett forhøyet', farge: '#C2410C', bg: '#FFF7ED' },
-              { temp: '38.5–39.9°C', label: 'Feber', farge: '#BE123C', bg: '#FFF1F2' },
-              { temp: '≥ 40°C', label: 'Høy feber', farge: '#BE123C', bg: '#FFF1F2' },
+              { temp: '< 37.5°C', label: t('temp.normal'), farge: farger.grønn, bg: farger.grønnLys },
+              { temp: '37.5–38.4°C', label: t('temp.lettForhøyet'), farge: '#C2410C', bg: '#FFF7ED' },
+              { temp: '38.5–39.9°C', label: t('temp.feber'), farge: '#BE123C', bg: '#FFF1F2' },
+              { temp: '≥ 40°C', label: t('temp.høyFeber'), farge: '#BE123C', bg: '#FFF1F2' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
                 <div style={{ padding: '4px 10px', backgroundColor: item.bg, borderRadius: '20px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: item.farge, fontWeight: '600', minWidth: '90px', textAlign: 'center' }}>{item.temp}</div>
@@ -178,17 +198,17 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
         <>
           {/* Siste måling */}
           {sisteMåling && (() => {
-            const status = getFeberstatus(sisteMåling.temperatur);
+            const status = getFeberstatus(sisteMåling.temperatur, t);
             return (
               <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>Siste måling</div>
+                    <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>{t('temp.sisteMåling')}</div>
                     <div style={{ fontSize: '42px', fontFamily: 'var(--font-plus-jakarta)', color: status.farge, fontWeight: '700', lineHeight: 1, marginBottom: '6px' }}>
                       {sisteMåling.temperatur}°C
                     </div>
                     <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>
-                      Registrert {sisteMåling.klokkeslett.slice(0, 5)}
+                      {t('temp.registrertKl', { tid: sisteMåling.klokkeslett.slice(0, 5) })}
                     </div>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', backgroundColor: status.bg, border: `1px solid ${status.border}`, borderRadius: '20px' }}>
                       <span style={{ fontSize: '14px' }}>{status.farge === farger.grønn ? '😊' : '🤒'}</span>
@@ -207,10 +227,10 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, lineHeight: 1.5 }}>
                 {dagensMålinger.length > 1
-                  ? `${babyNavn} har hatt ${dagensMålinger.length} målinger i dag. Siste: ${dagensMålinger[0]?.temperatur}°C.`
+                  ? t('temp.innsiktFlereMålinger', { navn: babyNavn, antall: dagensMålinger.length, temp: dagensMålinger[0]?.temperatur })
                   : dagensMålinger.length === 1
-                  ? `Første måling i dag registrert kl. ${dagensMålinger[0]?.klokkeslett.slice(0, 5)}.`
-                  : `Ingen målinger i dag ennå.`}
+                  ? t('temp.innsiktEnMåling', { tid: dagensMålinger[0]?.klokkeslett.slice(0, 5) })
+                  : t('temp.innsiktIngen')}
               </div>
             </div>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -222,7 +242,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
             {/* Graf */}
             <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '10px' }}>Temperaturutvikling</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '10px' }}>{t('temp.temperaturutvikling')}</div>
               <GrafKomponent />
             </div>
            {/* Siste medisin */}
@@ -230,31 +250,31 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
   onClick={() => onNavigate?.('medisin')}
   style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px', textAlign: 'left', cursor: 'pointer', width: '100%' }}
 >
-  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '6px' }}>Siste medisin</div>
+  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '6px' }}>{t('temp.sisteMedisin')}</div>
   <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5, marginBottom: '8px' }}>
-    Se medisin-siden for oversikt over medisiner og doser.
+    {t('temp.seMediasinSide')}
   </div>
   <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>
-    Gå til medisin →
+    {t('temp.gåTilMedisin')}
   </div>
 </button>
 </div>
 
           {/* Symptomer */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '14px' }}>Symptomer</div>
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '14px' }}>{t('temp.symptomer')}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {SYMPTOMER.map(s => {
-                const aktiv = aktivSymptomer.includes(s);
+              {symptomer.map(s => {
+                const aktiv = aktivSymptomer.includes(s.id);
                 return (
-                  <button key={s} onClick={() => toggleSymptom(s)} style={{ padding: '7px 14px', backgroundColor: aktiv ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${aktiv ? farger.grønn : farger.kremMørk}`, borderRadius: '20px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: aktiv ? farger.grønn : farger.tekst, fontWeight: aktiv ? '600' : '400', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <button key={s.id} onClick={() => toggleSymptom(s.id)} style={{ padding: '7px 14px', backgroundColor: aktiv ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${aktiv ? farger.grønn : farger.kremMørk}`, borderRadius: '20px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: aktiv ? farger.grønn : farger.tekst, fontWeight: aktiv ? '600' : '400', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {aktiv && <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke={farger.grønn} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                    {s}
+                    {s.label}
                   </button>
                 );
               })}
               <button style={{ padding: '7px 14px', backgroundColor: farger.bakgrunn, border: `1.5px solid ${farger.kremMørk}`, borderRadius: '20px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer' }}>
-                + Legg til
+                {t('temp.leggTil')}
               </button>
             </div>
           </div>
@@ -262,12 +282,12 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
           {/* Sykdomsdagbok */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Sykdomsdagbok</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>I dag</div>
+              <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('temp.sykdomsdagbok')}</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('temp.iDag')}</div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(220,207,192,0.35)', borderRadius: '16px', overflow: 'hidden', padding: '8px 0' }}>
               {målinger.slice(0, 6).map((m, i) => {
-                const status = getFeberstatus(m.temperatur);
+                const status = getFeberstatus(m.temperatur, t);
                 return (
                   <div key={i} style={{ position: 'relative' }}>
                     {i < Math.min(målinger.length, 6) - 1 && (
@@ -280,7 +300,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: status.farge, fontWeight: '600' }}>{m.temperatur}°C</div>
-                        {m.notat && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{m.notat}</div>}
+                        {m.notat && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{formatNotat(m.notat)}</div>}
                       </div>
                     </div>
                   </div>
@@ -294,7 +314,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
             onClick={() => setVisSkjema(true)}
             style={{ position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)', padding: '16px 32px', background: `linear-gradient(135deg, ${farger.grønn}, #1E4030)`, border: 'none', borderRadius: '50px', fontSize: '15px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 20px rgba(45,92,69,0.5)', zIndex: 50 }}
           >
-            <span style={{ fontSize: '18px' }}>+</span> Registrer temperatur
+            <span style={{ fontSize: '18px' }}>+</span> {t('temp.registrerTemperatur')}
           </button>
         </>
       )}
@@ -304,21 +324,21 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisSkjema(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Registrer temperatur 🌡️</div>
+            <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('temp.registrerTemperaturTittel')}</div>
 
             {/* Temperatur input */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Temperatur (°C)</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('temp.temperaturGrad')}</div>
               <input
                 type="number"
                 step="0.1"
                 value={temperaturInput}
                 onChange={e => setTemperaturInput(e.target.value)}
-                placeholder="f.eks. 38.5"
+                placeholder={t('temp.temperaturPlaceholder')}
                 style={{ width: '100%', padding: '16px', fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', boxSizing: 'border-box', textAlign: 'center', fontWeight: '700' }}
               />
               {temperaturInput && !isNaN(parseFloat(temperaturInput.replace(',', '.'))) && (() => {
-                const status = getFeberstatus(parseFloat(temperaturInput.replace(',', '.')));
+                const status = getFeberstatus(parseFloat(temperaturInput.replace(',', '.')), t);
                 return (
                   <div style={{ marginTop: '8px', padding: '8px 14px', backgroundColor: status.bg, border: `1px solid ${status.border}`, borderRadius: '10px', textAlign: 'center' }}>
                     <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: status.farge, fontWeight: '600' }}>{status.label}</div>
@@ -329,14 +349,14 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
 
             {/* Symptomer */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Symptomer (valgfritt)</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('temp.symptomerValgfritt')}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {SYMPTOMER.map(s => {
-                  const aktiv = aktivSymptomer.includes(s);
+                {symptomer.map(s => {
+                  const aktiv = aktivSymptomer.includes(s.id);
                   return (
-                    <button key={s} onClick={() => toggleSymptom(s)} style={{ padding: '7px 14px', backgroundColor: aktiv ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${aktiv ? farger.grønn : farger.kremMørk}`, borderRadius: '20px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: aktiv ? farger.grønn : farger.tekst, fontWeight: aktiv ? '600' : '400', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <button key={s.id} onClick={() => toggleSymptom(s.id)} style={{ padding: '7px 14px', backgroundColor: aktiv ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${aktiv ? farger.grønn : farger.kremMørk}`, borderRadius: '20px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: aktiv ? farger.grønn : farger.tekst, fontWeight: aktiv ? '600' : '400', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {aktiv && <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke={farger.grønn} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                      {s}
+                      {s.label}
                     </button>
                   );
                 })}
@@ -346,19 +366,19 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
             {/* Dato og tid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
               <div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Dato</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('temp.dato')}</div>
                 <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Tidspunkt</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('temp.tidspunkt')}</div>
                 <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
             </div>
 
             {/* Notat */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>Notat (valgfritt)</div>
-              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder="Hvordan ser babyen ut? Andre observasjoner?" rows={2} style={{ width: '100%', padding: '12px 14px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('temp.notatValgfritt')}</div>
+              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder={t('temp.notatPlaceholder')} rows={2} style={{ width: '100%', padding: '12px 14px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
             </div>
 
             <button
@@ -366,7 +386,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
               disabled={!temperaturInput || lagrer}
               style={{ width: '100%', padding: '16px', backgroundColor: !temperaturInput ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: !temperaturInput ? farger.tekstLys : '#FDFAF6', cursor: !temperaturInput ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter)' }}
             >
-              {lagrer ? 'Lagrer...' : 'Lagre temperatur'}
+              {lagrer ? t('temp.lagrer') : t('temp.lagreTemperatur')}
             </button>
           </div>
         </div>
