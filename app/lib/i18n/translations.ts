@@ -729,6 +729,27 @@ export const oversettelser = {
   'vekt.lagrer': { no: 'Lagrer...', en: 'Saving...', sv: 'Sparar...', da: 'Gemmer...', de: 'Speichert...' },
   'vekt.lagreMåling': { no: 'Lagre måling', en: 'Save measurement', sv: 'Spara mätning', da: 'Gem måling', de: 'Messung speichern' },
 
+  'viftemeny.sovn': { no: 'Søvn / lur', en: 'Sleep / nap', sv: 'Sömn / tupplur', da: 'Søvn / lur', de: 'Schlaf / Nickerchen' },
+  'viftemeny.amming': { no: 'Amming', en: 'Feeding', sv: 'Amning', da: 'Amning', de: 'Stillen' },
+  'viftemeny.bleie': { no: 'Bleie', en: 'Diaper', sv: 'Blöja', da: 'Ble', de: 'Windel' },
+  'viftemeny.medisin': { no: 'Medisin', en: 'Medicine', sv: 'Medicin', da: 'Medicin', de: 'Medizin' },
+  'viftemeny.signaler': { no: 'Signaler', en: 'Signals', sv: 'Signaler', da: 'Signaler', de: 'Signale' },
+  'viftemeny.pumping': { no: 'Pumping', en: 'Pumping', sv: 'Pumpning', da: 'Pumpning', de: 'Abpumpen' },
+  'viftemeny.mat': { no: 'Mat', en: 'Food', sv: 'Mat', da: 'Mad', de: 'Essen' },
+  'viftemeny.aktivitet': { no: 'Aktivitet', en: 'Activity', sv: 'Aktivitet', da: 'Aktivitet', de: 'Aktivität' },
+  'viftemeny.notat': { no: 'Notat', en: 'Note', sv: 'Anteckning', da: 'Note', de: 'Notiz' },
+  'viftemeny.temperatur': { no: 'Temperatur', en: 'Temperature', sv: 'Temperatur', da: 'Temperatur', de: 'Temperatur' },
+  'viftemeny.vekt': { no: 'Vekt / lengde', en: 'Weight / length', sv: 'Vikt / längd', da: 'Vægt / længde', de: 'Gewicht / Länge' },
+  'viftemeny.kolikk': { no: 'Uro & ro', en: 'Fussiness & calm', sv: 'Oro & lugn', da: 'Uro & ro', de: 'Unruhe & Ruhe' },
+  'viftemeny.kommerSnart': { no: 'kommer snart', en: 'coming soon', sv: 'kommer snart', da: 'kommer snart', de: 'kommt bald' },
+  'viftemeny.velgFavoritter': { no: 'Velg dine favoritter', en: 'Choose your favourites', sv: 'Välj dina favoriter', da: 'Vælg dine favoritter', de: 'Wähle deine Favoriten' },
+  'viftemeny.velgOpptil6': { no: 'Velg opptil 6 ting du vil ha rask tilgang til', en: 'Choose up to 6 things you want quick access to', sv: 'Välj upp till 6 saker du vill ha snabb tillgång till', da: 'Vælg op til 6 ting du vil have hurtig adgang til', de: 'Wähle bis zu 6 Dinge für schnellen Zugriff' },
+  'viftemeny.valgt': { no: '{antall}/6 valgt', en: '{antall}/6 selected', sv: '{antall}/6 valda', da: '{antall}/6 valgt', de: '{antall}/6 ausgewählt' },
+  'viftemeny.lagre': { no: 'Lagre', en: 'Save', sv: 'Spara', da: 'Gem', de: 'Speichern' },
+  'viftemeny.dineFavoritter': { no: 'Dine favoritter', en: 'Your favourites', sv: 'Dina favoriter', da: 'Dine favoritter', de: 'Deine Favoriten' },
+  'viftemeny.velgSnarveier': { no: 'Velg hvilke snarveier du vil ha i menyen', en: 'Choose which shortcuts you want in the menu', sv: 'Välj vilka genvägar du vill ha i menyn', da: 'Vælg hvilke genveje du vil have i menuen', de: 'Wähle welche Shortcuts du im Menü haben möchtest' },
+  'viftemeny.seAlle': { no: 'Se alle', en: 'See all', sv: 'Se alla', da: 'Se alle', de: 'Alle ansehen' },
+
   ...signalerOversettelser,
 } as const;
 

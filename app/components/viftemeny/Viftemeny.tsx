@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = {
   bruker: any;
@@ -10,20 +12,22 @@ type Props = {
   onLukk: () => void;
 };
 
-const ALLE_SIDER: Record<string, { label: string; bygget: boolean }> = {
-  sovn: { label: 'Søvn / lur', bygget: true },
-  amming: { label: 'Amming', bygget: true },
-  bleie: { label: 'Bleie', bygget: true },
-  medisin: { label: 'Medisin', bygget: true },
-  signaler: { label: 'Signaler', bygget: true },
-  pumping: { label: 'Pumping', bygget: true },
-  mat: { label: 'Mat', bygget: true },
-  aktivitet: { label: 'Aktivitet', bygget: true },
-  notat: { label: 'Notat', bygget: true },
-  temperatur: { label: 'Temperatur', bygget: true },
-  vekt: { label: 'Vekt / lengde', bygget: true },
-  kolikk: { label: 'Uro & ro', bygget: true },
-};
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const getAlleSider = (t: TFn): Record<string, { label: string; bygget: boolean }> => ({
+  sovn: { label: t('viftemeny.sovn'), bygget: true },
+  amming: { label: t('viftemeny.amming'), bygget: true },
+  bleie: { label: t('viftemeny.bleie'), bygget: true },
+  medisin: { label: t('viftemeny.medisin'), bygget: true },
+  signaler: { label: t('viftemeny.signaler'), bygget: true },
+  pumping: { label: t('viftemeny.pumping'), bygget: true },
+  mat: { label: t('viftemeny.mat'), bygget: true },
+  aktivitet: { label: t('viftemeny.aktivitet'), bygget: true },
+  notat: { label: t('viftemeny.notat'), bygget: true },
+  temperatur: { label: t('viftemeny.temperatur'), bygget: true },
+  vekt: { label: t('viftemeny.vekt'), bygget: true },
+  kolikk: { label: t('viftemeny.kolikk'), bygget: true },
+});
 
 const ANBEFALTE_ETTER_ALDER = (alder: number): string[] => {
   if (alder < 3) return ['sovn', 'amming', 'bleie', 'signaler', 'medisin', 'notat'];
@@ -96,6 +100,9 @@ const IkonKomponent = ({ id }: { id: string }) => {
 };
 
 export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Props) {
+  const { t } = useLanguage();
+  const ALLE_SIDER = getAlleSider(t);
+
   const [favoritter, setFavoritter] = useState<string[]>([]);
   const [visVelgFavoritter, setVisVelgFavoritter] = useState(false);
   const [alleFavoritter, setAlleFavoritter] = useState<string[]>([]);
@@ -150,9 +157,9 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
       <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisVelgFavoritter(false)}>
         <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '85vh', overflowY: 'auto' }}>
           <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>Velg dine favoritter</div>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Velg opptil 6 ting du vil ha rask tilgang til</div>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '20px' }}>{alleFavoritter.length}/6 valgt</div>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('viftemeny.velgFavoritter')}</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('viftemeny.velgOpptil6')}</div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '20px' }}>{t('viftemeny.valgt', { antall: alleFavoritter.length })}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
           {Object.entries(ALLE_SIDER).map(([id, info]) => {
   const valgt = alleFavoritter.includes(id);
@@ -166,7 +173,7 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
         <IkonKomponent id={id} />
         <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: valgt ? farger.grønn : farger.tekst, fontWeight: valgt ? '600' : '400', flex: 1 }}>
           {info.label}
-          {!info.bygget && <span style={{ fontSize: '10px', color: farger.tekstLys }}> · kommer snart</span>}
+          {!info.bygget && <span style={{ fontSize: '10px', color: farger.tekstLys }}> · {t('viftemeny.kommerSnart')}</span>}
         </span>
       </button>
       <div onClick={() => !deaktivert && toggleFavoritt(id)} style={{ cursor: deaktivert ? 'not-allowed' : 'pointer', opacity: deaktivert ? 0.4 : 1, flexShrink: 0 }}>
@@ -183,7 +190,7 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
 })}
           </div>
           <button onClick={lagreFavoritter} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            Lagre
+            {t('viftemeny.lagre')}
           </button>
         </div>
       </div>
@@ -232,12 +239,12 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
               <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" fill={farger.grønn} opacity="0.7"/>
             </svg>
             <div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>Dine favoritter</div>
-              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Velg hvilke snarveier du vil ha i menyen</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>{t('viftemeny.dineFavoritter')}</div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('viftemeny.velgSnarveier')}</div>
             </div>
           </div>
           <button onClick={e => { e.stopPropagation(); setVisVelgFavoritter(true); }} style={{ padding: '6px 14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', cursor: 'pointer' }}>
-            Se alle
+            {t('viftemeny.seAlle')}
           </button>
         </div>
       </div>
