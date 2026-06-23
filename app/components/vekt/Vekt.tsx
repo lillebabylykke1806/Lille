@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -16,6 +17,8 @@ type VektLogg = {
 };
 
 export default function Vekt({ bruker, aktivtBarn }: Props) {
+  const { t, locale } = useLanguage();
+
   const [logg, setLogg] = useState<VektLogg[]>([]);
   const [laster, setLaster] = useState(true);
   const [visLeggTil, setVisLeggTil] = useState(false);
@@ -64,8 +67,15 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
 
   const sisteLogg = logg[0];
 
+  const dateLocale = locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB';
+
   const formatDato = (dato: string) => {
-    return new Date(dato).toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' });
+    return new Date(dato).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
+  const formatKortDato = (dato: string) => {
+    const d = new Date(dato);
+    return `${d.getDate()}. ${d.toLocaleDateString(dateLocale, { month: 'short' })}`;
   };
 
   if (laster) return (
@@ -81,10 +91,10 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
       {/* Header */}
       <div style={{ marginBottom: '24px', textAlign: 'center' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
-          Vekst & størrelser
+          {t('vekt.tittel')}
         </div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-          Følg barnets vekst over tid
+          {t('vekt.undertittel')}
         </div>
       </div>
 
@@ -92,7 +102,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
       {sisteLogg && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '12px' }}>
-            Siste registrering · {formatDato(sisteLogg.dato)}
+            {t('vekt.sisteRegistrering', { dato: formatDato(sisteLogg.dato) })}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             {sisteLogg.vekt && (
@@ -100,7 +110,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                 <div style={{ fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
                   {sisteLogg.vekt} kg
                 </div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Vekt</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('vekt.vekt')}</div>
               </div>
             )}
             {sisteLogg.lengde && (
@@ -108,7 +118,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                 <div style={{ fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
                   {sisteLogg.lengde} cm
                 </div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Lengde</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('vekt.lengde')}</div>
               </div>
             )}
             {sisteLogg.klaer && (
@@ -116,7 +126,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                 <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
                   {sisteLogg.klaer}
                 </div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Klærstørrelse</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('vekt.klærstørrelse')}</div>
               </div>
             )}
             {sisteLogg.sko && (
@@ -124,7 +134,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                 <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
                   {sisteLogg.sko}
                 </div>
-                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Skostørrelse</div>
+                <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('vekt.skostørrelse')}</div>
               </div>
             )}
           </div>
@@ -134,8 +144,8 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
       {/* Vekstkurve */}
       {logg.length >= 2 && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px' }}>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>Vekstkurve</div>
-          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>Basert på dine registreringer</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{t('vekt.vekstkurve')}</div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>{t('vekt.basertPåRegistreringer')}</div>
 
           {/* Vekt-graf */}
           {logg.some(l => l.vekt) && (() => {
@@ -155,7 +165,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
             const path = punkter.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
             return (
               <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '8px' }}>⚖️ Vekt (kg)</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '8px' }}>⚖️ {t('vekt.vektKg')}</div>
                 <svg width="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
                   <defs>
                     <linearGradient id="vektGrad" x1="0" y1="0" x2="0" y2="1">
@@ -171,7 +181,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                       <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{p.vekt} kg</text>
                       {i === 0 || i === punkter.length - 1 ? (
                         <text x={p.x} y={height - 2} textAnchor="middle" fontSize="8" fill={farger.tekstLys} fontFamily="var(--font-inter)">
-                          {new Date(p.dato).getDate()}.{new Date(p.dato).getMonth() + 1}
+                          {formatKortDato(p.dato)}
                         </text>
                       ) : null}
                     </g>
@@ -199,7 +209,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
             const path = punkter.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
             return (
               <div>
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600', marginBottom: '8px' }}>📏 Lengde (cm)</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600', marginBottom: '8px' }}>📏 {t('vekt.lengdeCm')}</div>
                 <svg width="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
                   <defs>
                     <linearGradient id="lengdeGrad" x1="0" y1="0" x2="0" y2="1">
@@ -215,7 +225,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                       <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{p.lengde} cm</text>
                       {i === 0 || i === punkter.length - 1 ? (
                         <text x={p.x} y={height - 2} textAnchor="middle" fontSize="8" fill={farger.tekstLys} fontFamily="var(--font-inter)">
-                          {new Date(p.dato).getDate()}.{new Date(p.dato).getMonth() + 1}
+                          {formatKortDato(p.dato)}
                         </text>
                       ) : null}
                     </g>
@@ -229,21 +239,21 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
 
       {/* Legg til knapp */}
       <button onClick={() => setVisLeggTil(true)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '20px' }}>
-        + Registrer ny måling
+        {t('vekt.registrerNyMåling')}
       </button>
 
       {/* Historikk */}
       {logg.length > 0 && (
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px 20px' }}>
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px' }}>
-            Historikk
+            {t('vekt.historikk')}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {logg.map((l, i) => (
               <div key={l.id} style={{ padding: '14px', backgroundColor: farger.bakgrunn, borderRadius: '12px', borderLeft: `3px solid ${farger.grønn}` }}>
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>
                   {formatDato(l.dato)}
-                  {i === 0 && <span style={{ marginLeft: '8px', backgroundColor: farger.grønnLys, color: farger.grønn, fontSize: '10px', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>Siste</span>}
+                  {i === 0 && <span style={{ marginLeft: '8px', backgroundColor: farger.grønnLys, color: farger.grønn, fontSize: '10px', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>{t('vekt.siste')}</span>}
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {l.vekt && (
@@ -284,47 +294,47 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>
-              Ny måling
+              {t('vekt.nyMåling')}
             </div>
 
             {/* Dato */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Dato</div>
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('vekt.dato')}</div>
               <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
             </div>
 
             {/* Vekt og lengde */}
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Vekt (kg)</div>
-                <input type="number" step="0.1" value={vekt} onChange={e => setVekt(e.target.value)} placeholder="F.eks. 5.2" style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('vekt.vektKg')}</div>
+                <input type="number" step="0.1" value={vekt} onChange={e => setVekt(e.target.value)} placeholder={t('vekt.vektPlaceholder')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Lengde (cm)</div>
-                <input type="number" step="0.1" value={lengde} onChange={e => setLengde(e.target.value)} placeholder="F.eks. 58" style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('vekt.lengdeCm')}</div>
+                <input type="number" step="0.1" value={lengde} onChange={e => setLengde(e.target.value)} placeholder={t('vekt.lengdePlaceholder')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
             </div>
 
             {/* Klær og sko */}
             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Klæsstørrelse</div>
-                <input type="text" value={klaer} onChange={e => setKlaer(e.target.value)} placeholder="F.eks. 62 eller 3-6 mnd" style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('vekt.klærstørrelse')}</div>
+                <input type="text" value={klaer} onChange={e => setKlaer(e.target.value)} placeholder={t('vekt.klærstørrelsePlaceholder')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Skostørrelse</div>
-                <input type="text" value={sko} onChange={e => setSko(e.target.value)} placeholder="F.eks. 17" style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+                <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('vekt.skostørrelse')}</div>
+                <input type="text" value={sko} onChange={e => setSko(e.target.value)} placeholder={t('vekt.skostørrelsePlaceholder')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
             </div>
 
             {/* Notat */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Notat (valgfritt)</div>
-              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder="F.eks. legevaktsbesøk, sjekket av lege..." style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '70px', boxSizing: 'border-box' }} />
+              <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('vekt.notatValgfritt')}</div>
+              <textarea value={notat} onChange={e => setNotat(e.target.value)} placeholder={t('vekt.notatPlaceholder')} style={{ width: '100%', padding: '12px 16px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', minHeight: '70px', boxSizing: 'border-box' }} />
             </div>
 
             <button onClick={lagre} disabled={(!vekt && !lengde && !klaer && !sko) || lagrer} style={{ width: '100%', padding: '16px', backgroundColor: (vekt || lengde || klaer || sko) ? farger.grønnLys : farger.kremMørk, border: `1px solid ${(vekt || lengde || klaer || sko) ? farger.grønn : 'transparent'}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: (vekt || lengde || klaer || sko) ? farger.grønn : farger.tekstLys, cursor: (vekt || lengde || klaer || sko) ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}>
-              {lagrer ? 'Lagrer...' : 'Lagre måling'}
+              {lagrer ? t('vekt.lagrer') : t('vekt.lagreMåling')}
             </button>
           </div>
         </div>
