@@ -2,11 +2,15 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = {
   bruker: any;
   onFerdig: () => void;
 };
+
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
 
 const hentAnbefalte = (alder: number) => {
   if (alder < 1) return ['amming', 'sovn', 'bleie', 'signaler', 'notat', 'medisin'];
@@ -16,21 +20,20 @@ const hentAnbefalte = (alder: number) => {
   return ['sovn', 'mat', 'aktivitet', 'medisin', 'vekt', 'notat'];
 };
 
-const ALLE_FAVORITTER = [
-  { id: 'amming', label: 'Amming' },
-  { id: 'sovn', label: 'Søvn / lur' },
-  { id: 'medisin', label: 'Medisin / vaksine' },
-  { id: 'bleie', label: 'Bleie' },
-  { id: 'signaler', label: 'Signaler' },
-  { id: 'pumping', label: 'Pumping' },
-  { id: 'mat', label: 'Mat (fast føde)' },
-  { id: 'aktivitet', label: 'Aktivitet' },
-  { id: 'notat', label: 'Notat' },
-  { id: 'temperatur', label: 'Temperatur' },
-  { id: 'vaksine', label: 'Vaksine' },
-  { id: 'vekt', label: 'Vekt / lengde' },
+const getAlleFavoritter = (t: TFn) => [
+  { id: 'amming', label: t('onboarding.amming') },
+  { id: 'sovn', label: t('onboarding.sovn') },
+  { id: 'medisin', label: t('onboarding.medisin') },
+  { id: 'bleie', label: t('onboarding.bleie') },
+  { id: 'signaler', label: t('onboarding.signaler') },
+  { id: 'pumping', label: t('onboarding.pumping') },
+  { id: 'mat', label: t('onboarding.mat') },
+  { id: 'aktivitet', label: t('onboarding.aktivitet') },
+  { id: 'notat', label: t('onboarding.notat') },
+  { id: 'temperatur', label: t('onboarding.temperatur') },
+  { id: 'vaksine', label: t('onboarding.vaksine') },
+  { id: 'vekt', label: t('onboarding.vekt') },
 ];
-
 const IkonKomponent = ({ id, valgt }: { id: string; valgt: boolean }) => {
   const farge = valgt ? farger.grønn : '#8A7060';
   const bgFarge = valgt ? `${farger.grønn}18` : farger.kremMørk;
@@ -140,8 +143,10 @@ const IkonKomponent = ({ id, valgt }: { id: string; valgt: boolean }) => {
 };
 
 export default function Onboarding({ bruker, onFerdig }: Props) {
-  const [steg, setSteg] = useState(1);
-  const [babyNavn, setBabyNavn] = useState('');
+  const { t } = useLanguage();
+  const ALLE_FAVORITTER = getAlleFavoritter(t);
+
+  const [steg, setSteg] = useState(1);  const [babyNavn, setBabyNavn] = useState('');
   const [fødselsdato, setFødselsdato] = useState('');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [favoritter, setFavoritter] = useState<string[]>([]);
@@ -156,13 +161,12 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
 
   const alderTekst = () => {
     const alder = alderIMåneder();
-    if (alder < 1) return 'Nyfødt';
-    if (alder < 12) return `${alder} måneder`;
+    if (alder < 1) return t('onboarding.nyfødt');
+    if (alder < 12) return t('onboarding.måneder', { alder });
     const år = Math.floor(alder / 12);
     const mnd = alder % 12;
-    return mnd > 0 ? `${år} år og ${mnd} måneder` : `${år} år`;
+    return mnd > 0 ? t('onboarding.årOgMåneder', { år, mnd }) : t('onboarding.år', { år });
   };
-
   const toggleFavoritt = (id: string) => {
     if (favoritter.includes(id)) {
       setFavoritter(favoritter.filter(f => f !== id));
@@ -224,27 +228,25 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           <img src="/leep.png" alt="Lille" style={{ width: '120px', marginBottom: '32px', mixBlendMode: 'multiply' }} />
           <div style={{ fontSize: '28px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px', lineHeight: 1.3 }}>
-            Velkommen til Lille
+            {t('onboarding.velkommenTittel')}
           </div>
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '48px', maxWidth: '300px' }}>
-            Din babys språk, i dine hender. La oss sette opp appen for deg og din lille en.
+            {t('onboarding.velkommenBeskrivelse')}
           </div>
           <button onClick={() => setSteg(2)} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            Kom i gang 🌿
-          </button>
-        </div>
+            {t('onboarding.komIGang')}
+          </button>        </div>
       )}
 
       {/* Steg 2 – Hvem er babyen? */}
       {steg === 2 && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>
-            Hvem er babyen? 🤍
+            {t('onboarding.hvemErBabyen')}
           </div>
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '32px' }}>
-            Fortell oss litt om din lille en
+            {t('onboarding.fortellOmBabyen')}
           </div>
-
           {/* Babybilde */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
             <label style={{ cursor: 'pointer' }}>
@@ -254,8 +256,7 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
                 ) : (
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '28px' }}>📸</div>
-                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px' }}>Legg til bilde</div>
-                  </div>
+                    <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '4px' }}>{t('onboarding.leggTilBilde')}</div>                  </div>
                 )}
               </div>
               <input type="file" accept="image/*" onChange={lastOppBilde} style={{ display: 'none' }} />
@@ -264,20 +265,18 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
 
           {/* Navn */}
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Babyens navn</div>
+            <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('onboarding.babyensNavn')}</div>
             <input
               type="text"
               value={babyNavn}
               onChange={e => setBabyNavn(e.target.value)}
-              placeholder="F.eks. Emma"
-              style={{ width: '100%', padding: '12px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.hvit, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
+              placeholder={t('onboarding.navnPlaceholder')}              style={{ width: '100%', padding: '12px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.hvit, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
             />
           </div>
 
           {/* Fødselsdato */}
           <div style={{ marginBottom: '40px' }}>
-            <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Fødselsdato</div>
-            <input
+            <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('onboarding.fødselsdato')}</div>            <input
               type="date"
               value={fødselsdato}
               onChange={e => setFødselsdato(e.target.value)}
@@ -287,7 +286,7 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
 
           <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <button onClick={() => setSteg(1)} style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Tilbake
+              {t('onboarding.tilbake')}
             </button>
             <button
               onClick={() => {
@@ -297,9 +296,8 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
               disabled={!babyNavn || !fødselsdato}
               style={{ flex: 2, padding: '14px', backgroundColor: babyNavn && fødselsdato ? farger.grønn : farger.kremMørk, border: 'none', borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: babyNavn && fødselsdato ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}
             >
-              Neste →
-            </button>
-          </div>
+              {t('onboarding.neste')}
+            </button>          </div>
         </div>
       )}
 
@@ -307,18 +305,17 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
       {steg === 3 && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>
-            Velg dine favoritter ✨
+            {t('onboarding.velgFavoritter')}
           </div>
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '4px' }}>
-            Velg opptil 6 ting du vil ha rask tilgang til
+            {t('onboarding.velgOpptil6')}
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontStyle: 'italic', marginBottom: '8px' }}>
-            Basert på {babyNavn}s alder ({alderTekst()})
+            {t('onboarding.basertPåAlder', { navn: babyNavn, alder: alderTekst() })}
           </div>
           <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '20px' }}>
-            {favoritter.length}/6 valgt
+            {t('onboarding.valgt', { antall: favoritter.length })}
           </div>
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, overflowY: 'auto', marginBottom: '20px' }}>
             {ALLE_FAVORITTER.map(item => {
               const valgt = favoritter.includes(item.id);
@@ -360,16 +357,15 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={() => setSteg(2)} style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Tilbake
+              {t('onboarding.tilbake')}
             </button>
             <button
               onClick={() => setSteg(4)}
               disabled={favoritter.length === 0}
               style={{ flex: 2, padding: '14px', backgroundColor: favoritter.length > 0 ? farger.grønn : farger.kremMørk, border: 'none', borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: favoritter.length > 0 ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}
             >
-              Neste →
-            </button>
-          </div>
+              {t('onboarding.neste')}
+            </button>          </div>
         </div>
       )}
 
@@ -378,19 +374,18 @@ export default function Onboarding({ bruker, onFerdig }: Props) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           <div style={{ fontSize: '64px', marginBottom: '24px' }}>🌿</div>
           <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '12px', lineHeight: 1.3 }}>
-            Alt er klart{babyNavn ? `, ${babyNavn}` : ''}! 🤍
+            {t('onboarding.altErKlart', { navn: babyNavn ? `, ${babyNavn}` : '' })}
           </div>
           <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '48px', maxWidth: '280px' }}>
-            Appen er nå tilpasset deg og din lille en. Vi gleder oss til å hjelpe deg i babytiden.
+            {t('onboarding.gledOssBeskrivelse')}
           </div>
           <button
             onClick={lagreProfil}
             disabled={laster}
             style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
           >
-            {laster ? 'Lagrer...' : 'Start Lille 🌙'}
-          </button>
-        </div>
+            {laster ? t('onboarding.lagrer') : t('onboarding.startLille')}
+          </button>        </div>
       )}
     </div>
   );
