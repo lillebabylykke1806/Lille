@@ -786,6 +786,24 @@ export const oversettelser = {
   'onboarding.vaksine': { no: 'Vaksine', en: 'Vaccine', sv: 'Vaccin', da: 'Vaccine', de: 'Impfung' },
   'onboarding.vekt': { no: 'Vekt / lengde', en: 'Weight / length', sv: 'Vikt / längd', da: 'Vægt / længde', de: 'Gewicht / Länge' },
 
+  'lyd.skapRo': { no: 'Skap ro', en: 'Create calm', sv: 'Skapa lugn', da: 'Skab ro', de: 'Ruhe schaffen' },
+  'lyd.velgEnLyd': { no: 'Velg en lyd som roer dere begge 🌙', en: 'Choose a sound that calms you both 🌙', sv: 'Välj ett ljud som lugnar er båda 🌙', da: 'Vælg en lyd der roer jer begge 🌙', de: 'Wähle einen Klang der euch beide beruhigt 🌙' },
+  'lyd.roligeLyder': { no: 'Rolige lyder', en: 'Calm sounds', sv: 'Lugna ljud', da: 'Rolige lyde', de: 'Ruhige Klänge' },
+  'lyd.regulering': { no: 'Regulering', en: 'Regulation', sv: 'Reglering', da: 'Regulering', de: 'Regulierung' },
+  'lyd.foreldrero': { no: 'Foreldrero', en: 'Parent calm', sv: 'Föräldralugnhet', da: 'Forældrero', de: 'Elternruhe' },
+  'lyd.regn': { no: 'Regn', en: 'Rain', sv: 'Regn', da: 'Regn', de: 'Regen' },
+  'lyd.hav': { no: 'Hav', en: 'Ocean', sv: 'Hav', da: 'Hav', de: 'Meer' },
+  'lyd.whiteNoise': { no: 'White noise', en: 'White noise', sv: 'Vitt brus', da: 'Hvid støj', de: 'Weißes Rauschen' },
+  'lyd.vifte': { no: 'Vifte', en: 'Fan', sv: 'Fläkt', da: 'Vifte', de: 'Ventilator' },
+  'lyd.hjertelyd': { no: 'Hjertelyd', en: 'Heartbeat', sv: 'Hjärtljud', da: 'Hjertelyd', de: 'Herzschlag' },
+  'lyd.pustelyder': { no: 'Pustelyder', en: 'Breathing sounds', sv: 'Andningsljud', da: 'Pustelyde', de: 'Atemgeräusche' },
+  'lyd.womb': { no: 'Womb sounds', en: 'Womb sounds', sv: 'Livmodersljud', da: 'Livmoderlyde', de: 'Mutterleib-Geräusche' },
+  'lyd.rytmer': { no: 'Myke rytmer', en: 'Soft rhythms', sv: 'Mjuka rytmer', da: 'Bløde rytmer', de: 'Sanfte Rhythmen' },
+  'lyd.frekvenser': { no: 'Beroligende frekvenser', en: 'Soothing frequencies', sv: 'Lugnande frekvenser', da: 'Beroligende frekvenser', de: 'Beruhigende Frequenzen' },
+  'lyd.nattpust': { no: 'Nattpust', en: 'Night breathing', sv: 'Nattandning', da: 'Nattpust', de: 'Nachtatem' },
+  'lyd.piano': { no: 'Rolig piano', en: 'Calm piano', sv: 'Lugn piano', da: 'Rolig klaver', de: 'Ruhiges Klavier' },
+  'lyd.grounding': { no: 'Grounding-lyder', en: 'Grounding sounds', sv: 'Jordande ljud', da: 'Groundinglyde', de: 'Erdende Klänge' },
+
   ...signalerOversettelser,
 } as const;
 

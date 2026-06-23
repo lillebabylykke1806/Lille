@@ -1,37 +1,41 @@
 'use client';
 import React, { useState, useRef } from 'react';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { onLukk: () => void; };
 
 type Lyd = { id: string; navn: string; fil: string; };
 type Gruppe = { kategori: string; lyder: Lyd[]; };
 
-const LYDER: Gruppe[] = [
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const getLyder = (t: TFn): Gruppe[] => [
   {
-    kategori: 'Rolige lyder',
+    kategori: t('lyd.roligeLyder'),
     lyder: [
-      { id: 'regn', navn: 'Regn', fil: '/lyder/regn.mp3' },
-      { id: 'hav', navn: 'Hav', fil: '/lyder/hav.mp3' },
-      { id: 'white-noise', navn: 'White noise', fil: '/lyder/white-noise.mp3' },
-      { id: 'vifte', navn: 'Vifte', fil: '/lyder/vifte.mp3' },
-      { id: 'hjertelyd', navn: 'Hjertelyd', fil: '/lyder/hjertelyd.mp3' },
+      { id: 'regn', navn: t('lyd.regn'), fil: '/lyder/regn.mp3' },
+      { id: 'hav', navn: t('lyd.hav'), fil: '/lyder/hav.mp3' },
+      { id: 'white-noise', navn: t('lyd.whiteNoise'), fil: '/lyder/white-noise.mp3' },
+      { id: 'vifte', navn: t('lyd.vifte'), fil: '/lyder/vifte.mp3' },
+      { id: 'hjertelyd', navn: t('lyd.hjertelyd'), fil: '/lyder/hjertelyd.mp3' },
     ],
   },
   {
-    kategori: 'Regulering',
+    kategori: t('lyd.regulering'),
     lyder: [
-      { id: 'pustelyder', navn: 'Pustelyder', fil: '/lyder/pustelyder.mp3' },
-      { id: 'womb', navn: 'Womb sounds', fil: '/lyder/womb.mp3' },
-      { id: 'rytmer', navn: 'Myke rytmer', fil: '/lyder/rytmer.mp3' },
-      { id: 'frekvenser', navn: 'Beroligende frekvenser', fil: '/lyder/frekvenser.mp3' },
+      { id: 'pustelyder', navn: t('lyd.pustelyder'), fil: '/lyder/pustelyder.mp3' },
+      { id: 'womb', navn: t('lyd.womb'), fil: '/lyder/womb.mp3' },
+      { id: 'rytmer', navn: t('lyd.rytmer'), fil: '/lyder/rytmer.mp3' },
+      { id: 'frekvenser', navn: t('lyd.frekvenser'), fil: '/lyder/frekvenser.mp3' },
     ],
   },
   {
-    kategori: 'Foreldrero',
+    kategori: t('lyd.foreldrero'),
     lyder: [
-      { id: 'nattpust', navn: 'Nattpust', fil: '/lyder/nattpust.mp3' },
-      { id: 'piano', navn: 'Rolig piano', fil: '/lyder/piano.mp3' },
-      { id: 'grounding', navn: 'Grounding-lyder', fil: '/lyder/grounding.mp3' },
+      { id: 'nattpust', navn: t('lyd.nattpust'), fil: '/lyder/nattpust.mp3' },
+      { id: 'piano', navn: t('lyd.piano'), fil: '/lyder/piano.mp3' },
+      { id: 'grounding', navn: t('lyd.grounding'), fil: '/lyder/grounding.mp3' },
     ],
   },
 ];
@@ -134,6 +138,9 @@ const LydIkon = ({ id }: { id: string }) => {
 };
 
 export default function LydPanel({ onLukk }: Props) {
+  const { t } = useLanguage();
+  const LYDER = getLyder(t);
+
   const [aktivLyd, setAktivLyd] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -174,12 +181,12 @@ export default function LydPanel({ onLukk }: Props) {
         <div style={{ width: '40px', height: '4px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '2px', margin: '0 auto 16px' }} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Skap ro</div>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('lyd.skapRo')}</div>
           <button onClick={() => { if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; } onLukk(); }} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '20px' }}>✕</button>
         </div>
 
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '20px' }}>
-          Velg en lyd som roer dere begge 🌙
+          {t('lyd.velgEnLyd')}
         </div>
 
         {LYDER.map((gruppe, gi) => (
