@@ -1,5 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = {
   onLukk: () => void;
@@ -15,49 +17,57 @@ type Scenario = {
   bølger?: boolean;
 };
 
-const SCENARIER: Scenario[] = [
+type Farge = { id: string; navn: string; farge: string };
+
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const getScenarier = (t: TFn): Scenario[] => [
   {
     id: 'maaneskinn',
-    navn: '🌙 Måneskinn',
-    beskrivelse: 'Mørk blå med svak måneglow. Perfekt under nattamming.',
+    navn: t('nattlys.måneskinn'),
+    beskrivelse: t('nattlys.måneskinnBeskrivelse'),
     bakgrunn: 'radial-gradient(ellipse at 25% 30%, #2A4A8E 0%, #0D1B3E 55%, #050D20 100%)',
     glow: 'rgba(138,174,224,0.35)',
     stjerner: true,
   },
   {
     id: 'varm',
-    navn: '🕯️ Rolig varm',
-    beskrivelse: 'Dyp amber som en saltlampe. Beroligende og varm.',
+    navn: t('nattlys.roligVarm'),
+    beskrivelse: t('nattlys.roligVarmBeskrivelse'),
     bakgrunn: 'radial-gradient(ellipse at 50% 60%, #7A3A0A 0%, #3D1A05 45%, #1A0A02 100%)',
     glow: 'rgba(220,140,50,0.5)',
   },
   {
     id: 'stjernehimmel',
-    navn: '✨ Stjernehimmel',
-    beskrivelse: 'Dyp lilla natt med glitrende stjerner.',
+    navn: t('nattlys.stjernehimmel'),
+    beskrivelse: t('nattlys.stjernehimmelBeskrivelse'),
     bakgrunn: 'radial-gradient(ellipse at 60% 40%, #2A1A5E 0%, #0F0820 70%, #050310 100%)',
     glow: 'rgba(160,120,255,0.35)',
     stjerner: true,
   },
   {
     id: 'havlys',
-    navn: '🌊 Havlys',
-    beskrivelse: 'Dyp turkis-blå med myke bølger som beveger seg.',
+    navn: t('nattlys.havlys'),
+    beskrivelse: t('nattlys.havlysBeskrivelse'),
     bakgrunn: 'radial-gradient(ellipse at 40% 70%, #0A3D4A 0%, #051D2E 50%, #020D18 100%)',
     glow: 'rgba(30,180,180,0.4)',
     bølger: true,
   },
 ];
 
-const FARGER = [
-  { id: 'varm_hvit', navn: 'Varm hvit', farge: '#FFE4B5' },
-  { id: 'solnedgang', navn: 'Solnedgang', farge: '#FF8C42' },
-  { id: 'lavendel', navn: 'Lavendel', farge: '#C4A8E8' },
-  { id: 'himmelblaa', navn: 'Himmelblå', farge: '#87CEEB' },
-  { id: 'skoggronn', navn: 'Skoggrønn', farge: '#8FBC8F' },
+const getFarger = (t: TFn): Farge[] => [
+  { id: 'varm_hvit', navn: t('nattlys.varmHvit'), farge: '#FFE4B5' },
+  { id: 'solnedgang', navn: t('nattlys.solnedgang'), farge: '#FF8C42' },
+  { id: 'lavendel', navn: t('nattlys.lavendel'), farge: '#C4A8E8' },
+  { id: 'himmelblaa', navn: t('nattlys.himmelblå'), farge: '#87CEEB' },
+  { id: 'skoggronn', navn: t('nattlys.skoggrønn'), farge: '#8FBC8F' },
 ];
 
 export default function NattlysPanel({ onLukk }: Props) {
+  const { t } = useLanguage();
+  const SCENARIER = getScenarier(t);
+  const FARGER = getFarger(t);
+
   const [aktivTab, setAktivTab] = useState<'farger' | 'scener'>('scener');
   const [valgtScenario, setValgtScenario] = useState<Scenario | null>(null);
   const [valgtFarge, setValgtFarge] = useState(FARGER[0]);
@@ -165,7 +175,7 @@ export default function NattlysPanel({ onLukk }: Props) {
             fontFamily: 'var(--font-inter)',
             cursor: 'pointer',
           }}>
-          Avslutt nattlys
+          {t('nattlys.avsluttNattlys')}
         </button>
       </div>
     );
@@ -195,7 +205,7 @@ export default function NattlysPanel({ onLukk }: Props) {
 
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Nattlys</div>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('nattlys.tittel')}</div>
           <button onClick={onLukk} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '20px' }}>✕</button>
         </div>
 
@@ -209,7 +219,7 @@ export default function NattlysPanel({ onLukk }: Props) {
               fontSize: '13px', fontFamily: 'var(--font-inter)', fontWeight: aktivTab === tab ? '600' : '400',
               transition: 'all 0.2s ease',
             }}>
-              {tab === 'farger' ? 'Farger' : 'Scener'}
+              {tab === 'farger' ? t('nattlys.farger') : t('nattlys.scener')}
             </button>
           ))}
         </div>
@@ -238,7 +248,7 @@ export default function NattlysPanel({ onLukk }: Props) {
             {/* Lysstyrke */}
             <div style={{ marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0' }}>Lysstyrke</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0' }}>{t('nattlys.lysstyrke')}</div>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>{lysstyrke}%</div>
               </div>
               <input type="range" min={5} max={80} value={lysstyrke} onChange={e => setLysstyrke(Number(e.target.value))}
@@ -247,17 +257,17 @@ export default function NattlysPanel({ onLukk }: Props) {
 
             {/* Timer */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0', marginBottom: '10px' }}>Timer</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0', marginBottom: '10px' }}>{t('nattlys.timer')}</div>
               <div style={{ display: 'flex', gap: '8px' }}>
-                {[30, 60, 90, null].map((t, i) => (
-                  <button key={i} onClick={() => setTimer(t)} style={{
+                {[30, 60, 90, null].map((min, i) => (
+                  <button key={i} onClick={() => setTimer(min)} style={{
                     flex: 1, padding: '10px 4px', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                    backgroundColor: timer === t ? '#7C8FD4' : 'rgba(255,255,255,0.06)',
-                    color: timer === t ? '#FDFAF6' : '#8A8FA8',
+                    backgroundColor: timer === min ? '#7C8FD4' : 'rgba(255,255,255,0.06)',
+                    color: timer === min ? '#FDFAF6' : '#8A8FA8',
                     fontSize: '12px', fontFamily: 'var(--font-inter)',
                     transition: 'all 0.2s ease',
                   }}>
-                    {t === null ? 'Alltid på' : `${t} min`}
+                    {min === null ? t('nattlys.alltidPå') : t('nattlys.minutter', { min })}
                   </button>
                 ))}
               </div>
@@ -319,7 +329,7 @@ export default function NattlysPanel({ onLukk }: Props) {
             fontFamily: 'var(--font-inter)',
             boxShadow: '0 4px 20px rgba(124,143,212,0.3)',
           }}>
-          Slå på nattlys 🌙
+          {t('nattlys.slåPå')}
         </button>
       </div>
     </div>
