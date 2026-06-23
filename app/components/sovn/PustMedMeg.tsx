@@ -1,5 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { onLukk: () => void; };
 
@@ -12,15 +14,19 @@ type Øvelse = {
   utPust: number;
 };
 
-const ØVELSER: Øvelse[] = [
-  { id: 'rolig', navn: 'Rolig pust', beskrivelse: '4 sek inn – 6 sek ut', innPust: 4, hold: 0, utPust: 6 },
-  { id: '478', navn: '4-7-8 pust', beskrivelse: '4 sek inn – 7 sek hold – 8 sek ut', innPust: 4, hold: 7, utPust: 8 },
-  { id: 'boks', navn: 'Boks pust', beskrivelse: '4 sek inn – 4 sek hold – 4 sek ut', innPust: 4, hold: 4, utPust: 4 },
+type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
+
+const getØvelser = (t: TFn): Øvelse[] => [
+  { id: 'rolig', navn: t('pust.roligPust'), beskrivelse: t('pust.roligPustBeskrivelse'), innPust: 4, hold: 0, utPust: 6 },
+  { id: '478', navn: t('pust.pust478'), beskrivelse: t('pust.pust478Beskrivelse'), innPust: 4, hold: 7, utPust: 8 },
+  { id: 'boks', navn: t('pust.boksPust'), beskrivelse: t('pust.boksPustBeskrivelse'), innPust: 4, hold: 4, utPust: 4 },
 ];
 
 export default function PustMedMeg({ onLukk }: Props) {
-  const [fase, setFase] = useState<'velg' | 'puster'>('velg');
-  const [valgtØvelse, setValgtØvelse] = useState(ØVELSER[0]);
+  const { t } = useLanguage();
+  const ØVELSER = getØvelser(t);
+
+  const [fase, setFase] = useState<'velg' | 'puster'>('velg');  const [valgtØvelse, setValgtØvelse] = useState(ØVELSER[0]);
   const [varighet, setVarighet] = useState(5);
   const [pusteFase, setPusteFase] = useState<'inn' | 'hold' | 'ut'>('inn');
   const [sekunder, setSekunder] = useState(0);
@@ -89,7 +95,7 @@ export default function PustMedMeg({ onLukk }: Props) {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <button onClick={onLukk} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>✕</button>
-          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>Pust med meg</div>
+          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('pust.tittel')}</div>
           <div style={{ width: '32px' }} />
         </div>
 
@@ -98,7 +104,7 @@ export default function PustMedMeg({ onLukk }: Props) {
           <div style={{ position: 'relative', width: '180px', height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: '180px', height: '180px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(124,100,200,0.15) 0%, transparent 70%)', filter: 'blur(10px)' }} />
             <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(124,100,200,0.4) 0%, rgba(60,50,150,0.6) 100%)', boxShadow: '0 0 30px rgba(124,100,200,0.4), 0 0 60px rgba(124,100,200,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.7)' }}>Finn ro</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.7)' }}>{t('pust.finnRo')}</div>
             </div>
           </div>
         </div>
@@ -124,7 +130,7 @@ export default function PustMedMeg({ onLukk }: Props) {
 
         {/* Varighet */}
         <div style={{ marginBottom: '28px' }}>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0', marginBottom: '10px' }}>Varighet</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0', marginBottom: '10px' }}>{t('pust.varighet')}</div>
           <div style={{ display: 'flex', gap: '8px' }}>
             {[2, 5, 10].map(v => (
               <button key={v} onClick={() => setVarighet(v)} style={{
@@ -145,7 +151,7 @@ export default function PustMedMeg({ onLukk }: Props) {
           color: '#FDFAF6', fontSize: '15px', fontWeight: '600', fontFamily: 'var(--font-inter)',
           boxShadow: '0 4px 20px rgba(124,100,200,0.4)',
         }}>
-          Start øvelse
+          {t('pust.startØvelse')}
         </button>
       </div>
     );
@@ -161,7 +167,7 @@ export default function PustMedMeg({ onLukk }: Props) {
 
       {/* Pustefase tekst */}
       <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: '#FDFAF6', fontWeight: '300', marginBottom: '40px', letterSpacing: '0.05em' }}>
-        {pusteFase === 'inn' ? 'Pust inn' : pusteFase === 'hold' ? 'Hold' : 'Pust ut'}
+        {pusteFase === 'inn' ? t('pust.pustInn') : pusteFase === 'hold' ? t('pust.hold') : t('pust.pustUt')}
       </div>
 
       {/* Pustesirkel */}
@@ -209,7 +215,7 @@ export default function PustMedMeg({ onLukk }: Props) {
         backgroundColor: 'rgba(255,255,255,0.06)', color: '#8A8FA8',
         fontSize: '14px', fontFamily: 'var(--font-inter)', cursor: 'pointer',
       }}>
-        Avslutt øvelse
+        {t('pust.avsluttØvelse')}
       </button>
     </div>
   );

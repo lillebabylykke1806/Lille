@@ -827,6 +827,21 @@ export const oversettelser = {
   'nattlys.himmelblå': { no: 'Himmelblå', en: 'Sky blue', sv: 'Himmelsblå', da: 'Himmelblå', de: 'Himmelblau' },
   'nattlys.skoggrønn': { no: 'Skoggrønn', en: 'Forest green', sv: 'Skogsgrön', da: 'Skovgrøn', de: 'Waldgrün' },
 
+  'pust.tittel': { no: 'Pust med meg', en: 'Breathe with me', sv: 'Andas med mig', da: 'Vejrtræk med mig', de: 'Atme mit mir' },
+  'pust.finnRo': { no: 'Finn ro', en: 'Find calm', sv: 'Hitta lugn', da: 'Find ro', de: 'Ruhe finden' },
+  'pust.roligPust': { no: 'Rolig pust', en: 'Calm breathing', sv: 'Lugn andning', da: 'Rolig vejrtrækning', de: 'Ruhiges Atmen' },
+  'pust.roligPustBeskrivelse': { no: '4 sek inn – 6 sek ut', en: '4 sec in – 6 sec out', sv: '4 sek in – 6 sek ut', da: '4 sek ind – 6 sek ud', de: '4 Sek ein – 6 Sek aus' },
+  'pust.pust478': { no: '4-7-8 pust', en: '4-7-8 breathing', sv: '4-7-8 andning', da: '4-7-8 vejrtrækning', de: '4-7-8 Atmung' },
+  'pust.pust478Beskrivelse': { no: '4 sek inn – 7 sek hold – 8 sek ut', en: '4 sec in – 7 sec hold – 8 sec out', sv: '4 sek in – 7 sek håll – 8 sek ut', da: '4 sek ind – 7 sek hold – 8 sek ud', de: '4 Sek ein – 7 Sek halten – 8 Sek aus' },
+  'pust.boksPust': { no: 'Boks pust', en: 'Box breathing', sv: 'Boxandning', da: 'Boks vejrtrækning', de: 'Box-Atmung' },
+  'pust.boksPustBeskrivelse': { no: '4 sek inn – 4 sek hold – 4 sek ut', en: '4 sec in – 4 sec hold – 4 sec out', sv: '4 sek in – 4 sek håll – 4 sek ut', da: '4 sek ind – 4 sek hold – 4 sek ud', de: '4 Sek ein – 4 Sek halten – 4 Sek aus' },
+  'pust.varighet': { no: 'Varighet', en: 'Duration', sv: 'Varaktighet', da: 'Varighed', de: 'Dauer' },
+  'pust.startØvelse': { no: 'Start øvelse', en: 'Start exercise', sv: 'Starta övning', da: 'Start øvelse', de: 'Übung starten' },
+  'pust.pustInn': { no: 'Pust inn', en: 'Breathe in', sv: 'Andas in', da: 'Pust ind', de: 'Einatmen' },
+  'pust.hold': { no: 'Hold', en: 'Hold', sv: 'Håll', da: 'Hold', de: 'Halten' },
+  'pust.pustUt': { no: 'Pust ut', en: 'Breathe out', sv: 'Andas ut', da: 'Pust ud', de: 'Ausatmen' },
+  'pust.avsluttØvelse': { no: 'Avslutt øvelse', en: 'End exercise', sv: 'Avsluta övning', da: 'Afslut øvelse', de: 'Übung beenden' },
+
   ...signalerOversettelser,
 } as const;
 
