@@ -8,11 +8,11 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: no.lilleapp.app
-        certificate: Lille Distribution
-        provisioning_profile: Lille App Store 2
       vars:
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
+        CERTIFICATE_NAME: "Lille Distribution"
+        PROVISIONING_PROFILE_NAME: "Lille App Store 2"
       node: latest
     scripts:
       - name: Install dependencies
