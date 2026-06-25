@@ -183,8 +183,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   }
 
   return (
-    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', paddingBottom: '90px' }}>
-      <div style={{ overflowY: 'auto' }}>
+    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative' }}>
+      <div style={{ overflowY: 'auto', height: '100vh', paddingBottom: '90px' }}>
       {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(side, fane) => { setAktivSide(side); if (fane === 'innsikt') setInnsiktStartFane('innsikt'); else setInnsiktStartFane('språk'); }} onByttBarn={setAktivtBarn} />}
       {aktivSide === 'sovn' && <Sovn bruker={bruker} aktivtBarn={aktivtBarn} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} onNavigate={setAktivSide} />}
         {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
