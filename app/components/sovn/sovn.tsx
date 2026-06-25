@@ -94,6 +94,7 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
   const [visJusterTid, setVisJusterTid] = useState(false);
   const [nyTidStr, setNyTidStr] = useState('');
   const [valgteSignaler, setValgteSignaler] = useState<string[]>([]);
+  const [egneSignaler, setEgneSignaler] = useState<{ id: string; label: string }[]>([]);
   const [tidslinje, setTidslinje] = useState<TidslinjeItem[]>([]);
   const [søvnkvalitet, setSøvnkvalitet] = useState('God');
   const [nyDato, setNyDato] = useState(dagensdato());
@@ -158,7 +159,11 @@ const [nattInnsikt, setNattInnsikt] = useState('');
 
     const aktivNatt = data?.find((l: any) => l.type === 'natt' && !l.slutt);
     if (aktivNatt?.signaler) {
-      setValgteSignaler(aktivNatt.signaler.split(',').filter(Boolean));
+      const alleSignaler = aktivNatt.signaler.split(',').filter(Boolean);
+      setValgteSignaler(alleSignaler);
+      const standardIds = ['gned', 'gjesping', 'stirret', 'hodet'];
+      const egne = alleSignaler.filter(s => !standardIds.includes(s));
+      setEgneSignaler(egne.map(s => ({ id: s, label: s })));
     }
   }, [bruker, aktivtBarn, t]);
 
@@ -810,6 +815,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
                   if (!egetSignalTekst.trim()) return;
                   const nyeSignaler = [...valgteSignaler, egetSignalTekst.trim()];
                   setValgteSignaler(nyeSignaler);
+                  setEgneSignaler(prev => [...prev, { id: egetSignalTekst.trim(), label: egetSignalTekst.trim() }]);
                   if (lurId) await supabase.from('lurer').update({ signaler: nyeSignaler.join(',') }).eq('id', lurId);
                   setEgetSignalTekst(''); setVisEgetSignal(false);
                 }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
@@ -914,6 +920,16 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
                   <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? '#8AAEE0' : '#8A8FA8', textAlign: 'center', lineHeight: 1.2 }}>{valgteSignaler.includes(signal.id) ? `✓ ${signal.label}` : signal.label}</div>
                 </button>
               ))}
+              {egneSignaler.map(signal => (
+                <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? '1.5px solid rgba(138,174,224,0.6)' : '1px solid rgba(255,255,255,0.08)', backgroundColor: valgteSignaler.includes(signal.id) ? 'rgba(138,174,224,0.25)' : 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'none'} stroke={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'rgba(255,255,255,0.3)'} strokeWidth="1.3"/>
+                  </svg>
+                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? '#8AAEE0' : '#8A8FA8', textAlign: 'center', lineHeight: 1.2 }}>
+                    {valgteSignaler.includes(signal.id) ? '✓ ' : ''}{signal.label}
+                  </div>
+                </button>
+              ))}
             </div>
             <button onClick={() => setVisEgetSignal(true)} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '12px', border: '1.5px dashed rgba(255,255,255,0.15)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer', marginTop: '8px' }}>
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -981,6 +997,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
                   if (!egetSignalTekst.trim()) return;
                   const nyeSignaler = [...valgteSignaler, egetSignalTekst.trim()];
                   setValgteSignaler(nyeSignaler);
+                  setEgneSignaler(prev => [...prev, { id: egetSignalTekst.trim(), label: egetSignalTekst.trim() }]);
                   if (lurId) await supabase.from('lurer').update({ signaler: nyeSignaler.join(',') }).eq('id', lurId);
                   setEgetSignalTekst(''); setVisEgetSignal(false);
                 }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
