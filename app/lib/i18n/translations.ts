@@ -158,6 +158,8 @@ export const oversettelser = {
   'søvn.lyder': { no: 'Lyder', en: 'Sounds', sv: 'Ljud', da: 'Lyde', de: 'Geräusche' },
   'søvn.nattlys': { no: 'Nattlys', en: 'Night light', sv: 'Nattlampa', da: 'Natlys', de: 'Nachtlicht' },
   'søvn.pustMedMeg': { no: '🌿 Reguler deg først', en: '🌿 Regulate yourself first', sv: '🌿 Reglera dig först', da: '🌿 Reguler dig først', de: '🌿 Reguliere dich zuerst' },
+  'søvn.etterregistrer': { no: 'Etterregistrer søvn', en: 'Add past sleep', sv: 'Efterregistrera sömn', da: 'Efterregistrer søvn', de: 'Schlaf nachtragen' },
+  'søvn.etterregistrerBeskrivelse': { no: 'Legg til søvn fra tidligere i dag eller i går', en: 'Add sleep from earlier today or yesterday', sv: 'Lägg till sömn från tidigare idag eller igår', da: 'Tilføj søvn fra tidligere i dag eller i går', de: 'Schlaf von früher heute oder gestern hinzufügen' },
   'søvn.nattligOppvåkningKnapp': { no: 'Nattlig\noppvåkning', en: 'Night\nwake-up', sv: 'Nattligt\nuppvaknande', da: 'Natlig\nopvågning', de: 'Nächtliches\nAufwachen' },
   'søvn.startSøvnenIgjen': { no: 'Start søvnen\nigjen', en: 'Start sleep\nagain', sv: 'Starta sömnen\nigen', da: 'Start søvnen\nigen', de: 'Schlaf erneut\nstarten' },
   'søvn.våkenSiden': { no: 'Våken siden', en: 'Awake since', sv: 'Vaken sedan', da: 'Vågen siden', de: 'Wach seit' },
