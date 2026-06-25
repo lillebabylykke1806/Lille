@@ -512,7 +512,7 @@ Svar KUN med observasjonen på ${språkNavn}.`
 <div style={{ padding: '20px 24px 0' }}>
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
     <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       <div style={{ textAlign: 'right' }}>
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
           {tidspunkt(t)}{babyNavn ? `, ${babyNavn}` : ''} ✨
