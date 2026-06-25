@@ -155,6 +155,11 @@ const [nattInnsikt, setNattInnsikt] = useState('');
     else if (oppvåkninger <= 2) setSøvnkvalitet('God');
     else if (oppvåkninger <= 4) setSøvnkvalitet('Ok');
     else setSøvnkvalitet('Urolig');
+
+    const aktivNatt = data?.find((l: any) => l.type === 'natt' && !l.slutt);
+    if (aktivNatt?.signaler) {
+      setValgteSignaler(aktivNatt.signaler.split(',').filter(Boolean));
+    }
   }, [bruker, aktivtBarn, t]);
 
   useEffect(() => {
@@ -840,7 +845,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
           </div>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px' }}>
             <div style={{ pointerEvents: 'none', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
-              <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
+              <img src="/mane-natt.png" alt="måne" style={{ width: '130px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
             </div>
             <div style={{ position: 'relative', width: '200px', height: '200px' }}>
               <svg width="200" height="200" viewBox="0 0 200 200">
@@ -954,6 +959,24 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
 </button>
           </div>
           {redigerLur && <RedigerModal />}
+          {visEgetSignal && (
+            <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisEgetSignal(false)}>
+              <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+                <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+                <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('søvn.leggTilEgetSignal')}</div>
+                <input type="text" value={egetSignalTekst} onChange={e => setEgetSignalTekst(e.target.value)} placeholder="F.eks. Klynket, Gned ansiktet..." autoFocus style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }} />
+                <button onClick={async () => {
+                  if (!egetSignalTekst.trim()) return;
+                  const nyeSignaler = [...valgteSignaler, egetSignalTekst.trim()];
+                  setValgteSignaler(nyeSignaler);
+                  if (lurId) await supabase.from('lurer').update({ signaler: nyeSignaler.join(',') }).eq('id', lurId);
+                  setEgetSignalTekst(''); setVisEgetSignal(false);
+                }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+                  Lagre signal
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         {visAnnetModal && (
           <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisAnnetModal(false)}>
