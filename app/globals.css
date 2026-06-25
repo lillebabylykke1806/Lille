@@ -19,6 +19,10 @@ html, body {
   font-family: Georgia, serif;
   -webkit-font-smoothing: antialiased;
 }
+
+body {
+  padding-top: env(safe-area-inset-top);
+}
 h1, h2, h3 {
   font-family: var(--font-plus-jakarta), sans-serif;
 }

@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="no" className={`${inter.variable} ${plusJakarta.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
+      <body className="min-h-full flex flex-col" style={{ fontFamily: 'var(--font-inter), sans-serif', paddingTop: 'env(safe-area-inset-top)' }}>
   <LanguageProvider>{children}</LanguageProvider>
 </body>
     </html>

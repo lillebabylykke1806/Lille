@@ -7,5 +7,8 @@ const config: CapacitorConfig = {
     url: 'https://www.lilleapp.no',
     cleartext: true,
   },
+  ios: {
+    contentInset: 'always',
+  },
 };
 export default config;
