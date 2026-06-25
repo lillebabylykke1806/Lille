@@ -238,6 +238,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const { locale, t } = useLanguage();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
+  const [tilstandOverstyrt, setTilstandOverstyrt] = useState(false);
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [dagensFlyt, setDagensFlyt] = useState<any[]>([]);
   const [nesteLur, setNesteLur] = useState<{ tid: string; om: string; type: 'lur' | 'natt' } | null>(null);
@@ -417,6 +418,49 @@ Svar KUN med observasjonen på ${språkNavn}.`
     return () => clearInterval(interval);
   }, [bruker, aktivtBarn, babyNavn, lastDagensFlyt, hentAuraObservasjon]);
 
+  useEffect(() => {
+    const oppdaterTilstand = async () => {
+      if (lurPågår) {
+        setBabyTilstand('sover');
+        return;
+      }
+      if (tilstandOverstyrt) return;
+
+      if (nesteLur?.om === 'Nå!') {
+        setBabyTilstand('trøtt');
+        return;
+      }
+
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (profilId) {
+        const dagensdato = new Date().toISOString().split('T')[0];
+        const { data: uroLogg } = await supabase
+          .from('uro_logg')
+          .select('*')
+          .eq('profil_id', profilId)
+          .eq('dato', dagensdato);
+
+        const nå = Date.now();
+        const harNyligUro = (uroLogg || []).some((u: any) => {
+          if (!u.tidspunkt) return false;
+          const [timer, min] = u.tidspunkt.split(':').map(Number);
+          const tidspunkt = new Date();
+          tidspunkt.setHours(timer, min, 0, 0);
+          return nå - tidspunkt.getTime() <= 30 * 60 * 1000;
+        });
+
+        if (harNyligUro) {
+          setBabyTilstand('urolig');
+          return;
+        }
+      }
+
+      setBabyTilstand('rolig');
+    };
+
+    oppdaterTilstand();
+  }, [lurPågår, nesteLur, dagensFlyt, tilstandOverstyrt, bruker, aktivtBarn]);
+
   const tilstandConfig: Record<string, { tekst: string; undertekst: string; farge: string }> = {
     rolig: { tekst: t('hjem.rolig'), undertekst: t('hjem.roligUndertekst'), farge: '#A8B5A2' },
     trøtt: { tekst: t('hjem.trøtt'), undertekst: t('hjem.trøttUndertekst'), farge: '#C7BDD8' },
@@ -439,16 +483,16 @@ Svar KUN med observasjonen på ${språkNavn}.`
 
   const snarveier = [
     {
-      label: t('hjem.amming'), side: 'amming',
-      svg: <img src="/tateflaske-mork.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
-    },
-    {
       label: t('hjem.signaler'), side: 'signaler',
       svg: (
         <svg width="48" height="48" viewBox="0 0 28 28" fill="none">
           <path d="M14 23C14 23 4 17 4 10.5C4 7.5 6.7 5 10 5C11.8 5 13.2 5.9 14 7.2C14.8 5.9 16.2 5 18 5C21.3 5 24 7.5 24 10.5C24 17 14 23 14 23Z" fill="none" stroke="#A8B5A2" strokeWidth="1.7" strokeLinejoin="round"/>
         </svg>
       ),
+    },
+    {
+      label: t('hjem.amming'), side: 'amming',
+      svg: <img src="/tateflaske-mork.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
     },
     {
       label: t('hjem.uroRo'), side: 'kolikk',
@@ -468,10 +512,7 @@ Svar KUN med observasjonen på ${språkNavn}.`
 <div style={{ padding: '20px 24px 0' }}>
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
     <BarnVelger bruker={bruker} aktivtBarnId={aktivtBarn?.id} onByttBarn={onByttBarn} />
-    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      <button onClick={() => setVisDelModal(true)} style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-        🎁
-      </button>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
       <div style={{ textAlign: 'right' }}>
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta), sans-serif', fontWeight: 600, color: '#3F3A37', marginBottom: '2px', letterSpacing: '-0.3px' }}>
           {tidspunkt(t)}{babyNavn ? `, ${babyNavn}` : ''} ✨
@@ -480,6 +521,9 @@ Svar KUN med observasjonen på ${språkNavn}.`
           {valgtTilstand.tekst}
         </div>
       </div>
+      <button onClick={() => setVisDelModal(true)} style={{ background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+        🎁
+      </button>
     </div>
   </div>
 </div>
@@ -543,7 +587,7 @@ Svar KUN med observasjonen på ${språkNavn}.`
       {/* Tilstandsvelger */}
       <div style={{ display: 'flex', gap: '8px', padding: '0 24px 16px', overflowX: 'auto' }}>
         {Object.entries(tilstandConfig).map(([key, val]) => (
-          <button key={key} onClick={() => setBabyTilstand(key)} style={{ flexShrink: 0, padding: '9px 18px', borderRadius: '24px', border: babyTilstand === key ? `1.5px solid ${val.farge}` : '1.5px solid rgba(220,207,192,0.6)', backgroundColor: babyTilstand === key ? `${val.farge}22` : 'rgba(255,255,255,0.6)', color: babyTilstand === key ? val.farge : '#7B746D', fontSize: '12.5px', fontFamily: 'var(--font-inter), sans-serif', cursor: 'pointer', fontWeight: babyTilstand === key ? 600 : 400, transition: 'all 0.3s ease' }}>
+          <button key={key} onClick={() => { setTilstandOverstyrt(true); setBabyTilstand(key); }} style={{ flexShrink: 0, padding: '9px 18px', borderRadius: '24px', border: babyTilstand === key ? `1.5px solid ${val.farge}` : '1.5px solid rgba(220,207,192,0.6)', backgroundColor: babyTilstand === key ? `${val.farge}22` : 'rgba(255,255,255,0.6)', color: babyTilstand === key ? val.farge : '#7B746D', fontSize: '12.5px', fontFamily: 'var(--font-inter), sans-serif', cursor: 'pointer', fontWeight: babyTilstand === key ? 600 : 400, transition: 'all 0.3s ease' }}>
             {tilstandLabels[key]}
           </button>
         ))}
@@ -694,6 +738,15 @@ Svar KUN med observasjonen på ${språkNavn}.`
       {/* AI-innsikt kort */}
       <div style={{ padding: '0 24px 16px' }}>
         <AIInnsiktKort bruker={bruker} aktivtBarn={aktivtBarn} babyNavn={babyNavn} onNavigate={onNavigate} />
+      </div>
+
+      <div style={{ padding: '0 24px 12px', display: 'flex', gap: '12px' }}>
+        <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+          {t('hjem.oppsummeringLurer', { antall: dagensFlyt.filter(h => h.type === 'lur').length })}
+        </span>
+        <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#7B746D' }}>
+          {t('hjem.oppsummeringAmming', { antall: dagensFlyt.filter(h => h.type === 'amming').length })}
+        </span>
       </div>
 
       {/* Dagens flyt */}
