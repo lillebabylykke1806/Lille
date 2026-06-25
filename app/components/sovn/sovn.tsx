@@ -838,11 +838,11 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
             </div>
             <div style={{ width: '32px' }} />
           </div>
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', left: '-20px', top: '-10px', pointerEvents: 'none', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '260px', marginBottom: '16px' }}>
+            <div style={{ pointerEvents: 'none', animation: visManeAnimasjon ? 'moonRise 1.5s ease-out forwards' : 'moonFloat 5s ease-in-out infinite' }}>
               <img src="/mane-natt.png" alt="måne" style={{ width: '180px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(232,200,122,0.5))' }} />
             </div>
-            <div style={{ position: 'relative', width: '200px', height: '200px', marginLeft: '60px' }}>
+            <div style={{ position: 'relative', width: '200px', height: '200px' }}>
               <svg width="200" height="200" viewBox="0 0 200 200">
                 <defs>
                   <linearGradient id="nattGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -898,13 +898,11 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
                 </button>
               ))}
             </div>
-            <button onClick={() => setVisEgetSignal(true)} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: '1.5px dashed rgba(255,255,255,0.15)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', marginTop: '8px' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle cx="8" cy="8" r="7" stroke="rgba(255,255,255,0.4)" strokeWidth="1.3"/>
-                <line x1="8" y1="5" x2="8" y2="11" stroke="rgba(255,255,255,0.4)" strokeWidth="1.3" strokeLinecap="round"/>
-                <line x1="5" y1="8" x2="11" y2="8" stroke="rgba(255,255,255,0.4)" strokeWidth="1.3" strokeLinecap="round"/>
+            <button onClick={() => setVisEgetSignal(true)} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '12px', border: '1.5px dashed rgba(255,255,255,0.15)', backgroundColor: 'rgba(255,255,255,0.04)', cursor: 'pointer', marginTop: '8px' }}>
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.3"/>
               </svg>
-              <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>{t('søvn.leggTilEgetSignal')}</span>
+              <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textAlign: 'center', lineHeight: 1.2 }}>+ {t('søvn.leggTilEgetSignal')}</div>
             </button>
           </div>
           {tidslinje.length > 0 && (
