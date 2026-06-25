@@ -93,6 +93,7 @@ export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMor
   const [søvnType, setSøvnType] = useState<'lur' | 'natt' | null>(null);
   const [visJusterTid, setVisJusterTid] = useState(false);
   const [nyTidStr, setNyTidStr] = useState('');
+  const [nyDatoJuster, setNyDatoJuster] = useState(dagensdato());
   const [valgteSignaler, setValgteSignaler] = useState<string[]>([]);
   const [egneSignaler, setEgneSignaler] = useState<{ id: string; label: string }[]>([]);
   const [tidslinje, setTidslinje] = useState<TidslinjeItem[]>([]);
@@ -344,9 +345,9 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
   };
 
   const justerStartTidManuelt = () => {
-    if (!nyTidStr || !startTid) return;
+    if (!nyTidStr) return;
     const [h, m] = nyTidStr.split(':').map(Number);
-    const nyTid = new Date(startTid);
+    const nyTid = new Date(nyDatoJuster);
     nyTid.setHours(h, m, 0, 0);
     if (nyTid > new Date()) return;
     setStartTid(nyTid);
@@ -551,7 +552,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
           <button onClick={async () => { await registrerOppvåkning(); setVisning('velg'); lastTidslinje(); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
             {t('søvn.startDagen')}
           </button>
-          <button onClick={() => { setNyTidStr(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })); setVisJusterTid(true); }} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
+          <button onClick={() => { setNyTidStr(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(true); }} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
             {t('søvn.ikkeRiktigTidspunkt')}
           </button>
           {visJusterTid && (
@@ -713,7 +714,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
           ) : (
             <>
               <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px', zIndex: 1 }}>
-                <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', width: '220px', height: '220px' }}>
+                <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', width: '220px', height: '220px' }}>
                   <svg width="220" height="220" viewBox="0 0 220 220">
                     <defs>
                       <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -740,6 +741,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
               {visJusterTid && (
                 <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
                   <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>Sett starttid:</div>
+                  <input type="date" value={nyDatoJuster} onChange={e => setNyDatoJuster(e.target.value)} style={{ padding: '6px 10px', fontSize: '13px', border: `1px solid rgba(255,255,255,0.15)`, borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.06)', color: '#FDFAF6', outline: 'none', fontFamily: 'var(--font-inter)' }} />
                   <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '6px 10px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '8px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)' }} />
                   <button onClick={justerStartTidManuelt} style={{ padding: '6px 14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
                 </div>
@@ -889,7 +891,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
       ? `${String(Math.floor(oppvåkningMinutter / 60)).padStart(2, '0')}:${String(oppvåkningMinutter % 60).padStart(2, '0')}`
       : timerTekst}
   </div>
-  <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
+  <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
     <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>{t('søvn.siden')} {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
   </button>
 </div>
@@ -898,6 +900,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
           {visJusterTid && (
             <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 16px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>Sett sovnetid:</div>
+              <input type="date" value={nyDatoJuster} onChange={e => setNyDatoJuster(e.target.value)} style={{ padding: '6px 10px', fontSize: '13px', border: `1px solid rgba(255,255,255,0.15)`, borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.06)', color: '#FDFAF6', outline: 'none', fontFamily: 'var(--font-inter)' }} />
               <input type="time" value={nyTidStr} onChange={e => setNyTidStr(e.target.value)} style={{ padding: '6px 10px', fontSize: '15px', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.06)', color: '#FDFAF6', outline: 'none', fontFamily: 'var(--font-inter)' }} />
               <button onClick={justerStartTidManuelt} style={{ padding: '6px 14px', backgroundColor: '#7C8FD4', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>OK</button>
             </div>
