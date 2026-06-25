@@ -17,8 +17,6 @@ type Scenario = {
   bølger?: boolean;
 };
 
-type Farge = { id: string; navn: string; farge: string };
-
 type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
 
 const getScenarier = (t: TFn): Scenario[] => [
@@ -45,32 +43,13 @@ const getScenarier = (t: TFn): Scenario[] => [
     glow: 'rgba(160,120,255,0.35)',
     stjerner: true,
   },
-  {
-    id: 'havlys',
-    navn: t('nattlys.havlys'),
-    beskrivelse: t('nattlys.havlysBeskrivelse'),
-    bakgrunn: 'radial-gradient(ellipse at 40% 70%, #0A3D4A 0%, #051D2E 50%, #020D18 100%)',
-    glow: 'rgba(30,180,180,0.4)',
-    bølger: true,
-  },
-];
-
-const getFarger = (t: TFn): Farge[] => [
-  { id: 'varm_hvit', navn: t('nattlys.varmHvit'), farge: '#FFE4B5' },
-  { id: 'solnedgang', navn: t('nattlys.solnedgang'), farge: '#FF8C42' },
-  { id: 'lavendel', navn: t('nattlys.lavendel'), farge: '#C4A8E8' },
-  { id: 'himmelblaa', navn: t('nattlys.himmelblå'), farge: '#87CEEB' },
-  { id: 'skoggronn', navn: t('nattlys.skoggrønn'), farge: '#8FBC8F' },
 ];
 
 export default function NattlysPanel({ onLukk }: Props) {
   const { t } = useLanguage();
   const SCENARIER = getScenarier(t);
-  const FARGER = getFarger(t);
 
-  const [aktivTab, setAktivTab] = useState<'farger' | 'scener'>('scener');
   const [valgtScenario, setValgtScenario] = useState<Scenario | null>(null);
-  const [valgtFarge, setValgtFarge] = useState(FARGER[0]);
   const [lysstyrke, setLysstyrke] = useState(50);
   const [timer, setTimer] = useState<number | null>(60);
   const [aktivtNattlys, setAktivtNattlys] = useState(false);
@@ -96,20 +75,17 @@ export default function NattlysPanel({ onLukk }: Props) {
 
   useEffect(() => {
     if (aktivtNattlys && timer !== null) {
-      const t = setTimeout(() => setAktivtNattlys(false), timer * 60 * 1000);
-      return () => clearTimeout(t);
+      const timeout = setTimeout(() => setAktivtNattlys(false), timer * 60 * 1000);
+      return () => clearTimeout(timeout);
     }
   }, [aktivtNattlys, timer]);
 
   // Fullt nattlys-modus
   if (aktivtNattlys) {
-    const scenario = valgtScenario;
-    const bg = scenario
-      ? scenario.bakgrunn
-      : `radial-gradient(ellipse at 50% 50%, ${valgtFarge.farge}22 0%, ${valgtFarge.farge}08 60%, #060D1F 100%)`;
-    const glowFarge = scenario ? scenario.glow : `${valgtFarge.farge}20`;
-    const visStjerner = scenario?.stjerner || aktivTab === 'farger';
-    const visBølger = scenario?.bølger;
+    const scenario = valgtScenario || SCENARIER[0];
+    const bg = scenario.bakgrunn;
+    const glowFarge = scenario.glow;
+    const visStjerner = scenario.stjerner;
 
     return (
       <div style={{
@@ -120,7 +96,6 @@ export default function NattlysPanel({ onLukk }: Props) {
       }}>
         <style>{`
           @keyframes nattStar { 0%,100%{opacity:0.1} 50%{opacity:0.6} }
-          @keyframes nattBølge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
           @keyframes nattGlow { 0%,100%{opacity:0.3} 50%{opacity:0.6} }
         `}</style>
 
@@ -145,14 +120,6 @@ export default function NattlysPanel({ onLukk }: Props) {
             animation: `nattStar ${2 + s.d}s ${s.d}s infinite ease-in-out`,
           }} />
         ))}
-
-        {/* Bølger */}
-        {visBølger && (
-          <svg viewBox="0 0 430 100" style={{ position: 'absolute', bottom: '20%', width: '100%', animation: 'nattBølge 4s ease-in-out infinite' }} preserveAspectRatio="none">
-            <path d="M0 50 C60 30 120 70 180 50 C240 30 300 70 360 50 C400 35 430 45 430 45 L430 100 L0 100 Z" fill="rgba(80,140,200,0.08)"/>
-            <path d="M0 65 C80 45 160 75 240 55 C300 40 370 65 430 55 L430 100 L0 100 Z" fill="rgba(80,140,200,0.06)"/>
-          </svg>
-        )}
 
         {/* Lysstyrke overlay */}
         <div style={{
@@ -204,122 +171,54 @@ export default function NattlysPanel({ onLukk }: Props) {
         <div style={{ width: '40px', height: '4px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '2px', margin: '0 auto 16px' }} />
 
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('nattlys.tittel')}</div>
           <button onClick={onLukk} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '20px' }}>✕</button>
         </div>
 
-        {/* Tabs */}
-        <div style={{ display: 'flex', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '12px', padding: '3px', marginBottom: '20px' }}>
-          {(['farger', 'scener'] as const).map(tab => (
-            <button key={tab} onClick={() => setAktivTab(tab)} style={{
-              flex: 1, padding: '8px', borderRadius: '10px', border: 'none', cursor: 'pointer',
-              backgroundColor: aktivTab === tab ? 'rgba(255,255,255,0.12)' : 'transparent',
-              color: aktivTab === tab ? '#E8DDD0' : '#8A8FA8',
-              fontSize: '13px', fontFamily: 'var(--font-inter)', fontWeight: aktivTab === tab ? '600' : '400',
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+          {SCENARIER.map(s => (
+            <button key={s.id} onClick={() => setValgtScenario(s)} style={{
+              padding: '16px', borderRadius: '16px', border: 'none', cursor: 'pointer',
+              background: valgtScenario?.id === s.id
+                ? `linear-gradient(135deg, rgba(124,143,212,0.3) 0%, rgba(124,143,212,0.1) 100%)`
+                : 'rgba(255,255,255,0.05)',
+              borderWidth: '1px', borderStyle: 'solid',
+              borderColor: valgtScenario?.id === s.id ? 'rgba(124,143,212,0.5)' : 'rgba(255,255,255,0.08)',
+              display: 'flex', alignItems: 'center', gap: '14px', textAlign: 'left',
               transition: 'all 0.2s ease',
             }}>
-              {tab === 'farger' ? t('nattlys.farger') : t('nattlys.scener')}
+              {/* Forhåndsvisning */}
+              <div style={{
+                width: '52px', height: '52px', borderRadius: '12px', flexShrink: 0,
+                background: s.bakgrunn,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: `0 0 12px ${s.glow}`,
+              }}>
+                <div style={{ fontSize: '20px' }}>
+                  {s.id === 'maaneskinn' ? '🌙' : s.id === 'varm' ? '🕯️' : '✨'}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '4px' }}>{s.navn}</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', lineHeight: 1.4 }}>{s.beskrivelse}</div>
+              </div>
+              {valgtScenario?.id === s.id && (
+                <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="9" fill="#7C8FD4" opacity="0.3"/>
+                    <path d="M6 10L9 13L14 7" stroke="#8AAEE0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              )}
             </button>
           ))}
         </div>
 
-        {aktivTab === 'farger' && (
-          <>
-            {/* Fargevalg */}
-            <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', justifyContent: 'center' }}>
-              {FARGER.map(f => (
-                <button key={f.id} onClick={() => setValgtFarge(f)} style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                }}>
-                  <div style={{
-                    width: '48px', height: '48px', borderRadius: '50%',
-                    backgroundColor: f.farge,
-                    border: valgtFarge.id === f.id ? '3px solid #FDFAF6' : '3px solid transparent',
-                    boxShadow: valgtFarge.id === f.id ? `0 0 12px ${f.farge}` : 'none',
-                    transition: 'all 0.2s ease',
-                  }} />
-                  <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textAlign: 'center' }}>{f.navn}</div>
-                </button>
-              ))}
-            </div>
-
-            {/* Lysstyrke */}
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0' }}>{t('nattlys.lysstyrke')}</div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8' }}>{lysstyrke}%</div>
-              </div>
-              <input type="range" min={5} max={80} value={lysstyrke} onChange={e => setLysstyrke(Number(e.target.value))}
-                style={{ width: '100%', accentColor: '#8AAEE0' }} />
-            </div>
-
-            {/* Timer */}
-            <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#E8DDD0', marginBottom: '10px' }}>{t('nattlys.timer')}</div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {[30, 60, 90, null].map((min, i) => (
-                  <button key={i} onClick={() => setTimer(min)} style={{
-                    flex: 1, padding: '10px 4px', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                    backgroundColor: timer === min ? '#7C8FD4' : 'rgba(255,255,255,0.06)',
-                    color: timer === min ? '#FDFAF6' : '#8A8FA8',
-                    fontSize: '12px', fontFamily: 'var(--font-inter)',
-                    transition: 'all 0.2s ease',
-                  }}>
-                    {min === null ? t('nattlys.alltidPå') : t('nattlys.minutter', { min })}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {aktivTab === 'scener' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
-            {SCENARIER.map(s => (
-              <button key={s.id} onClick={() => setValgtScenario(s)} style={{
-                padding: '16px', borderRadius: '16px', border: 'none', cursor: 'pointer',
-                background: valgtScenario?.id === s.id
-                  ? `linear-gradient(135deg, rgba(124,143,212,0.3) 0%, rgba(124,143,212,0.1) 100%)`
-                  : 'rgba(255,255,255,0.05)',
-                borderWidth: '1px', borderStyle: 'solid',
-                borderColor: valgtScenario?.id === s.id ? 'rgba(124,143,212,0.5)' : 'rgba(255,255,255,0.08)',
-                display: 'flex', alignItems: 'center', gap: '14px', textAlign: 'left',
-                transition: 'all 0.2s ease',
-              }}>
-                {/* Forhåndsvisning */}
-                <div style={{
-                  width: '52px', height: '52px', borderRadius: '12px', flexShrink: 0,
-                  background: s.bakgrunn,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 0 12px ${s.glow}`,
-                }}>
-                  <div style={{ fontSize: '20px' }}>
-                    {s.id === 'maaneskinn' ? '🌙' : s.id === 'varm' ? '🕯️' : s.id === 'stjernehimmel' ? '✨' : '🌊'}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '4px' }}>{s.navn}</div>
-                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', lineHeight: 1.4 }}>{s.beskrivelse}</div>
-                </div>
-                {valgtScenario?.id === s.id && (
-                  <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <circle cx="10" cy="10" r="9" fill="#7C8FD4" opacity="0.3"/>
-                      <path d="M6 10L9 13L14 7" stroke="#8AAEE0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
-
         {/* Start-knapp */}
         <button
           onClick={() => {
-            if (aktivTab === 'scener' && !valgtScenario) setValgtScenario(SCENARIER[0]);
+            if (!valgtScenario) setValgtScenario(SCENARIER[0]);
             setAktivtNattlys(true);
           }}
           style={{

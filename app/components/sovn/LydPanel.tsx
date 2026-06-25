@@ -180,9 +180,14 @@ export default function LydPanel({ onLukk }: Props) {
 
         <div style={{ width: '40px', height: '4px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '2px', margin: '0 auto 16px' }} />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('lyd.skapRo')}</div>
-          <button onClick={() => { if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; } onLukk(); }} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '20px' }}>✕</button>
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('lyd.skapRo')}</div>
+            <button onClick={() => { if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; } onLukk(); }} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '20px' }}>✕</button>
+          </div>
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginTop: '6px' }}>
+            {t('lyd.undertittel')}
+          </div>
         </div>
 
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', marginBottom: '20px' }}>

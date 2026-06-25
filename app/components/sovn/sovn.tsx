@@ -7,7 +7,15 @@ import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
-import type { OversettelseNøkkel } from '../../lib/i18n/translations';
+import type { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
+
+const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
+  no: 'norsk',
+  en: 'English',
+  sv: 'svenska',
+  da: 'dansk',
+  de: 'Deutsch',
+};
 
 type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; onNavigate?: (side: string) => void; };
 type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; };
@@ -76,7 +84,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
 };
 
 export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen, onNavigate }: Props) {
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
   const signaler = getSignaler(t);
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
@@ -108,18 +116,32 @@ const [oppvåkningStart, setOppvåkningStart] = useState<Date | null>(null);
 const [oppvåkningMinutter, setOppvåkningMinutter] = useState(0);
 const [visAnnetModal, setVisAnnetModal] = useState(false);
 const [annetTekst, setAnnetTekst] = useState('');
+const [nattInnsikt, setNattInnsikt] = useState('');
 
   const lastTidslinje = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
     if (!profilId) return;
+    const nå = new Date();
+    const fra = new Date(nå.getTime() - 24 * 60 * 60 * 1000);
+    const fraDato = fra.toISOString().split('T')[0];
+    const tilDato = nå.toISOString().split('T')[0];
     const { data } = await supabase
       .from('lurer')
       .select('*')
       .eq('profil_id', profilId)
-      .eq('dato', dagensdato())
+      .gte('dato', fraDato)
+      .lte('dato', tilDato)
       .order('start', { ascending: true });
     if (!data) return;
-    const items: TidslinjeItem[] = data.map((l: any) => ({
+    const filtered = data.filter((l: any) => {
+      const itemTime = new Date(`${l.dato}T${(l.start || '00:00').slice(0, 5)}:00`);
+      return itemTime >= fra && itemTime <= nå;
+    }).sort((a: any, b: any) => {
+      const aTime = new Date(`${a.dato}T${a.start}:00`).getTime();
+      const bTime = new Date(`${b.dato}T${b.start}:00`).getTime();
+      return aTime - bTime;
+    });
+    const items: TidslinjeItem[] = filtered.map((l: any) => ({
       id: l.id,
       tid: l.start,
       slutt: l.slutt,
@@ -128,7 +150,7 @@ const [annetTekst, setAnnetTekst] = useState('');
       varighet: l.varighet,
     }));
     setTidslinje(items);
-    const oppvåkninger = data.filter((l: any) => l.type === 'oppvåkning').length;
+    const oppvåkninger = filtered.filter((l: any) => l.type === 'oppvåkning').length;
     if (oppvåkninger === 0) setSøvnkvalitet('Utmerket');
     else if (oppvåkninger <= 2) setSøvnkvalitet('God');
     else if (oppvåkninger <= 4) setSøvnkvalitet('Ok');
@@ -177,6 +199,67 @@ const [annetTekst, setAnnetTekst] = useState('');
     }
     return () => { if (interval) clearInterval(interval); };
   }, [startTid, visning, lurFerdig, nattligOppvåkning, oppvåkningStart]);
+
+  useEffect(() => {
+    if (visning !== 'nattAktiv') return;
+
+    const hentNattInnsikt = async () => {
+      const babyNavn = aktivtBarn?.navn || 'baby';
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (!profilId) return;
+
+      const fraDate = new Date();
+      fraDate.setDate(fraDate.getDate() - 5);
+      const fra = fraDate.toISOString().split('T')[0];
+      const språkNavn = LOCALE_SPRÅKNAVN[locale];
+
+      const { data: nattData } = await supabase
+        .from('lurer')
+        .select('*')
+        .eq('profil_id', profilId)
+        .eq('type', 'natt')
+        .gte('dato', fra);
+
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 120,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Analyser dataene og gi ÉN kort innsikt PÅ SPRÅKET ${språkNavn}. Maks 1-2 setninger. Vær varm og konkret.
+
+Velg ÉN av disse innsiktstypene (tilfeldig mellom de som er relevante basert på data):
+1. Hvis det finnes registrerte søvnsignaler i kveld (${valgteSignaler.length} signaler): Formuler at ${babyNavn} sovnet etter [antall] registrerte søvnsignaler i kveld.
+2. Hvis det finnes nattregistreringer fra de siste 5 dagene: Formuler at de siste kveldene har innsovning skjedd mellom [tidligste]–[seneste] tidspunkt.
+3. Ellers: Formuler kveldens våkentid før natt var [varighet].
+
+Valgte signaler i kveld: ${JSON.stringify(valgteSignaler)}
+Tidslinje siste 24 timer: ${JSON.stringify(tidslinje)}
+Nattregistreringer siste 5 dager: ${JSON.stringify(nattData)}
+
+Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
+            }],
+          }),
+        });
+        const result = await response.json();
+        setNattInnsikt(result.content?.[0]?.text || '');
+      } catch {
+        if (valgteSignaler.length > 0) {
+          setNattInnsikt(`${babyNavn} sovnet etter ${valgteSignaler.length} registrerte søvnsignaler i kveld.`);
+        } else if (nattData && nattData.length > 0) {
+          const tider = nattData.map((n: any) => n.start).filter(Boolean).sort();
+          setNattInnsikt(`De siste kveldene har innsovning skjedd mellom ${tider[0]}–${tider[tider.length - 1]}.`);
+        } else {
+          setNattInnsikt('Kveldens våkentid før natt er registrert i tidslinjen.');
+        }
+      }
+    };
+
+    hentNattInnsikt();
+  }, [visning, tidslinje, valgteSignaler, aktivtBarn, bruker, locale]);
 
   const startSøvn = async (type: 'lur' | 'natt') => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -334,14 +417,6 @@ const [annetTekst, setAnnetTekst] = useState('');
     lastTidslinje();
   };
 
-  const søvnmelding = () => {
-    if (minutter < 60) return 'Baby sover 🌙 Natta har så vidt begynt – la ro senke seg.';
-    if (søvnkvalitet === 'Utmerket') return 'Fantastisk natt! ✨ Baby sover godt og sammenhengende.';
-    if (søvnkvalitet === 'God') return 'Nydelig natt ✨ Baby sover godt med få oppvåkninger.';
-    if (søvnkvalitet === 'Ok') return 'En grei natt 🌙 Litt uro, men baby sover.';
-    return 'Urolig natt 💛 Baby trenger ekstra ro og nærhet nå.';
-  };
-
   const circumference = 2 * Math.PI * 95;
   const progress = Math.min((minutter % 60) / 60, 1);
   const timer = Math.floor(minutter / 60);
@@ -497,7 +572,7 @@ const [annetTekst, setAnnetTekst] = useState('');
       <div style={{ padding: '24px', textAlign: 'center' }}>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         <div style={{ marginBottom: '8px', position: 'relative', display: 'inline-block' }}>
-          <img src="/mane.png" alt="måne" style={{ width: '150px', height: 'auto', maskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)', WebkitMaskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)' }} />
+          <img src="/mane.png" alt="måne" style={{ width: '105px', height: 'auto', maskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)', WebkitMaskImage: 'radial-gradient(ellipse 70% 75% at 35% 52%, black 30%, transparent 68%)' }} />
         </div>
         <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '4px', lineHeight: 1.3 }}>{t('søvn.hvaSlagsSøvn')}</div>
         <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '28px' }}>{t('søvn.velgType')}</div>
@@ -809,17 +884,17 @@ const [annetTekst, setAnnetTekst] = useState('');
               <span style={{ fontSize: '14px' }}>✨</span>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('søvn.nattensInnsikt')}</div>
             </div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{søvnmelding()}</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#C4A882', lineHeight: 1.6 }}>{nattInnsikt}</div>
           </div>
           <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600', marginBottom: '12px' }}>{t('søvn.signalerIKveld')}</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
               {signaler.map(signal => (
-                <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '10px 4px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? '1.5px solid rgba(138,174,224,0.6)' : '1px solid rgba(255,255,255,0.08)', backgroundColor: valgteSignaler.includes(signal.id) ? 'rgba(138,174,224,0.15)' : 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
+                <button key={signal.id} onClick={() => toggleSignal(signal.id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 6px', borderRadius: '12px', border: valgteSignaler.includes(signal.id) ? '1.5px solid rgba(138,174,224,0.6)' : '1px solid rgba(255,255,255,0.08)', backgroundColor: valgteSignaler.includes(signal.id) ? 'rgba(138,174,224,0.25)' : 'rgba(255,255,255,0.04)', cursor: 'pointer' }}>
                   <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                     <path d="M10 16C10 16 3 11 3 6.5C3 4.5 4.5 3 6.5 3C7.8 3 9 3.7 10 5C11 3.7 12.2 3 13.5 3C15.5 3 17 4.5 17 6.5C17 11 10 16 10 16Z" fill={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'none'} stroke={valgteSignaler.includes(signal.id) ? '#8AAEE0' : 'rgba(255,255,255,0.3)'} strokeWidth="1.3"/>
                   </svg>
-                  <div style={{ fontSize: '8px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? '#8AAEE0' : '#8A8FA8', textAlign: 'center', lineHeight: 1.2 }}>{signal.label}</div>
+                  <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: valgteSignaler.includes(signal.id) ? '#8AAEE0' : '#8A8FA8', textAlign: 'center', lineHeight: 1.2 }}>{valgteSignaler.includes(signal.id) ? `✓ ${signal.label}` : signal.label}</div>
                 </button>
               ))}
             </div>

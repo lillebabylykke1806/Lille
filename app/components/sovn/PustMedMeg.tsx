@@ -93,10 +93,13 @@ export default function PustMedMeg({ onLukk }: Props) {
       <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: '#0D1B3E', display: 'flex', flexDirection: 'column', padding: '24px' }}>
         <style>{`@keyframes pustInn { 0%{transform:scale(0.3)} 100%{transform:scale(1)} } @keyframes pustUt { 0%{transform:scale(1)} 100%{transform:scale(0.3)} }`}</style>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <button onClick={onLukk} style={{ background: 'none', border: 'none', color: '#8A8FA8', cursor: 'pointer', fontSize: '24px' }}>✕</button>
           <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: '#E8DDD0', fontWeight: '600' }}>{t('pust.tittel')}</div>
           <div style={{ width: '32px' }} />
+        </div>
+        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic', textAlign: 'center', marginBottom: '24px', lineHeight: 1.6, padding: '0 8px' }}>
+          {t('pust.forklaring')}
         </div>
 
         {/* Sirkelpreview */}
