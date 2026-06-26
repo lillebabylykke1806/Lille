@@ -1,7 +1,15 @@
+'use client';
+
 export default function Personvern() {
     return (
-      <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 24px', fontFamily: 'sans-serif', lineHeight: 1.7, color: '#3F3A37' }}>
-        <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>Personvernerklæring for Lille</h1>
+      <>
+        <button onClick={() => window.history.back()} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', cursor: 'pointer', padding: '16px 24px', fontSize: '15px', fontFamily: 'var(--font-inter)', color: '#2D5C45' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="#2D5C45" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Tilbake
+        </button>
+      <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 24px', fontFamily: 'sans-serif', lineHeight: 1.7, color: '#3F3A37' }}>        <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>Personvernerklæring for Lille</h1>
         <p style={{ color: '#7B746D', marginBottom: '32px' }}>Sist oppdatert: 11. juni 2026</p>
   
         <h2 style={{ fontSize: '20px', marginTop: '32px' }}>Hva vi samler inn</h2>
@@ -22,5 +30,6 @@ export default function Personvern() {
         <h2 style={{ fontSize: '20px', marginTop: '32px' }}>Kontakt</h2>
         <p>Isabella Figved<br/>E-post: isabellafjellet@gmail.com</p>
       </div>
+      </>
     );
   }
