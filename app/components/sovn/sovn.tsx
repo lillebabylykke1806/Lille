@@ -608,17 +608,17 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
           </button>
         </div>
-        <button onClick={() => setVisning('etterregistrer')} style={{ width: '100%', padding: '14px 20px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left', marginBottom: '16px' }}>
+        <button onClick={() => setVisning('etterregistrer')} style={{ width: '100%', padding: '14px 20px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', textAlign: 'left', marginBottom: '16px' }}>
           <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-            <circle cx="18" cy="18" r="14" stroke={farger.tekstLys} strokeWidth="1.5" fill="none"/>
-            <line x1="18" y1="11" x2="18" y2="18" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round"/>
-            <line x1="18" y1="18" x2="23" y2="21" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round"/>
+            <circle cx="18" cy="18" r="14" stroke={farger.grønn} strokeWidth="1.5" fill="none"/>
+            <line x1="18" y1="11" x2="18" y2="18" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="18" y1="18" x2="23" y2="21" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
           <div>
-            <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>{t('søvn.etterregistrer')}</div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.etterregistrerBeskrivelse')}</div>
+            <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, marginBottom: '2px', fontWeight: '400' }}>{t('søvn.etterregistrer')}</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn }}>{t('søvn.etterregistrerBeskrivelse')}</div>
           </div>
-          <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
+          <div style={{ marginLeft: 'auto', color: farger.grønn, fontSize: '18px' }}>›</div>
         </button>
         <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start', textAlign: 'left' }}>
           <span style={{ fontSize: '18px' }}>💡</span>
