@@ -1,6 +1,6 @@
 export const signalerOversettelser = {
   'signaler.tittel': { no: 'Signaler', en: 'Signals', sv: 'Signaler', da: 'Signaler', de: 'Signale' },
-  'signaler.laerBabyensSprak': { no: 'Lær babyens språk 💛', en: "Learn your baby's language 💛", sv: 'Lär dig bebisens språk 💛', da: 'Lær babyens sprog 💛', de: 'Lerne die Sprache deines Babys 💛' },
+  'signaler.laerBabyensSprak': { no: 'Små signaler kan fortelle mye om hva babyen trenger 💛', en: 'Small signals can tell a lot about what the baby needs 💛', sv: 'Små signaler kan berätta mycket om vad bebisen behöver 💛', da: 'Små signaler kan fortælle meget om hvad babyen har brug for 💛', de: 'Kleine Signale können viel darüber verraten was das Baby braucht 💛' },
   'signaler.forstaHvaSignalerBetyr': { no: 'Forstå hva ulike signaler kan bety.', en: 'Understand what different signals can mean.', sv: 'Förstå vad olika signaler kan betyda.', da: 'Forstå hvad forskellige signaler kan betyde.', de: 'Verstehe, was verschiedene Signale bedeuten können.' },
   'signaler.tidligSignal': { no: 'Tidlig signal', en: 'Early signal', sv: 'Tidigt signal', da: 'Tidligt signal', de: 'Frühes Signal' },
   'signaler.sentSignal': { no: 'Sent signal', en: 'Late signal', sv: 'Sent signal', da: 'Sent signal', de: 'Spätes Signal' },
@@ -17,7 +17,7 @@ export const signalerOversettelser = {
   'signaler.lagrer': { no: 'Lagrer...', en: 'Saving...', sv: 'Sparar...', da: 'Gemmer...', de: 'Speichert...' },
   'signaler.lagreSignal': { no: 'Lagre signal', en: 'Save signal', sv: 'Spara signal', da: 'Gem signal', de: 'Signal speichern' },
   'signaler.signaletErRegistrert': { no: 'Signalet er registrert!', en: 'Signal registered!', sv: 'Signalen är registrerad!', da: 'Signalet er registreret!', de: 'Signal erfasst!' },
-  'signaler.viserOftest': { no: '{navn} viser oftest', en: '{navn} most often shows', sv: '{navn} visar oftast', da: '{navn} viser oftest', de: '{navn} zeigt am häufigsten' },
+  'signaler.viserOftest': { no: '{navn}s vanligste vei til søvn', en: '{navn}\'s most common path to sleep', sv: '{navn}s vanligaste väg till sömn', da: '{navn}s mest almindelige vej til søvn', de: '{navn}s häufigster Weg zum Schlafen' },
   'signaler.registrertGang': { no: 'Dette mønsteret går igjen i {antall} av {total} registrerte lurer.', en: 'This pattern appears in {antall} of {total} registered naps.', sv: 'Detta mönster förekommer i {antall} av {total} registrerade lurer.', da: 'Dette mønster går igen i {antall} af {total} registrerede lurer.', de: 'Dieses Muster taucht in {antall} von {total} registrierten Schläfchen auf.' },
   'signaler.registrertGanger': { no: 'Dette mønsteret går igjen i {antall} av {total} registrerte lurer.', en: 'This pattern appears in {antall} of {total} registered naps.', sv: 'Detta mönster förekommer i {antall} av {total} registrerade lurer.', da: 'Dette mønster går igen i {antall} af {total} registrerede lurer.', de: 'Dieses Muster taucht in {antall} von {total} registrierten Schläfchen auf.' },
   'signaler.vanligsteSignalene': { no: 'Vanligste signalene', en: 'Most common signals', sv: 'Vanligaste signalerna', da: 'Mest almindelige signaler', de: 'Häufigste Signale' },
