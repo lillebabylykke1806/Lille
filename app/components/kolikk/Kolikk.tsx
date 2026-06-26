@@ -62,6 +62,7 @@ export default function Kolikk({ bruker, aktivtBarn }: Props) {
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [visRegistrer, setVisRegistrer] = useState(false);
   const [aiMønstre, setAiMønstre] = useState<string[]>([]);
+  const [aiUroInnsikt, setAiUroInnsikt] = useState('');
   const [lasterAI, setLasterAI] = useState(false);
   const [nesteUro, setNesteUro] = useState<{ om: string; tidspunkt: string } | null>(null);
   const [tiltakStatistikk, setTiltakStatistikk] = useState<{ tiltak: string; fungerte: number; total: number }[]>([]);
@@ -176,8 +177,26 @@ Svar KUN med de 3 punktene, én per linje.`
       const result = await response.json();
       const tekst = result.content?.[0]?.text || '';
       setAiMønstre(tekst.split('\n').filter((l: string) => l.trim().startsWith('✨')));
+
+      const response2 = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 120,
+          messages: [{
+            role: 'user',
+            content: `Du er en varm babyekspert. Gi ÉN kort, personlig og varm observasjon på ${språkNavn} om ${babyNavn}s uro-mønstre. Maks 1-2 setninger. Bruk babyens navn. Ingen introduksjon.
+
+Data: ${JSON.stringify(logg.slice(0, 10))}`
+          }],
+        }),
+      });
+      const result2 = await response2.json();
+      setAiUroInnsikt(result2.content?.[0]?.text || '');
     } catch {
       setAiMønstre([]);
+      setAiUroInnsikt('');
     }
     setLasterAI(false);
   }, [logg, babyNavn, locale, t]);
@@ -217,9 +236,9 @@ Svar KUN med de 3 punktene, én per linje.`
   const medalje = (i: number) => i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';
 
   const resultatValg = [
-    { id: 'bra' as const, label: t('kolikk.hjalpGodt') },
-    { id: 'delvis' as const, label: t('kolikk.hjalpLitt') },
-    { id: 'ikke' as const, label: t('kolikk.hjalpIkke') },
+    { id: 'bra' as const, label: '😊 Hjalp', farge: farger.grønn, bg: farger.grønnLys },
+    { id: 'delvis' as const, label: '😐 Litt bedre', farge: '#8B6340', bg: '#FFF8EC' },
+    { id: 'ikke' as const, label: '😞 Ingen effekt', farge: '#BE123C', bg: '#FFF1F2' },
   ];
 
   const innsiktKort = [
@@ -404,6 +423,12 @@ Svar KUN med de 3 punktene, én per linje.`
         {/* Historikk */}
         {logg.length > 0 && (
           <>
+            {aiUroInnsikt && logg.length >= 3 && (
+              <div style={{ backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', padding: '14px 16px', marginBottom: '12px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                <span style={{ fontSize: '16px', flexShrink: 0 }}>✨</span>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, lineHeight: 1.6 }}>{aiUroInnsikt}</div>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('kolikk.historikk')}</div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn }}>{t('kolikk.seAlle')}</div>
@@ -590,10 +615,13 @@ Svar KUN med de 3 punktene, én per linje.`
               <div style={{ display: 'flex', gap: '8px' }}>
                 {resultatValg.map(r => (
                   <button key={r.id} onClick={() => setNyResultat(r.id)}
-                    style={{ flex: 1, padding: '10px 8px', borderRadius: '12px', border: `1.5px solid ${nyResultat === r.id ? farger.grønn : farger.kremMørk}`, backgroundColor: nyResultat === r.id ? farger.grønnLys : farger.bakgrunn, color: nyResultat === r.id ? farger.grønn : farger.tekst, fontSize: '12px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyResultat === r.id ? '600' : '400' }}>
+                    style={{ flex: 1, padding: '12px 8px', borderRadius: '12px', border: `1.5px solid ${nyResultat === r.id ? r.farge : farger.kremMørk}`, backgroundColor: nyResultat === r.id ? r.bg : farger.bakgrunn, color: nyResultat === r.id ? r.farge : farger.tekst, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyResultat === r.id ? '600' : '400' }}>
                     {r.label}
                   </button>
                 ))}
+              </div>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginTop: '8px', lineHeight: 1.5 }}>
+                Da begynner Lille å lære hva som faktisk fungerer for {babyNavn} 🤍
               </div>
             </div>
 
