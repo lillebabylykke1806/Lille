@@ -300,10 +300,20 @@ export default function Amming({ bruker }: Props) {
 
         {/* Innsikt */}
         {logg.length > 0 && (
-          <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px' }}>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '600', marginBottom: '4px' }}>{t('amming.iDag')}</div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.6 }}>
-              {logg.length} {logg.length === 1 ? t('amming.ammingEntall') : t('amming.ammingFlertall')} · {totalMinutter} {t('amming.minutterTotalt')}
+          <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px 18px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700', marginBottom: '10px' }}>
+              {t('amming.iDag')} 🤍
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>
+                🍼 {logg.length} {logg.length === 1 ? t('amming.ammingEntall') : t('amming.ammingFlertall')}
+              </div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>
+                ⏱️ {totalMinutter} {t('amming.minutterTotalt')}
+              </div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>
+                🤱 {t('amming.nesteBryst')}: {brystNavn(anbefalingBryst)}
+              </div>
             </div>
           </div>
         )}

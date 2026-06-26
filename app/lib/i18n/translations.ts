@@ -278,6 +278,7 @@ export const oversettelser = {
   'amming.sisteAmming': { no: 'Siste amming', en: 'Last feeding', sv: 'Senaste amning', da: 'Seneste amning', de: 'Letzte Stillzeit' },
   'amming.neste': { no: 'Neste:', en: 'Next:', sv: 'Nästa:', da: 'Næste:', de: 'Nächste:' },
   'amming.iDag': { no: '✨ I dag', en: '✨ Today', sv: '✨ Idag', da: '✨ I dag', de: '✨ Heute' },
+  'amming.nesteBryst': { no: 'Neste bryst', en: 'Next breast', sv: 'Nästa bröst', da: 'Næste bryst', de: 'Nächste Brust' },
   'amming.ammingFlertall': { no: 'amminger', en: 'feedings', sv: 'amningar', da: 'amninger', de: 'Stillzeiten' },
   'amming.ammingEntall': { no: 'amming', en: 'feeding', sv: 'amning', da: 'amning', de: 'Stillzeit' },
   'amming.minutterTotalt': { no: 'minutter totalt', en: 'minutes total', sv: 'minuter totalt', da: 'minutter i alt', de: 'Minuten gesamt' },
