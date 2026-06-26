@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { SPRÅK_NAVN, SPRÅK_FLAGG, Locale } from '../../lib/i18n/translations';
 import BarnVelger from './BarnVelger';
+import Innstillinger from './Innstillinger';
 
 const SPRÅK_KODER: Locale[] = ['no', 'en', 'sv', 'da', 'de'];
 
@@ -28,6 +29,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
   const [sender, setSender] = useState(false);
   const [visRedigerProfil, setVisRedigerProfil] = useState(false);
   const [visBarnVelger, setVisBarnVelger] = useState(false);
+  const [visInnstillinger, setVisInnstillinger] = useState(false);
   const [brukernavn, setBrukernavn] = useState('');
 
   useEffect(() => {
@@ -128,6 +130,10 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
     const { url } = await res.json();
     if (url) window.location.href = url;
   };
+
+  if (visInnstillinger) {
+    return <Innstillinger onTilbake={() => setVisInnstillinger(false)} />;
+  }
 
   return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '0 0 100px' }}>
@@ -301,7 +307,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
             </div>
           </div>
           {[
-            { ikon: '⚙️', bg: '#F8FAFC', tittel: 'Innstillinger', onClick: () => {} },
+            { ikon: '⚙️', bg: '#F8FAFC', tittel: 'Innstillinger', onClick: () => setVisInnstillinger(true) },
             { ikon: '🔒', bg: '#F8FAFC', tittel: 'Personvern', onClick: () => {} },
             { ikon: '❓', bg: '#F8FAFC', tittel: 'Hjelp & support', onClick: () => {} },
           ].map((item, i, arr) => (
