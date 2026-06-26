@@ -10,7 +10,6 @@ type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string, fane?:
 type RegistertSignal = {
   navn: string;
   antall: number;
-  prosentFørLur: number;
   gjsnittMinFørSøvn: number;
 };
 
@@ -150,6 +149,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
   }, [KATEGORIER]);
 
   const [registrerteSignaler, setRegistrerteSignaler] = useState<RegistertSignal[]>([]);
+  const [totalLurer, setTotalLurer] = useState(0);
   const [babyNavn, setBabyNavn] = useState('babyen');
   const [laster, setLaster] = useState(true);
   const [aktivKategori, setAktivKategori] = useState<Kategori | null>(null);
@@ -187,9 +187,9 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
       });
     });
     const totalLurer = lurer.length;
+    setTotalLurer(totalLurer);
     const liste: RegistertSignal[] = Object.entries(signalTelling).map(([navn, d]) => ({
       navn, antall: d.antall,
-      prosentFørLur: Math.round((d.antall / totalLurer) * 100),
       gjsnittMinFørSøvn: d.minutterFørSøvn.length > 0 ? Math.round(d.minutterFørSøvn.reduce((a, b) => a + b, 0) / d.minutterFørSøvn.length) : 0,
     })).sort((a, b) => b.antall - a.antall);
     setRegistrerteSignaler(liste);
@@ -227,6 +227,7 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
   };
 
   const topp3 = registrerteSignaler.slice(0, 3);
+  const totalRegistrerteLurer = totalLurer || registrerteSignaler.reduce((max, s) => Math.max(max, s.antall), 0);
   const displayNavn = babyNavn === 'babyen' ? t('signaler.babyenFallback') : babyNavn;
 
   // Detaljvisning
@@ -443,38 +444,75 @@ export default function Signaler({ bruker, aktivtBarn, onNavigate }: Props) {
                 <HjerteIkon farge={farger.terrakotta} størrelse={18} />
                 <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700' }}>{t('signaler.viserOftest', { navn: displayNavn })}</div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginBottom: '12px' }}>
-                {topp3.map((signal, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                      <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.hvit, border: `1.5px solid ${farger.terrakotta}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <HjerteIkon farge={farger.terrakotta} størrelse={26} />
-                      </div>
-                      <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, textAlign: 'center', maxWidth: '56px', lineHeight: 1.3 }}>{finnVisningsNavn(signal.navn)}</div>
-                    </div>
-                    {i < topp3.length - 1 && <div style={{ fontSize: '14px', color: farger.terrakotta, marginBottom: '18px' }}>→</div>}
-                    {i === topp3.length - 1 && (
-                      <>
-                        <div style={{ fontSize: '14px', color: farger.terrakotta, marginBottom: '18px' }}>→</div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                          <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: farger.grønnLys, border: `1.5px solid ${farger.grønn}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <img src="/mane-natt.png" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-                          </div>
-                          <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>{t('signaler.sovn')}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                <div>
+                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '10px', fontWeight: '600' }}>{t('signaler.vanligsteSignalene')}</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {topp3.map((signal, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.hvit, border: `1.5px solid ${farger.terrakotta}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <HjerteIkon farge={farger.terrakotta} størrelse={18} />
                         </div>
-                      </>
-                    )}
+                        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '600', lineHeight: 1.3 }}>{finnVisningsNavn(signal.navn)}</div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                <div>
+                  <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '10px', fontWeight: '600' }}>{t('innsikt.typiskVeiTilUro')}</div>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', flexWrap: 'wrap' }}>
+                    {topp3.map((signal, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                          <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.hvit, border: `1.5px solid ${farger.terrakotta}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <HjerteIkon farge={farger.terrakotta} størrelse={18} />
+                          </div>
+                        </div>
+                        {i < topp3.length - 1 && <div style={{ fontSize: '12px', color: farger.terrakotta, marginBottom: '10px' }}>→</div>}
+                        {i === topp3.length - 1 && (
+                          <>
+                            <div style={{ fontSize: '12px', color: farger.terrakotta, marginBottom: '10px' }}>→</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                              <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.grønnLys, border: `1.5px solid ${farger.grønn}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <img src="/mane-natt.png" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '12px' }}>
                 {topp3[0]?.antall === 1
-                  ? t('signaler.registrertGang', { antall: topp3[0]?.antall })
-                  : t('signaler.registrertGanger', { antall: topp3[0]?.antall })}
+                  ? t('signaler.registrertGang', { antall: topp3[0]?.antall, total: totalRegistrerteLurer })
+                  : t('signaler.registrertGanger', { antall: topp3[0]?.antall, total: totalRegistrerteLurer })}
               </div>
               <button onClick={() => onNavigate?.('innsikt', 'innsikt')} style={{ width: '100%', padding: '12px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '50px', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
   {t('signaler.seInnsikt', { navn: displayNavn })}
 </button>
+            </div>
+          )}
+
+          {/* Siste registrerte signaler */}
+          {registrerteSignaler.length > 0 && (
+            <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <span style={{ fontSize: '18px' }}>💛</span>
+                <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('signaler.sisteRegistrerteSignaler')}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {registrerteSignaler.map((signal, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '12px 14px', backgroundColor: farger.bakgrunn, borderRadius: '14px', border: `1px solid ${farger.kremMørk}` }}>
+                    <div style={{ fontSize: '28px', lineHeight: 1, flexShrink: 0 }}>💛</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>{finnVisningsNavn(signal.navn)}</div>
+                      <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.4 }}>{t('signaler.visteDetteGanger', { navn: displayNavn, antall: signal.antall })}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
