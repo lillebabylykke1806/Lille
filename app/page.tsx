@@ -43,32 +43,84 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     const lastData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const res = await fetch('/api/sjekk-abonnement', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: session.user.email }),
-        });
-        const { aktiv } = await res.json();
-        if (!aktiv) {
-          await supabase.auth.signOut();
-          setLaster(false);
-          return;
+        let partnerHarAktivTilgang = false;
+
+        // Sjekk om bruker er partner med tilgang
+        const { data: partnerTilgang } = await supabase
+          .from('barn_tilgang')
+          .select('*, invitert_av')
+          .eq('bruker_id', session.user.id)
+          .single();
+
+        if (partnerTilgang) {
+          // Sjekk at den som inviterte har aktivt abonnement
+          const { data: invitertBruker } = await supabase
+            .from('profiler')
+            .select('stripe_subscription_status')
+            .eq('id', partnerTilgang.invitert_av)
+            .single();
+
+          if (invitertBruker?.stripe_subscription_status === 'active') {
+            setHarAbonnement(true);
+            partnerHarAktivTilgang = true;
+
+            // Last inn partner-barnets data
+            const { data: partnerBarn } = await supabase
+              .from('barn_tilgang')
+              .select('barn_id, barn(*)')
+              .eq('bruker_id', session.user.id)
+              .single();
+            if (partnerBarn?.barn) setAktivtBarn(partnerBarn.barn);
+          } else {
+            // Bruker A har ikke aktivt abonnement – partner B får ikke tilgang
+            setHarAbonnement(false);
+            await supabase.auth.signOut();
+            setLaster(false);
+            return;
+          }
+        }
+
+        if (!partnerHarAktivTilgang) {
+          const res = await fetch('/api/sjekk-abonnement', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: session.user.email }),
+          });
+          const { aktiv } = await res.json();
+          if (!aktiv) {
+            await supabase.auth.signOut();
+            setLaster(false);
+            return;
+          }
         }
       
         setBruker(session.user);
       
-        const { data: barn } = await supabase
-          .from('barn')
-          .select('*')
-          .eq('bruker_id', session.user.id)
-          .order('opprettet', { ascending: true })
-          .limit(1)
-          .single();
+        if (!partnerHarAktivTilgang) {
+          const { data: barn } = await supabase
+            .from('barn')
+            .select('*')
+            .eq('bruker_id', session.user.id)
+            .order('opprettet', { ascending: true })
+            .limit(1)
+            .single();
   
-        if (barn) {
-          setAktivtBarn(barn);
-        } else {
-          setVisOnboarding(true);
+          // Sjekk om bruker har tilgang via partner-invitasjon
+          if (!barn || barn.length === 0) {
+            const { data: tilgang } = await supabase
+              .from('barn_tilgang')
+              .select('barn_id, barn(*)')
+              .eq('bruker_id', session.user.id);
+
+            if (tilgang && tilgang.length > 0) {
+              const partnerBarn = tilgang[0].barn;
+              setAktivtBarn(partnerBarn);
+            } else {
+              setVisOnboarding(true);
+            }
+          } else {
+            setAktivtBarn(barn);
+          }
         }
   
         const lagretType = localStorage.getItem('lille_sovtype');
