@@ -28,6 +28,10 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
   const [visBarnVelger, setVisBarnVelger] = useState(false);
   const [visInnstillinger, setVisInnstillinger] = useState(false);
   const [brukernavn, setBrukernavn] = useState('');
+  const [visPartnerModal, setVisPartnerModal] = useState(false);
+  const [partnerEpost, setPartnerEpost] = useState('');
+  const [senderInvitasjon, setSenderInvitasjon] = useState(false);
+  const [invitasjonSendt, setInvitasjonSendt] = useState(false);
 
   useEffect(() => {
     const lastProfil = async () => {
@@ -126,6 +130,24 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
     });
     const { url } = await res.json();
     if (url) window.location.href = url;
+  };
+
+  const sendPartnerInvitasjon = async () => {
+    if (!partnerEpost.trim()) return;
+    setSenderInvitasjon(true);
+    const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker.id).single();
+    await fetch('/api/inviter-partner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        invitert_epost: partnerEpost.trim(),
+        barn_id: barn?.id,
+        barn_navn: barn?.navn || 'babyen',
+        invitert_av_epost: bruker.email,
+      }),
+    });
+    setSenderInvitasjon(false);
+    setInvitasjonSendt(true);
   };
 
   if (visInnstillinger) {
@@ -237,7 +259,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Familie</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
-          <button style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+          <button onClick={() => setVisPartnerModal(true)} style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <circle cx="9" cy="7" r="3" stroke={farger.grønn} strokeWidth="1.5"/>
@@ -403,6 +425,42 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
           defaultVisMeny={true}
           onLukk={() => setVisBarnVelger(false)}
         />
+      )}
+
+      {visPartnerModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => { setVisPartnerModal(false); setInvitasjonSendt(false); setPartnerEpost(''); }}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+            <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+            {invitasjonSendt ? (
+              <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🤍</div>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Invitasjon sendt!</div>
+                <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Vi har sendt en e-post til {partnerEpost} med en lenke for å komme i gang.</div>
+              </div>
+            ) : (
+              <>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Del med partner 🤍</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6, marginBottom: '24px' }}>
+                  Inviter partneren din til å se og registrere data for babyen. De får gratis tilgang – du betaler for begge.
+                </div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Partners e-post</div>
+                <input
+                  type="email"
+                  value={partnerEpost}
+                  onChange={e => setPartnerEpost(e.target.value)}
+                  placeholder="partner@epost.no"
+                  style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }}
+                />
+                <button
+                  onClick={sendPartnerInvitasjon}
+                  disabled={!partnerEpost.trim() || senderInvitasjon}
+                  style={{ width: '100%', padding: '16px', backgroundColor: partnerEpost.trim() ? farger.grønn : farger.kremMørk, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: partnerEpost.trim() ? '#FDFAF6' : farger.tekstLys, cursor: partnerEpost.trim() ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}>
+                  {senderInvitasjon ? 'Sender...' : 'Send invitasjon 🤍'}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
