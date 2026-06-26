@@ -33,18 +33,30 @@ const getAktivitetTyper = (t: TFn) => [
   { id: 'massasje', label: t('aktivitet.typeMassasje'), ikon: '🤍' },
   { id: 'lesing', label: t('aktivitet.typeLesing'), ikon: '📖' },
   { id: 'sang', label: t('aktivitet.typeSang'), ikon: '🎵' },
+  { id: 'magelek', label: t('aktivitet.typeMagelek'), ikon: '🐣' },
+  { id: 'sansestund', label: t('aktivitet.typeSansestund'), ikon: '🌈' },
+  { id: 'bøker', label: t('aktivitet.typeBøker'), ikon: '📚' },
+  { id: 'utetid', label: t('aktivitet.typeUtetid'), ikon: '🌳' },
+  { id: 'babysang', label: t('aktivitet.typeBabysang'), ikon: '🎶' },
+  { id: 'svømming', label: t('aktivitet.typeSvømming'), ikon: '🏊' },
   { id: 'annet', label: t('aktivitet.typeAnnet'), ikon: '✨' },
 ];
 
 const getMilepælerForslag = (t: TFn) => [
   { id: 'Første smil', label: t('aktivitet.milepælFørsteSmil') },
   { id: 'Første latter', label: t('aktivitet.milepælFørsteLatter') },
+  { id: 'Rullet fra mage til rygg', label: t('aktivitet.milepælRulletMageTilRygg') },
+  { id: 'Rullet fra rygg til mage', label: t('aktivitet.milepælRulletRyggTilMage') },
+  { id: 'Fant tærne', label: t('aktivitet.milepælFantTærne') },
+  { id: 'Satt uten støtte', label: t('aktivitet.milepælSattUtenStøtte') },
+  { id: 'Krabbet', label: t('aktivitet.milepælKrabbet') },
+  { id: 'Reiste seg opp', label: t('aktivitet.milepælReisteSeg') },
   { id: 'Første ord', label: t('aktivitet.milepælFørsteOrd') },
   { id: 'Første steg', label: t('aktivitet.milepælFørsteSteg') },
+  { id: 'Første tann', label: t('aktivitet.milepælFørsteTann') },
   { id: 'Satt alene', label: t('aktivitet.milepælSattAlene') },
   { id: 'Snudde seg', label: t('aktivitet.milepælSnudde') },
   { id: 'Holdt hodet oppe', label: t('aktivitet.milepælHoldtHodet') },
-  { id: 'Første tann', label: t('aktivitet.milepælFørsteTann') },
   { id: 'Spiste fast føde', label: t('aktivitet.milepælSpisteFastFøde') },
   { id: 'Vinket hei/hadet', label: t('aktivitet.milepælVinket') },
 ];
@@ -90,6 +102,46 @@ const AktivitetIkon = ({ type }: { type: string }) => {
       <circle cx="18" cy="16" r="3" stroke={farge} strokeWidth="1.5" fill="none"/>
     </svg>
   );
+  if (type === 'magelek') return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <ellipse cx="12" cy="14" rx="7" ry="5" stroke={farge} strokeWidth="1.5" fill="none"/>
+      <path d="M9 14C9 14 10 11 12 11C14 11 15 14 15 14" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+  if (type === 'sansestund') return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="4" stroke={farge} strokeWidth="1.5" fill="none"/>
+      <path d="M12 2V5M12 19V22M2 12H5M19 12H22M4.9 4.9L7 7M17 17L19.1 19.1M19.1 4.9L17 7M7 17L4.9 19.1" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+  if (type === 'bøker') return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M4 4H10C11.1 4 12 4.9 12 6V20L4 16V4Z" stroke={farge} strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+      <path d="M20 4H14C12.9 4 12 4.9 12 6V20L20 16V4Z" stroke={farge} strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+    </svg>
+  );
+  if (type === 'utetid') return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M12 3L8 10H16L12 3Z" stroke={farge} strokeWidth="1.5" fill={`${farge}20`} strokeLinejoin="round"/>
+      <path d="M9 10L6 17H18L15 10" stroke={farge} strokeWidth="1.5" strokeLinejoin="round" fill="none"/>
+      <line x1="12" y1="17" x2="12" y2="21" stroke={farge} strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+  if (type === 'babysang') return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M9 18C9 18 7 16 7 13C7 10 9 8 12 8C15 8 17 10 17 13C17 16 15 18 15 18" stroke={farge} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+      <circle cx="12" cy="19" r="2" stroke={farge} strokeWidth="1.5" fill="none"/>
+      <path d="M15 6C16 5 18 5 19 6" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
+      <path d="M9 6C8 5 6 5 5 6" stroke={farge} strokeWidth="1.3" strokeLinecap="round"/>
+    </svg>
+  );
+  if (type === 'svømming') return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M2 16C5 13 8 19 11 16C14 13 17 19 20 16" stroke={farge} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+      <circle cx="15" cy="8" r="2" stroke={farge} strokeWidth="1.5" fill="none"/>
+      <path d="M8 13L11 10L14 12" stroke={farge} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <path d="M12 2L14.5 9H22L16 13.5L18.5 20.5L12 16L5.5 20.5L8 13.5L2 9H9.5L12 2Z" stroke={farge} strokeWidth="1.5" fill="none"/>
@@ -108,6 +160,7 @@ export default function Aktivitet({ bruker }: Props) {
   const [visNyMilepæl, setVisNyMilepæl] = useState(false);
   const [lagrer, setLagrer] = useState(false);
   const [visBekreftet, setVisBekreftet] = useState(false);
+  const [aiAktivitetInnsikt, setAiAktivitetInnsikt] = useState('');
 
   const [valgtType, setValgtType] = useState('lek');
   const [varighet, setVarighet] = useState(15);
@@ -129,6 +182,22 @@ export default function Aktivitet({ bruker }: Props) {
   }, [bruker?.id]);
 
   useEffect(() => { lastData(); }, [lastData]);
+
+  useEffect(() => {
+    const hentUkeAktivitet = async () => {
+      const fraDate = new Date();
+      fraDate.setDate(fraDate.getDate() - 7);
+      const { data } = await supabase.from('aktiviteter').select('*').eq('profil_id', bruker?.id).gte('dato', fraDate.toISOString().split('T')[0]);
+      if (!data || data.length === 0) return;
+      const antall = data.length;
+      const typeTelling: Record<string, number> = {};
+      data.forEach((a: any) => { typeTelling[a.type] = (typeTelling[a.type] || 0) + 1; });
+      const mest = Object.entries(typeTelling).sort((a, b) => b[1] - a[1])[0];
+      const mestLabel = AKTIVITET_TYPER.find(at => at.id === mest[0])?.label || mest[0];
+      setAiAktivitetInnsikt(`${t('aktivitet.aiAntall', { antall })}\n${t('aktivitet.aiMestPopulær', { aktivitet: mestLabel })}`);
+    };
+    hentUkeAktivitet();
+  }, [bruker?.id, AKTIVITET_TYPER, t]);
 
   const lagreAktivitet = async () => {
     setLagrer(true);
@@ -212,6 +281,17 @@ export default function Aktivitet({ bruker }: Props) {
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>{totalMinutter}</div>
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('aktivitet.minutterTotalt')}</div>
+              </div>
+            </div>
+          )}
+
+          {aiAktivitetInnsikt && (
+            <div style={{ backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <span style={{ fontSize: '16px', flexShrink: 0 }}>✨</span>
+              <div>
+                {aiAktivitetInnsikt.split('\n').map((linje, i) => (
+                  <div key={i} style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, lineHeight: 1.6 }}>{linje}</div>
+                ))}
               </div>
             </div>
           )}
