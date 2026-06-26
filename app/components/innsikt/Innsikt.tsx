@@ -33,6 +33,8 @@ export default function Innsikt({ bruker, aktivtBarn, onNavigate, startFane }: P
   const [sisteSignaler, setSisteSignaler] = useState<any[]>([]);
   const [lasterInnsikt, setLasterInnsikt] = useState(false);
   const [lasterSpråk, setLasterSpråk] = useState(false);
+  const [signalObservasjon, setSignalObservasjon] = useState('');
+  const [lasterSignalObservasjon, setLasterSignalObservasjon] = useState(false);
   const [babyNavn, setBabyNavn] = useState('');
   const [fødselsdato, setFødselsdato] = useState('');
   const [data, setData] = useState<any>({});
@@ -194,6 +196,40 @@ Svar KUN med observasjonene og oppdagelsene på ${språkNavn}, én per linje. In
     }
   }, [data.lurer, babyNavn, harSignaler, hentSpråkInnsikter]);
 
+  useEffect(() => {
+    if (signalKjede.length === 0 || !babyNavn) return;
+    const hentSignalObservasjon = async () => {
+      setLasterSignalObservasjon(true);
+      const språkNavn = LOCALE_SPRÅKNAVN[locale];
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 150,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Analyser ${babyNavn}s søvnsignaler og gi ÉN kort, personlig observasjon på ${språkNavn}. Maks 2 setninger. Start med "❤️". Bruk babyens navn. Vær konkret om hvilke signaler som vises og når.
+
+Vanligste signaler før søvn: ${signalKjede.slice(0, 4).join(', ')}
+Antall registreringer: ${data.lurer?.filter((l: any) => l.signaler)?.length || 0}
+Gjennomsnittlig tid fra signal til søvn: ${søvnOvergangTider.signalTilSøvn || 'ukjent'} min
+
+Svar KUN med observasjonen på ${språkNavn}, ingen introduksjon.`
+            }],
+          }),
+        });
+        const result = await response.json();
+        setSignalObservasjon(result.content?.[0]?.text || '');
+      } catch {
+        setSignalObservasjon('');
+      }
+      setLasterSignalObservasjon(false);
+    };
+    hentSignalObservasjon();
+  }, [signalKjede, babyNavn, locale, søvnOvergangTider.signalTilSøvn, data.lurer]);
+
   const getSignalFarge = (signal: string): { bg: string; border: string; farge: string } => {
     const lower = signal.toLowerCase();
     if (lower.includes('stirr') || lower.includes('blikk') || lower.includes('tomt')) return { bg: '#FFF8EC', border: '#F4D9A0', farge: '#8B6340' };
@@ -317,17 +353,19 @@ Svar KUN med observasjonene og oppdagelsene på ${språkNavn}, én per linje. In
         <div style={{ backgroundColor: farger.terrakottaLys, border: `1px solid ${farger.terrakotta}`, borderRadius: '20px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: '12px', top: '12px', fontSize: '56px', opacity: 0.2 }}>☁️</div>
           <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>{t('innsikt.aiObservasjon')}</div>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: '#8B6340', fontWeight: '700', marginBottom: '4px', lineHeight: 1.4, paddingRight: '60px' }}>
-  {t('innsikt.viserOfteDisseSignalene', { navn: babyNavn })}
-</div>
-{søvnOvergangTider.signalTilSøvn && (
-  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '16px', opacity: 0.8 }}>
-    {t('innsikt.gjennomsnittMinutterFraSignal', { min: søvnOvergangTider.signalTilSøvn })}
-  </div>
-)}
-{!søvnOvergangTider.signalTilSøvn && (
-  <div style={{ marginBottom: '16px' }} />
-)}
+
+          {lasterSignalObservasjon ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+              <div style={{ width: '18px', height: '18px', border: `2px solid ${farger.terrakotta}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.terrakotta }}>{t('innsikt.analysererMønstre', { navn: babyNavn })}</div>
+            </div>
+          ) : signalObservasjon ? (
+            <div style={{ fontSize: '15px', fontFamily: 'var(--font-inter)', color: '#8B6340', lineHeight: 1.7, marginBottom: '12px' }}>{signalObservasjon}</div>
+          ) : null}
+
+          <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, marginBottom: '10px', opacity: 0.8 }}>
+            {t('innsikt.registrertGanger', { antall: data.lurer?.filter((l: any) => l.signaler)?.length || 0 })}
+          </div>
           {/* Horisontal signalkjede med PNG-ikoner */}
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
             {signalKjede.slice(0, 4).map((signal, i) => {
