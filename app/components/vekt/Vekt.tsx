@@ -17,6 +17,39 @@ type VektLogg = {
   notat: string | null;
 };
 
+const WHO_P50_VEKT: { måned: number; kg: number }[] = [
+  { måned: 0, kg: 3.3 },
+  { måned: 1, kg: 4.5 },
+  { måned: 2, kg: 5.6 },
+  { måned: 3, kg: 6.4 },
+  { måned: 4, kg: 7.0 },
+  { måned: 5, kg: 7.5 },
+  { måned: 6, kg: 7.9 },
+  { måned: 8, kg: 8.6 },
+  { måned: 10, kg: 9.2 },
+  { måned: 12, kg: 9.6 },
+];
+
+const hentWhoP50Vekt = (måneder: number): number => {
+  let nærmest = WHO_P50_VEKT[0];
+  let minDiff = Math.abs(måneder - nærmest.måned);
+  for (const entry of WHO_P50_VEKT) {
+    const diff = Math.abs(måneder - entry.måned);
+    if (diff < minDiff) {
+      minDiff = diff;
+      nærmest = entry;
+    }
+  }
+  return nærmest.kg;
+};
+
+const hentAlderMåneder = (fødselsdato?: string): number => {
+  if (!fødselsdato) return 0;
+  const nå = new Date();
+  const født = new Date(fødselsdato);
+  return (nå.getFullYear() - født.getFullYear()) * 12 + (nå.getMonth() - født.getMonth());
+};
+
 export default function Vekt({ bruker, aktivtBarn }: Props) {
   const { t, locale } = useLanguage();
   const { formaterVekt, formaterLengde, formaterVæske, formaterTemp } = useMåleenhet();
@@ -32,6 +65,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
   const [klaer, setKlaer] = useState('');
   const [sko, setSko] = useState('');
   const [notat, setNotat] = useState('');
+  const [aiVekstInnsikt, setAiVekstInnsikt] = useState('');
 
   const lastData = useCallback(async () => {
     setLaster(true);
@@ -46,6 +80,19 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
   }, [bruker?.id, aktivtBarn?.navn]);
 
   useEffect(() => { lastData(); }, [lastData]);
+
+  useEffect(() => {
+    if (logg.length < 2) return;
+    const sisteVekt = logg[0]?.vekt;
+    const forrigeVekt = logg[1]?.vekt;
+    if (sisteVekt && forrigeVekt) {
+      if (sisteVekt > forrigeVekt) {
+        setAiVekstInnsikt(`Følger vekstkurven fint 📈`);
+      } else {
+        setAiVekstInnsikt(`Vekten er stabil 📊`);
+      }
+    }
+  }, [logg]);
 
   const lagre = async () => {
     if (!vekt && !lengde && !klaer && !sko) return;
@@ -165,6 +212,8 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
               dato: l.dato,
             }));
             const path = punkter.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+            const whoP50 = aktivtBarn?.fødselsdato ? hentWhoP50Vekt(hentAlderMåneder(aktivtBarn.fødselsdato)) : null;
+            const p50Y = whoP50 !== null ? height - padding - ((whoP50 - min) / range) * (height - padding * 2) : null;
             return (
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600', marginBottom: '8px' }}>⚖️ {t('vekt.vektKg')}</div>
@@ -175,6 +224,12 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                       <stop offset="100%" stopColor={farger.grønn} stopOpacity="0"/>
                     </linearGradient>
                   </defs>
+                  {p50Y !== null && (
+                    <>
+                      <line x1={padding} y1={p50Y} x2={width - padding} y2={p50Y} stroke="#A8B5A2" strokeWidth="1" strokeDasharray="4,4"/>
+                      <text x={width - padding + 2} y={p50Y + 4} fontSize="8" fill="#A8B5A2">P50</text>
+                    </>
+                  )}
                   <path d={`${path} L ${punkter[punkter.length-1].x} ${height} L ${punkter[0].x} ${height} Z`} fill="url(#vektGrad)"/>
                   <path d={path} fill="none" stroke={farger.grønn} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   {punkter.map((p, i) => (
@@ -236,6 +291,13 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
               </div>
             );
           })()}
+        </div>
+      )}
+
+      {aiVekstInnsikt && (
+        <div style={{ backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '20px' }}>✨</span>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '500' }}>{aiVekstInnsikt}</div>
         </div>
       )}
 
