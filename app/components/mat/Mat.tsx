@@ -89,6 +89,7 @@ export default function Mat({ bruker, aktivtBarn }: Props) {
   const [klokkeslett, setKlokkeslett] = useState(new Date().toTimeString().slice(0, 5));
   const [lagrer, setLagrer] = useState(false);
   const [allergiStatus, setAllergiStatus] = useState('');
+  const [erNyMatvare, setErNyMatvare] = useState<boolean | null>(null);
 
   const lastData = useCallback(async () => {
     setLaster(true);
@@ -132,7 +133,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
         profil_id: bruker?.id,
         dato, klokkeslett, matvare: matvare.trim(), kategori, reaksjon, mengde, notater: notater.trim() || null, allergi_status: allergiStatus || null,
       });
-      setMatvare(''); setKategori(''); setReaksjon(''); setMengde(''); setNotater(''); setAllergiStatus('');
+      setMatvare(''); setKategori(''); setReaksjon(''); setMengde(''); setNotater(''); setAllergiStatus(''); setErNyMatvare(null);
     await lastData();
     setLagrer(false);
   };
@@ -498,6 +499,26 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
                 style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
               />
             </div>
+
+            {matvare.trim() && (
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.nyMatvare')}</div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setErNyMatvare(true)} style={{ flex: 1, padding: '12px', backgroundColor: erNyMatvare === true ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${erNyMatvare === true ? farger.grønn : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: erNyMatvare === true ? farger.grønn : farger.tekst, fontWeight: erNyMatvare === true ? '600' : '400' }}>
+                    {t('mat.ja')}
+                  </button>
+                  <button onClick={() => setErNyMatvare(false)} style={{ flex: 1, padding: '12px', backgroundColor: erNyMatvare === false ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${erNyMatvare === false ? farger.grønn : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: erNyMatvare === false ? farger.grønn : farger.tekst, fontWeight: erNyMatvare === false ? '600' : '400' }}>
+                    {t('mat.nei')}
+                  </button>
+                </div>
+                {erNyMatvare === true && (
+                  <div style={{ marginTop: '10px', padding: '12px 16px', backgroundColor: '#F0F7F0', border: `1px solid ${farger.grønn}`, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '18px' }}>🌱</span>
+                    <span style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, fontWeight: '600' }}>{t('mat.førstegangBadge', { navn: babyNavn })}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Kategori */}
             <div style={{ marginBottom: '16px' }}>
