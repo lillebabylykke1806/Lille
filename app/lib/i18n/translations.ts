@@ -607,8 +607,8 @@ export const oversettelser = {
   'pumping.kveld': { no: 'Kveld', en: 'Evening', sv: 'Kväll', da: 'Aften', de: 'Abend' },
   'pumping.natt': { no: 'Natt', en: 'Night', sv: 'Natt', da: 'Nat', de: 'Nacht' },
 
-  'notat.tittel': { no: 'Notater', en: 'Notes', sv: 'Anteckningar', da: 'Noter', de: 'Notizen' },
-  'notat.undertittel': { no: 'Skriv ned tanker, milepæler og observasjoner', en: 'Write down thoughts, milestones and observations', sv: 'Skriv ned tankar, milstolpar och observationer', da: 'Skriv tanker, milepæle og observationer ned', de: 'Schreibe Gedanken, Meilensteine und Beobachtungen auf' },
+  'notat.tittel': { no: 'Babybok', en: 'Baby book', sv: 'Babybok', da: 'Babybok', de: 'Babybuch' },
+  'notat.undertittel': { no: 'Skriv ned minner, tanker og små øyeblikk', en: 'Write down memories, thoughts and small moments', sv: 'Skriv ned minnen, tankar och små ögonblick', da: 'Skriv minder, tanker og små øjeblikke ned', de: 'Schreibe Erinnerungen, Gedanken und kleine Momente auf' },
   'notat.søkPlaceholder': { no: 'Søk i notater...', en: 'Search notes...', sv: 'Sök i anteckningar...', da: 'Søg i noter...', de: 'Notizen durchsuchen...' },
   'notat.alle': { no: 'Alle', en: 'All', sv: 'Alla', da: 'Alle', de: 'Alle' },
   'notat.ingenFunnet': { no: 'Ingen notater funnet', en: 'No notes found', sv: 'Inga anteckningar hittades', da: 'Ingen noter fundet', de: 'Keine Notizen gefunden' },
