@@ -34,6 +34,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
   const [invitasjonSendt, setInvitasjonSendt] = useState(false);
   const [visInviterModal, setVisInviterModal] = useState(false);
   const [kopiert, setKopiert] = useState(false);
+  const [harPartner, setHarPartner] = useState(false);
 
   useEffect(() => {
     const lastProfil = async () => {
@@ -62,6 +63,20 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
     };
     lastProfil();
   }, [bruker]);
+
+  useEffect(() => {
+    const sjekkPartner = async () => {
+      const { data: barn } = await supabase.from('barn').select('id').eq('bruker_id', bruker.id).single();
+      if (!barn) return;
+      const { data: tilgang } = await supabase.from('barn_tilgang').select('*').eq('barn_id', barn.id);
+      if (tilgang && tilgang.length > 0) setHarPartner(true);
+      else {
+        const { data: invitasjon } = await supabase.from('partner_invitasjoner').select('*').eq('barn_id', barn.id).eq('akseptert', false);
+        if (invitasjon && invitasjon.length > 0) setHarPartner(true);
+      }
+    };
+    sjekkPartner();
+  }, [bruker.id]);
 
   const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fil = e.target.files?.[0];
@@ -438,6 +453,12 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>🤍</div>
                 <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Invitasjon sendt!</div>
                 <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Vi har sendt en e-post til {partnerEpost} med en lenke for å komme i gang.</div>
+              </div>
+            ) : harPartner ? (
+              <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                <div style={{ fontSize: '40px', marginBottom: '12px' }}>🤍</div>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Partner er allerede lagt til</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Du kan kun dele med én partner. Ta kontakt med oss hvis du vil endre dette.</div>
               </div>
             ) : (
               <>
