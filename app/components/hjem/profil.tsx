@@ -24,9 +24,15 @@ export default function Profil({ bruker, onLoggUt }: Props) {
   const [sendt, setSendt] = useState(false);
   const [sender, setSender] = useState(false);
   const [visRedigerProfil, setVisRedigerProfil] = useState(false);
+  const [brukernavn, setBrukernavn] = useState('');
 
   useEffect(() => {
     const lastProfil = async () => {
+      try {
+        const lagretNavn = localStorage.getItem(`lille_brukernavn_${bruker.id}`);
+        if (lagretNavn) setBrukernavn(lagretNavn);
+      } catch {}
+
       const { data: barn } = await supabase
         .from('barn')
         .select('*')
@@ -87,6 +93,11 @@ export default function Profil({ bruker, onLoggUt }: Props) {
   };
 
   const lagreProfil = async () => {
+    try {
+      if (brukernavn.trim()) {
+        localStorage.setItem(`lille_brukernavn_${bruker.id}`, brukernavn.trim());
+      }
+    } catch {}
     await supabase.from('barn').update({
       navn: babyNavn,
       fødselsdato: babyFødselsdato,
@@ -97,6 +108,8 @@ export default function Profil({ bruker, onLoggUt }: Props) {
       setVisRedigerProfil(false);
     }, 2000);
   };
+
+  const visningsNavn = brukernavn || bruker.email?.split('@')[0] || 'Bruker';
 
   const babyMåneder = babyFødselsdato
     ? Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 30.5))
@@ -164,7 +177,7 @@ export default function Profil({ bruker, onLoggUt }: Props) {
             <input type="file" accept="image/*" onChange={håndterBilde} style={{ display: 'none' }} />
           </label>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{bruker.email?.split('@')[0] || 'Bruker'} 🌸</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{visningsNavn} 🌸</div>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
               {babyNavn || t('profil.babyen')}{babyMåneder !== null ? ` · ${babyMåneder} ${t('profil.måneder')}` : ''}
             </div>
@@ -319,32 +332,23 @@ export default function Profil({ bruker, onLoggUt }: Props) {
         </button>
       </div>
 
-      {/* Rediger profil modal */}
       {visRedigerProfil && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisRedigerProfil(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('profil.tittel')}</div>
-            <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('profil.babynsNavn')}</div>
-            <input
-              type="text"
-              value={babyNavn}
-              onChange={(e) => setBabyNavn(e.target.value)}
-              placeholder={t('profil.skrivNavnHer')}
-              style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '16px', outline: 'none', fontFamily: 'var(--font-plus-jakarta)', boxSizing: 'border-box' }}
-            />
-            <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('profil.fødselsdato')}</div>
-            <input
-              type="date"
-              value={babyFødselsdato}
-              onChange={(e) => setBabyFødselsdato(e.target.value)}
-              style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
-            />
-            <button
-              onClick={lagreProfil}
-              style={{ width: '100%', padding: '14px', backgroundColor: lagret ? farger.grønnLys : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: lagret ? farger.grønn : '#FDFAF6', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', transition: 'all 0.3s' }}
-            >
-              {lagret ? t('profil.lagretBekreftelse') : t('profil.lagreProfil')}
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Rediger profil</div>
+
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ditt navn</div>
+            <input type="text" value={brukernavn} onChange={e => setBrukernavn(e.target.value)} placeholder="F.eks. Isabella" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '16px' }} />
+
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Babyens navn</div>
+            <input type="text" value={babyNavn} onChange={e => setBabyNavn(e.target.value)} placeholder="F.eks. Wilhelm" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '16px' }} />
+
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Fødselsdato</div>
+            <input type="date" value={babyFødselsdato} onChange={e => setBabyFødselsdato(e.target.value)} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '24px' }} />
+
+            <button onClick={lagreProfil} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+              {lagret ? '✓ Lagret!' : 'Lagre'}
             </button>
           </div>
         </div>
