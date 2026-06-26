@@ -32,6 +32,8 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
   const [partnerEpost, setPartnerEpost] = useState('');
   const [senderInvitasjon, setSenderInvitasjon] = useState(false);
   const [invitasjonSendt, setInvitasjonSendt] = useState(false);
+  const [visInviterModal, setVisInviterModal] = useState(false);
+  const [kopiert, setKopiert] = useState(false);
 
   useEffect(() => {
     const lastProfil = async () => {
@@ -287,7 +289,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
           {[
             { ikon: '👑', bg: '#FFF8EC', tittel: 'Mitt abonnement', undertekst: 'Premium aktiv', onClick: åpneAbonnement },
-            { ikon: '🎁', bg: '#F0F7F0', tittel: 'Inviter en venn', undertekst: 'Dere får begge 1 måned gratis', onClick: () => {} },
+            { ikon: '🎁', bg: '#F0F7F0', tittel: 'Inviter en venn', undertekst: 'Dere får begge 1 måned gratis', onClick: () => setVisInviterModal(true) },
             { ikon: '💬', bg: '#EEF2FF', tittel: 'Send tilbakemelding', undertekst: 'Hjelp oss å bli enda bedre', onClick: () => setVisTilbakemelding(true) },
           ].map((item, i, arr) => (
             <button key={i} onClick={item.onClick} style={{ width: '100%', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', borderBottom: i < arr.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', cursor: 'pointer', textAlign: 'left' }}>
@@ -459,6 +461,39 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {visInviterModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisInviterModal(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+            <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎁</div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Del Lille med en venn</div>
+              <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
+                Del appen med en venn som har baby
+              </div>
+            </div>
+            <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '20px', marginBottom: '16px', textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Din rabattkode</div>
+              <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '4px', marginBottom: '4px' }}>VENN20</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>20% rabatt de første 2 månedene</div>
+            </div>
+            <button onClick={() => { 
+              navigator.clipboard.writeText('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); 
+              setKopiert(true); 
+              setTimeout(() => setKopiert(false), 3000); 
+            }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
+              {kopiert ? '✓ Kopiert!' : 'Kopier delingstekst'}
+            </button>
+            <button onClick={() => { 
+              const tekst = encodeURIComponent('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); 
+              window.open(`sms:?body=${tekst}`); 
+            }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+              Send som SMS
+            </button>
           </div>
         </div>
       )}
