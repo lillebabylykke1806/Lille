@@ -1,10 +1,13 @@
 'use client';
+export const dynamic = 'force-dynamic';
+
+import { Suspense } from 'react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '../lib/supabase';
 import { farger } from '../lib/farger';
 
-export default function PartnerPage() {
+function PartnerInnhold() {
   const searchParams = useSearchParams();
   const kode = searchParams.get('kode');
   const [status, setStatus] = useState<'laster' | 'loggInn' | 'ferdig' | 'feil'>('laster');
@@ -93,5 +96,18 @@ export default function PartnerPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PartnerPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#F8F3EE' }}>
+        <div style={{ width: '28px', height: '28px', border: '2px solid #2D5C45', borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    }>
+      <PartnerInnhold />
+    </Suspense>
   );
 }
