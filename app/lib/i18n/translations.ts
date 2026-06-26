@@ -761,7 +761,7 @@ export const oversettelser = {
   'viftemeny.pumping': { no: 'Pumping', en: 'Pumping', sv: 'Pumpning', da: 'Pumpning', de: 'Abpumpen' },
   'viftemeny.mat': { no: 'Mat', en: 'Food', sv: 'Mat', da: 'Mad', de: 'Essen' },
   'viftemeny.aktivitet': { no: 'Aktivitet', en: 'Activity', sv: 'Aktivitet', da: 'Aktivitet', de: 'Aktivität' },
-  'viftemeny.notat': { no: 'Notat', en: 'Note', sv: 'Anteckning', da: 'Note', de: 'Notiz' },
+  'viftemeny.notat': { no: 'Babybok', en: 'Baby book', sv: 'Babybok', da: 'Babybok', de: 'Babybuch' },
   'viftemeny.temperatur': { no: 'Temperatur', en: 'Temperature', sv: 'Temperatur', da: 'Temperatur', de: 'Temperatur' },
   'viftemeny.vekt': { no: 'Vekt / lengde', en: 'Weight / length', sv: 'Vikt / längd', da: 'Vægt / længde', de: 'Gewicht / Länge' },
   'viftemeny.kolikk': { no: 'Uro & ro', en: 'Fussiness & calm', sv: 'Oro & lugn', da: 'Uro & ro', de: 'Unruhe & Ruhe' },
