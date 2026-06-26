@@ -4,15 +4,18 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { SPRÅK_NAVN, SPRÅK_FLAGG, Locale } from '../../lib/i18n/translations';
+import BarnVelger from './BarnVelger';
 
 const SPRÅK_KODER: Locale[] = ['no', 'en', 'sv', 'da', 'de'];
 
 type Props = {
   bruker: any;
   onLoggUt: () => void;
+  aktivtBarn?: any;
+  onByttBarn?: (barn: any) => void;
 };
 
-export default function Profil({ bruker, onLoggUt }: Props) {
+export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Props) {
   const { locale, setLocale, t } = useLanguage();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyFødselsdato, setBabyFødselsdato] = useState('');
@@ -24,6 +27,7 @@ export default function Profil({ bruker, onLoggUt }: Props) {
   const [sendt, setSendt] = useState(false);
   const [sender, setSender] = useState(false);
   const [visRedigerProfil, setVisRedigerProfil] = useState(false);
+  const [visBarnVelger, setVisBarnVelger] = useState(false);
   const [brukernavn, setBrukernavn] = useState('');
 
   useEffect(() => {
@@ -202,14 +206,15 @@ export default function Profil({ bruker, onLoggUt }: Props) {
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Barn</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
-          <button onClick={() => setVisRedigerProfil(true)} style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="8" r="4" stroke={farger.grønn} strokeWidth="1.5"/>
-                <path d="M4 20C4 16.69 7.58 14 12 14C16.42 14 20 16.69 20 20" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+          <button onClick={() => setVisBarnVelger(true)} style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.grønnLys, border: `2px solid ${farger.grønn}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              {babyBilde ? (
+                <img src={babyBilde} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>{(aktivtBarn?.navn || babyNavn)?.charAt(0) || '?'}</span>
+              )}
             </div>
-            <span style={{ flex: 1, fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>{babyNavn || t('profil.babyen')}</span>
+            <span style={{ flex: 1, fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>{aktivtBarn?.navn || babyNavn || t('profil.babyen')}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 4L10 8L6 12" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
@@ -396,6 +401,16 @@ export default function Profil({ bruker, onLoggUt }: Props) {
             )}
           </div>
         </div>
+      )}
+
+      {visBarnVelger && (
+        <BarnVelger
+          bruker={bruker}
+          aktivtBarnId={aktivtBarn?.id || null}
+          onByttBarn={(barn) => { onByttBarn?.(barn); setVisBarnVelger(false); }}
+          defaultVisMeny={true}
+          onLukk={() => setVisBarnVelger(false)}
+        />
       )}
     </div>
   );

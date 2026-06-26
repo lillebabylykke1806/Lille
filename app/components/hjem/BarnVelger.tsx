@@ -14,11 +14,13 @@ type Props = {
   bruker: any;
   aktivtBarnId: number | null;
   onByttBarn: (barn: Barn) => void;
+  defaultVisMeny?: boolean;
+  onLukk?: () => void;
 };
 
-export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn }: Props) {
+export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn, defaultVisMeny, onLukk }: Props) {
   const [alleBarn, setAlleBarn] = useState<Barn[]>([]);
-  const [visMeny, setVisMeny] = useState(false);
+  const [visMeny, setVisMeny] = useState(defaultVisMeny || false);
   const [aktivtBarn, setAktivtBarn] = useState<Barn | null>(null);
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
 
@@ -46,13 +48,19 @@ export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn }: Props) 
     setBabyBilde(lagretBilde);
     onByttBarn(barn);
     setVisMeny(false);
+    onLukk?.();
+  };
+
+  const lukkMeny = () => {
+    setVisMeny(false);
+    onLukk?.();
   };
 
   const forbokstav = aktivtBarn?.navn?.charAt(0).toUpperCase() || '?';
 
   return (
     <>
-      {/* Knapp øverst til venstre */}
+      {!defaultVisMeny && (
       <button
         onClick={() => setVisMeny(true)}
         style={{
@@ -77,12 +85,13 @@ export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn }: Props) 
           </span>
         )}
       </button>
+      )}
 
       {/* Meny */}
       {visMeny && (
         <div
           style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 300, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
-          onClick={() => setVisMeny(false)}
+          onClick={lukkMeny}
         >
           <div
             onClick={e => e.stopPropagation()}
@@ -153,7 +162,7 @@ export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn }: Props) 
             </div>
 
             <button
-              onClick={() => { setVisMeny(false); }}
+              onClick={lukkMeny}
               style={{ width: '100%', padding: '14px', backgroundColor: farger.bakgrunn, border: `1px dashed ${farger.kremMørk}`, borderRadius: '14px', fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
