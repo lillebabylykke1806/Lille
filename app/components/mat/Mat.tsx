@@ -105,11 +105,16 @@ export default function Mat({ bruker, aktivtBarn }: Props) {
   const hentAiInnsikter = useCallback(async () => {
     setLasterAi(true);
     const språkNavn = LOCALE_SPRÅKNAVN[locale];
-    const prompt = `Du er en varm babyekspert i appen Lille. Analyser ${babyNavn}s matregistreringer og gi 3-4 korte, personlige innsikter på ${språkNavn}.
+    const prompt = `Du er en varm babyekspert i appen Lille. Analyser ${babyNavn}s matregistreringer og gi 2-3 korte, svært konkrete og personlige innsikter på ${språkNavn}.
 
-Matdata: ${JSON.stringify(matreg.slice(0, 20))}
+Matdata: ${JSON.stringify(matreg.slice(0, 30))}
 
-Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på reaksjonsmønstre, favoritter og tips. Svar KUN med innsiktene, én per linje.`;
+Eksempler på gode innsikter:
+- "Lille ser at ${babyNavn} liker frukt bedre enn grønnsaker."
+- "Fisk har blitt godt mottatt 4 av 4 ganger."
+- "Blåbær har gitt allergireaksjon to ganger – vær obs."
+
+Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret med matvarer og antall ganger. Nevn allergi hvis allergi_status er rød eller oransje. Svar KUN med innsiktene på ${språkNavn}, én per linje.`;
     try {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -123,7 +128,7 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
   }, [babyNavn, locale, matreg]);
 
   useEffect(() => {
-    if (matreg.length >= 3) hentAiInnsikter();
+    if (matreg.length >= 5) hentAiInnsikter();
   }, [matreg, hentAiInnsikter]);
 
   const lagreMatregistrering = async () => {
