@@ -58,11 +58,18 @@ export default function Pumping({ bruker }: Props) {
   const [klokkeslett, setKlokkeslett] = useState(new Date().toTimeString().slice(0, 5));
   const [notat, setNotat] = useState('');
   const [lagrer, setLagrer] = useState(false);
+  const [fryserMl, setFryserMl] = useState<number>(0);
+  const [kjøleskapMl, setKjøleskapMl] = useState<number>(0);
+  const [visLagerModal, setVisLagerModal] = useState(false);
+  const [nyFryser, setNyFryser] = useState('');
+  const [nyKjøleskap, setNyKjøleskap] = useState('');
 
   const lastData = useCallback(async () => {
     setLaster(true);
     const { data } = await supabase.from('pumping').select('*').eq('profil_id', bruker?.id).order('dato', { ascending: false }).order('klokkeslett', { ascending: false });
     setPumpinger(data || []);
+    const { data: lager } = await supabase.from('melkelager').select('*').eq('profil_id', bruker?.id).single();
+    if (lager) { setFryserMl(lager.fryser || 0); setKjøleskapMl(lager.kjøleskap || 0); }
     setLaster(false);
   }, [bruker?.id]);
 
@@ -353,7 +360,6 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
               { label: t('pumping.iDag'), verdi: `${dagensMengde} ml`, undertekst: økterLabel(dagensØkter) },
               { label: t('pumping.denneUken'), verdi: `${(uketotal / 1000).toFixed(1)} l`, undertekst: økterLabel(ukeØkter) },
               { label: t('pumping.gjennomsnitt'), verdi: `${snittPerDag} ml`, undertekst: t('pumping.perDag') },
-              { label: t('pumping.melkelagerLabel'), verdi: '–', undertekst: t('pumping.iFryseren') },
             ].map((boks, i) => (
               <div key={i} style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', padding: '12px' }}>
                 <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', marginBottom: '4px', letterSpacing: '0.05em' }}>{boks.label}</div>
@@ -361,6 +367,11 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
                 <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{boks.undertekst}</div>
               </div>
             ))}
+            <button onClick={() => setVisLagerModal(true)} style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', padding: '12px', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
+              <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', marginBottom: '6px', letterSpacing: '0.05em' }}>{t('pumping.melkelagerLabel')}</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst, marginBottom: '2px' }}>🥶 {fryserMl} ml</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>🍼 {kjøleskapMl} ml</div>
+            </button>
           </div>
 
           {/* AI Innsikt */}
@@ -505,6 +516,33 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
               style={{ width: '100%', padding: '16px', backgroundColor: (!varighet || !mengde) ? farger.kremMørk : farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: (!varighet || !mengde) ? farger.tekstLys : '#FDFAF6', cursor: (!varighet || !mengde) ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter)' }}
             >
               {lagrer ? t('pumping.lagrer') : t('pumping.lagrePumpingøkt')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {visLagerModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisLagerModal(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
+            <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>🥶 {t('pumping.melkelagerLabel')}</div>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>🥶 Fryser (ml)</div>
+              <input type="number" value={nyFryser} onChange={e => setNyFryser(e.target.value)} placeholder={`${fryserMl}`} style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+            </div>
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>🍼 Kjøleskap (ml)</div>
+              <input type="number" value={nyKjøleskap} onChange={e => setNyKjøleskap(e.target.value)} placeholder={`${kjøleskapMl}`} style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+            </div>
+            <button onClick={async () => {
+              const f = nyFryser ? parseInt(nyFryser) : fryserMl;
+              const k = nyKjøleskap ? parseInt(nyKjøleskap) : kjøleskapMl;
+              await supabase.from('melkelager').upsert({ profil_id: bruker?.id, fryser: f, kjøleskap: k }, { onConflict: 'profil_id' });
+              setFryserMl(f); setKjøleskapMl(k);
+              setNyFryser(''); setNyKjøleskap('');
+              setVisLagerModal(false);
+            }} style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+              Lagre
             </button>
           </div>
         </div>
