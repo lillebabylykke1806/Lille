@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -18,6 +19,7 @@ type VektLogg = {
 
 export default function Vekt({ bruker, aktivtBarn }: Props) {
   const { t, locale } = useLanguage();
+  const { formaterVekt, formaterLengde, formaterVæske, formaterTemp } = useMåleenhet();
 
   const [logg, setLogg] = useState<VektLogg[]>([]);
   const [laster, setLaster] = useState(true);
@@ -108,7 +110,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
             {sisteLogg.vekt && (
               <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
                 <div style={{ fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
-                  {sisteLogg.vekt} kg
+                  {formaterVekt(sisteLogg.vekt)}
                 </div>
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('vekt.vekt')}</div>
               </div>
@@ -116,7 +118,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
             {sisteLogg.lengde && (
               <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
                 <div style={{ fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700' }}>
-                  {sisteLogg.lengde} cm
+                  {formaterLengde(sisteLogg.lengde)}
                 </div>
                 <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('vekt.lengde')}</div>
               </div>
@@ -178,7 +180,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                   {punkter.map((p, i) => (
                     <g key={i}>
                       <circle cx={p.x} cy={p.y} r="5" fill={farger.hvit} stroke={farger.grønn} strokeWidth="2"/>
-                      <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{p.vekt} kg</text>
+                      <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{formaterVekt(p.vekt!)}</text>
                       {i === 0 || i === punkter.length - 1 ? (
                         <text x={p.x} y={height - 2} textAnchor="middle" fontSize="8" fill={farger.tekstLys} fontFamily="var(--font-inter)">
                           {formatKortDato(p.dato)}
@@ -222,7 +224,7 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                   {punkter.map((p, i) => (
                     <g key={i}>
                       <circle cx={p.x} cy={p.y} r="5" fill={farger.hvit} stroke={farger.terrakotta} strokeWidth="2"/>
-                      <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{p.lengde} cm</text>
+                      <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize="9" fill={farger.tekstLys} fontFamily="var(--font-inter)">{formaterLengde(p.lengde!)}</text>
                       {i === 0 || i === punkter.length - 1 ? (
                         <text x={p.x} y={height - 2} textAnchor="middle" fontSize="8" fill={farger.tekstLys} fontFamily="var(--font-inter)">
                           {formatKortDato(p.dato)}
@@ -258,12 +260,12 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {l.vekt && (
                     <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>
-                      ⚖️ <span style={{ fontWeight: '600' }}>{l.vekt} kg</span>
+                      ⚖️ <span style={{ fontWeight: '600' }}>{formaterVekt(l.vekt)}</span>
                     </div>
                   )}
                   {l.lengde && (
                     <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>
-                      📏 <span style={{ fontWeight: '600' }}>{l.lengde} cm</span>
+                      📏 <span style={{ fontWeight: '600' }}>{formaterLengde(l.lengde)}</span>
                     </div>
                   )}
                   {l.klaer && (

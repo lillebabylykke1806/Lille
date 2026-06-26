@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
 import { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; };
@@ -44,6 +45,7 @@ const getTidspunkt = (klokkeslett: string, t: TFn) => {
 
 export default function Pumping({ bruker }: Props) {
   const { t, locale } = useLanguage();
+  const { formaterVekt, formaterLengde, formaterVæske, formaterTemp } = useMåleenhet();
   const pumpingTyper = getPumpingTyper(t);  const [pumpinger, setPumpinger] = useState<PumpingRegistrering[]>([]);
   const [laster, setLaster] = useState(true);
   const [visSkjema, setVisSkjema] = useState(false);
@@ -330,7 +332,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{ fontSize: '16px' }}>💧</span>
                     <div>
-                      <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{dagensMengde} ml</div>
+                      <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{formaterVæske(dagensMengde)}</div>
                       <div style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('pumping.totalMengde')}</div>
                     </div>
                   </div>
@@ -357,9 +359,9 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
           {/* 4 statistikkbokser */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px', marginBottom: '16px' }}>
             {[
-              { label: t('pumping.iDag'), verdi: `${dagensMengde} ml`, undertekst: økterLabel(dagensØkter) },
-              { label: t('pumping.denneUken'), verdi: `${(uketotal / 1000).toFixed(1)} l`, undertekst: økterLabel(ukeØkter) },
-              { label: t('pumping.gjennomsnitt'), verdi: `${snittPerDag} ml`, undertekst: t('pumping.perDag') },
+              { label: t('pumping.iDag'), verdi: formaterVæske(dagensMengde), undertekst: økterLabel(dagensØkter) },
+              { label: t('pumping.denneUken'), verdi: formaterVæske(uketotal), undertekst: økterLabel(ukeØkter) },
+              { label: t('pumping.gjennomsnitt'), verdi: formaterVæske(snittPerDag), undertekst: t('pumping.perDag') },
             ].map((boks, i) => (
               <div key={i} style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', padding: '12px' }}>
                 <div style={{ fontSize: '9px', fontFamily: 'var(--font-inter)', color: farger.terrakotta, fontWeight: '700', marginBottom: '4px', letterSpacing: '0.05em' }}>{boks.label}</div>
@@ -427,7 +429,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
                         </div>
                       </div>
                       <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700', flexShrink: 0 }}>
-                        {p.mengde} ml
+                        {formaterVæske(p.mengde)}
                       </div>
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <path d="M6 4L10 8L6 12" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

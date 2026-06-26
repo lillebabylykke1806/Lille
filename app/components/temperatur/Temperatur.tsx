@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
 import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; onNavigate?: (side: string) => void; };
@@ -38,6 +39,8 @@ const getFeberstatus = (temp: number, t: TFn) => {
 
 export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
   const { t } = useLanguage();
+  const { formaterVekt, formaterLengde, formaterVæske, formaterTemp, målesystem } = useMåleenhet();
+  const tilCelsius = (temp: number) => målesystem === 'imperisk' ? (temp - 32) * 5 / 9 : temp;
   const symptomer = getSymptomer(t);
   const finnSymptomLabel = (id: string) => symptomer.find(s => s.id === id)?.label ?? id;
   const formatNotat = (notat?: string | null) => {
@@ -205,7 +208,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
                   <div>
                     <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '6px' }}>{t('temp.sisteMåling')}</div>
                     <div style={{ fontSize: '42px', fontFamily: 'var(--font-plus-jakarta)', color: status.farge, fontWeight: '700', lineHeight: 1, marginBottom: '6px' }}>
-                      {sisteMåling.temperatur}°C
+                      {formaterTemp(sisteMåling.temperatur)}
                     </div>
                     <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>
                       {t('temp.registrertKl', { tid: sisteMåling.klokkeslett.slice(0, 5) })}
@@ -299,7 +302,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
                         🌡️
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: status.farge, fontWeight: '600' }}>{m.temperatur}°C</div>
+                        <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: status.farge, fontWeight: '600' }}>{formaterTemp(m.temperatur)}</div>
                         {m.notat && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{formatNotat(m.notat)}</div>}
                       </div>
                     </div>
@@ -338,7 +341,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
                 style={{ width: '100%', padding: '16px', fontSize: '24px', fontFamily: 'var(--font-plus-jakarta)', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', boxSizing: 'border-box', textAlign: 'center', fontWeight: '700' }}
               />
               {temperaturInput && !isNaN(parseFloat(temperaturInput.replace(',', '.'))) && (() => {
-                const status = getFeberstatus(parseFloat(temperaturInput.replace(',', '.')), t);
+                const status = getFeberstatus(tilCelsius(parseFloat(temperaturInput.replace(',', '.'))), t);
                 return (
                   <div style={{ marginTop: '8px', padding: '8px 14px', backgroundColor: status.bg, border: `1px solid ${status.border}`, borderRadius: '10px', textAlign: 'center' }}>
                     <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: status.farge, fontWeight: '600' }}>{status.label}</div>
