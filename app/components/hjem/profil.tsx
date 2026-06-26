@@ -294,7 +294,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
           {[
             { ikon: '⚙️', bg: '#F8FAFC', tittel: 'Innstillinger', onClick: () => setVisInnstillinger(true) },
-            { ikon: '🔒', bg: '#F8FAFC', tittel: 'Personvern', onClick: () => {} },
+            { ikon: '🔒', bg: '#F8FAFC', tittel: 'Personvern', onClick: () => window.open('https://lilleapp.no/personvern', '_blank') },
             { ikon: '❓', bg: '#F8FAFC', tittel: 'Hjelp & support', onClick: () => {} },
           ].map((item, i, arr) => (
             <button key={i} onClick={item.onClick} style={{ width: '100%', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', borderBottom: i < arr.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', cursor: 'pointer', textAlign: 'left' }}>
