@@ -157,7 +157,7 @@ Skriv 4-6 korte, personlige og varme innsikter om mønstre du ser. Bruk babyens 
       const result = await response.json();
       const tekst = result.content?.[0]?.text || '';
       setInnsikter(tekst.split('\n').filter((l: string) => l.trim().startsWith('✨')));
-    } catch { setInnsikter([t('innsikt.kunneIkkeLasteInnsikter')]); }
+    } catch { setInnsikter([]); }
     setLasterInnsikt(false);
   }, [babyNavn, data.lurer, data.amming, data.bleie, fødselsdato, locale, t]);
 
@@ -184,7 +184,7 @@ Svar KUN med observasjonene og oppdagelsene på ${språkNavn}, én per linje. In
       const linjer = tekst.split('\n').filter((l: string) => l.trim());
       setSpråkInnsikter(linjer.filter((l: string) => l.trim().startsWith('💛')));
       setUkeInnsikter(linjer.filter((l: string) => l.trim().startsWith('✨UKE:')).map((l: string) => l.replace('✨UKE:', '✨')));
-    } catch { setSpråkInnsikter([t('innsikt.kunneIkkeLasteSpråk')]); }
+    } catch { setSpråkInnsikter([]); }
     setLasterSpråk(false);
   }, [data.lurer, babyNavn, fødselsdato, locale, t]);
 
@@ -630,9 +630,14 @@ Svar KUN med observasjonene og oppdagelsene på ${språkNavn}, én per linje. In
             <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('innsikt.personligeInnsikter')}</div>
             <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '16px' }}>{t('innsikt.aiAnalysererMønstre', { navn: babyNavn })}</div>
             {innsikter.length === 0 && !lasterInnsikt && (
-              <button onClick={hentInnsikter} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                {t('innsikt.analyserData', { navn: babyNavn })}
-              </button>
+              <>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6, marginBottom: '12px', padding: '12px', backgroundColor: farger.bakgrunn, borderRadius: '12px' }}>
+                  {t('innsikt.ingenDataEnnå')}
+                </div>
+                <button onClick={hentInnsikter} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+                  {t('innsikt.analyserData', { navn: babyNavn })}
+                </button>
+              </>
             )}
             {lasterInnsikt && (
               <div style={{ textAlign: 'center', padding: '20px' }}>
