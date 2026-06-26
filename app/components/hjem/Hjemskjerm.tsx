@@ -475,13 +475,6 @@ Svar KUN med observasjonen på ${språkNavn}.`
 
   const valgtTilstand = tilstandConfig[babyTilstand] || tilstandConfig.rolig;
 
-  const aiInnsikt: Record<string, string> = {
-    rolig: t('hjem.aiInnsiktRolig'),
-    trøtt: t('hjem.aiInnsiktTrøtt'),
-    urolig: t('hjem.aiInnsiktUrolig'),
-    sover: t('hjem.aiInnsiktSover'),
-  };
-
   const tilstandLabels: Record<string, string> = {
     rolig: t('hjem.tilstandRolig'), trøtt: t('hjem.tilstandTrøtt'), urolig: t('hjem.tilstandUrolig'), sover: t('hjem.tilstandSover'),
   };
@@ -538,7 +531,7 @@ Svar KUN med observasjonen på ${språkNavn}.`
         <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: '13.5px', fontFamily: 'var(--font-inter), sans-serif', color: '#3F3A37', lineHeight: '1.4', marginBottom: '6px' }}>
-              {aiInnsikt[babyTilstand]}
+              {valgtTilstand.undertekst}
             </div>
             <button onClick={() => onNavigate('innsikt', 'innsikt')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '12px', fontFamily: 'var(--font-inter), sans-serif', color: '#A8B5A2', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
               {t('hjem.seInnsikt')}

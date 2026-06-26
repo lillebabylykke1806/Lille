@@ -93,7 +93,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
       const result = await response.json();
       const tekst = result.content?.[0]?.text || '';
       setAiInnsikter(tekst.split('\n').filter((l: string) => l.trim().startsWith('✦')));
-    } catch { }
+    } catch { setAiInnsikter([]); }
     setLasterAi(false);
   }, [locale, pumpinger]);
 

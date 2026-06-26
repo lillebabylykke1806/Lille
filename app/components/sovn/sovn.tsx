@@ -258,14 +258,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
         const result = await response.json();
         setNattInnsikt(result.content?.[0]?.text || '');
       } catch {
-        if (valgteSignaler.length > 0) {
-          setNattInnsikt(`${babyNavn} sovnet etter ${valgteSignaler.length} registrerte søvnsignaler i kveld.`);
-        } else if (nattData && nattData.length > 0) {
-          const tider = nattData.map((n: any) => n.start).filter(Boolean).sort();
-          setNattInnsikt(`De siste kveldene har innsovning skjedd mellom ${tider[0]}–${tider[tider.length - 1]}.`);
-        } else {
-          setNattInnsikt('Kveldens våkentid før natt er registrert i tidslinjen.');
-        }
+        setNattInnsikt('');
       }
     };
 

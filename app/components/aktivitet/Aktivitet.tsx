@@ -189,15 +189,31 @@ export default function Aktivitet({ bruker }: Props) {
       fraDate.setDate(fraDate.getDate() - 7);
       const { data } = await supabase.from('aktiviteter').select('*').eq('profil_id', bruker?.id).gte('dato', fraDate.toISOString().split('T')[0]);
       if (!data || data.length === 0) return;
-      const antall = data.length;
-      const typeTelling: Record<string, number> = {};
-      data.forEach((a: any) => { typeTelling[a.type] = (typeTelling[a.type] || 0) + 1; });
-      const mest = Object.entries(typeTelling).sort((a, b) => b[1] - a[1])[0];
-      const mestLabel = AKTIVITET_TYPER.find(at => at.id === mest[0])?.label || mest[0];
-      setAiAktivitetInnsikt(`${t('aktivitet.aiAntall', { antall })}\n${t('aktivitet.aiMestPopulær', { aktivitet: mestLabel })}`);
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 150,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Analyser disse aktivitetene fra siste uke og gi ÉN kort, personlig innsikt på norsk. Maks 1-2 setninger. Bruk gjerne et passende emoji.
+
+Aktivitetsdata: ${JSON.stringify(data)}
+
+Svar KUN med innsikten, ingen introduksjon.`
+            }],
+          }),
+        });
+        const result = await response.json();
+        setAiAktivitetInnsikt(result.content?.[0]?.text || '');
+      } catch {
+        setAiAktivitetInnsikt('');
+      }
     };
     hentUkeAktivitet();
-  }, [bruker?.id, AKTIVITET_TYPER, t]);
+  }, [bruker?.id]);
 
   const lagreAktivitet = async () => {
     setLagrer(true);

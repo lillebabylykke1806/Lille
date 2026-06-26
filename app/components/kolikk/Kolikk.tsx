@@ -177,7 +177,7 @@ Svar KUN med de 3 punktene, én per linje.`
       const tekst = result.content?.[0]?.text || '';
       setAiMønstre(tekst.split('\n').filter((l: string) => l.trim().startsWith('✨')));
     } catch {
-      setAiMønstre([`✨ ${t('kolikk.registrerEpisoder')}`]);
+      setAiMønstre([]);
     }
     setLasterAI(false);
   }, [logg, babyNavn, locale, t]);

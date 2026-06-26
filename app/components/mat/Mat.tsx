@@ -118,7 +118,7 @@ Skriv 3-4 korte innsikter. Bruk babyens navn. Start hver med ✨. Fokuser på re
       const result = await response.json();
       const tekst = result.content?.[0]?.text || '';
       setAiInnsikter(tekst.split('\n').filter((l: string) => l.trim().startsWith('✨')));
-    } catch { }
+    } catch { setAiInnsikter([]); }
     setLasterAi(false);
   }, [babyNavn, locale, matreg]);
 
