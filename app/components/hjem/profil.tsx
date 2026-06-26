@@ -295,7 +295,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
           {[
             { ikon: '⚙️', bg: '#F8FAFC', tittel: 'Innstillinger', onClick: () => setVisInnstillinger(true) },
             { ikon: '🔒', bg: '#F8FAFC', tittel: 'Personvern', onClick: () => window.open('https://lilleapp.no/personvern', '_blank') },
-            { ikon: '❓', bg: '#F8FAFC', tittel: 'Hjelp & support', onClick: () => {} },
+            { ikon: '❓', bg: '#F8FAFC', tittel: 'Hjelp & support', onClick: () => window.open('mailto:lillebabylykke@outlook.com?subject=Hjelp%20%26%20support%20-%20Lille', '_blank') },
           ].map((item, i, arr) => (
             <button key={i} onClick={item.onClick} style={{ width: '100%', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', borderBottom: i < arr.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', cursor: 'pointer', textAlign: 'left' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>{item.ikon}</div>
