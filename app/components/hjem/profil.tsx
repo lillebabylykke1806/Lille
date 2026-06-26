@@ -3,11 +3,8 @@ import { farger } from '../../lib/farger';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
-import { SPRÅK_NAVN, SPRÅK_FLAGG, Locale } from '../../lib/i18n/translations';
 import BarnVelger from './BarnVelger';
 import Innstillinger from './Innstillinger';
-
-const SPRÅK_KODER: Locale[] = ['no', 'en', 'sv', 'da', 'de'];
 
 type Props = {
   bruker: any;
@@ -17,7 +14,7 @@ type Props = {
 };
 
 export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Props) {
-  const { locale, setLocale, t } = useLanguage();
+  const { t } = useLanguage();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyFødselsdato, setBabyFødselsdato] = useState('');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
@@ -295,17 +292,6 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Innstillinger</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
-          <div style={{ padding: '14px 20px', borderBottom: `1px solid ${farger.kremMørk}` }}>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '10px' }}>{t('profil.språk')}</div>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {SPRÅK_KODER.map((code) => (
-                <button key={code} type="button" onClick={() => setLocale(code)} style={{ flex: 1, padding: '8px 4px', borderRadius: '10px', border: locale === code ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: locale === code ? farger.grønnLys : farger.bakgrunn, color: locale === code ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '9px', fontWeight: locale === code ? '600' : '400', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ fontSize: '16px', lineHeight: 1 }}>{SPRÅK_FLAGG[code]}</span>
-                  <span>{SPRÅK_NAVN[code]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
           {[
             { ikon: '⚙️', bg: '#F8FAFC', tittel: 'Innstillinger', onClick: () => setVisInnstillinger(true) },
             { ikon: '🔒', bg: '#F8FAFC', tittel: 'Personvern', onClick: () => {} },
