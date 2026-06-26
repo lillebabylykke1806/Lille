@@ -119,6 +119,7 @@ const [oppvåkningMinutter, setOppvåkningMinutter] = useState(0);
 const [visAnnetModal, setVisAnnetModal] = useState(false);
 const [annetTekst, setAnnetTekst] = useState('');
 const [nattInnsikt, setNattInnsikt] = useState('');
+const [aiLurInnsikt, setAiLurInnsikt] = useState('');
 
   const lastTidslinje = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -264,6 +265,37 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
 
     hentNattInnsikt();
   }, [visning, tidslinje, valgteSignaler, aktivtBarn, bruker, locale]);
+
+  useEffect(() => {
+    if (tidslinje.length < 2) return;
+    const hentAiInnsikt = async () => {
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 120,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Analyser dagens søvndata og gi ÉN kort, konkret observasjon på norsk. Maks 1-2 setninger. Start med 💛.
+
+Eksempler:
+- "💛 Første gjesp kommer vanligvis 18 minutter før lur."
+- "💛 Beste luretid ser ut til å være rundt kl. 10."
+
+Søvndata i dag: ${JSON.stringify(tidslinje)}
+
+Svar KUN med observasjonen, ingen introduksjon.`
+            }],
+          }),
+        });
+        const result = await response.json();
+        setAiLurInnsikt(result.content?.[0]?.text || '');
+      } catch { setAiLurInnsikt(''); }
+    };
+    hentAiInnsikt();
+  }, [tidslinje]);
 
   const startSøvn = async (type: 'lur' | 'natt') => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -744,6 +776,12 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`,
                   {t('søvn.avsluttLur')}
                 </button>
               </div>
+
+              {aiLurInnsikt && (
+                <div style={{ backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', padding: '14px 16px', marginBottom: '12px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                  <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, lineHeight: 1.6 }}>{aiLurInnsikt}</div>
+                </div>
+              )}
 
               {/* Signaler */}
               <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px', marginBottom: '12px' }}>

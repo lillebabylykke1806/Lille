@@ -61,6 +61,7 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
   const [klokkeslett, setKlokkeslett] = useState(new Date().toTimeString().slice(0, 5));
   const [notat, setNotat] = useState('');
   const [lagrer, setLagrer] = useState(false);
+  const [aiTempInnsikt, setAiTempInnsikt] = useState('');
 
   const lastData = useCallback(async () => {
     setLaster(true);
@@ -75,6 +76,37 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
   }, [bruker?.id, aktivtBarn]);
 
   useEffect(() => { lastData(); }, [lastData]);
+
+  useEffect(() => {
+    if (målinger.length < 3) return;
+    const hentAiInnsikt = async () => {
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 120,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Analyser disse temperaturmålingene for ${babyNavn} og gi ÉN kort, konkret og personlig observasjon på norsk. Maks 1-2 setninger. Bruk babyens navn. Start med 💛.
+
+Eksempler:
+- "💛 Feberen til ${babyNavn} synker vanligvis 1 time etter Paracet."
+- "💛 ${babyNavn} har hatt forhøyet temperatur 3 av de siste 7 dagene."
+
+Temperaturdata: ${JSON.stringify(målinger.slice(0, 20))}
+
+Svar KUN med observasjonen, ingen introduksjon.`
+            }],
+          }),
+        });
+        const result = await response.json();
+        setAiTempInnsikt(result.content?.[0]?.text || '');
+      } catch { setAiTempInnsikt(''); }
+    };
+    hentAiInnsikt();
+  }, [målinger, babyNavn]);
 
   const lagreTemperatur = async () => {
     if (!temperaturInput) return;
@@ -240,6 +272,12 @@ export default function Temperatur({ bruker, aktivtBarn, onNavigate }: Props) {
               <path d="M6 4L10 8L6 12" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
+
+          {aiTempInnsikt && (
+            <div style={{ backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', padding: '14px 16px', marginBottom: '16px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.grønn, lineHeight: 1.6 }}>{aiTempInnsikt}</div>
+            </div>
+          )}
 
           {/* Graf og siste medisin */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
