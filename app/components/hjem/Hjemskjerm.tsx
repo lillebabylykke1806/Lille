@@ -253,6 +253,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [visDagbok, setVisDagbok] = useState(false);
   const [alleDagensHendelser, setAlleDagensHendelser] = useState<any[]>([]);
   const [auraObservasjon, setAuraObservasjon] = useState('');
+  const [signalOppdagelse, setSignalOppdagelse] = useState('');
   const [visDelModal, setVisDelModal] = useState(false);
 const [kopiert, setKopiert] = useState(false);
 const [redigerOppvåkning, setRedigerOppvåkning] = useState<any>(null);
@@ -321,6 +322,51 @@ Svar KUN med observasjonen på ${språkNavn}.`
     };
     hentBilde();
   }, [aktivtBarn, bruker, hentAuraObservasjon]);
+
+  useEffect(() => {
+    if (!babyNavn || babyNavn === 'babyen') return;
+    const hentSignalOppdagelse = async () => {
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (!profilId) return;
+
+      const fraDate = new Date();
+      fraDate.setDate(fraDate.getDate() - 7);
+      const { data: lurer } = await supabase
+        .from('lurer')
+        .select('*')
+        .eq('profil_id', profilId)
+        .gte('dato', fraDate.toISOString().split('T')[0])
+        .not('signaler', 'is', null);
+
+      if (!lurer || lurer.length < 3) return;
+
+      const lurMedSignaler = lurer.filter((l: any) => l.signaler && l.signaler.length > 0);
+      if (lurMedSignaler.length < 3) return;
+
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 100,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Lag ÉN kort, konkret observasjon om ${babyNavn}s søvnsignalmønster. Maks 1 setning. Bruk babyens navn. Nevn gjerne konkrete signaler og tid. Eksempel: "Wilhelm viser oftest gjesping → gnir øynene → sovner innen 22 minutter."
+
+Søvndata med signaler: ${JSON.stringify(lurMedSignaler.slice(0, 10))}
+
+Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
+            }],
+          }),
+        });
+        const result = await response.json();
+        const tekst = result.content?.[0]?.text || '';
+        if (tekst) setSignalOppdagelse(tekst);
+      } catch {}
+    };
+    hentSignalOppdagelse();
+  }, [babyNavn, aktivtBarn, bruker]);
 
   const lastDagensFlyt = useCallback(async () => {
     const profilId = await hentProfilId(aktivtBarn, bruker);
@@ -732,6 +778,15 @@ Svar KUN med observasjonen på ${språkNavn}.`
           </button>
         ))}
       </div>
+
+      {signalOppdagelse && (
+        <div style={{ padding: '0 24px 16px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(244,168,83,0.3)', borderRadius: '20px', padding: '14px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>💛 Lille har oppdaget noe nytt</div>
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{signalOppdagelse}</div>
+          </div>
+        </div>
+      )}
 
       {/* AI-innsikt kort */}
       <div style={{ padding: '0 24px 16px' }}>
