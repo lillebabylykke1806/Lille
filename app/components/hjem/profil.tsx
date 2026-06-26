@@ -304,7 +304,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
           {[
             { ikon: '👑', bg: '#FFF8EC', tittel: 'Mitt abonnement', undertekst: 'Premium aktiv', onClick: åpneAbonnement },
-            { ikon: '🎁', bg: '#F0F7F0', tittel: 'Inviter en venn', undertekst: 'Dere får begge 1 måned gratis', onClick: () => setVisInviterModal(true) },
+            { ikon: '🎁', bg: '#F0F7F0', tittel: 'Inviter en venn', undertekst: 'Gi bort 20% rabatt i 2 måneder', onClick: () => setVisInviterModal(true) },
             { ikon: '💬', bg: '#EEF2FF', tittel: 'Send tilbakemelding', undertekst: 'Hjelp oss å bli enda bedre', onClick: () => setVisTilbakemelding(true) },
           ].map((item, i, arr) => (
             <button key={i} onClick={item.onClick} style={{ width: '100%', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', borderBottom: i < arr.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', cursor: 'pointer', textAlign: 'left' }}>
