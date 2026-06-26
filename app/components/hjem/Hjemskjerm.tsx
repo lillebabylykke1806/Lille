@@ -178,7 +178,7 @@ const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: a
       ]);
 
       if (!lurer.data?.length && !amming.data?.length) {
-        setInnsikt(t('hjem.begynnRegistrereInnsikt', { navn: babyNavn }));
+        setInnsikt('');
         setLaster(false);
         return;
       }
@@ -204,7 +204,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`
         const result = await response.json();
         setInnsikt(result.content?.[0]?.text || '');
       } catch {
-        setInnsikt(t('hjem.begynnRegistrereInnsikt', { navn: babyNavn }));
+        setInnsikt('');
       }
       setLaster(false);
     };
@@ -213,12 +213,17 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`
   }, [bruker, aktivtBarn, babyNavn, locale, t]);
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+    <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '10px 14px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
         <div style={{ fontSize: '20px', flexShrink: 0 }}>✨</div>
         <div style={{ flex: 1 }}>
           {laster ? (
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>{t('hjem.analyserer', { navn: babyNavn })}</div>
+          ) : !innsikt ? (
+            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
+              <span style={{ fontSize: '15px' }}>💛</span> <strong>Lille lærer av registreringene dine.</strong><br/>
+              Registrer søvn og signaler noen dager, så begynner AI å oppdage mønstre.
+            </div>
           ) : (
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{innsikt}</div>
           )}
