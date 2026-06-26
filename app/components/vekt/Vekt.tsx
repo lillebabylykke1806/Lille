@@ -83,16 +83,32 @@ export default function Vekt({ bruker, aktivtBarn }: Props) {
 
   useEffect(() => {
     if (logg.length < 2) return;
-    const sisteVekt = logg[0]?.vekt;
-    const forrigeVekt = logg[1]?.vekt;
-    if (sisteVekt && forrigeVekt) {
-      if (sisteVekt > forrigeVekt) {
-        setAiVekstInnsikt(`Følger vekstkurven fint 📈`);
-      } else {
-        setAiVekstInnsikt(`Vekten er stabil 📊`);
+    const hentAiInnsikt = async () => {
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 150,
+            messages: [{
+              role: 'user',
+              content: `Du er en varm babyekspert i appen Lille. Analyser disse vekt- og lengdemålingene og gi ÉN kort, personlig og varm innsikt på norsk. Maks 1-2 setninger. Bruk babyens navn ${aktivtBarn?.navn || 'babyen'}. Avslutt gjerne med et passende emoji.
+
+Vektlogg (nyeste først): ${JSON.stringify(logg.slice(0, 6))}
+
+Svar KUN med innsikten, ingen introduksjon.`
+            }],
+          }),
+        });
+        const result = await response.json();
+        setAiVekstInnsikt(result.content?.[0]?.text || '');
+      } catch {
+        setAiVekstInnsikt('');
       }
-    }
-  }, [logg]);
+    };
+    hentAiInnsikt();
+  }, [logg, aktivtBarn]);
 
   const lagre = async () => {
     if (!vekt && !lengde && !klaer && !sko) return;
