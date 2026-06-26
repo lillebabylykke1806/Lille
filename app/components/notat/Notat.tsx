@@ -311,6 +311,23 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
             {nyKategori === 'milepæl' && (
   <div style={{ marginBottom: '16px' }}>
     <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('notat.alderMilepæler')}</div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+      {[
+        { tekst: '⭐ Første smil', mal: '⭐ Første smil! 🤍' },
+        { tekst: '⭐ Første latter', mal: '⭐ Første latter! 😄' },
+        { tekst: '⭐ Rullet fra mage til rygg', mal: '⭐ Rullet fra mage til rygg! 🎉' },
+        { tekst: '⭐ Rullet fra rygg til mage', mal: '⭐ Rullet fra rygg til mage! 🎉' },
+        { tekst: '⭐ Fant tærne', mal: '⭐ Fant tærne! 🦶' },
+        { tekst: '⭐ Satt uten støtte', mal: '⭐ Satt uten støtte! 💪' },
+        { tekst: '⭐ Krabbet', mal: '⭐ Krabbet for første gang! 🐛' },
+        { tekst: '⭐ Reiste seg opp', mal: '⭐ Reiste seg opp! 🙌' },
+      ].map((m, i) => (
+        <button key={i} onClick={() => setNyTekst(m.mal)}
+          style={{ padding: '6px 12px', borderRadius: '20px', border: `1px solid ${farger.kremMørk}`, backgroundColor: nyTekst === m.mal ? '#FFF3D6' : farger.bakgrunn, fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekst, cursor: 'pointer' }}>
+          {m.tekst}
+        </button>
+      ))}
+    </div>
     <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
       {[1,2,3,4,5,6,7,8,9,10,11,12].map(mnd => (
         <button key={mnd} onClick={() => setNyTekst(t('notat.månedMilepæl', { mnd }))}
