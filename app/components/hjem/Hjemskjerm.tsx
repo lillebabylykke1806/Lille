@@ -338,10 +338,10 @@ Svar KUN med observasjonen på ${språkNavn}.`
         .gte('dato', fraDate.toISOString().split('T')[0])
         .not('signaler', 'is', null);
 
-      if (!lurer || lurer.length < 3) return;
+      if (!lurer || lurer.length < 1) return;
 
       const lurMedSignaler = lurer.filter((l: any) => l.signaler && l.signaler.length > 0);
-      if (lurMedSignaler.length < 3) return;
+      if (lurMedSignaler.length < 1) return;
 
       try {
         const response = await fetch('https://api.anthropic.com/v1/messages', {
