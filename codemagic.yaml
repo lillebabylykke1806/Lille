@@ -23,12 +23,15 @@ workflows:
         script: npx cap sync ios
       - name: Set up code signing
         script: xcode-project use-profiles
+      - name: Set encryption key
+        script: |
+          /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
       - name: Build iOS
         script: |
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
-            --archive-xcargs "CURRENT_PROJECT_VERSION=5 MARKETING_VERSION=1.0.4"
+            --archive-xcargs "CURRENT_PROJECT_VERSION=6 MARKETING_VERSION=1.0.4"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
