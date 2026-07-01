@@ -60,8 +60,31 @@ export default function BloggInnhold({ artikler }: { artikler: Artikkel[] }) {
         }
       `}</style>
 
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, backgroundColor: BAKGRUNN, borderBottom: `1px solid ${KREM}` }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <a
+            href="https://apps.apple.com/us/app/lille/id6780271912"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '12px 24px',
+              backgroundColor: GRØNN,
+              color: '#FDFAF6',
+              borderRadius: 50,
+              fontSize: '14px',
+              fontWeight: 600,
+              textDecoration: 'none',
+              fontFamily: 'var(--font-inter), sans-serif',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Last ned appen
+          </a>
+        </div>
+      </nav>
+
       {/* Hero */}
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '64px 24px 40px' }}>
+      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '64px 24px 40px', paddingTop: 88 }}>
         <div className="blogg-hero-grid">
           <div>
             <h1 style={{ fontFamily: 'var(--font-plus-jakarta), sans-serif', fontSize: 'clamp(2.25rem, 5vw, 3.25rem)', fontWeight: 700, lineHeight: 1.15, margin: '0 0 12px', color: TEKST }}>
