@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export type Artikkel = {
   slug: string;
@@ -111,8 +112,15 @@ export default function BloggInnhold({ artikler }: { artikler: Artikkel[] }) {
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: 420, aspectRatio: '4/5', borderRadius: 24, backgroundColor: KREM, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-              <img src="/baby-ansikt.png" alt="Baby" style={{ width: '70%', height: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+            <div style={{ position: 'relative', width: '100%', maxWidth: 420, aspectRatio: '4/5', borderRadius: 24, overflow: 'hidden', backgroundColor: KREM }}>
+              <Image
+                src="/hero-baby.png"
+                alt="Baby"
+                fill
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 640px) 100vw, 420px"
+                priority
+              />
             </div>
           </div>
         </div>
