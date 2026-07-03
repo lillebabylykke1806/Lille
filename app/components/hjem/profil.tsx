@@ -133,7 +133,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
     }, 2000);
   };
 
-  const visningsNavn = brukernavn || bruker.email?.split('@')[0] || 'Bruker';
+  const visningsNavn = brukernavn || bruker.email?.split('@')[0] || t('profil.bruker');
 
   const babyMåneder = babyFødselsdato
     ? Math.floor((new Date().getTime() - new Date(babyFødselsdato).getTime()) / (1000 * 60 * 60 * 24 * 30.5))
@@ -159,7 +159,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
       body: JSON.stringify({
         invitert_epost: partnerEpost.trim(),
         barn_id: barn?.id,
-        barn_navn: barn?.navn || 'babyen',
+        barn_navn: barn?.navn || t('profil.babyen').toLowerCase(),
         invitert_av_epost: bruker.email,
       }),
     });
@@ -177,7 +177,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
 
       {/* Header */}
       <div style={{ padding: '24px 24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ fontSize: '28px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Mer</div>
+        <div style={{ fontSize: '28px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('profil.mer')}</div>
         <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <path d="M18 8C18 6.4 17.4 4.9 16.2 3.8C15.1 2.6 13.6 2 12 2C10.4 2 8.9 2.6 7.8 3.8C6.6 4.9 6 6.4 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke={farger.tekstLys} strokeWidth="1.5" fill="none"/>
@@ -194,8 +194,8 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
           </svg>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', lineHeight: 1.4 }}>Du gjør en fantastisk jobb,</div>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.4 }}>små steg hver dag blir til store fremskritt.</div>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', lineHeight: 1.4 }}>{t('profil.motivasjonTittel')}</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.4 }}>{t('profil.motivasjonUndertekst')}</div>
         </div>
         <div style={{ fontSize: '32px', flexShrink: 0 }}>🌿</div>
       </div>
@@ -229,7 +229,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
             </div>
             <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#FFF8EC', border: '1px solid #F4D9A0', borderRadius: '20px', padding: '3px 10px' }}>
               <span style={{ fontSize: '12px' }}>👑</span>
-              <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600' }}>Premium aktiv</span>
+              <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8B6340', fontWeight: '600' }}>{t('profil.premiumAktiv')}</span>
             </div>
           </div>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -245,7 +245,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
             <circle cx="12" cy="8" r="4" stroke={farger.tekst} strokeWidth="1.5"/>
             <path d="M4 20C4 16.69 7.58 14 12 14C16.42 14 20 16.69 20 20" stroke={farger.tekst} strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Barn</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('profil.barn')}</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
           <button onClick={() => setVisBarnVelger(true)} style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
@@ -273,7 +273,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
             <path d="M3 20C3 17 5.69 14.5 9 14.5" stroke={farger.tekst} strokeWidth="1.5" strokeLinecap="round"/>
             <path d="M15 14.5C18.31 14.5 21 17 21 20" stroke={farger.tekst} strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Familie</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('profil.familie')}</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
           <button onClick={() => setVisPartnerModal(true)} style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
@@ -285,7 +285,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
                 <path d="M15 14.5C18.31 14.5 21 17 21 20" stroke={farger.grønn} strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </div>
-            <span style={{ flex: 1, fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>Del data med partner</span>
+            <span style={{ flex: 1, fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekst }}>{t('profil.delMedPartner')}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 4L10 8L6 12" stroke={farger.tekstLys} strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
@@ -299,13 +299,13 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" fill={farger.tekst} opacity="0.7"/>
           </svg>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Lille</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('profil.lille')}</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
           {[
-            { ikon: '👑', bg: '#FFF8EC', tittel: 'Mitt abonnement', undertekst: 'Premium aktiv', onClick: åpneAbonnement },
-            { ikon: '🎁', bg: '#F0F7F0', tittel: 'Inviter en venn', undertekst: 'Gi bort 20% rabatt i 2 måneder', onClick: () => setVisInviterModal(true) },
-            { ikon: '💬', bg: '#EEF2FF', tittel: 'Send tilbakemelding', undertekst: 'Hjelp oss å bli enda bedre', onClick: () => setVisTilbakemelding(true) },
+            { ikon: '👑', bg: '#FFF8EC', tittel: t('profil.mittAbonnement'), undertekst: t('profil.premiumAktiv'), onClick: åpneAbonnement },
+            { ikon: '🎁', bg: '#F0F7F0', tittel: t('profil.inviterVenn'), undertekst: t('profil.inviterVennUndertekst'), onClick: () => setVisInviterModal(true) },
+            { ikon: '💬', bg: '#EEF2FF', tittel: t('profil.sendTilbakemeldingKnapp'), undertekst: t('profil.sendTilbakemeldingUndertekst'), onClick: () => setVisTilbakemelding(true) },
           ].map((item, i, arr) => (
             <button key={i} onClick={item.onClick} style={{ width: '100%', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', borderBottom: i < arr.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', cursor: 'pointer', textAlign: 'left' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>{item.ikon}</div>
@@ -328,13 +328,13 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
             <circle cx="12" cy="12" r="3" stroke={farger.tekst} strokeWidth="1.5"/>
             <path d="M19.4 15C19.2 15.3 19.1 15.7 19.3 16L20.1 17.4C20.4 17.9 20.3 18.5 19.9 18.9L18.9 19.9C18.5 20.3 17.9 20.4 17.4 20.1L16 19.3C15.7 19.1 15.3 19.2 15 19.4L14.4 20.9C14.2 21.4 13.7 21.8 13.2 21.8H11.8C11.3 21.8 10.8 21.4 10.6 20.9L10 19.4C9.7 19.2 9.3 19.1 9 19.3L7.6 20.1C7.1 20.4 6.5 20.3 6.1 19.9L5.1 18.9C4.7 18.5 4.6 17.9 4.9 17.4L5.7 16C5.9 15.7 5.8 15.3 5.6 15L4.1 14.4C3.6 14.2 3.2 13.7 3.2 13.2V11.8C3.2 11.3 3.6 10.8 4.1 10.6L5.6 10C5.8 9.7 5.9 9.3 5.7 9L4.9 7.6C4.6 7.1 4.7 6.5 5.1 6.1L6.1 5.1C6.5 4.7 7.1 4.6 7.6 4.9L9 5.7C9.3 5.9 9.7 5.8 10 5.6L10.6 4.1C10.8 3.6 11.3 3.2 11.8 3.2H13.2C13.7 3.2 14.2 3.6 14.4 4.1L15 5.6C15.3 5.8 15.7 5.9 16 5.7L17.4 4.9C17.9 4.6 18.5 4.7 18.9 5.1L19.9 6.1C20.3 6.5 20.4 7.1 20.1 7.6L19.3 9C19.1 9.3 19.2 9.7 19.4 10L20.9 10.6C21.4 10.8 21.8 11.3 21.8 11.8V13.2C21.8 13.7 21.4 14.2 20.9 14.4L19.4 15Z" stroke={farger.tekst} strokeWidth="1.5"/>
           </svg>
-          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>Innstillinger</div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('profil.innstillinger')}</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
           {[
-            { ikon: '⚙️', bg: '#F8FAFC', tittel: 'Innstillinger', onClick: () => setVisInnstillinger(true) },
-            { ikon: '🔒', bg: '#F8FAFC', tittel: 'Personvern', onClick: () => window.open('https://lilleapp.no/personvern', '_blank') },
-            { ikon: '❓', bg: '#F8FAFC', tittel: 'Hjelp & support', onClick: () => window.open('mailto:lillebabylykke@outlook.com?subject=Hjelp%20%26%20support%20-%20Lille', '_blank') },
+            { ikon: '⚙️', bg: '#F8FAFC', tittel: t('profil.innstillinger'), onClick: () => setVisInnstillinger(true) },
+            { ikon: '🔒', bg: '#F8FAFC', tittel: t('profil.personvern'), onClick: () => window.open('https://lilleapp.no/personvern', '_blank') },
+            { ikon: '❓', bg: '#F8FAFC', tittel: t('profil.hjelpOgSupport'), onClick: () => window.open('mailto:lillebabylykke@outlook.com?subject=Hjelp%20%26%20support%20-%20Lille', '_blank') },
           ].map((item, i, arr) => (
             <button key={i} onClick={item.onClick} style={{ width: '100%', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', borderBottom: i < arr.length - 1 ? `1px solid ${farger.kremMørk}` : 'none', cursor: 'pointer', textAlign: 'left' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>{item.ikon}</div>
@@ -355,8 +355,8 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
           </svg>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', lineHeight: 1.4 }}>Lille er her for å støtte deg</div>
-          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>i små og store øyeblikk.</div>
+          <div style={{ fontSize: '14px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', lineHeight: 1.4 }}>{t('profil.bunnTittel')}</div>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('profil.bunnUndertekst')}</div>
         </div>
         <div style={{ fontSize: '32px', flexShrink: 0 }}>🌿</div>
       </div>
@@ -372,19 +372,19 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisRedigerProfil(false)}>
           <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Rediger profil</div>
+            <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('profil.redigerProfil')}</div>
 
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ditt navn</div>
-            <input type="text" value={brukernavn} onChange={e => setBrukernavn(e.target.value)} placeholder="F.eks. Isabella" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '16px' }} />
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('profil.dittNavn')}</div>
+            <input type="text" value={brukernavn} onChange={e => setBrukernavn(e.target.value)} placeholder={t('profil.navnPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '16px' }} />
 
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Babyens navn</div>
-            <input type="text" value={babyNavn} onChange={e => setBabyNavn(e.target.value)} placeholder="F.eks. Wilhelm" style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '16px' }} />
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('profil.babynsNavn')}</div>
+            <input type="text" value={babyNavn} onChange={e => setBabyNavn(e.target.value)} placeholder={t('profil.babyNavnPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '16px' }} />
 
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Fødselsdato</div>
+            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('profil.fødselsdato')}</div>
             <input type="date" value={babyFødselsdato} onChange={e => setBabyFødselsdato(e.target.value)} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '24px' }} />
 
             <button onClick={lagreProfil} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              {lagret ? '✓ Lagret!' : 'Lagre'}
+              {lagret ? t('profil.lagretBekreftelse') : t('profil.lagre')}
             </button>
           </div>
         </div>
@@ -451,34 +451,34 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
             {invitasjonSendt ? (
               <div style={{ textAlign: 'center', padding: '24px 0' }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>🤍</div>
-                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Invitasjon sendt!</div>
-                <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Vi har sendt en e-post til {partnerEpost} med en lenke for å komme i gang.</div>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('profil.invitasjonSendt')}</div>
+                <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>{t('profil.invitasjonSendtInfo', { epost: partnerEpost })}</div>
               </div>
             ) : harPartner ? (
               <div style={{ textAlign: 'center', padding: '16px 0' }}>
                 <div style={{ fontSize: '40px', marginBottom: '12px' }}>🤍</div>
-                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Partner er allerede lagt til</div>
-                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>Du kan kun dele med én partner. Ta kontakt med oss hvis du vil endre dette.</div>
+                <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('profil.partnerAlleredeLagtTil')}</div>
+                <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>{t('profil.partnerAlleredeInfo')}</div>
               </div>
             ) : (
               <>
-                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Del med partner 🤍</div>
+                <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('profil.delMedPartnerTittel')}</div>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6, marginBottom: '24px' }}>
-                  Inviter partneren din til å se og registrere data for babyen. De får gratis tilgang – du betaler for begge.
+                  {t('profil.delMedPartnerInfo')}
                 </div>
-                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Partners e-post</div>
+                <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('profil.partnersEpost')}</div>
                 <input
                   type="email"
                   value={partnerEpost}
                   onChange={e => setPartnerEpost(e.target.value)}
-                  placeholder="partner@epost.no"
+                  placeholder={t('profil.partnerEpostPlaceholder')}
                   style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }}
                 />
                 <button
                   onClick={sendPartnerInvitasjon}
                   disabled={!partnerEpost.trim() || senderInvitasjon}
                   style={{ width: '100%', padding: '16px', backgroundColor: partnerEpost.trim() ? farger.grønn : farger.kremMørk, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: partnerEpost.trim() ? '#FDFAF6' : farger.tekstLys, cursor: partnerEpost.trim() ? 'pointer' : 'not-allowed', fontFamily: 'var(--font-inter)' }}>
-                  {senderInvitasjon ? 'Sender...' : 'Send invitasjon 🤍'}
+                  {senderInvitasjon ? t('profil.sender') : t('profil.sendInvitasjon')}
                 </button>
               </>
             )}
@@ -492,28 +492,28 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
               <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎁</div>
-              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Del Lille med en venn</div>
+              <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('hjem.delLilleMedVenn')}</div>
               <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.6 }}>
-                Del appen med en venn som har baby
+                {t('profil.inviterVennModalBeskrivelse')}
               </div>
             </div>
             <div style={{ backgroundColor: farger.bakgrunn, borderRadius: '16px', padding: '20px', marginBottom: '16px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Din rabattkode</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t('hjem.dinRabattkode')}</div>
               <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '4px', marginBottom: '4px' }}>VENN20</div>
-              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>20% rabatt de første 2 månedene</div>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('profil.rabattForste2Maaneder')}</div>
             </div>
             <button onClick={() => { 
-              navigator.clipboard.writeText('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); 
+              navigator.clipboard.writeText(t('profil.delingstekst')); 
               setKopiert(true); 
               setTimeout(() => setKopiert(false), 3000); 
             }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
-              {kopiert ? '✓ Kopiert!' : 'Kopier delingstekst'}
+              {kopiert ? t('profil.kopiert') : t('profil.kopierDelingstekst')}
             </button>
             <button onClick={() => { 
-              const tekst = encodeURIComponent('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); 
+              const tekst = encodeURIComponent(t('profil.delingstekst')); 
               window.open(`sms:?body=${tekst}`); 
             }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Send som SMS
+              {t('profil.sendSomSms')}
             </button>
           </div>
         </div>

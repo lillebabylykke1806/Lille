@@ -127,8 +127,12 @@ function getKategorier(t: TFn): Kategori[] {
   ];
 }
 
-/** Maps Sovn.tsx signal label variants to Signaler KATEGORIER navn (DB keys). */
+/** Maps Sovn.tsx signal ids/label variants to Signaler KATEGORIER navn (DB keys). */
 const SOVN_TIL_KATEGORI_NAVN: Record<string, string> = {
+  gned: 'Gnir øynene',
+  gjesping: 'Gjesper',
+  stirret: 'Stirrer tomt',
+  hodet: 'Vender hodet bort',
   'Gned øynene': 'Gnir øynene',
   'Gjesping': 'Gjesper',
   'Stirret tomt': 'Stirrer tomt',

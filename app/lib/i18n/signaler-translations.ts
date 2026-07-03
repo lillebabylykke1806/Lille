@@ -39,27 +39,27 @@ export const signalerOversettelser = {
   'signaler.kategoriSultTittel': { no: 'Sultsignaler', en: 'Hunger signals', sv: 'Hungersignaler', da: 'Sultsignaler', de: 'Hungersignale' },
   'signaler.kategoriSultUndertittel': { no: 'Tegn på at babyen ønsker mat.', en: 'Signs that your baby wants food.', sv: 'Tecken på att bebisen vill ha mat.', da: 'Tegn på, at babyen ønsker mad.', de: 'Anzeichen dafür, dass dein Baby essen möchte.' },
 
-  'signaler.sovnStirrerTomtVisningsNavn': { no: 'Stirrer tomt', en: 'Blank stare', sv: 'Tom blick', da: 'Stirrer tomt', de: 'Leerer Blick' },
+  'signaler.sovnStirrerTomtVisningsNavn': { no: 'Stirrer tomt', en: 'Blank stare', sv: 'Tom blick', da: 'Tomt blik', de: 'Leerer Blick' },
   'signaler.sovnStirrerTomtBeskrivelse': { no: 'Babyen ser tomt ut i blikket og virker fjern.', en: 'Your baby has a distant, unfocused look.', sv: 'Bebisen ser frånvarande ut i blicken.', da: 'Babyen ser fjern ud i blikket.', de: 'Dein Baby wirkt im Blick leer und abwesend.' },
   'signaler.sovnStirrerTomtKanBety1': { no: 'Tidlig trøtthetssignal', en: 'Early tiredness cue', sv: 'Tidigt trötthetstecken', da: 'Tidligt træthedssignal', de: 'Frühes Müdigkeitssignal' },
   'signaler.sovnStirrerTomtKanBety2': { no: 'Babyen begynner å koble av', en: 'Your baby is starting to switch off', sv: 'Bebisen börjar varva ner', da: 'Babyen begynder at koble fra', de: 'Dein Baby beginnt abzuschalten' },
   'signaler.sovnStirrerTomtKanBety3': { no: 'Tid for å starte nedtrapping', en: 'Time to start winding down', sv: 'Dags att börja varva ner', da: 'Tid til at begynde nedtrapning', de: 'Zeit, langsam runterzufahren' },
   'signaler.sovnStirrerTomtTips': { no: 'Begynn å roe ned miljøet når du ser dette.', en: 'Start calming the environment when you notice this.', sv: 'Börja lugna miljön när du ser detta.', da: 'Begynd at dæmpe omgivelserne, når du ser dette.', de: 'Beruhige die Umgebung, sobald du das bemerkst.' },
 
-  'signaler.sovnGjesperVisningsNavn': { no: 'Gjesper', en: 'Yawns', sv: 'Gäspar', da: 'Gaber', de: 'Gähnt' },
+  'signaler.sovnGjesperVisningsNavn': { no: 'Gjesper', en: 'Yawning', sv: 'Gäspar', da: 'Gaber', de: 'Gähnen' },
   'signaler.sovnGjesperBeskrivelse': { no: 'Gjesping er et vanlig tegn på tretthet.', en: 'Yawning is a common sign of tiredness.', sv: 'Gäspningar är ett vanligt tecken på trötthet.', da: 'Gaben er et almindeligt tegn på træthed.', de: 'Gähnen ist ein häufiges Zeichen von Müdigkeit.' },
   'signaler.sovnGjesperKanBety1': { no: 'Tidlig eller sent signal avhengig av kontekst', en: 'Can be early or late depending on context', sv: 'Kan vara tidigt eller sent beroende på sammanhang', da: 'Kan være tidligt eller sent afhængigt af konteksten', de: 'Kann je nach Situation ein frühes oder spätes Signal sein' },
   'signaler.sovnGjesperKanBety2': { no: 'Kombinert med andre signaler = søvn nærmer seg', en: 'Combined with other cues means sleep is near', sv: 'Tillsammans med andra signaler närmar sig sömnen', da: 'Sammen med andre signaler betyder det, at søvnen nærmer sig', de: 'Mit anderen Signalen zusammen heißt das: Schlafen steht bevor' },
   'signaler.sovnGjesperTips': { no: 'Ett gjesp er ikke nok – se etter kombinasjoner.', en: 'One yawn alone is not enough – look for combinations.', sv: 'En gäspning räcker inte – titta efter kombinationer.', da: 'Et gab alene er ikke nok – se efter kombinationer.', de: 'Ein einzelnes Gähnen reicht nicht – achte auf Kombinationen.' },
 
-  'signaler.sovnGnirOyneneVisningsNavn': { no: 'Gnir øynene', en: 'Rubs eyes', sv: 'Gnuggar ögonen', da: 'Gnir øjnene', de: 'Reibt die Augen' },
+  'signaler.sovnGnirOyneneVisningsNavn': { no: 'Gnir øynene', en: 'Rubbing eyes', sv: 'Gnuggar ögonen', da: 'Gnidder øjnene', de: 'Augen reiben' },
   'signaler.sovnGnirOyneneBeskrivelse': { no: 'Babyen gnir eller klør seg i øynene.', en: 'Your baby rubs or scratches their eyes.', sv: 'Bebisen gnuggar eller kliar sig i ögonen.', da: 'Babyen gnider eller klør sig i øjnene.', de: 'Dein Baby reibt oder kratzt sich an den Augen.' },
   'signaler.sovnGnirOyneneKanBety1': { no: 'Sent søvnsignal', en: 'Late sleep cue', sv: 'Sent sömnsignal', da: 'Sent søvnsignal', de: 'Spätes Schlafsignal' },
   'signaler.sovnGnirOyneneKanBety2': { no: 'Babyen er overtrøtt om dette vedvarer', en: 'Your baby may be overtired if this continues', sv: 'Bebisen kan vara övertrött om detta fortsätter', da: 'Babyen kan være overtræt, hvis det fortsætter', de: 'Wenn das anhält, könnte dein Baby übermüdet sein' },
   'signaler.sovnGnirOyneneKanBety3': { no: 'Søvn nærmer seg', en: 'Sleep is approaching', sv: 'Sömnen närmar sig', da: 'Søvnen nærmer sig', de: 'Der Schlaf rückt näher' },
   'signaler.sovnGnirOyneneTips': { no: 'Er dette første signal du ser, kan babyen allerede være overtrøtt.', en: 'If this is the first cue you notice, your baby may already be overtired.', sv: 'Om detta är första signalen du ser kan bebisen redan vara övertrött.', da: 'Hvis dette er det første signal, du ser, kan babyen allerede være overtræt.', de: 'Wenn dies das erste Signal ist, das du siehst, ist dein Baby vielleicht schon übermüdet.' },
 
-  'signaler.sovnVenderHodetBortVisningsNavn': { no: 'Vender hodet bort', en: 'Turns head away', sv: 'Vänder bort huvudet', da: 'Vender hovedet væk', de: 'Dreht den Kopf weg' },
+  'signaler.sovnVenderHodetBortVisningsNavn': { no: 'Vender hodet bort', en: 'Turning head away', sv: 'Vänder bort huvudet', da: 'Vender hovedet væk', de: 'Kopf wegdrehen' },
   'signaler.sovnVenderHodetBortBeskrivelse': { no: 'Babyen vender hodet bort fra deg eller stimuli.', en: 'Your baby turns away from you or stimulation.', sv: 'Bebisen vänder bort huvudet från dig eller stimulans.', da: 'Babyen vender hovedet væk fra dig eller stimuli.', de: 'Dein Baby dreht den Kopf von dir oder Reizen weg.' },
   'signaler.sovnVenderHodetBortKanBety1': { no: 'Overstimulering', en: 'Overstimulation', sv: 'Överstimulering', da: 'Overstimulering', de: 'Überstimulation' },
   'signaler.sovnVenderHodetBortKanBety2': { no: 'Behov for pause', en: 'Needs a break', sv: 'Behöver en paus', da: 'Behov for pause', de: 'Braucht eine Pause' },
@@ -78,7 +78,7 @@ export const signalerOversettelser = {
   'signaler.sovnTungeOyelokkKanBety2': { no: 'Søvn er nært forestående', en: 'Sleep is very close', sv: 'Sömnen är nära', da: 'Søvnen er lige oppe over', de: 'Der Schlaf steht unmittelbar bevor' },
   'signaler.sovnTungeOyelokkTips': { no: 'Legg ned nå – babyen er klar.', en: 'Put your baby down now – they are ready.', sv: 'Lägg ner nu – bebisen är redo.', da: 'Læg babyen nu – babyen er klar.', de: 'Leg dein Baby jetzt hin – es ist bereit.' },
 
-  'signaler.pauseVenderHodetBortVisningsNavn': { no: 'Vender hodet bort', en: 'Turns head away', sv: 'Vänder bort huvudet', da: 'Vender hovedet væk', de: 'Dreht den Kopf weg' },
+  'signaler.pauseVenderHodetBortVisningsNavn': { no: 'Vender hodet bort', en: 'Turning head away', sv: 'Vänder bort huvudet', da: 'Vender hovedet væk', de: 'Kopf wegdrehen' },
   'signaler.pauseVenderHodetBortBeskrivelse': { no: 'Babyen vender hodet bort fra deg eller fra stimuli.', en: 'Your baby turns their head away from you or stimulation.', sv: 'Bebisen vänder bort huvudet från dig eller stimulans.', da: 'Babyen vender hovedet væk fra dig eller stimuli.', de: 'Dein Baby dreht den Kopf von dir oder Reizen weg.' },
   'signaler.pauseVenderHodetBortKanBety1': { no: 'Overstimulering', en: 'Overstimulation', sv: 'Överstimulering', da: 'Overstimulering', de: 'Überstimulation' },
   'signaler.pauseVenderHodetBortKanBety2': { no: 'Behov for pause', en: 'Needs a break', sv: 'Behöver en paus', da: 'Behov for pause', de: 'Braucht eine Pause' },
@@ -97,7 +97,7 @@ export const signalerOversettelser = {
   'signaler.pauseKnytterNeveneKanBety2': { no: 'Kan komme før gråt', en: 'May come before crying', sv: 'Kan komma före gråt', da: 'Kan komme før gråd', de: 'Kann vor dem Weinen auftreten' },
   'signaler.pauseKnytterNeveneTips': { no: 'Ta babyen opp og gi ro før situasjonen eskalerer.', en: 'Pick your baby up and offer calm before it escalates.', sv: 'Ta upp bebisen och ge lugn innan det eskalerar.', da: 'Tag babyen op og skab ro, før det eskalerer.', de: 'Nimm dein Baby hoch und schenke Ruhe, bevor es eskaliert.' },
 
-  'signaler.pauseBuerRyggenBakoverVisningsNavn': { no: 'Buer ryggen bakover', en: 'Arches back', sv: 'Böjer ryggen bakåt', da: 'Buer ryggen bagover', de: 'Überstreckt den Rücken' },
+  'signaler.pauseBuerRyggenBakoverVisningsNavn': { no: 'Buer ryggen bakover', en: 'Arches back', sv: 'Böjer ryggen bakåt', da: 'Bøjer ryggen bagover', de: 'Überstreckt den Rücken' },
   'signaler.pauseBuerRyggenBakoverBeskrivelse': { no: 'Babyen buer ryggen bakover.', en: 'Your baby arches their back backward.', sv: 'Bebisen böjer ryggen bakåt.', da: 'Babyen buer ryggen bagover.', de: 'Dein Baby überstreckt den Rücken nach hinten.' },
   'signaler.pauseBuerRyggenBakoverKanBety1': { no: 'Ubehag', en: 'Discomfort', sv: 'Obehag', da: 'Ubehag', de: 'Unwohlsein' },
   'signaler.pauseBuerRyggenBakoverKanBety2': { no: 'Protest', en: 'Protest', sv: 'Protest', da: 'Protest', de: 'Protest' },
@@ -117,7 +117,7 @@ export const signalerOversettelser = {
   'signaler.mageTrekkerBenaOppKanBety3': { no: 'Kolikk', en: 'Colic', sv: 'Kolik', da: 'Kolik', de: 'Kolik' },
   'signaler.mageTrekkerBenaOppTips': { no: 'Prøv sykkelbevegelser med bena eller magemassasje.', en: 'Try gentle bicycle leg movements or a tummy massage.', sv: 'Prova cykelrörelser med benen eller magmassage.', da: 'Prøv cykelbevægelser med benene eller mavemassage.', de: 'Versuche sanfte Fahrradbewegungen mit den Beinen oder eine Bauchmassage.' },
 
-  'signaler.mageKrummerRyggenVisningsNavn': { no: 'Krummer ryggen', en: 'Curves back', sv: 'Krummer ryggen', da: 'Krummer ryggen', de: 'Krümmt den Rücken' },
+  'signaler.mageKrummerRyggenVisningsNavn': { no: 'Krummer ryggen', en: 'Curves back', sv: 'Krummar ryggen', da: 'Bøjer ryggen', de: 'Krümmt den Rücken' },
   'signaler.mageKrummerRyggenBeskrivelse': { no: 'Babyen krummer ryggen og virker anspent.', en: 'Your baby curves their back and seems tense.', sv: 'Bebisen krummar ryggen och verkar spänd.', da: 'Babyen krummer ryggen og virker spændt.', de: 'Dein Baby krümmt den Rücken und wirkt angespannt.' },
   'signaler.mageKrummerRyggenKanBety1': { no: 'Magesmerter', en: 'Stomach pain', sv: 'Magont', da: 'Mavesmerter', de: 'Bauchschmerzen' },
   'signaler.mageKrummerRyggenKanBety2': { no: 'Luft i magen', en: 'Gas in the tummy', sv: 'Luft i magen', da: 'Luft i maven', de: 'Luft im Bauch' },

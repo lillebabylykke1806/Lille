@@ -17,7 +17,7 @@ const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
   de: 'Deutsch',
 };
 
-type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; onNavigate?: (side: string) => void; };
+type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; onNavigate?: (side: string) => void; onNavigasjonKonsumert?: () => void; };
 type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; };
 
 const tilTidsformat = (tid: string): string => {
@@ -83,7 +83,7 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
   );
 };
 
-export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen, onNavigate }: Props) {
+export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen, onNavigate, onNavigasjonKonsumert }: Props) {
   const { locale, t } = useLanguage();
   const signaler = getSignaler(t);
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
@@ -189,12 +189,16 @@ const [aiLurInnsikt, setAiLurInnsikt] = useState('');
       setNyDato(igår.toISOString().split('T')[0]);
       setNyType('natt');
       setVisning('etterregistrer');
+      onNavigasjonKonsumert?.();
     }
-  }, [åpneEtterregistrer]);
+  }, [åpneEtterregistrer, onNavigasjonKonsumert]);
 
   useEffect(() => {
-    if (åpneMorgen) setVisning('morgen');
-  }, [åpneMorgen]);
+    if (åpneMorgen) {
+      setVisning('morgen');
+      onNavigasjonKonsumert?.();
+    }
+  }, [åpneMorgen, onNavigasjonKonsumert]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;

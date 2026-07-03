@@ -27,7 +27,29 @@ export default function BloggInnhold({ artikler }: { artikler: Artikkel[] }) {
   const [søk, setSøk] = useState('');
   const [aktivKategori, setAktivKategori] = useState<string>('Alle');
   const [epost, setEpost] = useState('');
-  const [påmeldt, setPåmeldt] = useState(false);
+  const [senderNyhetsbrev, setSenderNyhetsbrev] = useState(false);
+  const [nyhetsbrevSuksess, setNyhetsbrevSuksess] = useState(false);
+  const [nyhetsbrevFeil, setNyhetsbrevFeil] = useState(false);
+
+  const handleNyhetsbrev = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!epost.trim() || senderNyhetsbrev) return;
+    setSenderNyhetsbrev(true);
+    setNyhetsbrevFeil(false);
+    try {
+      const res = await fetch('/api/nyhetsbrev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: epost.trim() }),
+      });
+      if (!res.ok) throw new Error();
+      setNyhetsbrevSuksess(true);
+    } catch {
+      setNyhetsbrevFeil(true);
+    } finally {
+      setSenderNyhetsbrev(false);
+    }
+  };
 
   const filtrerte = useMemo(() => {
     const q = søk.trim().toLowerCase();
@@ -237,28 +259,33 @@ export default function BloggInnhold({ artikler }: { artikler: Artikkel[] }) {
           <p style={{ fontSize: '15px', color: TEKST_LYS, margin: '0 0 28px', lineHeight: 1.6 }}>
             Meld deg på nyhetsbrevet vårt for ukentlige artikler og råd til nye foreldre.
           </p>
-          {påmeldt ? (
-            <p style={{ color: GRØNN, fontWeight: 600, fontSize: '15px' }}>Takk for påmeldingen! 🤍</p>
+          {nyhetsbrevSuksess ? (
+            <p style={{ color: GRØNN, fontWeight: 600, fontSize: '15px' }}>Takk! Du er nå påmeldt.</p>
           ) : (
             <form
-              onSubmit={(e) => { e.preventDefault(); if (epost.trim()) setPåmeldt(true); }}
+              onSubmit={handleNyhetsbrev}
               style={{ display: 'flex', gap: 12, maxWidth: 480, margin: '0 auto', flexWrap: 'wrap', justifyContent: 'center' }}
             >
               <input
                 type="email"
                 value={epost}
-                onChange={(e) => setEpost(e.target.value)}
+                onChange={(e) => { setEpost(e.target.value); setNyhetsbrevFeil(false); }}
                 placeholder="Din e-postadresse"
                 required
+                disabled={senderNyhetsbrev}
                 style={{ flex: 1, minWidth: 220, padding: '14px 16px', fontSize: '15px', border: `1px solid ${KREM}`, borderRadius: 12, backgroundColor: '#FDFAF6', color: TEKST, outline: 'none' }}
               />
               <button
                 type="submit"
-                style={{ padding: '14px 28px', backgroundColor: GRØNN, color: '#FDFAF6', border: 'none', borderRadius: 12, fontSize: '15px', fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif', whiteSpace: 'nowrap' }}
+                disabled={senderNyhetsbrev}
+                style={{ padding: '14px 28px', backgroundColor: GRØNN, color: '#FDFAF6', border: 'none', borderRadius: 12, fontSize: '15px', fontWeight: 600, cursor: senderNyhetsbrev ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter), sans-serif', whiteSpace: 'nowrap', opacity: senderNyhetsbrev ? 0.7 : 1 }}
               >
-                Meld meg på
+                {senderNyhetsbrev ? 'Sender...' : 'Meld meg på'}
               </button>
             </form>
+          )}
+          {nyhetsbrevFeil && (
+            <p style={{ color: '#C0392B', fontWeight: 500, fontSize: '14px', marginTop: 12 }}>Noe gikk galt. Prøv igjen.</p>
           )}
         </div>
       </section>
