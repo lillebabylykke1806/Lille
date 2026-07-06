@@ -19,7 +19,9 @@ import Kolikk from './components/kolikk/Kolikk';
 import Mat from './components/mat/Mat';
 import Pumping from './components/pumping/Pumping';
 import Temperatur from './components/temperatur/Temperatur';
+import Paywall from './components/paywall/Paywall';
 import { useLanguage } from './lib/i18n/LanguageContext';
+import { hasActiveSubscription, initRevenueCat, isNativeApp } from './lib/subscription';
 
 export default function Home() {
   const { t } = useLanguage();
@@ -38,6 +40,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   const [aktivtBarn, setAktivtBarn] = useState<any>(null);
   const [innsiktStartFane, setInnsiktStartFane] = useState<'språk' | 'innsikt'>('språk');
   const [harAbonnement, setHarAbonnement] = useState<boolean | null>(null);
+  const [visPaywall, setVisPaywall] = useState(false);
 
   useEffect(() => {
     const lastData = async () => {
@@ -81,17 +84,22 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         }
 
         if (!partnerHarAktivTilgang) {
-          const res = await fetch('/api/sjekk-abonnement', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: session.user.email }),
-          });
-          const { aktiv } = await res.json();
+          const aktiv = await hasActiveSubscription(
+            session.user.email || '',
+            session.user.id,
+          );
+          setHarAbonnement(aktiv);
           if (!aktiv) {
-            await supabase.auth.signOut();
-            setLaster(false);
-            return;
+            if (isNativeApp()) {
+              setVisPaywall(true);
+            } else {
+              await supabase.auth.signOut();
+              setLaster(false);
+              return;
+            }
           }
+        } else {
+          setHarAbonnement(true);
         }
       
         setBruker(session.user);
@@ -172,6 +180,17 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       setInnloggingFeil(t('innlogging.feilEpostPassord'));
     } else {
       localStorage.removeItem('lille_babybilde');
+      const aktiv = await hasActiveSubscription(data.user.email || '', data.user.id);
+      setHarAbonnement(aktiv);
+      if (!aktiv) {
+        if (isNativeApp()) {
+          setBruker(data.user);
+          setVisPaywall(true);
+          return;
+        }
+        await supabase.auth.signOut();
+        return;
+      }
       setBruker(data.user);
     }
   };
@@ -181,11 +200,22 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
     if (error) {
       setInnloggingFeil(t('innlogging.noeGikkGalt'));
-    } else {
-      const res = await fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: epost }) });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-      else setBruker(data.user);
+    } else if (data.user) {
+      if (isNativeApp()) {
+        await initRevenueCat(data.user.id);
+        setBruker(data.user);
+        setHarAbonnement(false);
+        setVisPaywall(true);
+      } else {
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: epost }),
+        });
+        const { url } = await res.json();
+        if (url) window.location.href = url;
+        else setBruker(data.user);
+      }
     }
   };
 
@@ -202,6 +232,18 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         <img src="/leep.png" alt="Lille" style={{ width: '180px', height: 'auto', mixBlendMode: 'multiply' }} />
         <div style={{ width: '28px', height: '28px', border: `2px solid ${farger.grønn}`, borderTop: '2px solid transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
       </div>
+    );
+  }
+
+  if (visPaywall && bruker && harAbonnement === false && isNativeApp()) {
+    return (
+      <Paywall
+        required
+        onSuccess={() => {
+          setHarAbonnement(true);
+          setVisPaywall(false);
+        }}
+      />
     );
   }
 
@@ -257,7 +299,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         {aktivSide === 'signaler' && <Signaler bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
         {aktivSide === 'kolikk' && <Kolikk bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'mat' && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
-        {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} aktivtBarn={aktivtBarn} onByttBarn={setAktivtBarn} />}
+        {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} aktivtBarn={aktivtBarn} onByttBarn={setAktivtBarn} onVisPaywall={() => setVisPaywall(true)} />}
         {aktivSide === 'pumping' && <Pumping bruker={bruker} />}
         {aktivSide === 'temperatur' && <Temperatur bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
       </div>
@@ -338,6 +380,13 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     onLukk={() => setVisRegistrer(false)}
   />
 )}
+
+      {visPaywall && bruker && harAbonnement && isNativeApp() && (
+        <Paywall
+          onSuccess={() => setVisPaywall(false)}
+          onClose={() => setVisPaywall(false)}
+        />
+      )}
     </div>
   );
 }

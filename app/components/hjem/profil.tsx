@@ -3,6 +3,7 @@ import { farger } from '../../lib/farger';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { isNativeApp } from '../../lib/subscription';
 import BarnVelger from './BarnVelger';
 import Innstillinger from './Innstillinger';
 
@@ -11,9 +12,10 @@ type Props = {
   onLoggUt: () => void;
   aktivtBarn?: any;
   onByttBarn?: (barn: any) => void;
+  onVisPaywall?: () => void;
 };
 
-export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Props) {
+export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn, onVisPaywall }: Props) {
   const { t } = useLanguage();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyFødselsdato, setBabyFødselsdato] = useState('');
@@ -140,6 +142,10 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn }: Pro
     : null;
 
   const åpneAbonnement = async () => {
+    if (isNativeApp()) {
+      onVisPaywall?.();
+      return;
+    }
     const res = await fetch('/api/portal-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
