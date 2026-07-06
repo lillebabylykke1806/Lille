@@ -56,7 +56,7 @@ async function getCurrentPackages(): Promise<PurchasesPackage[]> {
 async function getPackage(type: 'monthly' | 'yearly'): Promise<PurchasesPackage> {
   const packages = await getCurrentPackages();
   if (packages.length === 0) {
-    throw new Error('Ingen abonnementspakker tilgjengelig');
+    throw new Error('No subscription packages available');
   }
 
   const monthlyIds = ['$rc_monthly', 'monthly', 'lille_monthly'];
@@ -111,7 +111,7 @@ export async function initRevenueCat(appUserId?: string): Promise<void> {
 
 export async function purchaseMonthly(): Promise<{ success: boolean; error?: string; cancelled?: boolean }> {
   if (!isNative() || !initialized) {
-    return { success: false, error: 'Kjøp er kun tilgjengelig i appen' };
+    return { success: false, error: 'Purchases are only available in the app' };
   }
   try {
     const pkg = await getPackage('monthly');
@@ -120,13 +120,13 @@ export async function purchaseMonthly(): Promise<{ success: boolean; error?: str
   } catch (err: unknown) {
     const e = err as { userCancelled?: boolean; message?: string };
     if (e.userCancelled) return { success: false, cancelled: true };
-    return { success: false, error: e.message || 'Kjøpet feilet' };
+    return { success: false, error: e.message || 'Purchase failed' };
   }
 }
 
 export async function purchaseYearly(): Promise<{ success: boolean; error?: string; cancelled?: boolean }> {
   if (!isNative() || !initialized) {
-    return { success: false, error: 'Kjøp er kun tilgjengelig i appen' };
+    return { success: false, error: 'Purchases are only available in the app' };
   }
   try {
     const pkg = await getPackage('yearly');
@@ -135,21 +135,21 @@ export async function purchaseYearly(): Promise<{ success: boolean; error?: stri
   } catch (err: unknown) {
     const e = err as { userCancelled?: boolean; message?: string };
     if (e.userCancelled) return { success: false, cancelled: true };
-    return { success: false, error: e.message || 'Kjøpet feilet' };
+    return { success: false, error: e.message || 'Purchase failed' };
   }
 }
 
 export async function restorePurchases(): Promise<{ success: boolean; error?: string }> {
   if (!isNative() || !initialized) {
-    return { success: false, error: 'Gjenoppretting er kun tilgjengelig i appen' };
+    return { success: false, error: 'Restore is only available in the app' };
   }
   try {
     const { customerInfo } = await Purchases.restorePurchases();
     const active = await handlePurchaseResult(customerInfo);
-    return { success: active, error: active ? undefined : 'Ingen tidligere kjøp funnet' };
+    return { success: active, error: active ? undefined : 'No previous purchases found' };
   } catch (err: unknown) {
     const e = err as { message?: string };
-    return { success: false, error: e.message || 'Kunne ikke gjenopprette kjøp' };
+    return { success: false, error: e.message || 'Could not restore purchases' };
   }
 }
 

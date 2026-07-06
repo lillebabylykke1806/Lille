@@ -103,7 +103,7 @@ const [visAlleTiltak, setVisAlleTiltak] = useState(false);
       beregnStatistikk(parsed);
       beregnNesteUro(parsed);
     }
-  }, [bruker?.id, aktivtBarn?.navn]);
+  }, [bruker?.id, aktivtBarn?.navn, t]);
 
   const beregnStatistikk = (data: UroLogg[]) => {
     // Tiltak
@@ -147,7 +147,7 @@ const [visAlleTiltak, setVisAlleTiltak] = useState(false);
     const tidspunkt = `${String(timer).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
     if (omMinutter > 0 && omMinutter < 240) {
       setNesteUro({
-        om: omMinutter < 60 ? `Om ca. ${omMinutter} min` : `Om ca. ${Math.floor(omMinutter / 60)}t ${omMinutter % 60}min`,
+        om: omMinutter < 60 ? t('hjem.omMin', { n: omMinutter }) : omMinutter % 60 > 0 ? t('hjem.omTimerMin', { n: Math.floor(omMinutter / 60), m: omMinutter % 60 }) : t('hjem.omTimer', { n: Math.floor(omMinutter / 60) }),
         tidspunkt,
       });
     }
@@ -236,9 +236,9 @@ Data: ${JSON.stringify(logg.slice(0, 10))}`
   const medalje = (i: number) => i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';
 
   const resultatValg = [
-    { id: 'bra' as const, label: '😊 Hjalp', farge: farger.grønn, bg: farger.grønnLys },
-    { id: 'delvis' as const, label: '😐 Litt bedre', farge: '#8B6340', bg: '#FFF8EC' },
-    { id: 'ikke' as const, label: '😞 Ingen effekt', farge: '#BE123C', bg: '#FFF1F2' },
+    { id: 'bra' as const, label: t('kolikk.hjalp'), farge: farger.grønn, bg: farger.grønnLys },
+    { id: 'delvis' as const, label: t('kolikk.littBedre'), farge: '#8B6340', bg: '#FFF8EC' },
+    { id: 'ikke' as const, label: t('kolikk.ingenEffekt'), farge: '#BE123C', bg: '#FFF1F2' },
   ];
 
   const innsiktKort = [

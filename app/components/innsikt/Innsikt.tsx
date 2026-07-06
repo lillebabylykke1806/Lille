@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { søvnMinutterForDag } from '../../lib/søvnUtils';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { Locale } from '../../lib/i18n/translations';
 
@@ -137,8 +138,7 @@ export default function Innsikt({ bruker, aktivtBarn, onNavigate, startFane }: P
 
   const dagensSøvnMinutter = () => {
     const dagensdato = new Date().toISOString().split('T')[0];
-    return data.lurer?.filter((l: any) => (l.type === 'lur' || l.type === 'natt') && l.dato === dagensdato)
-      ?.reduce((sum: number, l: any) => sum + (l.varighet || 0), 0) || 0;
+    return søvnMinutterForDag(data.lurer || [], dagensdato);
   };
 
   const hentInnsikter = useCallback(async () => {

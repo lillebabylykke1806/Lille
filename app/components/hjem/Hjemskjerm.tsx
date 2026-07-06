@@ -5,7 +5,9 @@ import { supabase } from '../../lib/supabase';
 import { hentProfilId } from '../../lib/profilId';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { Locale } from '../../lib/i18n/translations';
+import { scheduleBabyNotifications } from '../../lib/notifications';
 import BarnVelger from './BarnVelger';
+import { lærtVåkenvinduMinutter } from '../../lib/søvnUtils';
 
 const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
   no: 'norsk',
@@ -117,27 +119,18 @@ const IkonKomponent = ({ type }: { type: string }) => {
   );
   };
 
-const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
-  const alderIMnd = () => {
-    if (!fødselsdato) return 3;
-    const nå = new Date();
-    const født = new Date(fødselsdato);
-    return (nå.getFullYear() - født.getFullYear()) * 12 + (nå.getMonth() - født.getMonth());
-  };
-  const alder = alderIMnd();
-  let våkenvindu = 90;
-  if (alder < 2) våkenvindu = 45;
-  else if (alder < 4) våkenvindu = 75;
-  else if (alder < 6) våkenvindu = 120;
-  else if (alder < 9) våkenvindu = 150;
-  else if (alder < 12) våkenvindu = 180;
-  else våkenvindu = 210;
+const beregnNesteLur = (fødselsdato: string, lurer: any[], t: (nøkkel: string, variabler?: Record<string, string | number>) => string) => {
+  const våkenvindu = lærtVåkenvinduMinutter(lurer, fødselsdato);
 
-  const sisteOppvåkning = [...(lurer || [])].sort((a: any, b: any) => b.start?.localeCompare(a.start))[0];
+  const sisteOppvåkning = [...(lurer || [])]
+    .filter((l: { type: string; start?: string }) => l.type === 'oppvåkning' && l.start)
+    .sort((a: { dato?: string; start?: string }, b: { dato?: string; start?: string }) =>
+      `${b.dato || ''}T${b.start || ''}`.localeCompare(`${a.dato || ''}T${a.start || ''}`)
+    )[0];
   if (!sisteOppvåkning?.start) return null;
 
   const [timer, minutter] = sisteOppvåkning.start.split(':').map(Number);
-  const oppvåkningTid = new Date();
+  const oppvåkningTid = new Date(`${sisteOppvåkning.dato || new Date().toISOString().split('T')[0]}T00:00:00`);
   oppvåkningTid.setHours(timer, minutter, 0, 0);
 
   const nesteLurTid = new Date(oppvåkningTid.getTime() + våkenvindu * 60000);
@@ -149,11 +142,12 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[]) => {
   const nåTimer = nå.getHours();
   const erLeggetid = nåTimer >= 18 || nesteLurTid.getHours() >= 18;
 
-  const omTekst = omMinutter <= 0 ? 'Nå!'
-    : omMinutter < 60 ? `Om ca. ${omMinutter} min`
-    : `Om ca. ${Math.floor(omMinutter / 60)}t ${omMinutter % 60 > 0 ? `${omMinutter % 60}min` : ''}`;
+  const omTekst = omMinutter <= 0 ? t('felles.nå')
+    : omMinutter < 60 ? t('hjem.omMin', { n: omMinutter })
+    : omMinutter % 60 > 0 ? t('hjem.omTimerMin', { n: Math.floor(omMinutter / 60), m: omMinutter % 60 })
+    : t('hjem.omTimer', { n: Math.floor(omMinutter / 60) });
 
-  return { tid: klokkeslett, om: omTekst, type: erLeggetid ? 'natt' as const : 'lur' as const };
+  return { tid: klokkeslett, om: omTekst, type: erLeggetid ? 'natt' as const : 'lur' as const, erNå: omMinutter <= 0 };
 };
 
 const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: any; aktivtBarn: any; babyNavn: string; onNavigate: (side: string, fane?: string) => void }) => {
@@ -221,8 +215,8 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#A8B5A2' }}>{t('hjem.analyserer', { navn: babyNavn })}</div>
           ) : !innsikt ? (
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
-              <span style={{ fontSize: '15px' }}>💛</span> <strong>Lille lærer av registreringene dine.</strong><br/>
-              Registrer søvn og signaler noen dager, så begynner AI å oppdage mønstre.
+              <span style={{ fontSize: '15px' }}>💛</span> <strong>{t('hjem.aiTomTittel')}</strong><br/>
+              {t('hjem.aiTomTekst')}
             </div>
           ) : (
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{innsikt}</div>
@@ -246,7 +240,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [tilstandOverstyrt, setTilstandOverstyrt] = useState(false);
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [dagensFlyt, setDagensFlyt] = useState<any[]>([]);
-  const [nesteLur, setNesteLur] = useState<{ tid: string; om: string; type: 'lur' | 'natt' } | null>(null);
+  const [nesteLur, setNesteLur] = useState<{ tid: string; om: string; type: 'lur' | 'natt'; erNå: boolean } | null>(null);
   const [lurPågår, setLurPågår] = useState(false);
   const [lurStartTid, setLurStartTid] = useState<string | null>(null);
   const [lurType, setLurType] = useState<'lur' | 'natt'>('lur');
@@ -373,17 +367,21 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     if (!profilId) return;
 
     const dagensdato = new Date().toISOString().split('T')[0];
+    const fjortenDagerSiden = new Date();
+    fjortenDagerSiden.setDate(fjortenDagerSiden.getDate() - 14);
+    const fraDato = fjortenDagerSiden.toISOString().split('T')[0];
 
-    const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes] = await Promise.all([
-      supabase.from('lurer').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
+    const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes, uroRes] = await Promise.all([
+      supabase.from('lurer').select('*').eq('profil_id', profilId).gte('dato', fraDato).order('start', { ascending: false }),
       supabase.from('amming').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
       supabase.from('bleie').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
       supabase.from('milepæler').select('*').eq('profil_id', profilId).eq('dato', dagensdato),
       supabase.from('mat').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
       supabase.from('pumping').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
+      supabase.from('uro_logg').select('tidspunkt').eq('profil_id', profilId).order('dato', { ascending: false }).limit(15),
     ]);
 
-    const lurItems = (lurRes.data || []).map((l: any) => ({
+    const lurItems = (lurRes.data || []).filter((l: { dato: string }) => l.dato === dagensdato).map((l: any) => ({
       id: l.id,
       tid: l.start,
       slutt: l.slutt || null,
@@ -446,9 +444,29 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     setDagensFlyt(alle);
     setAlleDagensHendelser(alle);
 
-    const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || []);
+    const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || [], t);
     setNesteLur(lurResult);
-  }, [aktivtBarn, bruker, t]);
+
+    const oppvåkninger = (lurRes.data || []).filter((l: { type: string; start?: string }) => l.type === 'oppvåkning' && l.start);
+    const sisteOppvåkning = [...oppvåkninger].sort((a: { dato: string; start?: string }, b: { dato: string; start?: string }) =>
+      `${b.dato}T${b.start || ''}`.localeCompare(`${a.dato}T${a.start || ''}`)
+    )[0];
+    let lastWakeTime: Date | null = null;
+    if (sisteOppvåkning?.start) {
+      const [timer, minutter] = sisteOppvåkning.start.split(':').map(Number);
+      lastWakeTime = new Date(`${sisteOppvåkning.dato}T00:00:00`);
+      lastWakeTime.setHours(timer, minutter, 0, 0);
+    }
+
+    scheduleBabyNotifications({
+      babyName: babyNavn || aktivtBarn?.navn || '',
+      fødselsdato: aktivtBarn?.fødselsdato || '',
+      lastWakeTime,
+      lurer: lurRes.data || [],
+      uroLogg: uroRes.data || [],
+      locale,
+    });
+  }, [aktivtBarn, bruker, t, locale, babyNavn]);
 
   useEffect(() => {
     const lagretType = localStorage.getItem('lille_sovtype');
@@ -477,7 +495,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       }
       if (tilstandOverstyrt) return;
 
-      if (nesteLur?.om === 'Nå!') {
+      if (nesteLur?.erNå) {
         setBabyTilstand('trøtt');
         return;
       }
@@ -604,13 +622,13 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
           const f = auraFarger[babyTilstand] || auraFarger.rolig;
           return (
             <>
-              <div style={{ position: 'absolute', width: '300px', height: '280px', background: `radial-gradient(ellipse, ${f.c1} 0%, transparent 70%)`, borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%', opacity: 0.35, filter: 'blur(22px)', transform: 'translate(40px, -20px)', transition: 'all 1s ease' }} />
-              <div style={{ position: 'absolute', width: '280px', height: '260px', background: `radial-gradient(ellipse, ${f.c2} 0%, transparent 70%)`, borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%', opacity: 0.25, filter: 'blur(20px)', transform: 'translate(-40px, 10px)', transition: 'all 1s ease' }} />
-              <div style={{ position: 'absolute', width: '260px', height: '260px', background: `radial-gradient(ellipse at 50% 50%, ${f.c3} 0%, transparent 70%)`, borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%', opacity: 0.7, filter: 'blur(16px)', transition: 'all 1s ease' }} />
+              <div style={{ position: 'absolute', width: '300px', height: '280px', background: `radial-gradient(ellipse, ${f.c1} 0%, transparent 70%)`, borderRadius: '62% 38% 54% 46% / 55% 48% 52% 45%', opacity: 0.35, filter: 'blur(22px)', transform: 'translate(40px, -20px)', transition: 'all 1s ease', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', width: '280px', height: '260px', background: `radial-gradient(ellipse, ${f.c2} 0%, transparent 70%)`, borderRadius: '45% 55% 38% 62% / 52% 60% 40% 48%', opacity: 0.25, filter: 'blur(20px)', transform: 'translate(-40px, 10px)', transition: 'all 1s ease', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', width: '260px', height: '260px', background: `radial-gradient(ellipse at 50% 50%, ${f.c3} 0%, transparent 70%)`, borderRadius: '55% 45% 62% 38% / 48% 55% 45% 52%', opacity: 0.7, filter: 'blur(16px)', transition: 'all 1s ease', pointerEvents: 'none' }} />
             </>
           );
         })()}
-        <div style={{ position: 'absolute', width: '200px', height: '200px', background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(6px)' }} />
+        <div style={{ position: 'absolute', width: '200px', height: '200px', background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(6px)', pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           {babyBilde ? (
             <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(255,255,255,0.9)', boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}>
@@ -745,26 +763,28 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
           </button>
         </div>
       ) : dagensFlyt.filter(h => h.type === 'oppvåkning').length === 0 ? (
-        <div style={{ padding: '0 24px 16px' }}>
-          <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', padding: '14px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#7B746D', marginBottom: '12px', lineHeight: 1.6 }}>
-              {t('hjem.registrerOppvåkning', { navn: babyNavn })}
-            </div>
-            <button onClick={async () => {
-              const profilId = await hentProfilId(aktivtBarn, bruker);
-              if (!profilId) return;
-              const nå = new Date();
-              await supabase.from('lurer').insert({
-                profil_id: profilId,
-                dato: nå.toISOString().split('T')[0],
-                type: 'oppvåkning',
-                start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-                slutt: null, varighet: 0, signaler: '',
-              });
-            }} style={{ width: '100%', padding: '12px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '12px', fontSize: '13px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              {t('hjem.registrerOppvåkningKnapp')}
-            </button>
-          </div>
+        <div style={{ padding: '0 24px 16px', position: 'relative', zIndex: 5 }}>
+          <button
+            type="button"
+            onClick={() => onNavigate('sovn-morgen')}
+            style={{
+              width: '100%',
+              padding: '16px',
+              backgroundColor: farger.grønnLys,
+              border: `1px solid ${farger.grønn}`,
+              borderRadius: '16px',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: farger.grønn,
+              cursor: 'pointer',
+              fontFamily: 'var(--font-inter)',
+              lineHeight: 1.6,
+              textAlign: 'left',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+            }}
+          >
+            {t('hjem.registrerOppvåkning', { navn: babyNavn || t('profil.babyen').toLowerCase() })}
+          </button>
         </div>
       ) : null}
       {/* Snarveier */}
@@ -859,8 +879,8 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
   <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setRedigerOppvåkning(null)}>
     <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
       <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
-      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>Endre oppvåkningstid</div>
-      <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>Tidspunkt</div>
+      <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('hjem.endreOppvåkningstid')}</div>
+      <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('hjem.tidspunkt')}</div>
       <input type="time" value={nyOppvåkningTid} onChange={e => setNyOppvåkningTid(e.target.value)} style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
       <button onClick={async () => {
         if (!redigerOppvåkning?.id) return;
@@ -868,7 +888,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
         setRedigerOppvåkning(null);
         lastDagensFlyt();
       }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-        Lagre
+        {t('felles.lagre')}
       </button>
       <button onClick={async () => {
         if (!redigerOppvåkning?.id) return;
@@ -876,7 +896,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
         setRedigerOppvåkning(null);
         lastDagensFlyt();
       }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: '1px solid #C48E7B', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#C48E7B', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginTop: '10px' }}>
-        🗑️ Slett hendelse
+        {t('felles.slettHendelse')}
       </button>
     </div>
     
@@ -897,10 +917,10 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
         setSlettHendelse(null);
         lastDagensFlyt();
       }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: '1px solid #C48E7B', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#C48E7B', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
-        🗑️ Slett hendelse
+        {t('felles.slettHendelse')}
       </button>
       <button onClick={() => setSlettHendelse(null)} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '15px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-        Avbryt
+        {t('felles.avbryt')}
       </button>
     </div>
   </div>
@@ -963,10 +983,10 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
               <div style={{ fontSize: '32px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', letterSpacing: '4px', marginBottom: '4px' }}>VENN20</div>
               <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('hjem.rabattBeskrivelse')}</div>
             </div>
-            <button onClick={() => { navigator.clipboard.writeText('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); setKopiert(true); setTimeout(() => setKopiert(false), 3000); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
+            <button onClick={() => { navigator.clipboard.writeText(t('profil.delingstekst')); setKopiert(true); setTimeout(() => setKopiert(false), 3000); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønn, border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}>
               {kopiert ? t('hjem.kopiertBekreftelse') : t('hjem.kopierDelingstekst')}
             </button>
-            <button onClick={() => { const tekst = encodeURIComponent('Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no'); window.open(`sms:?body=${tekst}`); }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
+            <button onClick={() => { const tekst = encodeURIComponent(t('profil.delingstekst')); window.open(`sms:?body=${tekst}`); }} style={{ width: '100%', padding: '16px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
               {t('hjem.sendSomSMS')}
             </button>
           </div>

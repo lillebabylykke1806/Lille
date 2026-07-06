@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json({ error: "Stripe ikke konfigurert" }, { status: 500 });
+    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
   }
   
   try {
@@ -23,6 +23,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url })
   } catch (err) {
     console.error(err)
-    return NextResponse.json({ error: "Noe gikk galt" }, { status: 500 })
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
   }
 }

@@ -22,6 +22,8 @@ import Temperatur from './components/temperatur/Temperatur';
 import Paywall from './components/paywall/Paywall';
 import { useLanguage } from './lib/i18n/LanguageContext';
 import { hasActiveSubscription, initRevenueCat, isNativeApp } from './lib/subscription';
+import { requestNotificationPermissionIfNeeded } from './lib/notifications';
+import { watchScreenshots } from './lib/screenshot';
 
 export default function Home() {
   const { t } = useLanguage();
@@ -41,6 +43,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   const [innsiktStartFane, setInnsiktStartFane] = useState<'språk' | 'innsikt'>('språk');
   const [harAbonnement, setHarAbonnement] = useState<boolean | null>(null);
   const [visPaywall, setVisPaywall] = useState(false);
+  const [visScreenshotToast, setVisScreenshotToast] = useState(false);
 
   useEffect(() => {
     const lastData = async () => {
@@ -140,6 +143,30 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     lastData();
   }, []);
   
+  useEffect(() => {
+    if (!bruker) return;
+    requestNotificationPermissionIfNeeded();
+  }, [bruker]);
+
+  useEffect(() => {
+    if (!bruker) return;
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    let cleanup = () => {};
+
+    watchScreenshots(() => {
+      setVisScreenshotToast(true);
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => setVisScreenshotToast(false), 4000);
+    }).then((unwatch) => {
+      cleanup = unwatch;
+    });
+
+    return () => {
+      if (hideTimer) clearTimeout(hideTimer);
+      cleanup();
+    };
+  }, [bruker]);
+
   useEffect(() => {
     if (!bruker) return;
     const sjekkGlemtLeggetid = async () => {
@@ -280,6 +307,12 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative' }}>
       <div style={{ overflowY: 'auto', height: '100vh', paddingBottom: '90px' }}>
       {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(side, fane) => {
+        if (side === 'sovn-morgen') {
+          setÅpneMorgen(true);
+          setÅpneEtterregistrer(false);
+          setAktivSide('sovn');
+          return;
+        }
         if (side === 'sovn') {
           setÅpneMorgen(false);
           setÅpneEtterregistrer(false);
@@ -351,22 +384,22 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     <div style={{ backgroundColor: farger.hvit, borderRadius: '24px', padding: '28px 24px', width: '100%', maxWidth: '380px', textAlign: 'center' }}>
       <div style={{ fontSize: '40px', marginBottom: '16px' }}>🌙</div>
       <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '10px' }}>
-        Glemte du å logge leggetiden?
+        {t('hjem.glemtLeggetidTittel')}
       </div>
       <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.7, marginBottom: '24px' }}>
-        Ingen stress – du kan registrere nattøkten i etterkant hvis du vil ha den med i oversikten.
+        {t('hjem.glemtLeggetidTekst')}
       </div>
       <button
         onClick={() => { setVisGlemtPopup(false); setÅpneEtterregistrer(true); setÅpneMorgen(false); setAktivSide('sovn'); }}
         style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '14px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)', marginBottom: '10px' }}
       >
-        Registrer leggetid
+        {t('hjem.registrerLeggetid')}
       </button>
       <button
         onClick={() => { setVisGlemtPopup(false); setÅpneMorgen(true); setÅpneEtterregistrer(false); setAktivSide('sovn'); }}
         style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '14px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
       >
-        Start ny dag
+        {t('hjem.startNyDag')}
       </button>
     </div>
   </div>
@@ -386,6 +419,29 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
           onSuccess={() => setVisPaywall(false)}
           onClose={() => setVisPaywall(false)}
         />
+      )}
+
+      {visScreenshotToast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '110px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 400,
+          width: 'calc(100% - 48px)',
+          maxWidth: '380px',
+          padding: '14px 18px',
+          backgroundColor: 'rgba(63, 58, 55, 0.92)',
+          color: '#FDFAF6',
+          borderRadius: '16px',
+          fontSize: '14px',
+          fontFamily: 'var(--font-inter), sans-serif',
+          textAlign: 'center',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+          pointerEvents: 'none',
+        }}>
+          Don&apos;t forget to tag @lilleapp 🤍
+        </div>
       )}
     </div>
   );

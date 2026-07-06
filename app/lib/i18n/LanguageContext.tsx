@@ -11,20 +11,20 @@ type LanguageContextType = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 const detekterSpråk = (): Locale => {
-  if (typeof window === 'undefined') return 'no';
+  if (typeof window === 'undefined') return 'en';
   const lagret = localStorage.getItem('lille_språk') as Locale | null;
   if (lagret && ['no', 'en', 'sv', 'da', 'de'].includes(lagret)) return lagret;
 
   const browserSpråk = navigator.language.toLowerCase();
+  if (browserSpråk.startsWith('no')) return 'no';
   if (browserSpråk.startsWith('sv')) return 'sv';
   if (browserSpråk.startsWith('da')) return 'da';
   if (browserSpråk.startsWith('de')) return 'de';
-  if (browserSpråk.startsWith('en')) return 'en';
-  return 'no';
+  return 'en';
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('no');
+  const [locale, setLocaleState] = useState<Locale>('en');
 
   useEffect(() => {
     setLocaleState(detekterSpråk());
@@ -38,7 +38,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const t = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>): string => {
     const oversettelse = oversettelser[nøkkel];
     if (!oversettelse) return nøkkel;
-    let tekst: string = oversettelse[locale] || oversettelse.no;
+    let tekst: string = oversettelse[locale] || oversettelse.en;
     if (variabler) {
       Object.entries(variabler).forEach(([key, value]) => {
         tekst = tekst.replace(`{${key}}`, String(value));

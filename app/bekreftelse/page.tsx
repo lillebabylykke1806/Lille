@@ -1,9 +1,11 @@
 ﻿'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '../lib/i18n/LanguageContext';
 
 export default function Bekreftelse() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,11 +31,11 @@ export default function Bekreftelse() {
     }}>
       <div style={{ fontSize: '48px' }}>🌿</div>
       <h1 style={{ fontSize: '26px', fontStyle: 'italic', color: '#B05A2F', margin: 0 }}>
-        Velkommen til Lille!
+        {t('bekreftelse.tittel')}
       </h1>
       <p style={{ fontSize: '15px', color: '#8A7060', fontFamily: 'var(--font-inter), sans-serif', lineHeight: 1.7, margin: 0 }}>
-        Din 7 dagers gratis prøveperiode er nå aktivert.<br />
-        Du sendes til appen om et øyeblikk...
+        {t('bekreftelse.prøveperiode')}<br />
+        {t('bekreftelse.redirect')}
       </p>
       <div style={{
         width: '28px', height: '28px',

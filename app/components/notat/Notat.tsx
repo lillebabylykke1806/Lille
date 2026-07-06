@@ -313,14 +313,14 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
     <div style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('notat.alderMilepæler')}</div>
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
       {[
-        { tekst: '⭐ Første smil', mal: '⭐ Første smil! 🤍' },
-        { tekst: '⭐ Første latter', mal: '⭐ Første latter! 😄' },
-        { tekst: '⭐ Rullet fra mage til rygg', mal: '⭐ Rullet fra mage til rygg! 🎉' },
-        { tekst: '⭐ Rullet fra rygg til mage', mal: '⭐ Rullet fra rygg til mage! 🎉' },
-        { tekst: '⭐ Fant tærne', mal: '⭐ Fant tærne! 🦶' },
-        { tekst: '⭐ Satt uten støtte', mal: '⭐ Satt uten støtte! 💪' },
-        { tekst: '⭐ Krabbet', mal: '⭐ Krabbet for første gang! 🐛' },
-        { tekst: '⭐ Reiste seg opp', mal: '⭐ Reiste seg opp! 🙌' },
+        { tekst: t('notat.milepælFørsteSmil'), mal: t('notat.milepælFørsteSmilMal') },
+        { tekst: t('notat.milepælFørsteLatter'), mal: t('notat.milepælFørsteLatterMal') },
+        { tekst: t('notat.milepælRulletMageRygg'), mal: t('notat.milepælRulletMageRyggMal') },
+        { tekst: t('notat.milepælRulletRyggMage'), mal: t('notat.milepælRulletRyggMageMal') },
+        { tekst: t('notat.milepælFantTærne'), mal: t('notat.milepælFantTærneMal') },
+        { tekst: t('notat.milepælSattUtenStøtte'), mal: t('notat.milepælSattUtenStøtteMal') },
+        { tekst: t('notat.milepælKrabbet'), mal: t('notat.milepælKrabbetMal') },
+        { tekst: t('notat.milepælReisteSeg'), mal: t('notat.milepælReisteSegMal') },
       ].map((m, i) => (
         <button key={i} onClick={() => setNyTekst(m.mal)}
           style={{ padding: '6px 12px', borderRadius: '20px', border: `1px solid ${farger.kremMørk}`, backgroundColor: nyTekst === m.mal ? '#FFF3D6' : farger.bakgrunn, fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekst, cursor: 'pointer' }}>

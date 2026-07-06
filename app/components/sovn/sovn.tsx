@@ -7,6 +7,7 @@ import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { søvnMinutterForDag } from '../../lib/søvnUtils';
 import type { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
 
 const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
@@ -86,6 +87,16 @@ const TidslinjeIkon = ({ type, mørk = false }: { type: string; mørk?: boolean 
 export default function Sovn({ bruker, aktivtBarn, åpneEtterregistrer, åpneMorgen, onNavigate, onNavigasjonKonsumert }: Props) {
   const { locale, t } = useLanguage();
   const signaler = getSignaler(t);
+  const kvalitetLabel = (k: string) =>
+    k === 'Utmerket' ? t('søvn.kvalitetUtmerket')
+    : k === 'God' ? t('søvn.kvalitetGod')
+    : k === 'Ok' ? t('søvn.kvalitetOk')
+    : t('søvn.kvalitetUrolig');
+  const kvalitetTekst = (k: string) =>
+    k === 'Utmerket' ? t('søvn.kvalitetUtmerketTekst')
+    : k === 'God' ? t('søvn.kvalitetGodTekst')
+    : k === 'Ok' ? t('søvn.kvalitetOkTekst')
+    : t('søvn.kvalitetUroligTekst');
   const [visning, setVisning] = useState<'velg' | 'lurAktiv' | 'nattAktiv' | 'etterregistrer' | 'morgen'>('velg');
   const [startTid, setStartTid] = useState<Date | null>(null);
   const [lurId, setLurId] = useState<number | null>(null);
@@ -170,6 +181,10 @@ const [aiLurInnsikt, setAiLurInnsikt] = useState('');
   }, [bruker, aktivtBarn, t]);
 
   useEffect(() => {
+    if (åpneMorgen) {
+      lastTidslinje();
+      return;
+    }
     const lagretStartTid = localStorage.getItem('lille_starttid');
     const lagretType = localStorage.getItem('lille_sovtype');
     const lagretLurId = localStorage.getItem('lille_lurid');
@@ -180,7 +195,7 @@ const [aiLurInnsikt, setAiLurInnsikt] = useState('');
       if (lagretLurId) setLurId(parseInt(lagretLurId));
     }
     lastTidslinje();
-  }, [lastTidslinje]);
+  }, [lastTidslinje, åpneMorgen]);
 
   useEffect(() => {
     if (åpneEtterregistrer) {
@@ -194,11 +209,56 @@ const [aiLurInnsikt, setAiLurInnsikt] = useState('');
   }, [åpneEtterregistrer, onNavigasjonKonsumert]);
 
   useEffect(() => {
-    if (åpneMorgen) {
+    if (!åpneMorgen) return;
+
+    const openMorgen = async () => {
       setVisning('morgen');
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (profilId) {
+        const iGår = new Date();
+        iGår.setDate(iGår.getDate() - 1);
+        const iGårStr = iGår.toISOString().split('T')[0];
+        const iDag = dagensdato();
+
+        const { data } = await supabase
+          .from('lurer')
+          .select('*')
+          .eq('profil_id', profilId)
+          .gte('dato', iGårStr)
+          .lte('dato', iDag);
+
+        const lurer = data || [];
+        const nattEntries = lurer
+          .filter((l: { type: string }) => l.type === 'natt')
+          .sort((a: { dato: string; start?: string }, b: { dato: string; start?: string }) =>
+            `${b.dato}T${b.start || ''}`.localeCompare(`${a.dato}T${a.start || ''}`)
+          );
+        const sisteNatt = nattEntries[0];
+
+        if (sisteNatt?.varighet) {
+          setNattMinutter(sisteNatt.varighet);
+        } else if (sisteNatt?.start) {
+          const start = new Date(`${sisteNatt.dato}T${sisteNatt.start.slice(0, 5)}:00`);
+          const end = sisteNatt.slutt
+            ? (() => {
+                const endSameDay = new Date(`${sisteNatt.dato}T${sisteNatt.slutt.slice(0, 5)}:00`);
+                return endSameDay <= start
+                  ? new Date(endSameDay.getTime() + 24 * 60 * 60 * 1000)
+                  : endSameDay;
+              })()
+            : new Date();
+          setNattMinutter(Math.max(0, Math.floor((end.getTime() - start.getTime()) / 60000)));
+        } else {
+          setNattMinutter(søvnMinutterForDag(lurer, iDag) + søvnMinutterForDag(lurer, iGårStr));
+        }
+      }
+
+      lastTidslinje();
       onNavigasjonKonsumert?.();
-    }
-  }, [åpneMorgen, onNavigasjonKonsumert]);
+    };
+
+    openMorgen();
+  }, [åpneMorgen, aktivtBarn, bruker, onNavigasjonKonsumert, lastTidslinje]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -469,7 +529,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
       <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
         <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
         <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>
-          Rediger {redigerLur?.tekst}
+          {t('søvn.rediger', { tekst: redigerLur?.tekst || '' })}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
           <div>
@@ -482,8 +542,8 @@ Svar KUN med observasjonen, ingen introduksjon.`
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-  <button onClick={() => setRedigerLur(null)} style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Avbryt</button>
-  <button onClick={lagreRedigertLur} style={{ flex: 2, padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Lagre</button>
+  <button onClick={() => setRedigerLur(null)} style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', fontSize: '14px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>{t('felles.avbryt')}</button>
+  <button onClick={lagreRedigertLur} style={{ flex: 2, padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>{t('felles.lagre')}</button>
 </div>
 <button onClick={async () => {
   if (!redigerLur?.id) return;
@@ -491,7 +551,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
   setRedigerLur(null);
   lastTidslinje();
 }} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: '1px solid #C48E7B', borderRadius: '12px', fontSize: '14px', color: '#C48E7B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-  🗑️ Slett registrering
+  {t('søvn.slettRegistrering')}
 </button>
       </div>
     </div>
@@ -570,9 +630,9 @@ Svar KUN med observasjonen, ingen introduksjon.`
           <div style={{ padding: '12px', backgroundColor: farger.bakgrunn, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ fontSize: '20px' }}>{søvnkvalitet === 'Utmerket' ? '⭐' : søvnkvalitet === 'God' ? '🌿' : søvnkvalitet === 'Ok' ? '🌙' : '💛'}</div>
             <div>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600' }}>{søvnkvalitet} natt</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600' }}>{t('søvn.nattkvalitet', { kvalitet: kvalitetLabel(søvnkvalitet) })}</div>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                {søvnkvalitet === 'Utmerket' ? 'Baby sov fantastisk! Du kan være stolt 🤍' : søvnkvalitet === 'God' ? 'En god natt med lite uro' : søvnkvalitet === 'Ok' ? 'Litt urolig, men ok' : 'Tøff natt – du gjør det bra!'}
+                {kvalitetTekst(søvnkvalitet)}
               </div>
             </div>
           </div>
@@ -626,7 +686,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
               <line x1="28" y1="18" x2="33" y2="18" stroke="#F4A853" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             <div>
-              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>Lur</div>
+              <div style={{ fontSize: '16px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, marginBottom: '2px', fontWeight: '400' }}>{t('søvn.lurLabel')}</div>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('søvn.dagtidssøvn')}</div>
             </div>
             <div style={{ marginLeft: 'auto', color: farger.tekstLys, fontSize: '18px' }}>›</div>
@@ -677,7 +737,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
           <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
             {(['lur', 'natt'] as const).map(sovntype => (
               <button key={sovntype} onClick={() => setNyType(sovntype)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: nyType === sovntype ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: nyType === sovntype ? farger.grønnLys : farger.bakgrunn, color: nyType === sovntype ? farger.grønn : farger.tekstLys, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', fontWeight: nyType === sovntype ? '600' : '400' }}>
-                {sovntype === 'lur' ? 'Lur' : t('søvn.nattesøvn')}
+                {sovntype === 'lur' ? t('søvn.lurLabel') : t('søvn.nattesøvn')}
               </button>
             ))}
           </div>
@@ -695,8 +755,8 @@ Svar KUN med observasjonen, ingen introduksjon.`
             </div>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={() => setVisning('velg')} style={{ flex: 1, padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '13px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Avbryt</button>
-            <button onClick={lagreEtterregistrert} style={{ flex: 1, padding: '12px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>Lagre</button>
+            <button onClick={() => setVisning('velg')} style={{ flex: 1, padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '13px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>{t('felles.avbryt')}</button>
+            <button onClick={lagreEtterregistrert} style={{ flex: 1, padding: '12px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>{t('felles.lagre')}</button>
           </div>
         </div>
       </div>
@@ -847,7 +907,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
               <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
                 <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
                 <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('søvn.leggTilEgetSignal')}</div>
-                <input type="text" value={egetSignalTekst} onChange={e => setEgetSignalTekst(e.target.value)} placeholder="F.eks. Klynket, Gned ansiktet..." autoFocus style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }} />
+                <input type="text" value={egetSignalTekst} onChange={e => setEgetSignalTekst(e.target.value)} placeholder={t('søvn.signalPlaceholder')} autoFocus style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }} />
                 <button onClick={async () => {
                   if (!egetSignalTekst.trim()) return;
                   const nyeSignaler = [...valgteSignaler, egetSignalTekst.trim()];
@@ -856,7 +916,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
                   if (lurId) await supabase.from('lurer').update({ signaler: nyeSignaler.join(',') }).eq('id', lurId);
                   setEgetSignalTekst(''); setVisEgetSignal(false);
                 }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                  Lagre signal
+                  {t('søvn.lagreSignal')}
                 </button>
               </div>
             </div>
@@ -1030,7 +1090,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
               <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px' }}>
                 <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
                 <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '20px' }}>{t('søvn.leggTilEgetSignal')}</div>
-                <input type="text" value={egetSignalTekst} onChange={e => setEgetSignalTekst(e.target.value)} placeholder="F.eks. Klynket, Gned ansiktet..." autoFocus style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }} />
+                <input type="text" value={egetSignalTekst} onChange={e => setEgetSignalTekst(e.target.value)} placeholder={t('søvn.signalPlaceholder')} autoFocus style={{ width: '100%', padding: '14px 16px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px' }} />
                 <button onClick={async () => {
                   if (!egetSignalTekst.trim()) return;
                   const nyeSignaler = [...valgteSignaler, egetSignalTekst.trim()];
@@ -1039,7 +1099,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
                   if (lurId) await supabase.from('lurer').update({ signaler: nyeSignaler.join(',') }).eq('id', lurId);
                   setEgetSignalTekst(''); setVisEgetSignal(false);
                 }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-                  Lagre signal
+                  {t('søvn.lagreSignal')}
                 </button>
               </div>
             </div>

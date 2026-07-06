@@ -174,7 +174,7 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn, onVis
   };
 
   if (visInnstillinger) {
-    return <Innstillinger onTilbake={() => setVisInnstillinger(false)} />;
+    return <Innstillinger onTilbake={() => setVisInnstillinger(false)} bruker={bruker} aktivtBarn={aktivtBarn} />;
   }
 
   return (

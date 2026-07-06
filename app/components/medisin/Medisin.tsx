@@ -36,18 +36,18 @@ type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | nu
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
 
-const STANDARD_MEDISINER = [
-  { navn: 'D-vitamindråper', dosering: '5 dråper', frekvens: 'Daglig', tidspunkt: '10:00' },
-  { navn: 'Infacol', dosering: '0.5 ml', frekvens: 'Ved behov', tidspunkt: '' },
-  { navn: 'Paracet', dosering: 'Se pakningsvedlegg', frekvens: 'Ved feber', tidspunkt: '' },
+const getStandardMedisiner = (t: TFn) => [
+  { navn: t('medisin.stdVitaminD'), altNavn: ['D-vitamindråper', 'Vitamin D drops'], dosering: t('medisin.stdVitaminDDosering'), frekvens: 'Daglig', tidspunkt: '10:00' },
+  { navn: t('medisin.stdInfacol'), altNavn: ['Infacol'], dosering: t('medisin.stdInfacolDosering'), frekvens: 'Ved behov', tidspunkt: '' },
+  { navn: t('medisin.stdParacet'), altNavn: ['Paracet', 'Paracetamol'], dosering: t('medisin.stdParacetDosering'), frekvens: 'Ved feber', tidspunkt: '' },
 ];
 
-const NORSKE_VAKSINER = [
-  { navn: '6 uker vaksine', alder: '6 uker', beskrivelse: 'Rotavirus' },
-  { navn: '3 måneder vaksine', alder: '3 mnd', beskrivelse: 'DTaP-IPV-Hib-HepB + PCV' },
-  { navn: '5 måneder vaksine', alder: '5 mnd', beskrivelse: 'DTaP-IPV-Hib-HepB + PCV + Rotavirus' },
-  { navn: '12 måneder vaksine', alder: '12 mnd', beskrivelse: 'DTaP-IPV-Hib-HepB + PCV + MMR' },
-  { navn: '15 måneder vaksine', alder: '15 mnd', beskrivelse: 'MMR 2' },
+const getNorskeVaksiner = (t: TFn) => [
+  { navn: t('medisin.vaksin6Uker'), altNavn: ['6 uker vaksine', '6 weeks vaccine'], alder: t('medisin.vaksin6UkerAlder'), beskrivelse: 'Rotavirus' },
+  { navn: t('medisin.vaksin3Mnd'), altNavn: ['3 måneder vaksine', '3 months vaccine'], alder: '3 mnd', beskrivelse: 'DTaP-IPV-Hib-HepB + PCV' },
+  { navn: t('medisin.vaksin5Mnd'), altNavn: ['5 måneder vaksine', '5 months vaccine'], alder: '5 mnd', beskrivelse: 'DTaP-IPV-Hib-HepB + PCV + Rotavirus' },
+  { navn: t('medisin.vaksin12Mnd'), altNavn: ['12 måneder vaksine', '12 months vaccine'], alder: '12 mnd', beskrivelse: 'DTaP-IPV-Hib-HepB + PCV + MMR' },
+  { navn: t('medisin.vaksin15Mnd'), altNavn: ['15 måneder vaksine', '15 months vaccine'], alder: '15 mnd', beskrivelse: 'MMR 2' },
 ];
 
 const getFrekvensValg = (t: TFn) => [
@@ -163,7 +163,7 @@ export default function Medisin({ bruker }: Props) {
       medisin_id: visGiDose.id,
       dato: dagensdato(),
       tidspunkt: new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
-      bivirkning: påvirkerSøvn ? `Påvirker søvn. ${bivirkningNotat}` : bivirkningNotat,
+      bivirkning: påvirkerSøvn ? `${t('medisin.påvirkerSøvnPrefix')} ${bivirkningNotat}` : bivirkningNotat,
     });
     if (visGiDose.tidspunkt) {
       setNesteDose({ navn: visGiDose.navn, tid: visGiDose.tidspunkt });
@@ -196,8 +196,8 @@ export default function Medisin({ bruker }: Props) {
 
   const erGittIDag = (medisinId: number) => logg.some(l => l.medisin_id === medisinId);
   const nestePåminnelse = medisiner.find(m => !erGittIDag(m.id) && m.frekvens !== 'Ved behov' && m.frekvens !== 'Ved feber' && m.tidspunkt);
-  const standardSomMangler = STANDARD_MEDISINER.filter(s => !medisiner.some(m => m.navn === s.navn));
-  const vaksinerSomMangler = NORSKE_VAKSINER.filter(v => !vaksiner.some(vak => vak.navn === v.navn));
+  const standardSomMangler = getStandardMedisiner(t).filter(s => !medisiner.some(m => m.navn === s.navn || s.altNavn.includes(m.navn)));
+  const vaksinerSomMangler = getNorskeVaksiner(t).filter(v => !vaksiner.some(vak => vak.navn === v.navn || v.altNavn.includes(vak.navn)));
 
   return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '24px 24px 100px' }}>

@@ -18,7 +18,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "Lille",
-  description: "Din babys språk, dine hender",
+  description: "Your baby's language, your hands",
   manifest: "/manifest.json",
 };
 
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="no" className={`${inter.variable} ${plusJakarta.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} ${plusJakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col" style={{ fontFamily: 'var(--font-inter), sans-serif', paddingTop: 'env(safe-area-inset-top)' }}>
   <LanguageProvider>
     <MåleenhetProvider>{children}</MåleenhetProvider>

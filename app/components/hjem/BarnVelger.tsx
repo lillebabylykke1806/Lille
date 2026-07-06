@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
+import { useLanguage } from '../../lib/i18n/LanguageContext';
 
 type Barn = {
   id: number;
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn, defaultVisMeny, onLukk }: Props) {
+  const { t } = useLanguage();
   const [alleBarn, setAlleBarn] = useState<Barn[]>([]);
   const [visMeny, setVisMeny] = useState(defaultVisMeny || false);
   const [aktivtBarn, setAktivtBarn] = useState<Barn | null>(null);
@@ -99,7 +101,7 @@ export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn, defaultVi
           >
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600', marginBottom: '16px' }}>
-              Velg barn
+              {t('barnVelger.velgBarn')}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
@@ -111,8 +113,8 @@ export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn, defaultVi
                   const nå = new Date();
                   const født = new Date(barn.fødselsdato);
                   const mnd = (nå.getFullYear() - født.getFullYear()) * 12 + (nå.getMonth() - født.getMonth());
-                  if (mnd < 12) return `${mnd} måneder`;
-                  return `${Math.floor(mnd / 12)} år`;
+                  if (mnd < 12) return t('felles.måneder', { n: mnd });
+                  return t('felles.år', { n: Math.floor(mnd / 12) });
                 };
                 return (
                   <button
@@ -168,7 +170,7 @@ export default function BarnVelger({ bruker, aktivtBarnId, onByttBarn, defaultVi
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M12 5V19M5 12H19" stroke={farger.tekstLys} strokeWidth="2" strokeLinecap="round"/>
               </svg>
-              Legg til nytt barn
+              {t('barnVelger.leggTil')}
             </button>
           </div>
         </div>

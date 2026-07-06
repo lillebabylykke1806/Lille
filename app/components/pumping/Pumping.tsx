@@ -529,11 +529,11 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>🥶 {t('pumping.melkelagerLabel')}</div>
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>🥶 Fryser (ml)</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.fryser')}</div>
               <input type="number" value={nyFryser} onChange={e => setNyFryser(e.target.value)} placeholder={`${fryserMl}`} style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
             </div>
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>🍼 Kjøleskap (ml)</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('pumping.kjøleskap')}</div>
               <input type="number" value={nyKjøleskap} onChange={e => setNyKjøleskap(e.target.value)} placeholder={`${kjøleskapMl}`} style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
             </div>
             <button onClick={async () => {
@@ -544,7 +544,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
               setNyFryser(''); setNyKjøleskap('');
               setVisLagerModal(false);
             }} style={{ width: '100%', padding: '16px', backgroundColor: farger.terrakotta, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-              Lagre
+              {t('felles.lagre')}
             </button>
           </div>
         </div>

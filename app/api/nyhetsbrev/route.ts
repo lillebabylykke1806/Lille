@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     const { email } = await req.json();
 
     if (!email || typeof email !== 'string' || !email.trim()) {
-      return NextResponse.json({ error: 'Ugyldig e-post' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     }
 
     const apiKey = process.env.MAILCHIMP_API_KEY;
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX;
 
     if (!apiKey || !listId || !serverPrefix) {
-      return NextResponse.json({ error: 'Mailchimp ikke konfigurert' }, { status: 500 });
+      return NextResponse.json({ error: 'Mailchimp not configured' }, { status: 500 });
     }
 
     const res = await fetch(
@@ -42,8 +42,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true });
     }
 
-    return NextResponse.json({ error: data?.detail || 'Mailchimp-feil' }, { status: 500 });
+    return NextResponse.json({ error: data?.detail || 'Mailchimp error' }, { status: 500 });
   } catch {
-    return NextResponse.json({ error: 'Noe gikk galt' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }

@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json({ error: 'Stripe ikke konfigurert' }, { status: 500 });
+    return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
   }
 
   try {
@@ -13,13 +13,13 @@ export async function POST(req: Request) {
     const { email } = await req.json();
 
     if (!email) {
-      return NextResponse.json({ error: 'Ingen e-post' }, { status: 400 });
+      return NextResponse.json({ error: 'No email provided' }, { status: 400 });
     }
 
     const customers = await stripe.customers.list({ email, limit: 1 });
     
     if (!customers.data.length) {
-      return NextResponse.json({ error: 'Ingen kunde funnet' }, { status: 404 });
+      return NextResponse.json({ error: 'No customer found' }, { status: 404 });
     }
 
     const session = await stripe.billingPortal.sessions.create({
@@ -30,6 +30,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: 'Noe gikk galt' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }

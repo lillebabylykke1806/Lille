@@ -49,5 +49,7 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Lille sends nap reminders, tiredness alerts, and daily sleep summaries.</string>
 </dict>
 </plist>
