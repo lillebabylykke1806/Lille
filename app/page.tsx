@@ -34,6 +34,7 @@ export default function Home() {
   const [passord, setPassord] = useState('');
   const [erNyBruker, setErNyBruker] = useState(false);
   const [innloggingFeil, setInnloggingFeil] = useState('');
+  const [loggerInn, setLoggerInn] = useState(false);
   const [visRegistrer, setVisRegistrer] = useState(false);
   const [visOnboarding, setVisOnboarding] = useState(false);
   const [visGlemtPopup, setVisGlemtPopup] = useState(false);
@@ -201,12 +202,17 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   }, [bruker]);
 
   const loggInn = async () => {
+    if (loggerInn) return;
     setInnloggingFeil('');
-    const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
-    if (error) {
-      setInnloggingFeil(t('innlogging.feilEpostPassord'));
-    } else {
+    setLoggerInn(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
+      if (error) {
+        setInnloggingFeil(t('innlogging.feilEpostPassord'));
+        return;
+      }
       localStorage.removeItem('lille_babybilde');
+      // Subscription/RevenueCat checks are guarded by timeouts and can never hang the login.
       const aktiv = await hasActiveSubscription(data.user.email || '', data.user.id);
       setHarAbonnement(aktiv);
       if (!aktiv) {
@@ -219,20 +225,31 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         return;
       }
       setBruker(data.user);
+    } catch {
+      setInnloggingFeil(t('innlogging.noeGikkGalt'));
+    } finally {
+      setLoggerInn(false);
     }
   };
 
   const registrer = async () => {
+    if (loggerInn) return;
     setInnloggingFeil('');
-    const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
-    if (error) {
-      setInnloggingFeil(t('innlogging.noeGikkGalt'));
-    } else if (data.user) {
+    setLoggerInn(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
+      if (error) {
+        setInnloggingFeil(t('innlogging.noeGikkGalt'));
+        return;
+      }
+      if (!data.user) return;
       if (isNativeApp()) {
-        await initRevenueCat(data.user.id);
+        // Show the user immediately; RevenueCat is set up in the background and
+        // failures here must not block the sign-up flow.
         setBruker(data.user);
         setHarAbonnement(false);
         setVisPaywall(true);
+        initRevenueCat(data.user.id);
       } else {
         const res = await fetch('/api/create-checkout-session', {
           method: 'POST',
@@ -243,6 +260,10 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         if (url) window.location.href = url;
         else setBruker(data.user);
       }
+    } catch {
+      setInnloggingFeil(t('innlogging.noeGikkGalt'));
+    } finally {
+      setLoggerInn(false);
     }
   };
 
@@ -292,8 +313,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
           <input type="email" value={epost} onChange={(e) => setEpost(e.target.value)} placeholder={t('innlogging.epostPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
           <input type="password" value={passord} onChange={(e) => setPassord(e.target.value)} placeholder={t('innlogging.passordPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '20px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
           {innloggingFeil && <p style={{ fontSize: '13px', color: '#C0392B', fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 14px', textAlign: 'center' }}>{innloggingFeil}</p>}
-          <button onClick={erNyBruker ? registrer : loggInn} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', marginBottom: '12px' }}>
-            {erNyBruker ? t('innlogging.opprettKonto') : t('innlogging.loggInn')}
+          <button onClick={erNyBruker ? registrer : loggInn} disabled={loggerInn} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: '#FDFAF6', cursor: loggerInn ? 'default' : 'pointer', opacity: loggerInn ? 0.7 : 1, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', marginBottom: '12px' }}>
+            {loggerInn ? '…' : (erNyBruker ? t('innlogging.opprettKonto') : t('innlogging.loggInn'))}
           </button>
           <button onClick={() => { setErNyBruker(!erNyBruker); setInnloggingFeil(''); }} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}>
             {erNyBruker ? t('innlogging.harAlleredeKonto') : t('innlogging.nyBruker')}

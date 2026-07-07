@@ -40,12 +40,17 @@ export async function syncSubscriptionStatus(userId: string, active: boolean): P
 export async function checkRevenueCatEntitlement(): Promise<boolean> {
   if (!isNative() || !initialized) return false;
 
-  const { customerInfo } = await Purchases.getCustomerInfo();
-  const active = hasEntitlement(customerInfo);
-  if (currentUserId && active) {
-    await syncSubscriptionStatus(currentUserId, true);
+  try {
+    const { customerInfo } = await Purchases.getCustomerInfo();
+    const active = hasEntitlement(customerInfo);
+    if (currentUserId && active) {
+      await syncSubscriptionStatus(currentUserId, true);
+    }
+    return active;
+  } catch (err) {
+    console.warn('RevenueCat entitlement check failed', err);
+    return false;
   }
-  return active;
 }
 
 async function getCurrentPackages(): Promise<PurchasesPackage[]> {
@@ -93,19 +98,24 @@ export async function initRevenueCat(appUserId?: string): Promise<void> {
     return;
   }
 
-  if (!initialized) {
-    await Purchases.configure({
-      apiKey,
-      appUserID: appUserId,
-    });
-    initialized = true;
-    currentUserId = appUserId ?? null;
-    return;
-  }
+  try {
+    if (!initialized) {
+      await Purchases.configure({
+        apiKey,
+        appUserID: appUserId,
+      });
+      initialized = true;
+      currentUserId = appUserId ?? null;
+      return;
+    }
 
-  if (appUserId && appUserId !== currentUserId) {
-    await Purchases.logIn({ appUserID: appUserId });
-    currentUserId = appUserId;
+    if (appUserId && appUserId !== currentUserId) {
+      await Purchases.logIn({ appUserID: appUserId });
+      currentUserId = appUserId;
+    }
+  } catch (err) {
+    // Never let RevenueCat setup failures propagate and freeze the caller (e.g. login).
+    console.warn('RevenueCat initialization failed', err);
   }
 }
 
