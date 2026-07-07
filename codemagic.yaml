@@ -28,7 +28,7 @@ workflows:
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
-            --archive-xcargs "CURRENT_PROJECT_VERSION=12 MARKETING_VERSION=1.0.4"
+            --archive-xcargs "CURRENT_PROJECT_VERSION=11 MARKETING_VERSION=1.0.4"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
@@ -48,8 +48,8 @@ workflows:
     scripts:
       - name: Install dependencies
         script: npm install
-      - name: Build Next.js
-        script: npm run build
+      - name: Create empty out directory
+        script: mkdir -p out
       - name: Sync Capacitor
         script: npx cap sync android
       - name: Set up keystore
