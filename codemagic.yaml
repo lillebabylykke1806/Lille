@@ -35,3 +35,43 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  android-workflow:
+    name: Android Workflow
+    max_build_duration: 60
+    environment:
+      groups:
+        - android
+      vars:
+        PACKAGE_NAME: "no.lilleapp.app"
+      node: latest
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Build Next.js
+        script: npm run build
+      - name: Sync Capacitor
+        script: npx cap sync android
+      - name: Set up keystore
+        script: |
+          echo $CM_KEYSTORE | base64 --decode > $CM_BUILD_DIR/android/keystore.jks
+          cat >> "$CM_BUILD_DIR/android/local.properties" <<EOF
+          storeFile=$CM_BUILD_DIR/android/keystore.jks
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          keyPassword=$CM_KEY_PASSWORD
+          EOF
+      - name: Build Android release
+        script: |
+          cd android
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file=$CM_BUILD_DIR/android/keystore.jks \
+            -Pandroid.injected.signing.store.password=$CM_KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$CM_KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$CM_KEY_PASSWORD
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
