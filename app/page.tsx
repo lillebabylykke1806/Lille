@@ -283,24 +283,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     );
   }
 
-  if (visPaywall && bruker && harAbonnement === false && isNativeApp()) {
-    return (
-      <Paywall
-        required
-        onSuccess={() => {
-          setHarAbonnement(true);
-          setVisPaywall(false);
-        }}
-      />
-    );
-  }
-
-  if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={async () => {
-    const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker.id).order('opprettet', { ascending: true }).limit(1).single();
-    if (barn) setAktivtBarn(barn);
-    setVisOnboarding(false);
-  }} />;
-
+  // 1. Not logged in → always show the login/register screen first.
   if (!bruker) {
     return (
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
@@ -324,6 +307,27 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     );
   }
 
+  // 2. Logged in but no active subscription → show the paywall before the app.
+  if (visPaywall && harAbonnement === false && isNativeApp()) {
+    return (
+      <Paywall
+        required
+        onSuccess={() => {
+          setHarAbonnement(true);
+          setVisPaywall(false);
+        }}
+      />
+    );
+  }
+
+  // 3. Logged in, needs to set up their baby profile.
+  if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={async () => {
+    const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker.id).order('opprettet', { ascending: true }).limit(1).single();
+    if (barn) setAktivtBarn(barn);
+    setVisOnboarding(false);
+  }} />;
+
+  // 4. Logged in with active subscription → home screen.
   return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative' }}>
       <div style={{ overflowY: 'auto', height: '100vh', paddingBottom: '90px' }}>
