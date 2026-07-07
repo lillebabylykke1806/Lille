@@ -45,6 +45,44 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   const [harAbonnement, setHarAbonnement] = useState<boolean | null>(null);
   const [visPaywall, setVisPaywall] = useState(false);
   const [visScreenshotToast, setVisScreenshotToast] = useState(false);
+  // True only for the register flow, so onboarding is shown after the paywall.
+  const [isNyBruker, setIsNyBruker] = useState(false);
+
+  // Onboarding completion is tracked in the "profiler" table (column: onboarding_fullført).
+  // The column name contains a non-ASCII character, so we bypass the typed query parser.
+  const hentOnboardingFullført = async (userId: string): Promise<boolean | null> => {
+    try {
+      const { data, error } = await (supabase.from('profiler') as any)
+        .select('onboarding_fullført')
+        .eq('id', userId)
+        .single();
+      if (error) return null;
+      return data?.onboarding_fullført ?? false;
+    } catch {
+      return null;
+    }
+  };
+
+  const markerOnboardingFullført = async (userId: string): Promise<void> => {
+    try {
+      await (supabase.from('profiler') as any)
+        .upsert({ id: userId, onboarding_fullført: true }, { onConflict: 'id' });
+    } catch {
+      // Column/table may be missing; don't block the flow.
+    }
+  };
+
+  /** Decide whether onboarding is needed. Users with an existing baby profile are
+   * considered onboarded (and the flag is backfilled). */
+  const trengerOnboarding = async (userId: string, harBarn: boolean): Promise<boolean> => {
+    if (harBarn) {
+      const fullført = await hentOnboardingFullført(userId);
+      if (fullført === false) await markerOnboardingFullført(userId);
+      return false;
+    }
+    const fullført = await hentOnboardingFullført(userId);
+    return fullført !== true;
+  };
 
   useEffect(() => {
     const lastData = async () => {
@@ -128,10 +166,18 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
               const partnerBarn = tilgang[0].barn;
               setAktivtBarn(partnerBarn);
             } else {
-              setVisOnboarding(true);
+              // No baby profile yet: onboarding only makes sense once they can enter
+              // the app (i.e. they have or will get a subscription).
+              const trenger = await trengerOnboarding(session.user.id, false);
+              if (trenger) {
+                setIsNyBruker(true);
+                setVisOnboarding(true);
+              }
             }
           } else {
             setAktivtBarn(barn);
+            // Existing baby profile → treat as onboarded (and backfill the flag).
+            await trengerOnboarding(session.user.id, true);
           }
         }
   
@@ -205,6 +251,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     if (loggerInn) return;
     setInnloggingFeil('');
     setLoggerInn(true);
+    // Login = existing user, not the register flow.
+    setIsNyBruker(false);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
       if (error) {
@@ -215,6 +263,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       // Subscription/RevenueCat checks are guarded by timeouts and can never hang the login.
       const aktiv = await hasActiveSubscription(data.user.email || '', data.user.id);
       setHarAbonnement(aktiv);
+
+      // No active subscription → paywall (then straight to home, no onboarding).
       if (!aktiv) {
         if (isNativeApp()) {
           setBruker(data.user);
@@ -223,6 +273,20 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         }
         await supabase.auth.signOut();
         return;
+      }
+
+      // Active subscription → home. Only show onboarding if the account is genuinely
+      // incomplete (no baby profile yet), never for established users.
+      const { data: barn } = await supabase
+        .from('barn')
+        .select('id')
+        .eq('bruker_id', data.user.id)
+        .limit(1)
+        .maybeSingle();
+      const trenger = await trengerOnboarding(data.user.id, !!barn);
+      if (trenger) {
+        setIsNyBruker(true);
+        setVisOnboarding(true);
       }
       setBruker(data.user);
     } catch {
@@ -236,6 +300,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     if (loggerInn) return;
     setInnloggingFeil('');
     setLoggerInn(true);
+    // Register = new user: paywall → onboarding → home.
+    setIsNyBruker(true);
     try {
       const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
       if (error) {
@@ -308,6 +374,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   }
 
   // 2. Logged in but no active subscription → show the paywall before the app.
+  //    New users continue to onboarding after purchase; existing users go to home.
   if (visPaywall && harAbonnement === false && isNativeApp()) {
     return (
       <Paywall
@@ -315,16 +382,19 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         onSuccess={() => {
           setHarAbonnement(true);
           setVisPaywall(false);
+          if (isNyBruker) setVisOnboarding(true);
         }}
       />
     );
   }
 
-  // 3. Logged in, needs to set up their baby profile.
+  // 3. New user with subscription → set up their baby profile.
   if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={async () => {
+    if (bruker?.id) await markerOnboardingFullført(bruker.id);
     const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker.id).order('opprettet', { ascending: true }).limit(1).single();
     if (barn) setAktivtBarn(barn);
     setVisOnboarding(false);
+    setIsNyBruker(false);
   }} />;
 
   // 4. Logged in with active subscription → home screen.
