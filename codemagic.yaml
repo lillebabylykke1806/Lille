@@ -28,7 +28,7 @@ workflows:
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
-            --archive-xcargs "CURRENT_PROJECT_VERSION=10 MARKETING_VERSION=1.0.4"
+            --archive-xcargs "CURRENT_PROJECT_VERSION=11 MARKETING_VERSION=1.0.4"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
