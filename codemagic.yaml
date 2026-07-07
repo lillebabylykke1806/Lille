@@ -61,6 +61,8 @@ workflows:
           keyAlias=$CM_KEY_ALIAS
           keyPassword=$CM_KEY_PASSWORD
           EOF
+      - name: Make gradlew executable
+        script: chmod +x android/gradlew
       - name: Build Android release
         script: |
           cd android
