@@ -45,6 +45,7 @@ workflows:
       vars:
         PACKAGE_NAME: "no.lilleapp.app"
       node: latest
+      java: 21
     scripts:
       - name: Install dependencies
         script: npm install
