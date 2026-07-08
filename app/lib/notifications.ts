@@ -24,21 +24,33 @@ function isNative(): boolean {
 }
 
 export function notificationsEnabled(): boolean {
-  return localStorage.getItem(STORAGE_ENABLED) === 'true';
+  try {
+    return localStorage.getItem(STORAGE_ENABLED) === 'true';
+  } catch {
+    return false;
+  }
 }
 
 export function setNotificationsEnabled(enabled: boolean): void {
-  localStorage.setItem(STORAGE_ENABLED, enabled ? 'true' : 'false');
+  try {
+    localStorage.setItem(STORAGE_ENABLED, enabled ? 'true' : 'false');
+  } catch {
+    // ignore
+  }
 }
 
 export async function requestNotificationPermissionIfNeeded(): Promise<boolean> {
   if (!isNative()) return false;
 
-  if (localStorage.getItem(STORAGE_ASKED) === 'true') {
-    return notificationsEnabled();
-  }
+  try {
+    if (localStorage.getItem(STORAGE_ASKED) === 'true') {
+      return notificationsEnabled();
+    }
 
-  localStorage.setItem(STORAGE_ASKED, 'true');
+    localStorage.setItem(STORAGE_ASKED, 'true');
+  } catch {
+    return false;
+  }
 
   try {
     const current = await LocalNotifications.checkPermissions();

@@ -13,7 +13,8 @@ export interface ScreenshotPlugin {
 const Screenshot = registerPlugin<ScreenshotPlugin>('Screenshot');
 
 export async function watchScreenshots(onScreenshot: () => void): Promise<() => void> {
-  if (!Capacitor.isNativePlatform()) {
+  // Screenshot plugin is iOS-only; skip on Android and web.
+  if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'ios') {
     return () => {};
   }
 

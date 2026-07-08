@@ -8,6 +8,7 @@ const IOS_API_KEY = 'appl_yJUgTGrXgObVRawZYPSFjYvrASv';
 const ANDROID_API_KEY = process.env.NEXT_PUBLIC_REVENUECAT_ANDROID_API_KEY ?? '';
 
 let initialized = false;
+let initFailed = false;
 let currentUserId: string | null = null;
 
 function isNative(): boolean {
@@ -16,6 +17,10 @@ function isNative(): boolean {
 
 export function isNativeApp(): boolean {
   return isNative();
+}
+
+function revenueCatReady(): boolean {
+  return isNative() && initialized && !initFailed;
 }
 
 function getApiKey(): string | null {
@@ -31,14 +36,18 @@ function hasEntitlement(customerInfo: CustomerInfo): boolean {
 
 export async function syncSubscriptionStatus(userId: string, active: boolean): Promise<void> {
   if (!active) return;
-  await supabase
-    .from('profiler')
-    .update({ stripe_subscription_status: 'active' })
-    .eq('id', userId);
+  try {
+    await supabase
+      .from('profiler')
+      .update({ stripe_subscription_status: 'active' })
+      .eq('id', userId);
+  } catch (err) {
+    console.warn('Could not sync subscription status', err);
+  }
 }
 
 export async function checkRevenueCatEntitlement(): Promise<boolean> {
-  if (!isNative() || !initialized) return false;
+  if (!revenueCatReady()) return false;
 
   try {
     const { customerInfo } = await Purchases.getCustomerInfo();
@@ -54,47 +63,60 @@ export async function checkRevenueCatEntitlement(): Promise<boolean> {
 }
 
 async function getCurrentPackages(): Promise<PurchasesPackage[]> {
-  const offerings: PurchasesOfferings = await Purchases.getOfferings();
-  return offerings.current?.availablePackages ?? [];
+  if (!revenueCatReady()) return [];
+  try {
+    const offerings: PurchasesOfferings = await Purchases.getOfferings();
+    return offerings.current?.availablePackages ?? [];
+  } catch (err) {
+    console.warn('RevenueCat offerings unavailable', err);
+    return [];
+  }
 }
 
-async function getPackage(type: 'monthly' | 'yearly'): Promise<PurchasesPackage> {
-  const packages = await getCurrentPackages();
-  if (packages.length === 0) {
-    throw new Error('No subscription packages available');
+async function getPackage(type: 'monthly' | 'yearly'): Promise<PurchasesPackage | null> {
+  try {
+    const packages = await getCurrentPackages();
+    if (packages.length === 0) return null;
+
+    const monthlyIds = ['$rc_monthly', 'monthly', 'lille_monthly'];
+    const yearlyIds = ['$rc_annual', 'yearly', 'lille_yearly', 'annual'];
+
+    const match = packages.find((pkg) => {
+      const id = pkg.identifier.toLowerCase();
+      if (type === 'monthly') {
+        return monthlyIds.some((m) => id.includes(m.replace('$rc_', ''))) || id.includes('month');
+      }
+      return yearlyIds.some((y) => id.includes(y.replace('$rc_', ''))) || id.includes('year') || id.includes('annual');
+    });
+
+    if (match) return match;
+    if (type === 'monthly') return packages[0];
+    return packages[packages.length - 1];
+  } catch (err) {
+    console.warn('RevenueCat package lookup failed', err);
+    return null;
   }
-
-  const monthlyIds = ['$rc_monthly', 'monthly', 'lille_monthly'];
-  const yearlyIds = ['$rc_annual', 'yearly', 'lille_yearly', 'annual'];
-
-  const match = packages.find((pkg) => {
-    const id = pkg.identifier.toLowerCase();
-    if (type === 'monthly') {
-      return monthlyIds.some((m) => id.includes(m.replace('$rc_', ''))) || id.includes('month');
-    }
-    return yearlyIds.some((y) => id.includes(y.replace('$rc_', ''))) || id.includes('year') || id.includes('annual');
-  });
-
-  if (match) return match;
-
-  if (type === 'monthly') return packages[0];
-  return packages[packages.length - 1];
 }
 
 async function handlePurchaseResult(customerInfo: CustomerInfo): Promise<boolean> {
-  const active = hasEntitlement(customerInfo);
-  if (currentUserId && active) {
-    await syncSubscriptionStatus(currentUserId, true);
+  try {
+    const active = hasEntitlement(customerInfo);
+    if (currentUserId && active) {
+      await syncSubscriptionStatus(currentUserId, true);
+    }
+    return active;
+  } catch (err) {
+    console.warn('RevenueCat purchase result handling failed', err);
+    return false;
   }
-  return active;
 }
 
 export async function initRevenueCat(appUserId?: string): Promise<void> {
-  if (!isNative()) return;
+  if (!isNative() || initFailed) return;
 
   const apiKey = getApiKey();
   if (!apiKey) {
-    console.warn('RevenueCat API key mangler for denne plattformen');
+    console.warn('RevenueCat API key not configured for this platform');
     return;
   }
 
@@ -114,17 +136,21 @@ export async function initRevenueCat(appUserId?: string): Promise<void> {
       currentUserId = appUserId;
     }
   } catch (err) {
-    // Never let RevenueCat setup failures propagate and freeze the caller (e.g. login).
+    initFailed = true;
+    initialized = false;
     console.warn('RevenueCat initialization failed', err);
   }
 }
 
 export async function purchaseMonthly(): Promise<{ success: boolean; error?: string; cancelled?: boolean }> {
-  if (!isNative() || !initialized) {
-    return { success: false, error: 'Purchases are only available in the app' };
+  if (!revenueCatReady()) {
+    return { success: false, error: 'Purchases are not available in the app yet' };
   }
   try {
     const pkg = await getPackage('monthly');
+    if (!pkg) {
+      return { success: false, error: 'No subscription packages available' };
+    }
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
     return { success: await handlePurchaseResult(customerInfo) };
   } catch (err: unknown) {
@@ -135,11 +161,14 @@ export async function purchaseMonthly(): Promise<{ success: boolean; error?: str
 }
 
 export async function purchaseYearly(): Promise<{ success: boolean; error?: string; cancelled?: boolean }> {
-  if (!isNative() || !initialized) {
-    return { success: false, error: 'Purchases are only available in the app' };
+  if (!revenueCatReady()) {
+    return { success: false, error: 'Purchases are not available in the app yet' };
   }
   try {
     const pkg = await getPackage('yearly');
+    if (!pkg) {
+      return { success: false, error: 'No subscription packages available' };
+    }
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
     return { success: await handlePurchaseResult(customerInfo) };
   } catch (err: unknown) {
@@ -150,8 +179,8 @@ export async function purchaseYearly(): Promise<{ success: boolean; error?: stri
 }
 
 export async function restorePurchases(): Promise<{ success: boolean; error?: string }> {
-  if (!isNative() || !initialized) {
-    return { success: false, error: 'Restore is only available in the app' };
+  if (!revenueCatReady()) {
+    return { success: false, error: 'Restore is not available in the app yet' };
   }
   try {
     const { customerInfo } = await Purchases.restorePurchases();
@@ -164,7 +193,7 @@ export async function restorePurchases(): Promise<{ success: boolean; error?: st
 }
 
 export async function getOfferingPrices(): Promise<{ monthly?: string; yearly?: string }> {
-  if (!isNative() || !initialized) return {};
+  if (!revenueCatReady()) return {};
   try {
     const packages = await getCurrentPackages();
     const monthly = packages.find((p) => p.identifier.toLowerCase().includes('month'));
@@ -176,7 +205,8 @@ export async function getOfferingPrices(): Promise<{ monthly?: string; yearly?: 
       monthly: monthly?.product.priceString,
       yearly: yearly?.product.priceString,
     };
-  } catch {
+  } catch (err) {
+    console.warn('RevenueCat price lookup failed', err);
     return {};
   }
 }

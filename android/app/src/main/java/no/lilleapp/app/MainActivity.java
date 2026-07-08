@@ -1,4 +1,4 @@
-package no.lilleapp;
+package no.lilleapp.app;
 
 import com.getcapacitor.BridgeActivity;
 
