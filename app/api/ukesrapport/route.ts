@@ -5,15 +5,14 @@ import { Resend } from 'resend';
 
 export const dynamic = 'force-dynamic';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function GET(req: Request) {
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
     const authHeader = req.headers.get('authorization');
     const isVercelCron = req.headers.get('x-vercel-cron') === '1' || req.headers.get('user-agent')?.includes('vercel-cron');
     if (!isVercelCron && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {

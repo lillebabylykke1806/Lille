@@ -1,5 +1,5 @@
 ---
-tittel: Baby Sleep Cues: 10 Signs Your Baby Is Ready for Sleep
+tittel: "Baby Sleep Cues: 10 Signs Your Baby Is Ready for Sleep"
 dato: 2026-07-12
 ingress: Babies often show subtle signs of tiredness long before they begin to cry. Learn how to recognize early, active, and late baby sleep cues so you can respond before your baby becomes overtired.
 kategori: Baby Sleep

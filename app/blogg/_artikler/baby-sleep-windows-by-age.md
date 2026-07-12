@@ -1,5 +1,5 @@
 ---
-tittel: Baby Sleep Windows by Age (0–12 Months): The Complete Guide for Better Naps
+tittel: "Baby Sleep Windows by Age (0–12 Months): The Complete Guide for Better Naps"
 dato: 2026-07-02
 ingress: Wondering how long your baby should stay awake before their next nap? Understanding wake windows can make naps easier, reduce overtiredness, and help you recognize your baby's natural sleep rhythm.
 kategori: Sleep
