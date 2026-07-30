@@ -147,18 +147,51 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
     if (matreg.length >= 5) hentAiInnsikter();
   }, [matreg, hentAiInnsikter]);
 
-  const lagreMatregistrering = async () => {
+  const kanLagre = Boolean(matvare.trim() && kategori && reaksjon && mengde) && !lagrer;
+
+  const lagreMatregistrering = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+
+    console.log('[Mat] SAVE CLICK registered', {
+      matvare: matvare.trim(),
+      kategori,
+      reaksjon,
+      mengde,
+      lagrer,
+      kanLagre,
+      allergiStatus,
+      erNyMatvare,
+      dato,
+      klokkeslett,
+    });
+
     setLagreFeil('');
+
     if (!matvare.trim() || !kategori || !reaksjon || !mengde) {
+      const mangler = [
+        !matvare.trim() ? 'matvare' : null,
+        !kategori ? 'kategori' : null,
+        !reaksjon ? 'reaksjon' : null,
+        !mengde ? 'mengde' : null,
+      ].filter(Boolean);
+      console.warn('[Mat] SAVE blocked by validation, missing:', mangler);
       setLagreFeil(t('mat.manglerFelter'));
-      console.warn('Mat save blocked: missing required fields', { matvare, kategori, reaksjon, mengde });
+      return;
+    }
+
+    if (lagrer) {
+      console.warn('[Mat] SAVE ignored — already saving');
       return;
     }
 
     setLagrer(true);
+    console.log('[Mat] SAVE starting async flow…');
+
     try {
+      console.log('[Mat] resolving profil_id…');
       const profilId = await hentProfilId(aktivtBarn, bruker);
-      console.log('Mat profil_id resolved:', profilId, {
+      console.log('[Mat] profil_id resolved:', profilId, {
         brukerId: bruker?.id,
         barnId: aktivtBarn?.id,
         barnBrukerId: aktivtBarn?.bruker_id,
@@ -166,15 +199,16 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
       });
 
       if (!profilId || !erGyldigProfilId(profilId)) {
-        console.error('Mat save aborted: invalid/missing profil_id', { profilId, bruker });
+        console.error('[Mat] SAVE aborted: invalid/missing profil_id', { profilId, bruker });
         setLagreFeil(t('mat.ikkeInnlogget'));
         return;
       }
 
-      // Ensure profiler row exists (some signups never create one)
+      console.log('[Mat] ensuring profiler row…');
       const profilerOk = await sikreProfilerRad(profilId);
+      console.log('[Mat] profiler row ok?', profilerOk);
       if (!profilerOk) {
-        console.error('Mat save aborted: could not ensure profiler row for', profilId);
+        console.error('[Mat] SAVE aborted: could not ensure profiler row for', profilId);
         setLagreFeil(t('mat.lagreFeil'));
         return;
       }
@@ -191,11 +225,11 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
         allergi_status: allergiStatus || null,
       };
 
-      console.log('Mat save attempt payload:', payload);
+      console.log('[Mat] insert payload:', payload);
       const { data, error } = await supabase.from('mat').insert(payload).select().single();
 
       if (error) {
-        console.error('Mat insert failed:', {
+        console.error('[Mat] insert FAILED:', {
           code: error.code,
           message: error.message,
           details: error.details,
@@ -210,7 +244,7 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
         return;
       }
 
-      console.log('Mat save success:', data?.id);
+      console.log('[Mat] insert SUCCESS id=', data?.id);
       setMatvare('');
       setKategori('');
       setReaksjon('');
@@ -222,11 +256,13 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
       setKlokkeslett(new Date().toTimeString().slice(0, 5));
       setVisSkjema(false);
       await lastData(true);
+      console.log('[Mat] SAVE flow complete');
     } catch (err) {
-      console.error('Mat save unexpected error:', err);
+      console.error('[Mat] SAVE unexpected error:', err);
       setLagreFeil(t('mat.lagreFeil'));
     } finally {
       setLagrer(false);
+      console.log('[Mat] SAVE finally — lagrer=false');
     }
   };
 
@@ -576,8 +612,8 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
 
       {/* ─── REGISTRERINGSSKJEMA ─── */}
       {visSkjema && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setVisSkjema(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: '48px', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 500, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => { console.log('[Mat] backdrop clicked — closing form'); setVisSkjema(false); }}>
+          <div onClick={e => e.stopPropagation()} onPointerDown={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))', maxHeight: '90vh', overflowY: 'auto', position: 'relative', zIndex: 501, boxShadow: '0 -8px 32px rgba(0,0,0,0.18)' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('mat.nyttMåltid')}</div>
 
@@ -687,11 +723,35 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
               </div>
             ) : null}
 
+            {!kanLagre && !lagrer ? (
+              <div style={{ marginBottom: '8px', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, textAlign: 'center' }}>
+                {t('mat.manglerFelter')}
+              </div>
+            ) : null}
+
             <button
               type="button"
-              onClick={lagreMatregistrering}
-              disabled={!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer}
-              style={{ width: '100%', padding: '16px', backgroundColor: (!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer) ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: (!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer) ? farger.tekstLys : '#FDFAF6', cursor: (!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer) ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter)' }}
+              data-testid="mat-lagre-knapp"
+              onClick={(e) => {
+                console.log('[Mat] SAVE button onClick fired', { kanLagre, lagrer });
+                lagreMatregistrering(e);
+              }}
+              style={{
+                width: '100%',
+                padding: '16px',
+                backgroundColor: kanLagre ? farger.grønn : farger.kremMørk,
+                border: 'none',
+                borderRadius: '14px',
+                fontSize: '15px',
+                fontWeight: '600',
+                color: kanLagre ? '#FDFAF6' : farger.tekstLys,
+                cursor: lagrer ? 'wait' : 'pointer',
+                fontFamily: 'var(--font-inter)',
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation',
+                position: 'relative',
+                zIndex: 502,
+              }}
             >
               {lagrer ? t('mat.lagrer') : t('mat.lagreMåltid')}
             </button>
