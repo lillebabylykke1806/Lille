@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { hentProfilId, sikreProfilerRad, erGyldigProfilId } from '../../lib/profilId';
 import { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; };
@@ -96,11 +97,24 @@ export default function Mat({ bruker, aktivtBarn }: Props) {
     if (!silent) setLaster(true);
     if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
 
-    const { data, error } = await supabase.from('mat').select('*').eq('profil_id', bruker?.id).order('dato', { ascending: false }).order('klokkeslett', { ascending: false });
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) {
+      console.error('Mat lastData: missing profil_id', { brukerId: bruker?.id, barnId: aktivtBarn?.id });
+      setMatreg([]);
+      if (!silent) setLaster(false);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('mat')
+      .select('*')
+      .eq('profil_id', profilId)
+      .order('dato', { ascending: false })
+      .order('klokkeslett', { ascending: false });
     if (error) console.error('Mat lastData failed:', error);
     setMatreg(data || []);
     if (!silent) setLaster(false);
-  }, [bruker?.id, aktivtBarn?.navn]);
+  }, [bruker, aktivtBarn]);
 
   useEffect(() => { lastData(); }, [lastData]);
 
@@ -143,13 +157,25 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
 
     setLagrer(true);
     try {
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-      if (authError) console.error('Mat auth.getUser failed:', authError);
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      console.log('Mat profil_id resolved:', profilId, {
+        brukerId: bruker?.id,
+        barnId: aktivtBarn?.id,
+        barnBrukerId: aktivtBarn?.bruker_id,
+        isValidUuid: erGyldigProfilId(profilId),
+      });
 
-      const profilId = authData?.user?.id || bruker?.id;
-      if (!profilId) {
-        console.error('Mat save aborted: no profil_id', { brukerId: bruker?.id, authUser: authData?.user?.id });
+      if (!profilId || !erGyldigProfilId(profilId)) {
+        console.error('Mat save aborted: invalid/missing profil_id', { profilId, bruker });
         setLagreFeil(t('mat.ikkeInnlogget'));
+        return;
+      }
+
+      // Ensure profiler row exists (some signups never create one)
+      const profilerOk = await sikreProfilerRad(profilId);
+      if (!profilerOk) {
+        console.error('Mat save aborted: could not ensure profiler row for', profilId);
+        setLagreFeil(t('mat.lagreFeil'));
         return;
       }
 
@@ -165,12 +191,22 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
         allergi_status: allergiStatus || null,
       };
 
-      console.log('Mat save attempt:', payload);
+      console.log('Mat save attempt payload:', payload);
       const { data, error } = await supabase.from('mat').insert(payload).select().single();
 
       if (error) {
-        console.error('Mat insert failed:', error);
-        setLagreFeil(t('mat.lagreFeil'));
+        console.error('Mat insert failed:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          profil_id: profilId,
+        });
+        if (error.code === '23503') {
+          setLagreFeil(t('mat.profilMangler'));
+        } else {
+          setLagreFeil(t('mat.lagreFeil'));
+        }
         return;
       }
 

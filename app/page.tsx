@@ -24,6 +24,7 @@ import { useLanguage } from './lib/i18n/LanguageContext';
 import { hasActiveSubscription, initRevenueCat, isNativeApp } from './lib/subscription';
 import { requestNotificationPermissionIfNeeded } from './lib/notifications';
 import { watchScreenshots } from './lib/screenshot';
+import { sikreProfilerRad } from './lib/profilId';
 
 export default function Home() {
   const { t } = useLanguage();
@@ -145,6 +146,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         }
       
         setBruker(session.user);
+        void sikreProfilerRad(session.user.id);
       
         if (!partnerHarAktivTilgang) {
           const { data: barn } = await supabase
@@ -268,6 +270,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       if (!aktiv) {
         if (isNativeApp()) {
           setBruker(data.user);
+          void sikreProfilerRad(data.user.id);
           setVisPaywall(true);
           return;
         }
@@ -289,6 +292,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         setVisOnboarding(true);
       }
       setBruker(data.user);
+      void sikreProfilerRad(data.user.id);
     } catch {
       setInnloggingFeil(t('innlogging.noeGikkGalt'));
     } finally {
@@ -309,6 +313,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         return;
       }
       if (!data.user) return;
+      void sikreProfilerRad(data.user.id);
       if (isNativeApp()) {
         // Show the user immediately; RevenueCat is set up in the background and
         // failures here must not block the sign-up flow.
