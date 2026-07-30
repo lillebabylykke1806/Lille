@@ -88,17 +88,19 @@ export default function Mat({ bruker, aktivtBarn }: Props) {
   const [dato, setDato] = useState(new Date().toISOString().split('T')[0]);
   const [klokkeslett, setKlokkeslett] = useState(new Date().toTimeString().slice(0, 5));
   const [lagrer, setLagrer] = useState(false);
+  const [lagreFeil, setLagreFeil] = useState('');
   const [allergiStatus, setAllergiStatus] = useState('');
   const [erNyMatvare, setErNyMatvare] = useState<boolean | null>(null);
 
-  const lastData = useCallback(async () => {
-    setLaster(true);
+  const lastData = useCallback(async (silent = false) => {
+    if (!silent) setLaster(true);
     if (aktivtBarn?.navn) setBabyNavn(aktivtBarn.navn);
 
-    const { data } = await supabase.from('mat').select('*').eq('profil_id', bruker?.id).order('dato', { ascending: false }).order('klokkeslett', { ascending: false });
+    const { data, error } = await supabase.from('mat').select('*').eq('profil_id', bruker?.id).order('dato', { ascending: false }).order('klokkeslett', { ascending: false });
+    if (error) console.error('Mat lastData failed:', error);
     setMatreg(data || []);
-    setLaster(false);
-}, [bruker?.id, aktivtBarn?.navn]);
+    if (!silent) setLaster(false);
+  }, [bruker?.id, aktivtBarn?.navn]);
 
   useEffect(() => { lastData(); }, [lastData]);
 
@@ -132,15 +134,64 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
   }, [matreg, hentAiInnsikter]);
 
   const lagreMatregistrering = async () => {
-if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
+    setLagreFeil('');
+    if (!matvare.trim() || !kategori || !reaksjon || !mengde) {
+      setLagreFeil(t('mat.manglerFelter'));
+      console.warn('Mat save blocked: missing required fields', { matvare, kategori, reaksjon, mengde });
+      return;
+    }
+
     setLagrer(true);
-    await supabase.from('mat').insert({
-        profil_id: bruker?.id,
-        dato, klokkeslett, matvare: matvare.trim(), kategori, reaksjon, mengde, notater: notater.trim() || null, allergi_status: allergiStatus || null,
-      });
-      setMatvare(''); setKategori(''); setReaksjon(''); setMengde(''); setNotater(''); setAllergiStatus(''); setErNyMatvare(null);
-    await lastData();
-    setLagrer(false);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError) console.error('Mat auth.getUser failed:', authError);
+
+      const profilId = authData?.user?.id || bruker?.id;
+      if (!profilId) {
+        console.error('Mat save aborted: no profil_id', { brukerId: bruker?.id, authUser: authData?.user?.id });
+        setLagreFeil(t('mat.ikkeInnlogget'));
+        return;
+      }
+
+      const payload = {
+        profil_id: profilId,
+        dato,
+        klokkeslett,
+        matvare: matvare.trim(),
+        kategori,
+        reaksjon,
+        mengde,
+        notater: notater.trim() || null,
+        allergi_status: allergiStatus || null,
+      };
+
+      console.log('Mat save attempt:', payload);
+      const { data, error } = await supabase.from('mat').insert(payload).select().single();
+
+      if (error) {
+        console.error('Mat insert failed:', error);
+        setLagreFeil(t('mat.lagreFeil'));
+        return;
+      }
+
+      console.log('Mat save success:', data?.id);
+      setMatvare('');
+      setKategori('');
+      setReaksjon('');
+      setMengde('');
+      setNotater('');
+      setAllergiStatus('');
+      setErNyMatvare(null);
+      setDato(new Date().toISOString().split('T')[0]);
+      setKlokkeslett(new Date().toTimeString().slice(0, 5));
+      setVisSkjema(false);
+      await lastData(true);
+    } catch (err) {
+      console.error('Mat save unexpected error:', err);
+      setLagreFeil(t('mat.lagreFeil'));
+    } finally {
+      setLagrer(false);
+    }
   };
 
   // Beregn smakskart
@@ -230,7 +281,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
                 {t('mat.velkommenBeskrivelse', { navn: babyNavn })}
               </div>
               <button
-                onClick={() => setVisSkjema(true)}
+                onClick={() => { setLagreFeil(''); setVisSkjema(true); }}
                 style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #F4A853, #E8943F)', border: 'none', borderRadius: '50px', fontSize: '14px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 16px rgba(244,168,83,0.4)' }}
               >
                 <span style={{ fontSize: '18px' }}>+</span> {t('mat.registrerFørsteMåltid')}
@@ -479,7 +530,7 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
 
           {/* Registrer-knapp */}
           <button
-            onClick={() => setVisSkjema(true)}
+            onClick={() => { setLagreFeil(''); setVisSkjema(true); }}
             style={{ position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)', padding: '16px 32px', background: 'linear-gradient(135deg, #F4A853, #E8943F)', border: 'none', borderRadius: '50px', fontSize: '15px', fontWeight: '700', color: '#fff', cursor: 'pointer', fontFamily: 'var(--font-inter)', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 20px rgba(244,168,83,0.5)', zIndex: 50 }}
           >
             <span style={{ fontSize: '18px' }}>+</span> {t('mat.registrerMåltid')}
@@ -594,10 +645,17 @@ if (!matvare.trim() || !kategori || !reaksjon || !mengde) return;
               <textarea value={notater} onChange={e => setNotater(e.target.value)} placeholder={t('mat.notaterPlaceholder')} rows={2} style={{ width: '100%', padding: '12px 14px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', resize: 'none', boxSizing: 'border-box' }} />
             </div>
 
+            {lagreFeil ? (
+              <div style={{ marginBottom: '12px', padding: '12px 14px', backgroundColor: '#FFF1F2', border: '1px solid #FECDD3', borderRadius: '12px', fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#BE123C', lineHeight: 1.5 }}>
+                {lagreFeil}
+              </div>
+            ) : null}
+
             <button
+              type="button"
               onClick={lagreMatregistrering}
               disabled={!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer}
-              style={{ width: '100%', padding: '16px', backgroundColor: (!matvare.trim() || !kategori || !reaksjon || !mengde) ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: (!matvare.trim() || !kategori || !reaksjon || !mengde) ? farger.tekstLys : '#FDFAF6', cursor: (!matvare.trim() || !kategori || !reaksjon || !mengde) ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter)' }}
+              style={{ width: '100%', padding: '16px', backgroundColor: (!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer) ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: '600', color: (!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer) ? farger.tekstLys : '#FDFAF6', cursor: (!matvare.trim() || !kategori || !reaksjon || !mengde || lagrer) ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-inter)' }}
             >
               {lagrer ? t('mat.lagrer') : t('mat.lagreMåltid')}
             </button>

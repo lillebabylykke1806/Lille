@@ -23,6 +23,8 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.lilleapp.no').replace(/\/$/, '');
+
   // Send e-post via Resend
   await resend.emails.send({
     from: 'Lille <noreply@lilleapp.no>',
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
         <p>${invitert_av_epost} har invitert deg til å følge <strong>${barn_navn}</strong> i appen Lille.</p>
         <p>Lille er en app som hjelper foreldre å forstå babyen sin bedre – registrer søvn, amming, signaler og mye mer.</p>
         <p>Du får tilgang til alle registreringer for ${barn_navn} uten å betale noe.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/partner?kode=${kode}" 
+        <a href="${appUrl}/partner?kode=${kode}" 
            style="display: inline-block; background: #2D5C45; color: white; padding: 14px 28px; border-radius: 50px; text-decoration: none; font-weight: 600; margin: 20px 0;">
           Godta invitasjon 🤍
         </a>

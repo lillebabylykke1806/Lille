@@ -5,6 +5,7 @@ import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
 import { SPRÅK_NAVN, SPRÅK_FLAGG, Locale } from '../../lib/i18n/translations';
+import { sisteVåkenTid } from '../../lib/søvnUtils';
 import {
   notificationsEnabled,
   toggleNotifications,
@@ -49,22 +50,10 @@ export default function Innstillinger({ onTilbake, bruker, aktivtBarn }: Props) 
         supabase.from('uro_logg').select('tidspunkt').eq('profil_id', profilId).order('dato', { ascending: false }).limit(15),
       ]);
 
-      const oppvåkninger = (lurRes.data || []).filter((l: { type: string; start?: string }) => l.type === 'oppvåkning' && l.start);
-      const siste = [...oppvåkninger].sort((a: { dato: string; start?: string }, b: { dato: string; start?: string }) =>
-        `${b.dato}T${b.start || ''}`.localeCompare(`${a.dato}T${a.start || ''}`)
-      )[0];
-
-      let lastWakeTime: Date | null = null;
-      if (siste?.start) {
-        const [timer, minutter] = siste.start.split(':').map(Number);
-        lastWakeTime = new Date(`${siste.dato}T00:00:00`);
-        lastWakeTime.setHours(timer, minutter, 0, 0);
-      }
-
       await scheduleBabyNotifications({
         babyName: aktivtBarn.navn || '',
         fødselsdato: aktivtBarn.fødselsdato || '',
-        lastWakeTime,
+        lastWakeTime: sisteVåkenTid(lurRes.data || []),
         lurer: lurRes.data || [],
         uroLogg: uroRes.data || [],
         locale,

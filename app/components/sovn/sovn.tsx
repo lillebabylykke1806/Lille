@@ -7,7 +7,8 @@ import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
-import { søvnMinutterForDag } from '../../lib/søvnUtils';
+import { søvnMinutterForDag, sisteVåkenTid } from '../../lib/søvnUtils';
+import { cancelNapNotifications, scheduleBabyNotifications } from '../../lib/notifications';
 import type { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
 
 const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
@@ -179,6 +180,34 @@ const [aiLurInnsikt, setAiLurInnsikt] = useState('');
       setEgneSignaler(egne.map(s => ({ id: s, label: s })));
     }
   }, [bruker, aktivtBarn, t]);
+
+  /** Cancel nap reminders when asleep; reschedule from actual wake after wake events. */
+  const oppdaterVarsler = useCallback(async (opts?: { cancelNapOnly?: boolean }) => {
+    if (opts?.cancelNapOnly) {
+      await cancelNapNotifications();
+      return;
+    }
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (!profilId) return;
+
+    const fjortenDagerSiden = new Date();
+    fjortenDagerSiden.setDate(fjortenDagerSiden.getDate() - 14);
+    const fraDato = fjortenDagerSiden.toISOString().split('T')[0];
+
+    const [lurRes, uroRes] = await Promise.all([
+      supabase.from('lurer').select('*').eq('profil_id', profilId).gte('dato', fraDato),
+      supabase.from('uro_logg').select('tidspunkt').eq('profil_id', profilId).order('dato', { ascending: false }).limit(15),
+    ]);
+
+    await scheduleBabyNotifications({
+      babyName: aktivtBarn?.navn || '',
+      fødselsdato: aktivtBarn?.fødselsdato || '',
+      lastWakeTime: sisteVåkenTid(lurRes.data || []),
+      lurer: lurRes.data || [],
+      uroLogg: uroRes.data || [],
+      locale,
+    });
+  }, [aktivtBarn, bruker, locale]);
 
   useEffect(() => {
     if (åpneMorgen) {
@@ -380,6 +409,9 @@ Svar KUN med observasjonen, ingen introduksjon.`
       setLurId(data[0].id);
       localStorage.setItem('lille_lurid', data[0].id.toString());
     }
+    // Baby is asleep — cancel pending "nap soon/now" reminders immediately.
+    // The early sleep start still feeds lærtVåkenvinduMinutter on next schedule.
+    await oppdaterVarsler({ cancelNapOnly: true });
     if (type === 'natt') {
       setVisManeAnimasjon(true);
       setVisning('nattAktiv');
@@ -404,6 +436,8 @@ Svar KUN med observasjonen, ingen introduksjon.`
     setOppvåkningStart(nå);
     setOppvåkningMinutter(0);
     lastTidslinje();
+    // Recalculate next nap from this ACTUAL wake time
+    await oppdaterVarsler();
   };
   
   const startSøvnIgjen = async () => {
@@ -422,6 +456,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
     setNattligOppvåkning(false);
     setOppvåkningStart(null);
     setOppvåkningMinutter(0);
+    await oppdaterVarsler({ cancelNapOnly: true });
     lastTidslinje();
   };
 
@@ -449,21 +484,34 @@ Svar KUN med observasjonen, ingen introduksjon.`
     const slutt = new Date();
     const diff = Math.floor((slutt.getTime() - startTid.getTime()) / 1000);
     const varighetMinutter = Math.floor(diff / 60);
+    const sluttStr = slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
     if (lurId) {
       await supabase.from('lurer').update({
-        slutt: slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+        slutt: sluttStr,
         varighet: varighetMinutter,
       }).eq('id', lurId);
+    }
+    // For daytime naps, also register an explicit wake so next prediction resets from ACTUAL wake
+    if (søvnType === 'lur') {
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (profilId) {
+        await supabase.from('lurer').insert({
+          profil_id: profilId, dato: dagensdato(), type: 'oppvåkning',
+          start: sluttStr, slutt: null, varighet: 0, signaler: '',
+        });
+      }
     }
     localStorage.removeItem('lille_starttid');
     localStorage.removeItem('lille_sovtype');
     localStorage.removeItem('lille_lurid');
     setNattMinutter(varighetMinutter);
+    const ferdigType = søvnType;
     setStartTid(null); setSøvnType(null); setLurId(null);
-    if (søvnType === 'natt') {
+    if (ferdigType === 'natt') {
       setVisning('morgen');
     } else {
       setLurFerdig(true);
+      await oppdaterVarsler();
     }
     lastTidslinje();
   };
@@ -497,6 +545,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
     }
     setNyStart(''); setNySlutt('');
     setVisning('velg'); lastTidslinje();
+    await oppdaterVarsler();
   };
 
   const lagreRedigertLur = async () => {
@@ -655,6 +704,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
                   if (!profilId) return;
                   await supabase.from('lurer').insert({ profil_id: profilId, dato: dagensdato(), type: 'oppvåkning', start: nyTidStr, slutt: null, varighet: 0, signaler: '' });
                   setVisJusterTid(false); setVisning('velg'); lastTidslinje();
+                  await oppdaterVarsler();
                 }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
                   {t('søvn.lagreOppvåkning')}
                 </button>

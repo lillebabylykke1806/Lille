@@ -7,7 +7,7 @@ import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { Locale } from '../../lib/i18n/translations';
 import { scheduleBabyNotifications } from '../../lib/notifications';
 import BarnVelger from './BarnVelger';
-import { lærtVåkenvinduMinutter } from '../../lib/søvnUtils';
+import { lærtVåkenvinduMinutter, sisteVåkenTid, erBabySovendeEtter, harSovnetEtter } from '../../lib/søvnUtils';
 
 const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
   no: 'norsk',
@@ -122,16 +122,14 @@ const IkonKomponent = ({ type }: { type: string }) => {
 const beregnNesteLur = (fødselsdato: string, lurer: any[], t: (nøkkel: string, variabler?: Record<string, string | number>) => string) => {
   const våkenvindu = lærtVåkenvinduMinutter(lurer, fødselsdato);
 
-  const sisteOppvåkning = [...(lurer || [])]
-    .filter((l: { type: string; start?: string }) => l.type === 'oppvåkning' && l.start)
-    .sort((a: { dato?: string; start?: string }, b: { dato?: string; start?: string }) =>
-      `${b.dato || ''}T${b.start || ''}`.localeCompare(`${a.dato || ''}T${a.start || ''}`)
-    )[0];
-  if (!sisteOppvåkning?.start) return null;
+  // Always reset from the most recent ACTUAL wake (oppvåkning or completed sleep end)
+  const oppvåkningTid = sisteVåkenTid(lurer || []);
+  if (!oppvåkningTid) return null;
 
-  const [timer, minutter] = sisteOppvåkning.start.split(':').map(Number);
-  const oppvåkningTid = new Date(`${sisteOppvåkning.dato || new Date().toISOString().split('T')[0]}T00:00:00`);
-  oppvåkningTid.setHours(timer, minutter, 0, 0);
+  // Don't predict next nap while baby is already asleep / already slept this wake
+  if (erBabySovendeEtter(lurer || [], oppvåkningTid) || harSovnetEtter(lurer || [], oppvåkningTid)) {
+    return null;
+  }
 
   const nesteLurTid = new Date(oppvåkningTid.getTime() + våkenvindu * 60000);
   const nå = new Date();
@@ -447,21 +445,10 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || [], t);
     setNesteLur(lurResult);
 
-    const oppvåkninger = (lurRes.data || []).filter((l: { type: string; start?: string }) => l.type === 'oppvåkning' && l.start);
-    const sisteOppvåkning = [...oppvåkninger].sort((a: { dato: string; start?: string }, b: { dato: string; start?: string }) =>
-      `${b.dato}T${b.start || ''}`.localeCompare(`${a.dato}T${a.start || ''}`)
-    )[0];
-    let lastWakeTime: Date | null = null;
-    if (sisteOppvåkning?.start) {
-      const [timer, minutter] = sisteOppvåkning.start.split(':').map(Number);
-      lastWakeTime = new Date(`${sisteOppvåkning.dato}T00:00:00`);
-      lastWakeTime.setHours(timer, minutter, 0, 0);
-    }
-
     scheduleBabyNotifications({
       babyName: babyNavn || aktivtBarn?.navn || '',
       fødselsdato: aktivtBarn?.fødselsdato || '',
-      lastWakeTime,
+      lastWakeTime: sisteVåkenTid(lurRes.data || []),
       lurer: lurRes.data || [],
       uroLogg: uroRes.data || [],
       locale,
