@@ -14,6 +14,8 @@ const PAYWALL_GRØNN = '#3D6B4F';
 const PAYWALL_BAKGRUNN = '#F5F0EA';
 const FALLBACK_MÅNEDLIG = 'NOK 99';
 const FALLBACK_ÅRLIG = 'NOK 799';
+const PERSONVERN_URL = 'https://lilleapp.no/personvern';
+const EULA_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
 
 type Plan = 'monthly' | 'yearly';
 
@@ -306,6 +308,61 @@ export default function Paywall({ onSuccess, onClose, required = false }: Props)
         >
           {t('paywall.vilkår')}
         </p>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '8px 16px',
+            marginTop: 14,
+            paddingTop: 4,
+            fontFamily: 'var(--font-inter), sans-serif',
+          }}
+        >
+          <a
+            href={PERSONVERN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              window.open(PERSONVERN_URL, '_blank');
+            }}
+            style={{
+              fontSize: '13px',
+              fontWeight: 600,
+              color: PAYWALL_GRØNN,
+              textDecoration: 'underline',
+              textUnderlineOffset: 3,
+              padding: '6px 2px',
+            }}
+          >
+            {t('paywall.personvernerklæring')}
+          </a>
+          <span style={{ color: farger.kremMørk, fontSize: '13px' }} aria-hidden>
+            ·
+          </span>
+          <a
+            href={EULA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              window.open(EULA_URL, '_blank');
+            }}
+            style={{
+              fontSize: '13px',
+              fontWeight: 600,
+              color: PAYWALL_GRØNN,
+              textDecoration: 'underline',
+              textUnderlineOffset: 3,
+              padding: '6px 2px',
+            }}
+          >
+            {t('paywall.vilkårForBruk')}
+          </a>
+        </div>
       </div>
     </div>
   );
