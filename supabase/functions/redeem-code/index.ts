@@ -25,12 +25,28 @@ function jsonResponse(body: Record<string, unknown>, status = 200) {
   });
 }
 
+async function ensureSubscriberExists(userId: string, rcKey: string): Promise<void> {
+  const res = await fetch(`https://api.revenuecat.com/v1/subscribers/${userId}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${rcKey}`,
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`RevenueCat subscriber lookup failed: ${err}`);
+  }
+}
+
 async function grantAmbassadorAccess(userId: string, email: string): Promise<void> {
   const rcKey = Deno.env.get('REVENUECAT_SECRET_API_KEY');
-  if (!rcKey) throw new Error('RevenueCat er ikke konfigurert');
+  if (!rcKey) throw new Error('RevenueCat is not configured');
 
   const encodedEntitlement = encodeURIComponent(ENTITLEMENT_ID);
   const baseUrl = `https://api.revenuecat.com/v1/subscribers/${userId}`;
+
+  await ensureSubscriberExists(userId, rcKey);
 
   const promoRes = await fetch(`${baseUrl}/entitlements/${encodedEntitlement}/promotional`, {
     method: 'POST',
@@ -43,7 +59,7 @@ async function grantAmbassadorAccess(userId: string, email: string): Promise<voi
 
   if (!promoRes.ok) {
     const err = await promoRes.text();
-    throw new Error(`RevenueCat promotional feilet: ${err}`);
+    throw new Error(`RevenueCat promotional failed: ${err}`);
   }
 
   const attrRes = await fetch(`${baseUrl}/attributes`, {
@@ -59,7 +75,7 @@ async function grantAmbassadorAccess(userId: string, email: string): Promise<voi
 
   if (!attrRes.ok) {
     const err = await attrRes.text();
-    throw new Error(`RevenueCat attributt feilet: ${err}`);
+    throw new Error(`RevenueCat attribute failed: ${err}`);
   }
 }
 
@@ -70,7 +86,7 @@ async function createDiscountCheckout(
   code: string,
 ): Promise<string> {
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
-  if (!stripeKey) throw new Error('Stripe er ikke konfigurert');
+  if (!stripeKey) throw new Error('Stripe is not configured');
 
   const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
 
@@ -86,7 +102,7 @@ async function createDiscountCheckout(
     cancel_url: `${APP_URL}/kode?c=${encodeURIComponent(code)}`,
   });
 
-  if (!session.url) throw new Error('Kunne ikke opprette Stripe Checkout');
+  if (!session.url) throw new Error('Could not create Stripe Checkout');
   return session.url;
 }
 
@@ -96,13 +112,13 @@ Deno.serve(async (req) => {
   }
 
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Metode ikke tillatt' }, 405);
+    return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse({ error: 'Du må være logget inn' }, 401);
+      return jsonResponse({ error: 'You need to be logged in' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -115,13 +131,13 @@ Deno.serve(async (req) => {
 
     const { data: { user }, error: authError } = await supabaseUser.auth.getUser();
     if (authError || !user) {
-      return jsonResponse({ error: 'Ugyldig innlogging' }, 401);
+      return jsonResponse({ error: 'Invalid login' }, 401);
     }
 
     const { code: rawCode } = await req.json();
     const code = typeof rawCode === 'string' ? rawCode.trim().toUpperCase() : '';
     if (!code) {
-      return jsonResponse({ error: 'Mangler kode' }, 400);
+      return jsonResponse({ error: 'Missing code' }, 400);
     }
 
     const userId = user.id;
@@ -136,13 +152,13 @@ Deno.serve(async (req) => {
       .single();
 
     if (codeError || !discountCode) {
-      return jsonResponse({ error: 'Ugyldig kode' });
+      return jsonResponse({ error: 'Invalid code' });
     }
 
     const dc = discountCode as DiscountCode;
 
     if (!dc.active) {
-      return jsonResponse({ error: 'Ugyldig kode' });
+      return jsonResponse({ error: 'Invalid code' });
     }
 
     if (dc.max_redemptions != null) {
@@ -153,7 +169,7 @@ Deno.serve(async (req) => {
         .eq('status', 'fulfilled');
 
       if (count != null && count >= dc.max_redemptions) {
-        return jsonResponse({ error: 'Koden er brukt opp' });
+        return jsonResponse({ error: 'This code has been fully redeemed' });
       }
     }
 
@@ -172,7 +188,7 @@ Deno.serve(async (req) => {
       .in('status', ['pending', 'fulfilled']);
 
     if ((existingByEmail && existingByEmail.length > 0) || (existingByUser && existingByUser.length > 0)) {
-      return jsonResponse({ error: 'Du har allerede brukt denne koden' });
+      return jsonResponse({ error: "You've already used this code" });
     }
 
     const { data: redemption, error: insertError } = await supabase
@@ -187,7 +203,7 @@ Deno.serve(async (req) => {
       .single();
 
     if (insertError || !redemption) {
-      return jsonResponse({ error: 'Kunne ikke starte innløsning' }, 500);
+      return jsonResponse({ error: 'Could not start redemption' }, 500);
     }
 
     const redemptionId = redemption.id;
@@ -209,13 +225,13 @@ Deno.serve(async (req) => {
         return jsonResponse({
           success: true,
           type: 'ambassador_free',
-          message: 'Du har nå gratis tilgang for alltid! Åpne appen og logg inn med denne kontoen.',
+          message: 'You now have free access for life! Open the app and log in with this account.',
         });
       }
 
       if (dc.type === 'customer_discount') {
         if (!dc.stripe_promo_code_id) {
-          throw new Error('Rabattkoden mangler Stripe-konfigurasjon');
+          throw new Error('This discount code is missing Stripe configuration');
         }
 
         const checkoutUrl = await createDiscountCheckout(
@@ -237,18 +253,18 @@ Deno.serve(async (req) => {
         });
       }
 
-      throw new Error('Ukjent kodetype');
+      throw new Error('Unknown code type');
     } catch (err) {
       await supabase
         .from('redemptions')
         .update({ status: 'failed' })
         .eq('id', redemptionId);
 
-      const message = err instanceof Error ? err.message : 'Noe gikk galt';
+      const message = err instanceof Error ? err.message : 'Something went wrong';
       return jsonResponse({ error: message }, 500);
     }
   } catch (err) {
     console.error('redeem-code error:', err);
-    return jsonResponse({ error: 'Noe gikk galt — prøv igjen om litt' }, 500);
+    return jsonResponse({ error: 'Something went wrong — please try again shortly' }, 500);
   }
 });

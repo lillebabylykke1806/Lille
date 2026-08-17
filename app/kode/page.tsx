@@ -30,7 +30,7 @@ function KodeInnhold() {
   useEffect(() => {
     if (!kode) {
       setSideStatus('feil');
-      setFeilmelding('Ingen kode i lenken. Sjekk at du har fått riktig lenke.');
+      setFeilmelding('No code in this link. Please check that you have the right URL.');
       return;
     }
 
@@ -51,7 +51,7 @@ function KodeInnhold() {
         : await supabase.auth.signInWithPassword({ email: epost, password: passord });
 
       if (result.error) {
-        setAuthFeil(erNy ? 'Kunne ikke opprette konto. Prøv igjen.' : 'Feil e-post eller passord.');
+        setAuthFeil(erNy ? 'Could not create account. Please try again.' : 'Wrong email or password.');
         return;
       }
       if (result.data.user) setBruker(result.data.user);
@@ -69,7 +69,7 @@ function KodeInnhold() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        setFeilmelding('Du må være logget inn for å løse inn koden.');
+        setFeilmelding('You need to be logged in to redeem this code.');
         return;
       }
 
@@ -86,7 +86,7 @@ function KodeInnhold() {
       const data = await res.json();
 
       if (!res.ok || data.error) {
-        setFeilmelding(data.error || 'Noe gikk galt — prøv igjen om litt.');
+        setFeilmelding(data.error || 'Something went wrong — please try again shortly.');
         return;
       }
 
@@ -95,10 +95,10 @@ function KodeInnhold() {
         return;
       }
 
-      setMelding(data.message || 'Koden er løst inn!');
+      setMelding(data.message || 'Code redeemed!');
       setSideStatus('suksess');
     } catch {
-      setFeilmelding('Noe gikk galt — prøv igjen om litt.');
+      setFeilmelding('Something went wrong — please try again shortly.');
     } finally {
       setLasterInnlosning(false);
     }
@@ -117,7 +117,7 @@ function KodeInnhold() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn, padding: '24px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>😕</div>
-        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Ugyldig lenke</div>
+        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Invalid link</div>
         <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{feilmelding}</div>
       </div>
     );
@@ -127,9 +127,9 @@ function KodeInnhold() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn, padding: '24px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
-        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Koden er løst inn!</div>
+        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Code redeemed!</div>
         <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '24px', maxWidth: '360px' }}>{melding}</div>
-        <a href='https://www.lilleapp.no' style={{ padding: '14px 28px', backgroundColor: farger.grønn, color: 'white', borderRadius: '50px', textDecoration: 'none', fontWeight: '600', fontFamily: 'var(--font-inter)' }}>Gå til Lille</a>
+        <a href='https://www.lilleapp.no' style={{ padding: '14px 28px', backgroundColor: farger.grønn, color: 'white', borderRadius: '50px', textDecoration: 'none', fontWeight: '600', fontFamily: 'var(--font-inter)' }}>Go to Lille</a>
       </div>
     );
   }
@@ -139,9 +139,9 @@ function KodeInnhold() {
       <div style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <img src='/leep.png' style={{ width: '100px', marginBottom: '16px', mixBlendMode: 'multiply' }} alt="" />
-          <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Løs inn kode</div>
+          <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Redeem code</div>
           <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-            Du løser inn: <strong style={{ color: farger.grønn, letterSpacing: '1px' }}>{kode}</strong>
+            You're redeeming: <strong style={{ color: farger.grønn, letterSpacing: '1px' }}>{kode}</strong>
           </div>
         </div>
 
@@ -149,7 +149,7 @@ function KodeInnhold() {
           {bruker ? (
             <>
               <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px', textAlign: 'center' }}>
-                Logget inn som <strong style={{ color: farger.tekst }}>{bruker.email}</strong>
+                Logged in as <strong style={{ color: farger.tekst }}>{bruker.email}</strong>
               </div>
               {feilmelding && (
                 <div style={{ padding: '12px', backgroundColor: '#FDEDED', borderRadius: '10px', color: '#B04545', fontSize: '14px', fontFamily: 'var(--font-inter)', marginBottom: '16px', textAlign: 'center' }}>
@@ -161,17 +161,17 @@ function KodeInnhold() {
                 disabled={lasterInnlosning}
                 style={{ width: '100%', padding: '14px', backgroundColor: lasterInnlosning ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: lasterInnlosning ? 'wait' : 'pointer', fontFamily: 'var(--font-inter)' }}
               >
-                {lasterInnlosning ? 'Løser inn…' : 'Løs inn kode 🤍'}
+                {lasterInnlosning ? 'Redeeming…' : 'Redeem code 🤍'}
               </button>
             </>
           ) : (
             <>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-                <button onClick={() => setErNy(false)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>Logg inn</button>
-                <button onClick={() => setErNy(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>Opprett konto</button>
+                <button onClick={() => setErNy(false)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>Log in</button>
+                <button onClick={() => setErNy(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>Create account</button>
               </div>
-              <input type='email' value={epost} onChange={e => setEpost(e.target.value)} placeholder='E-post' style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
-              <input type='password' value={passord} onChange={e => setPassord(e.target.value)} placeholder='Passord' style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: authFeil ? '12px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              <input type='email' value={epost} onChange={e => setEpost(e.target.value)} placeholder='Email' style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              <input type='password' value={passord} onChange={e => setPassord(e.target.value)} placeholder='Password' style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: authFeil ? '12px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               {authFeil && (
                 <div style={{ fontSize: '13px', color: '#B04545', fontFamily: 'var(--font-inter)', marginBottom: '16px', textAlign: 'center' }}>{authFeil}</div>
               )}
@@ -180,7 +180,7 @@ function KodeInnhold() {
                 disabled={lasterAuth || !epost || !passord}
                 style={{ width: '100%', padding: '14px', backgroundColor: lasterAuth ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: lasterAuth ? 'wait' : 'pointer', fontFamily: 'var(--font-inter)' }}
               >
-                {lasterAuth ? 'Vent…' : erNy ? 'Opprett konto og fortsett' : 'Logg inn og fortsett'} 🤍
+                {lasterAuth ? 'Please wait…' : erNy ? 'Create account and continue' : 'Log in and continue'} 🤍
               </button>
             </>
           )}
