@@ -142,6 +142,21 @@ export async function initRevenueCat(appUserId?: string): Promise<void> {
   }
 }
 
+export async function setRevenueCatEmail(email: string): Promise<void> {
+  if (!revenueCatReady() || !email) return;
+  try {
+    await Purchases.setEmail({ email });
+  } catch (err) {
+    console.warn('RevenueCat setEmail failed', err);
+  }
+}
+
+/** Koble Supabase-bruker til RevenueCat (app_user_id + e-post). */
+export async function syncRevenueCatUser(userId: string, email?: string | null): Promise<void> {
+  await initRevenueCat(userId);
+  if (email) await setRevenueCatEmail(email);
+}
+
 export async function purchaseMonthly(): Promise<{ success: boolean; error?: string; cancelled?: boolean }> {
   if (!revenueCatReady()) {
     return { success: false, error: 'Purchases are not available in the app yet' };

@@ -21,7 +21,8 @@ import Pumping from './components/pumping/Pumping';
 import Temperatur from './components/temperatur/Temperatur';
 import Paywall from './components/paywall/Paywall';
 import { useLanguage } from './lib/i18n/LanguageContext';
-import { hasActiveSubscription, initRevenueCat, isNativeApp } from './lib/subscription';
+import { hasActiveSubscription, isNativeApp } from './lib/subscription';
+import { syncRevenueCatUser } from './lib/revenuecat';
 import { requestNotificationPermissionIfNeeded } from './lib/notifications';
 import { watchScreenshots } from './lib/screenshot';
 import { sikreProfilerRad } from './lib/profilId';
@@ -147,6 +148,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       
         setBruker(session.user);
         void sikreProfilerRad(session.user.id);
+        if (isNativeApp()) void syncRevenueCatUser(session.user.id, session.user.email);
       
         if (!partnerHarAktivTilgang) {
           const { data: barn } = await supabase
@@ -271,6 +273,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         if (isNativeApp()) {
           setBruker(data.user);
           void sikreProfilerRad(data.user.id);
+          void syncRevenueCatUser(data.user.id, data.user.email);
           setVisPaywall(true);
           return;
         }
@@ -293,6 +296,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       }
       setBruker(data.user);
       void sikreProfilerRad(data.user.id);
+      if (isNativeApp()) void syncRevenueCatUser(data.user.id, data.user.email);
     } catch {
       setInnloggingFeil(t('innlogging.noeGikkGalt'));
     } finally {
@@ -320,7 +324,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         setBruker(data.user);
         setHarAbonnement(false);
         setVisPaywall(true);
-        initRevenueCat(data.user.id);
+        void syncRevenueCatUser(data.user.id, data.user.email);
       } else {
         const res = await fetch('/api/create-checkout-session', {
           method: 'POST',

@@ -1,0 +1,4 @@
+# Supabase local config — Edge Functions deployes med: supabase functions deploy redeem-code
+
+[functions.redeem-code]
+verify_jwt = true
