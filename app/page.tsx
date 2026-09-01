@@ -86,6 +86,29 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     return fullført !== true;
   };
 
+  /** Keep the user logged in; send web users without a subscription to Stripe checkout. */
+  const håndterManglendeAbonnement = async (user: { id: string; email?: string | null }) => {
+    setBruker(user);
+    void sikreProfilerRad(user.id);
+    setHarAbonnement(false);
+    if (isNativeApp()) {
+      void syncRevenueCatUser(user.id, user.email);
+      setVisPaywall(true);
+      return;
+    }
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email || '' }),
+      });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    } catch {
+      // Stay logged in even if checkout redirect fails — never sign out for subscription issues.
+    }
+  };
+
   useEffect(() => {
     const lastData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -137,7 +160,9 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
             if (isNativeApp()) {
               setVisPaywall(true);
             } else {
-              await supabase.auth.signOut();
+              // Keep session alive; subscription gating happens via checkout, not signOut.
+              setBruker(session.user);
+              void sikreProfilerRad(session.user.id);
               setLaster(false);
               return;
             }
@@ -268,16 +293,9 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       const aktiv = await hasActiveSubscription(data.user.email || '', data.user.id);
       setHarAbonnement(aktiv);
 
-      // No active subscription → paywall (then straight to home, no onboarding).
+      // No active subscription → paywall (native) or checkout (web). Never sign out here.
       if (!aktiv) {
-        if (isNativeApp()) {
-          setBruker(data.user);
-          void sikreProfilerRad(data.user.id);
-          void syncRevenueCatUser(data.user.id, data.user.email);
-          setVisPaywall(true);
-          return;
-        }
-        await supabase.auth.signOut();
+        await håndterManglendeAbonnement(data.user);
         return;
       }
 

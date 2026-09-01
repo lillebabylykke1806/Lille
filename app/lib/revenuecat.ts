@@ -8,7 +8,6 @@ const IOS_API_KEY = 'appl_yJUgTGrXgObVRawZYPSFjYvrASv';
 const ANDROID_API_KEY = process.env.NEXT_PUBLIC_REVENUECAT_ANDROID_API_KEY ?? '';
 
 let initialized = false;
-let initFailed = false;
 let currentUserId: string | null = null;
 
 function isNative(): boolean {
@@ -20,7 +19,7 @@ export function isNativeApp(): boolean {
 }
 
 function revenueCatReady(): boolean {
-  return isNative() && initialized && !initFailed;
+  return isNative() && initialized;
 }
 
 function getApiKey(): string | null {
@@ -112,7 +111,7 @@ async function handlePurchaseResult(customerInfo: CustomerInfo): Promise<boolean
 }
 
 export async function initRevenueCat(appUserId?: string): Promise<void> {
-  if (!isNative() || initFailed) return;
+  if (!isNative()) return;
 
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -136,9 +135,8 @@ export async function initRevenueCat(appUserId?: string): Promise<void> {
       currentUserId = appUserId;
     }
   } catch (err) {
-    initFailed = true;
     initialized = false;
-    console.warn('RevenueCat initialization failed', err);
+    console.warn('RevenueCat initialization failed (will retry on next sync)', err);
   }
 }
 
@@ -151,10 +149,15 @@ export async function setRevenueCatEmail(email: string): Promise<void> {
   }
 }
 
-/** Koble Supabase-bruker til RevenueCat (app_user_id + e-post). */
+/** Koble Supabase-bruker til RevenueCat (app_user_id + e-post).
+ * Feil her er ikke-kritiske og skal aldri påvirke Supabase-innlogging. */
 export async function syncRevenueCatUser(userId: string, email?: string | null): Promise<void> {
-  await initRevenueCat(userId);
-  if (email) await setRevenueCatEmail(email);
+  try {
+    await initRevenueCat(userId);
+    if (email) await setRevenueCatEmail(email);
+  } catch (err) {
+    console.warn('RevenueCat user sync failed (non-fatal)', err);
+  }
 }
 
 export async function purchaseMonthly(): Promise<{ success: boolean; error?: string; cancelled?: boolean }> {

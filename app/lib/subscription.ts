@@ -4,6 +4,7 @@ import {
   checkRevenueCatEntitlement,
   isNativeApp,
 } from './revenuecat';
+import { supabase } from './supabase';
 
 export { initRevenueCat, isNativeApp };
 
@@ -50,15 +51,35 @@ export async function checkStripeSubscription(email: string): Promise<boolean> {
   }
 }
 
+async function checkProfilerSubscription(userId: string): Promise<boolean> {
+  try {
+    const { data } = await supabase
+      .from('profiler')
+      .select('stripe_subscription_status')
+      .eq('id', userId)
+      .single();
+    return data?.stripe_subscription_status === 'active';
+  } catch {
+    return false;
+  }
+}
+
 /** True if user has active Stripe (web) or RevenueCat (app) subscription.
- * Every network/native call is guarded by a timeout so this can never hang. */
+ * Every network/native call is guarded by a timeout so this can never hang.
+ * A failed RevenueCat init/check must not block access when Stripe or profiler says active. */
 export async function hasActiveSubscription(email: string, userId?: string): Promise<boolean> {
   if (userId) await withTimeout(initRevenueCat(userId), 8000, undefined);
 
-  const [stripeAktiv, rcAktiv] = await Promise.all([
+  const checks: Promise<boolean>[] = [
     withTimeout(checkStripeSubscription(email), 8000, false),
-    isNativeApp() ? withTimeout(checkRevenueCatEntitlement(), 8000, false) : Promise.resolve(false),
-  ]);
+  ];
+  if (userId) {
+    checks.push(withTimeout(checkProfilerSubscription(userId), 8000, false));
+  }
+  if (isNativeApp()) {
+    checks.push(withTimeout(checkRevenueCatEntitlement(), 8000, false));
+  }
 
-  return stripeAktiv || rcAktiv;
+  const results = await Promise.all(checks);
+  return results.some(Boolean);
 }
