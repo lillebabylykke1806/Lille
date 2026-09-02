@@ -36,6 +36,8 @@ export default function Home() {
   const [passord, setPassord] = useState('');
   const [erNyBruker, setErNyBruker] = useState(false);
   const [innloggingFeil, setInnloggingFeil] = useState('');
+  const [resetMelding, setResetMelding] = useState('');
+  const [senderReset, setSenderReset] = useState(false);
   const [loggerInn, setLoggerInn] = useState(false);
   const [visRegistrer, setVisRegistrer] = useState(false);
   const [visOnboarding, setVisOnboarding] = useState(false);
@@ -276,6 +278,31 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     sjekkGlemtLeggetid();
   }, [bruker]);
 
+  const glemtPassord = async () => {
+    if (!epost.trim()) {
+      setResetMelding('');
+      setInnloggingFeil(t('innlogging.skrivEpostForReset'));
+      return;
+    }
+    setSenderReset(true);
+    setInnloggingFeil('');
+    setResetMelding('');
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(epost.trim(), {
+        redirectTo: `${window.location.origin}/tilbakestill-passord`,
+      });
+      if (error) {
+        setInnloggingFeil(t('innlogging.noeGikkGalt'));
+        return;
+      }
+      setResetMelding(t('innlogging.resetSendt'));
+    } catch {
+      setInnloggingFeil(t('innlogging.noeGikkGalt'));
+    } finally {
+      setSenderReset(false);
+    }
+  };
+
   const loggInn = async () => {
     if (loggerInn) return;
     setInnloggingFeil('');
@@ -387,12 +414,23 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px', width: '100%' }}>
           <p style={{ fontSize: '18px', fontStyle: 'italic', color: farger.terrakotta, margin: '0 0 20px' }}>{erNyBruker ? t('innlogging.velkommen') : t('innlogging.heiIgjen')}</p>
           <input type="email" value={epost} onChange={(e) => setEpost(e.target.value)} placeholder={t('innlogging.epostPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
-          <input type="password" value={passord} onChange={(e) => setPassord(e.target.value)} placeholder={t('innlogging.passordPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '20px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
+          <input type="password" value={passord} onChange={(e) => setPassord(e.target.value)} placeholder={t('innlogging.passordPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: !erNyBruker ? '8px' : '20px', outline: 'none', fontFamily: 'var(--font-inter), sans-serif', boxSizing: 'border-box' }} />
+          {!erNyBruker && (
+            <button
+              type="button"
+              onClick={glemtPassord}
+              disabled={senderReset}
+              style={{ display: 'block', width: '100%', marginBottom: '16px', padding: '0', background: 'none', border: 'none', fontSize: '13px', color: farger.terrakotta, cursor: senderReset ? 'default' : 'pointer', fontFamily: 'var(--font-inter), sans-serif', textAlign: 'right', opacity: senderReset ? 0.7 : 1 }}
+            >
+              {senderReset ? '…' : t('innlogging.glemtPassord')}
+            </button>
+          )}
+          {resetMelding && <p style={{ fontSize: '13px', color: farger.grønn, fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 14px', textAlign: 'center', lineHeight: 1.5 }}>{resetMelding}</p>}
           {innloggingFeil && <p style={{ fontSize: '13px', color: '#C0392B', fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 14px', textAlign: 'center' }}>{innloggingFeil}</p>}
           <button onClick={erNyBruker ? registrer : loggInn} disabled={loggerInn} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: '#FDFAF6', cursor: loggerInn ? 'default' : 'pointer', opacity: loggerInn ? 0.7 : 1, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', marginBottom: '12px' }}>
             {loggerInn ? '…' : (erNyBruker ? t('innlogging.opprettKonto') : t('innlogging.loggInn'))}
           </button>
-          <button onClick={() => { setErNyBruker(!erNyBruker); setInnloggingFeil(''); }} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}>
+          <button onClick={() => { setErNyBruker(!erNyBruker); setInnloggingFeil(''); setResetMelding(''); }} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}>
             {erNyBruker ? t('innlogging.harAlleredeKonto') : t('innlogging.nyBruker')}
           </button>
         </div>
