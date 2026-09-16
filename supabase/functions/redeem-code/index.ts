@@ -115,19 +115,40 @@ async function grantAmbassadorAccess(userId: string, email: string): Promise<voi
   }
 }
 
+function stripeCheckoutLocale(raw: unknown): 'auto' | 'nb' | 'en' | 'sv' | 'da' | 'de' {
+  const code = typeof raw === 'string' ? raw.trim().toLowerCase() : '';
+  switch (code) {
+    case 'no':
+      return 'nb';
+    case 'en':
+      return 'en';
+    case 'sv':
+      return 'sv';
+    case 'da':
+      return 'da';
+    case 'de':
+      return 'de';
+    default:
+      return 'auto';
+  }
+}
+
 async function createDiscountCheckout(
   email: string,
   userId: string,
   promoCodeId: string,
   code: string,
+  localeRaw?: unknown,
 ): Promise<string> {
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   if (!stripeKey) throw new Error('Stripe is not configured');
 
   const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+  const locale = stripeCheckoutLocale(localeRaw);
 
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
+    locale,
     customer_email: email,
     client_reference_id: userId,
     line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
@@ -173,7 +194,7 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: 'not_logged_in' }, 401);
     }
 
-    const { code: rawCode } = await req.json();
+    const { code: rawCode, locale: localeRaw } = await req.json();
     const code = typeof rawCode === 'string' ? rawCode.trim().toUpperCase() : '';
     if (!code) {
       return jsonResponse({ error: 'code_missing' }, 400);
@@ -278,6 +299,7 @@ Deno.serve(async (req) => {
           userId,
           dc.stripe_promo_code_id,
           code,
+          localeRaw,
         );
 
         await supabase

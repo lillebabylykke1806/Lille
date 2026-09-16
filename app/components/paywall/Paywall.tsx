@@ -38,7 +38,7 @@ const FAQ: { q: OversettelseNøkkel; a: OversettelseNøkkel }[] = [
 ];
 
 export default function Paywall({ onSuccess, onClose, email, userId }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [priser, setPriser] = useState<{ monthly?: string; yearly?: string }>({});
   const [valgtPlan, setValgtPlan] = useState<Plan>('yearly');
   const [laster, setLaster] = useState<'kjøp' | 'restore' | null>(null);
@@ -58,7 +58,7 @@ export default function Paywall({ onSuccess, onClose, email, userId }: Props) {
     const res = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email || '', userId: userId || '' }),
+      body: JSON.stringify({ email: email || '', userId: userId || '', locale }),
     });
     const { url } = await res.json();
     if (url) window.location.href = url;

@@ -43,7 +43,7 @@ function mapRedeemError(error: string | undefined, t: (k: OversettelseNøkkel) =
 }
 
 function KodeInnhold() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const searchParams = useSearchParams();
   const kodeFraUrl = normaliserKode(searchParams.get('c') ?? '');
 
@@ -159,7 +159,7 @@ function KodeInnhold() {
           Authorization: `Bearer ${session.access_token}`,
           apikey: SUPABASE_ANON_KEY,
         },
-        body: JSON.stringify({ code: kode }),
+        body: JSON.stringify({ code: kode, locale }),
       });
 
       const data = await res.json();
@@ -181,7 +181,7 @@ function KodeInnhold() {
     } finally {
       setLasterInnlosning(false);
     }
-  }, [kode, bruker, t]);
+  }, [kode, bruker, t, locale]);
 
   const spinner = (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn }}>
