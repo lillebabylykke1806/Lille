@@ -6,6 +6,10 @@ import { useSearchParams } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { farger } from '../lib/farger';
+import { erAlleredeRegistrert } from '../lib/authSignup';
+import { useLanguage } from '../lib/i18n/LanguageContext';
+import { lagreSamtykkeVedRegistrering } from '../lib/consent';
+import { ConsentCheckboxes } from '../components/consent/ConsentCheckboxes';
 
 const SUPABASE_URL = 'https://hicdsrqhgjdvjctxcucr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY2RzcnFoZ2pkdmpjdHhjdWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDMxNDEsImV4cCI6MjA5MzkxOTE0MX0.l8N5-LjFNakStf2ZF0-TyrD9Vg9ooFKihzh53L-NXNo';
@@ -13,6 +17,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 type SideStatus = 'laster' | 'klar' | 'suksess' | 'feil';
 
 function KodeInnhold() {
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const kode = searchParams.get('c')?.trim().toUpperCase() ?? '';
 
@@ -22,7 +27,10 @@ function KodeInnhold() {
   const [epost, setEpost] = useState('');
   const [passord, setPassord] = useState('');
   const [authFeil, setAuthFeil] = useState('');
+  const [alleredeKonto, setAlleredeKonto] = useState(false);
   const [lasterAuth, setLasterAuth] = useState(false);
+  const [godtarVilkår, setGodtarVilkår] = useState(false);
+  const [markedsforing, setMarkedsforing] = useState(false);
   const [lasterInnlosning, setLasterInnlosning] = useState(false);
   const [melding, setMelding] = useState('');
   const [feilmelding, setFeilmelding] = useState('');
@@ -44,17 +52,41 @@ function KodeInnhold() {
 
   const loggInnEllerRegistrer = async () => {
     setAuthFeil('');
+    setAlleredeKonto(false);
+    if (erNy && !godtarVilkår) {
+      setAuthFeil(t('consent.required'));
+      return;
+    }
     setLasterAuth(true);
     try {
-      const result = erNy
-        ? await supabase.auth.signUp({ email: epost, password: passord })
-        : await supabase.auth.signInWithPassword({ email: epost, password: passord });
-
-      if (result.error) {
-        setAuthFeil(erNy ? 'Could not create account. Please try again.' : 'Wrong email or password.');
+      if (erNy) {
+        const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
+        if (erAlleredeRegistrert(error, data?.user)) {
+          setAlleredeKonto(true);
+          return;
+        }
+        if (error) {
+          setAuthFeil(error.message || t('innlogging.noeGikkGalt'));
+          return;
+        }
+        if (data.user) {
+          await lagreSamtykkeVedRegistrering(data.user.id, markedsforing, epost);
+          setBruker(data.user);
+        }
         return;
       }
-      if (result.data.user) setBruker(result.data.user);
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
+      if (error) {
+        const melding = error.message?.toLowerCase() ?? '';
+        const feilPassord =
+          error.code === 'invalid_credentials' ||
+          melding.includes('invalid login credentials') ||
+          melding.includes('invalid credentials');
+        setAuthFeil(feilPassord ? t('innlogging.feilEpostPassord') : (error.message || t('innlogging.noeGikkGalt')));
+        return;
+      }
+      if (data.user) setBruker(data.user);
     } finally {
       setLasterAuth(false);
     }
@@ -167,20 +199,41 @@ function KodeInnhold() {
           ) : (
             <>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-                <button onClick={() => setErNy(false)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>Log in</button>
-                <button onClick={() => setErNy(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>Create account</button>
+                <button onClick={() => { setErNy(false); setAuthFeil(''); setAlleredeKonto(false); setGodtarVilkår(false); setMarkedsforing(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>{t('innlogging.loggInn')}</button>
+                <button onClick={() => { setErNy(true); setAuthFeil(''); setAlleredeKonto(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>{t('innlogging.opprettKonto')}</button>
               </div>
-              <input type='email' value={epost} onChange={e => setEpost(e.target.value)} placeholder='Email' style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
-              <input type='password' value={passord} onChange={e => setPassord(e.target.value)} placeholder='Password' style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: authFeil ? '12px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
-              {authFeil && (
+              <input type='email' value={epost} onChange={e => setEpost(e.target.value)} placeholder={t('innlogging.epostPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              <input type='password' value={passord} onChange={e => setPassord(e.target.value)} placeholder={t('innlogging.passordPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: erNy || authFeil || alleredeKonto ? '12px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              {erNy && (
+                <ConsentCheckboxes
+                  godtarVilkår={godtarVilkår}
+                  markedsforing={markedsforing}
+                  onGodtarVilkår={setGodtarVilkår}
+                  onMarkedsforing={setMarkedsforing}
+                />
+              )}
+              {alleredeKonto && (
+                <div style={{ margin: '0 0 16px', padding: '14px', backgroundColor: '#FDF6F0', borderRadius: '12px', border: `1px solid ${farger.kremMørk}`, textAlign: 'center' }}>
+                  <p style={{ fontSize: '15px', fontWeight: 600, color: farger.tekst, fontFamily: 'var(--font-inter)', margin: '0 0 4px' }}>{t('innlogging.alleredeKontoTittel')}</p>
+                  <p style={{ fontSize: '13px', color: farger.tekstLys, fontFamily: 'var(--font-inter)', margin: '0 0 14px' }}>{t('innlogging.alleredeKontoTekst')}</p>
+                  <button
+                    type="button"
+                    onClick={() => { setAlleredeKonto(false); setErNy(false); setAuthFeil(''); }}
+                    style={{ width: '100%', padding: '12px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
+                  >
+                    {t('innlogging.gåTilInnlogging')}
+                  </button>
+                </div>
+              )}
+              {authFeil && !alleredeKonto && (
                 <div style={{ fontSize: '13px', color: '#B04545', fontFamily: 'var(--font-inter)', marginBottom: '16px', textAlign: 'center' }}>{authFeil}</div>
               )}
               <button
                 onClick={loggInnEllerRegistrer}
-                disabled={lasterAuth || !epost || !passord}
-                style={{ width: '100%', padding: '14px', backgroundColor: lasterAuth ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: lasterAuth ? 'wait' : 'pointer', fontFamily: 'var(--font-inter)' }}
+                disabled={lasterAuth || !epost || !passord || (erNy && !godtarVilkår)}
+                style={{ width: '100%', padding: '14px', backgroundColor: lasterAuth || (erNy && !godtarVilkår) ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: lasterAuth || (erNy && !godtarVilkår) ? 'default' : 'pointer', fontFamily: 'var(--font-inter)', opacity: erNy && !godtarVilkår ? 0.6 : 1 }}
               >
-                {lasterAuth ? 'Please wait…' : erNy ? 'Create account and continue' : 'Log in and continue'} 🤍
+                {lasterAuth ? t('innlogging.ventLitt') : erNy ? t('innlogging.opprettOgFortsett') : t('innlogging.loggInnOgFortsett')} 🤍
               </button>
             </>
           )}

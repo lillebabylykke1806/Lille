@@ -48,6 +48,39 @@ async function grantAmbassadorAccess(userId: string, email: string): Promise<voi
 
   await ensureSubscriberExists(userId, rcKey);
 
+  // Idempotent: skip if Lille Pro is already active (avoids duplicate promotional grants on retry).
+  try {
+    const subRes = await fetch(baseUrl, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${rcKey}` },
+    });
+    if (subRes.ok) {
+      const body = await subRes.json();
+      const ent = body?.subscriber?.entitlements?.[ENTITLEMENT_ID];
+      if (ent) {
+        const expires = ent.expires_date ? new Date(ent.expires_date).getTime() : null;
+        const stillActive = expires === null || expires > Date.now();
+        if (stillActive) {
+          console.log('Ambassador already has active Lille Pro — skipping promotional grant');
+          // Still sync email attribute (non-fatal)
+          try {
+            await fetch(`${baseUrl}/attributes`, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${rcKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ attributes: { $email: { value: email } } }),
+            });
+          } catch { /* ignore */ }
+          return;
+        }
+      }
+    }
+  } catch (lookupErr) {
+    console.warn('RC entitlement idempotency check failed, will attempt grant:', lookupErr);
+  }
+
   const promoRes = await fetch(`${baseUrl}/entitlements/${encodedEntitlement}/promotional`, {
     method: 'POST',
     headers: {
@@ -62,20 +95,23 @@ async function grantAmbassadorAccess(userId: string, email: string): Promise<voi
     throw new Error(`RevenueCat promotional failed: ${err}`);
   }
 
-  const attrRes = await fetch(`${baseUrl}/attributes`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${rcKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      attributes: { $email: { value: email } },
-    }),
-  });
-
-  if (!attrRes.ok) {
-    const err = await attrRes.text();
-    throw new Error(`RevenueCat attribute failed: ${err}`);
+  // Attributes are nice-to-have; never fail the grant after promo succeeded.
+  try {
+    const attrRes = await fetch(`${baseUrl}/attributes`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${rcKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        attributes: { $email: { value: email } },
+      }),
+    });
+    if (!attrRes.ok) {
+      console.warn('RevenueCat attribute failed (non-fatal):', await attrRes.text());
+    }
+  } catch (attrErr) {
+    console.warn('RevenueCat attribute error (non-fatal):', attrErr);
   }
 }
 
@@ -93,9 +129,12 @@ async function createDiscountCheckout(
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer_email: email,
+    client_reference_id: userId,
     line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
     discounts: [{ promotion_code: promoCodeId }],
+    metadata: { app_user_id: userId },
     subscription_data: {
+      trial_period_days: 7,
       metadata: { app_user_id: userId },
     },
     success_url: `${APP_URL}/bekreftelse?kode=${encodeURIComponent(code)}`,

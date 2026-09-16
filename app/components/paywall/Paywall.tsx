@@ -7,50 +7,84 @@ import {
   purchaseMonthly,
   purchaseYearly,
   restorePurchases,
+  isNativeApp,
 } from '../../lib/revenuecat';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 const PAYWALL_GRØNN = '#3D6B4F';
 const PAYWALL_BAKGRUNN = '#F5F0EA';
 const FALLBACK_MÅNEDLIG = 'NOK 99';
 const FALLBACK_ÅRLIG = 'NOK 799';
 const PERSONVERN_URL = 'https://lilleapp.no/personvern';
-const EULA_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+const EULA_URL = 'https://lilleapp.no/vilkar';
 
 type Plan = 'monthly' | 'yearly';
 
 type Props = {
   onSuccess: () => void;
   onClose?: () => void;
+  /** @deprecated Freemium: paywall is always dismissible when onClose is set. */
   required?: boolean;
+  email?: string | null;
+  userId?: string | null;
 };
 
-export default function Paywall({ onSuccess, onClose, required = false }: Props) {
+const FAQ: { q: OversettelseNøkkel; a: OversettelseNøkkel }[] = [
+  { q: 'paywall.faq1q', a: 'paywall.faq1a' },
+  { q: 'paywall.faq2q', a: 'paywall.faq2a' },
+  { q: 'paywall.faq3q', a: 'paywall.faq3a' },
+  { q: 'paywall.faq4q', a: 'paywall.faq4a' },
+];
+
+export default function Paywall({ onSuccess, onClose, email, userId }: Props) {
   const { t } = useLanguage();
   const [priser, setPriser] = useState<{ monthly?: string; yearly?: string }>({});
   const [valgtPlan, setValgtPlan] = useState<Plan>('yearly');
   const [laster, setLaster] = useState<'kjøp' | 'restore' | null>(null);
   const [feil, setFeil] = useState('');
   const [suksess, setSuksess] = useState('');
+  const [åpenFaq, setÅpenFaq] = useState<number | null>(null);
 
   useEffect(() => {
-    getOfferingPrices().then(setPriser);
+    if (isNativeApp()) getOfferingPrices().then(setPriser);
   }, []);
 
   const månedligPris = priser.monthly || FALLBACK_MÅNEDLIG;
   const årligPris = priser.yearly || FALLBACK_ÅRLIG;
+  const prisEtterPrøve = valgtPlan === 'yearly' ? årligPris : månedligPris;
+
+  const startStripeCheckout = async () => {
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email || '', userId: userId || '' }),
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
+    else setFeil(t('paywall.kjøpFeilet'));
+  };
 
   const handleStartTrial = async () => {
     setFeil('');
     setSuksess('');
     setLaster('kjøp');
-    const result = valgtPlan === 'yearly' ? await purchaseYearly() : await purchaseMonthly();
-    setLaster(null);
-    if (result.success) {
-      setSuksess(t('paywall.kjøpFullført'));
-      setTimeout(onSuccess, 800);
-    } else if (!result.cancelled) {
-      setFeil(result.error || t('paywall.kjøpFeilet'));
+    try {
+      if (!isNativeApp()) {
+        await startStripeCheckout();
+        return;
+      }
+      const result = valgtPlan === 'yearly' ? await purchaseYearly() : await purchaseMonthly();
+      if (result.success) {
+        setSuksess(t('paywall.kjøpFullført'));
+        setTimeout(onSuccess, 800);
+      } else if (!result.cancelled) {
+        setFeil(result.error || t('paywall.kjøpFeilet'));
+      }
+    } catch {
+      setFeil(t('paywall.kjøpFeilet'));
+    } finally {
+      setLaster(null);
     }
   };
 
@@ -125,18 +159,18 @@ export default function Paywall({ onSuccess, onClose, required = false }: Props)
                 flexShrink: 0,
               }}
             >
-              {valgt && <span style={{ color: '#FDFAF6', fontSize: 13, lineHeight: 1 }}>✓</span>}
+              {valgt && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#FDFAF6' }} />}
             </div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: farger.tekst }}>{tittel}</div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: farger.tekst }}>{tittel}</div>
+              {plan === 'monthly' && (
+                <div style={{ fontSize: 12, color: farger.tekstLys, marginTop: 2 }}>{t('paywall.månedligUndertekst')}</div>
+              )}
+            </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '17px', fontWeight: 700, color: valgt ? PAYWALL_GRØNN : farger.tekst }}>
-              {pris}
-              <span style={{ fontSize: '13px', fontWeight: 500 }}>{periode}</span>
-            </div>
-            <div style={{ fontSize: '11px', color: farger.tekstLys, fontFamily: 'var(--font-inter), sans-serif', marginTop: 2 }}>
-              {t('paywall.etterPrøve')}
-            </div>
+            <div style={{ fontWeight: 700, fontSize: 15, color: farger.tekst }}>{pris}</div>
+            <div style={{ fontSize: 12, color: farger.tekstLys }}>{periode}</div>
           </div>
         </div>
       </button>
@@ -159,26 +193,34 @@ export default function Paywall({ onSuccess, onClose, required = false }: Props)
           maxWidth: 430,
           margin: '0 auto',
           minHeight: '100vh',
-          padding: '48px 24px 40px',
+          padding: '20px 24px 40px',
           display: 'flex',
           flexDirection: 'column',
         }}
       >
-        {!required && onClose && (
+        {onClose && (
           <button
+            type="button"
             onClick={onClose}
+            aria-label={t('felles.lukk')}
             style={{
               alignSelf: 'flex-start',
-              background: 'none',
-              border: 'none',
-              color: farger.tekstLys,
-              fontSize: '24px',
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: farger.hvit,
+              border: `1px solid ${farger.kremMørk}`,
+              color: farger.tekst,
+              fontSize: 22,
+              lineHeight: 1,
               cursor: 'pointer',
-              marginBottom: 8,
-              padding: 0,
+              marginBottom: 12,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            ‹
+            ×
           </button>
         )}
 
@@ -265,49 +307,114 @@ export default function Paywall({ onSuccess, onClose, required = false }: Props)
 
         <p
           style={{
+            fontSize: '13px',
+            color: farger.tekst,
+            textAlign: 'center',
+            lineHeight: 1.55,
+            marginTop: 12,
+            fontFamily: 'var(--font-inter), sans-serif',
+            fontWeight: 500,
+          }}
+        >
+          {t('paywall.klarPrisinfo', { pris: prisEtterPrøve })}
+        </p>
+
+        <p
+          style={{
             fontSize: '12px',
             color: farger.tekstLys,
             textAlign: 'center',
             lineHeight: 1.5,
-            marginTop: 12,
+            marginTop: 8,
             fontFamily: 'var(--font-inter), sans-serif',
           }}
         >
-          {t('paywall.avbrytNårSomHelst')}
+          {t('paywall.gratisMerke')}
         </p>
 
-        <button
-          onClick={handleRestore}
-          disabled={laster !== null}
-          style={{
-            width: '100%',
-            padding: '14px',
-            backgroundColor: 'transparent',
-            border: 'none',
-            color: farger.tekstLys,
-            fontSize: '14px',
-            cursor: laster ? 'not-allowed' : 'pointer',
-            fontFamily: 'var(--font-inter)',
-            textDecoration: 'underline',
-            textUnderlineOffset: 3,
-            marginTop: 'auto',
-          }}
-        >
-          {laster === 'restore' ? t('paywall.gjenoppretter') : t('paywall.gjenopprettKjøp')}
-        </button>
+        {isNativeApp() && (
+          <button
+            onClick={handleRestore}
+            disabled={laster !== null}
+            style={{
+              width: '100%',
+              padding: '14px',
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: farger.tekstLys,
+              fontSize: '14px',
+              cursor: laster ? 'not-allowed' : 'pointer',
+              fontFamily: 'var(--font-inter)',
+              textDecoration: 'underline',
+              textUnderlineOffset: 3,
+              marginTop: 8,
+            }}
+          >
+            {laster === 'restore' ? t('paywall.gjenoppretter') : t('paywall.gjenopprettKjøp')}
+          </button>
+        )}
 
-        <p
-          style={{
-            fontSize: '11px',
-            color: farger.tekstLys,
-            textAlign: 'center',
-            lineHeight: 1.5,
-            marginTop: 8,
-            fontFamily: 'var(--font-inter)',
-          }}
-        >
-          {t('paywall.vilkår')}
-        </p>
+        <div style={{ marginTop: 28 }}>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 700,
+              color: farger.tekst,
+              marginBottom: 10,
+              fontFamily: 'var(--font-plus-jakarta)',
+            }}
+          >
+            {t('paywall.faqTittel')}
+          </div>
+          {FAQ.map((item, i) => {
+            const åpen = åpenFaq === i;
+            return (
+              <div
+                key={item.q}
+                style={{
+                  borderBottom: `1px solid ${farger.kremMørk}`,
+                  marginBottom: 4,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setÅpenFaq(åpen ? null : i)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    padding: '12px 0',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    fontFamily: 'var(--font-inter)',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: farger.tekst,
+                  }}
+                >
+                  <span>{t(item.q)}</span>
+                  <span style={{ color: farger.tekstLys }}>{åpen ? '−' : '+'}</span>
+                </button>
+                {åpen && (
+                  <p
+                    style={{
+                      margin: '0 0 12px',
+                      fontSize: 13,
+                      lineHeight: 1.55,
+                      color: farger.tekstLys,
+                      fontFamily: 'var(--font-inter)',
+                    }}
+                  >
+                    {t(item.a)}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
         <div
           style={{
@@ -316,8 +423,7 @@ export default function Paywall({ onSuccess, onClose, required = false }: Props)
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: '8px 16px',
-            marginTop: 14,
-            paddingTop: 4,
+            marginTop: 24,
             fontFamily: 'var(--font-inter), sans-serif',
           }}
         >

@@ -6,6 +6,7 @@ import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { isNativeApp } from '../../lib/subscription';
 import BarnVelger from './BarnVelger';
 import Innstillinger from './Innstillinger';
+import { usePro } from '../abonnement/ProContext';
 
 type Props = {
   bruker: any;
@@ -17,6 +18,7 @@ type Props = {
 
 export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn, onVisPaywall }: Props) {
   const { t } = useLanguage();
+  const { hasPro, openPaywall } = usePro();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyFødselsdato, setBabyFødselsdato] = useState('');
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
@@ -282,8 +284,9 @@ export default function Profil({ bruker, onLoggUt, aktivtBarn, onByttBarn, onVis
           <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700' }}>{t('profil.familie')}</div>
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', overflow: 'hidden' }}>
-          <button onClick={() => setVisPartnerModal(true)} style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => hasPro ? setVisPartnerModal(true) : openPaywall()} style={{ width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', opacity: hasPro ? 1 : 0.7 }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: farger.grønnLys, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              {!hasPro && <span style={{ position: 'absolute', top: -4, right: -4, fontSize: 11 }}>🔒</span>}
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <circle cx="9" cy="7" r="3" stroke={farger.grønn} strokeWidth="1.5"/>
                 <circle cx="15" cy="7" r="3" stroke={farger.grønn} strokeWidth="1.5"/>

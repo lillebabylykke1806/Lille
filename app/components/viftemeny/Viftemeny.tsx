@@ -4,6 +4,8 @@ import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { OversettelseNøkkel } from '../../lib/i18n/translations';
+import { menyKreverPro } from '../../lib/gratisFunksjoner';
+import { usePro } from '../abonnement/ProContext';
 
 type Props = {
   bruker: any;
@@ -101,7 +103,18 @@ const IkonKomponent = ({ id }: { id: string }) => {
 
 export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Props) {
   const { t } = useLanguage();
+  const { hasPro, openPaywall } = usePro();
   const ALLE_SIDER = getAlleSider(t);
+
+  const åpneSide = (id: string) => {
+    if (menyKreverPro(id) && !hasPro) {
+      onLukk();
+      openPaywall();
+      return;
+    }
+    onNavigate(id);
+    onLukk();
+  };
 
   const [favoritter, setFavoritter] = useState<string[]>([]);
   const [visVelgFavoritter, setVisVelgFavoritter] = useState(false);
@@ -167,13 +180,14 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
   return (
     <div key={id} style={{ padding: '14px 16px', backgroundColor: valgt ? `${farger.grønn}18` : farger.bakgrunn, border: `1.5px solid ${valgt ? farger.grønn : farger.kremMørk}`, borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '14px' }}>
       <button
-        onClick={() => { if (info.bygget) { onNavigate(id); onLukk(); } }}
-        style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, background: 'none', border: 'none', cursor: info.bygget ? 'pointer' : 'default', padding: 0, textAlign: 'left' }}
+        onClick={() => { if (info.bygget) åpneSide(id); }}
+        style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, background: 'none', border: 'none', cursor: info.bygget ? 'pointer' : 'default', padding: 0, textAlign: 'left', opacity: menyKreverPro(id) && !hasPro ? 0.65 : 1 }}
       >
         <IkonKomponent id={id} />
         <span style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: valgt ? farger.grønn : farger.tekst, fontWeight: valgt ? '600' : '400', flex: 1 }}>
           {info.label}
           {!info.bygget && <span style={{ fontSize: '10px', color: farger.tekstLys }}> · {t('viftemeny.kommerSnart')}</span>}
+          {menyKreverPro(id) && !hasPro && <span style={{ fontSize: '11px' }}> 🔒</span>}
         </span>
       </button>
       <div onClick={() => !deaktivert && toggleFavoritt(id)} style={{ cursor: deaktivert ? 'not-allowed' : 'pointer', opacity: deaktivert ? 0.4 : 1, flexShrink: 0 }}>
@@ -213,9 +227,12 @@ export default function Viftemeny({ bruker, aktivtBarn, onNavigate, onLukk }: Pr
         const y = senterY + Math.sin(rad) * radius;
 
         return (
-          <div key={id} onClick={e => { e.stopPropagation(); if (info?.bygget) { onNavigate(id); onLukk(); } }}
-            style={{ position: 'fixed', left: `${x}px`, top: `${y}px`, transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', zIndex: 102, cursor: info?.bygget ? 'pointer' : 'default', opacity: info?.bygget ? 1 : 0.7 }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: bgFarger[id] || '#F0EBE3', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div key={id} onClick={e => { e.stopPropagation(); if (info?.bygget) åpneSide(id); }}
+            style={{ position: 'fixed', left: `${x}px`, top: `${y}px`, transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', zIndex: 102, cursor: info?.bygget ? 'pointer' : 'default', opacity: info?.bygget ? (menyKreverPro(id) && !hasPro ? 0.7 : 1) : 0.7 }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: bgFarger[id] || '#F0EBE3', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              {menyKreverPro(id) && !hasPro && (
+                <span style={{ position: 'absolute', top: -2, right: -2, fontSize: 12 }}>🔒</span>
+              )}
               <IkonKomponent id={id} />
             </div>
             <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#FDFAF6', fontWeight: '500', textShadow: '0 1px 4px rgba(0,0,0,0.6)', whiteSpace: 'nowrap' }}>

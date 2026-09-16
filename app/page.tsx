@@ -20,12 +20,30 @@ import Mat from './components/mat/Mat';
 import Pumping from './components/pumping/Pumping';
 import Temperatur from './components/temperatur/Temperatur';
 import Paywall from './components/paywall/Paywall';
+import TrialEnded from './components/abonnement/TrialEnded';
+import { ProProvider } from './components/abonnement/ProContext';
+import { LockBadge } from './components/abonnement/LockedContent';
 import { useLanguage } from './lib/i18n/LanguageContext';
-import { hasActiveSubscription, isNativeApp } from './lib/subscription';
+import { isNativeApp } from './lib/subscription';
 import { syncRevenueCatUser } from './lib/revenuecat';
 import { requestNotificationPermissionIfNeeded } from './lib/notifications';
 import { watchScreenshots } from './lib/screenshot';
 import { sikreProfilerRad } from './lib/profilId';
+import { erAlleredeRegistrert } from './lib/authSignup';
+import { lagreSamtykkeVedRegistrering } from './lib/consent';
+import { ConsentCheckboxes } from './components/consent/ConsentCheckboxes';
+import { sideKreverPro } from './lib/gratisFunksjoner';
+import {
+  getSubscriptionAccess,
+  markFirstPaywallPending,
+  consumeFirstPaywallPending,
+  shouldShowDailyPaywall,
+  markPaywallShownToday,
+  hasSeenTrialEnded,
+  markTrialEndedSeen,
+  readLastKnownPro,
+  type ProPeriod,
+} from './lib/abonnementAccess';
 
 export default function Home() {
   const { t } = useLanguage();
@@ -36,6 +54,9 @@ export default function Home() {
   const [passord, setPassord] = useState('');
   const [erNyBruker, setErNyBruker] = useState(false);
   const [innloggingFeil, setInnloggingFeil] = useState('');
+  const [alleredeKonto, setAlleredeKonto] = useState(false);
+  const [godtarVilkår, setGodtarVilkår] = useState(false);
+  const [markedsforing, setMarkedsforing] = useState(false);
   const [resetMelding, setResetMelding] = useState('');
   const [senderReset, setSenderReset] = useState(false);
   const [loggerInn, setLoggerInn] = useState(false);
@@ -47,10 +68,64 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   const [aktivtBarn, setAktivtBarn] = useState<any>(null);
   const [innsiktStartFane, setInnsiktStartFane] = useState<'språk' | 'innsikt'>('språk');
   const [harAbonnement, setHarAbonnement] = useState<boolean | null>(null);
+  const [proPeriod, setProPeriod] = useState<ProPeriod>(null);
+  const [proExpiresAt, setProExpiresAt] = useState<string | null>(null);
+  const [needsRestore, setNeedsRestore] = useState(false);
   const [visPaywall, setVisPaywall] = useState(false);
+  const [visTrialEnded, setVisTrialEnded] = useState(false);
   const [visScreenshotToast, setVisScreenshotToast] = useState(false);
+  const [gjenoppretter, setGjenoppretter] = useState(false);
   // True only for the register flow, so onboarding is shown after the paywall.
   const [isNyBruker, setIsNyBruker] = useState(false);
+
+  const openPaywall = () => {
+    setVisPaywall(true);
+    markPaywallShownToday();
+  };
+
+  const lukkPaywallTilGratis = async () => {
+    setVisPaywall(false);
+    markPaywallShownToday();
+    if (isNyBruker && bruker?.id) {
+      const { data: barn } = await supabase
+        .from('barn')
+        .select('id')
+        .eq('bruker_id', bruker.id)
+        .limit(1)
+        .maybeSingle();
+      const trenger = await trengerOnboarding(bruker.id, !!barn);
+      if (trenger) setVisOnboarding(true);
+    }
+  };
+
+  const anvendAccess = (access: Awaited<ReturnType<typeof getSubscriptionAccess>>) => {
+    setHarAbonnement(access.hasPro);
+    setProPeriod(access.periodType);
+    setProExpiresAt(access.expiresAt);
+    setNeedsRestore(!!access.needsRestore);
+    if (access.hasPro) {
+      setVisTrialEnded(false);
+      setNeedsRestore(false);
+    } else if (!access.uncertain && access.hadExpiredTrial && !hasSeenTrialEnded()) {
+      setVisTrialEnded(true);
+    }
+  };
+
+  const gjenopprettKjøp = async () => {
+    if (!bruker || gjenoppretter) return;
+    setGjenoppretter(true);
+    try {
+      if (isNativeApp()) {
+        const { restorePurchases } = await import('./lib/revenuecat');
+        await restorePurchases();
+      }
+      const access = await getSubscriptionAccess(bruker.email || '', bruker.id);
+      anvendAccess(access);
+      if (!access.hasPro) openPaywall();
+    } finally {
+      setGjenoppretter(false);
+    }
+  };
 
   // Onboarding completion is tracked in the "profiler" table (column: onboarding_fullført).
   // The column name contains a non-ASCII character, so we bypass the typed query parser.
@@ -88,27 +163,16 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     return fullført !== true;
   };
 
-  /** Keep the user logged in; send web users without a subscription to Stripe checkout. */
+  /** Keep the user logged in in free mode; optionally show dismissible paywall. */
   const håndterManglendeAbonnement = async (user: { id: string; email?: string | null }) => {
     setBruker(user);
     void sikreProfilerRad(user.id);
     setHarAbonnement(false);
-    if (isNativeApp()) {
-      void syncRevenueCatUser(user.id, user.email);
-      setVisPaywall(true);
-      return;
-    }
-    try {
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email || '' }),
-      });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-    } catch {
-      // Stay logged in even if checkout redirect fails — never sign out for subscription issues.
-    }
+    setProPeriod(null);
+    setProExpiresAt(null);
+    if (isNativeApp()) void syncRevenueCatUser(user.id, user.email);
+    setVisPaywall(true);
+    markPaywallShownToday();
   };
 
   useEffect(() => {
@@ -153,20 +217,20 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         }
 
         if (!partnerHarAktivTilgang) {
-          const aktiv = await hasActiveSubscription(
+          // Seed last-known so a slow/offline check never flashes locks at a payer.
+          const lastKnown = readLastKnownPro(session.user.id);
+          if (lastKnown !== null) setHarAbonnement(lastKnown);
+
+          const access = await getSubscriptionAccess(
             session.user.email || '',
             session.user.id,
           );
-          setHarAbonnement(aktiv);
-          if (!aktiv) {
-            if (isNativeApp()) {
+          anvendAccess(access);
+          if (!access.hasPro && !access.uncertain && !access.needsRestore) {
+            const førstegang = consumeFirstPaywallPending();
+            if (førstegang || shouldShowDailyPaywall()) {
               setVisPaywall(true);
-            } else {
-              // Keep session alive; subscription gating happens via checkout, not signOut.
-              setBruker(session.user);
-              void sikreProfilerRad(session.user.id);
-              setLaster(false);
-              return;
+              markPaywallShownToday();
             }
           }
         } else {
@@ -197,8 +261,6 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
               const partnerBarn = tilgang[0].barn;
               setAktivtBarn(partnerBarn);
             } else {
-              // No baby profile yet: onboarding only makes sense once they can enter
-              // the app (i.e. they have or will get a subscription).
               const trenger = await trengerOnboarding(session.user.id, false);
               if (trenger) {
                 setIsNyBruker(true);
@@ -207,7 +269,6 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
             }
           } else {
             setAktivtBarn(barn);
-            // Existing baby profile → treat as onboarded (and backfill the flag).
             await trengerOnboarding(session.user.id, true);
           }
         }
@@ -292,37 +353,59 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         redirectTo: `${window.location.origin}/tilbakestill-passord`,
       });
       if (error) {
-        setInnloggingFeil(t('innlogging.noeGikkGalt'));
+        setInnloggingFeil(error.message || t('innlogging.noeGikkGalt'));
         return;
       }
       setResetMelding(t('innlogging.resetSendt'));
-    } catch {
-      setInnloggingFeil(t('innlogging.noeGikkGalt'));
+    } catch (e) {
+      const melding = e instanceof Error ? e.message : '';
+      setInnloggingFeil(melding || t('innlogging.noeGikkGalt'));
     } finally {
       setSenderReset(false);
     }
   };
 
+  const gåTilInnlogging = () => {
+    setAlleredeKonto(false);
+    setInnloggingFeil('');
+    setResetMelding('');
+    setErNyBruker(false);
+    setIsNyBruker(false);
+  };
+
   const loggInn = async () => {
     if (loggerInn) return;
     setInnloggingFeil('');
+    setAlleredeKonto(false);
     setLoggerInn(true);
     // Login = existing user, not the register flow.
     setIsNyBruker(false);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
       if (error) {
-        setInnloggingFeil(t('innlogging.feilEpostPassord'));
+        const melding = error.message?.toLowerCase() ?? '';
+        const feilPassord =
+          error.code === 'invalid_credentials' ||
+          melding.includes('invalid login credentials') ||
+          melding.includes('invalid credentials');
+        setInnloggingFeil(feilPassord ? t('innlogging.feilEpostPassord') : (error.message || t('innlogging.noeGikkGalt')));
         return;
       }
       localStorage.removeItem('lille_babybilde');
-      // Subscription/RevenueCat checks are guarded by timeouts and can never hang the login.
-      const aktiv = await hasActiveSubscription(data.user.email || '', data.user.id);
-      setHarAbonnement(aktiv);
+      const lastKnown = readLastKnownPro(data.user.id);
+      if (lastKnown !== null) setHarAbonnement(lastKnown);
+      const access = await getSubscriptionAccess(data.user.email || '', data.user.id);
+      anvendAccess(access);
 
-      // No active subscription → paywall (native) or checkout (web). Never sign out here.
-      if (!aktiv) {
-        await håndterManglendeAbonnement(data.user);
+      // No Pro → free mode. Uncertain/needsRestore stays in app with restore CTA — never unlock.
+      if (!access.hasPro) {
+        setBruker(data.user);
+        void sikreProfilerRad(data.user.id);
+        if (isNativeApp()) void syncRevenueCatUser(data.user.id, data.user.email);
+        if (!access.uncertain && !access.needsRestore) {
+          setVisPaywall(true);
+          markPaywallShownToday();
+        }
         return;
       }
 
@@ -351,37 +434,40 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
 
   const registrer = async () => {
     if (loggerInn) return;
+    if (!godtarVilkår) {
+      setInnloggingFeil(t('consent.required'));
+      return;
+    }
     setInnloggingFeil('');
+    setAlleredeKonto(false);
     setLoggerInn(true);
     // Register = new user: paywall → onboarding → home.
     setIsNyBruker(true);
     try {
       const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
+
+      if (erAlleredeRegistrert(error, data?.user)) {
+        setAlleredeKonto(true);
+        return;
+      }
+
       if (error) {
-        setInnloggingFeil(t('innlogging.noeGikkGalt'));
+        setInnloggingFeil(error.message || t('innlogging.noeGikkGalt'));
         return;
       }
       if (!data.user) return;
-      void sikreProfilerRad(data.user.id);
-      if (isNativeApp()) {
-        // Show the user immediately; RevenueCat is set up in the background and
-        // failures here must not block the sign-up flow.
-        setBruker(data.user);
-        setHarAbonnement(false);
-        setVisPaywall(true);
-        void syncRevenueCatUser(data.user.id, data.user.email);
-      } else {
-        const res = await fetch('/api/create-checkout-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: epost }),
-        });
-        const { url } = await res.json();
-        if (url) window.location.href = url;
-        else setBruker(data.user);
-      }
-    } catch {
-      setInnloggingFeil(t('innlogging.noeGikkGalt'));
+      await lagreSamtykkeVedRegistrering(data.user.id, markedsforing, epost);
+      markFirstPaywallPending();
+      setBruker(data.user);
+      setHarAbonnement(false);
+      setProPeriod(null);
+      setProExpiresAt(null);
+      setVisPaywall(true);
+      markPaywallShownToday();
+      if (isNativeApp()) void syncRevenueCatUser(data.user.id, data.user.email);
+    } catch (e) {
+      const melding = e instanceof Error ? e.message : '';
+      setInnloggingFeil(melding || t('innlogging.noeGikkGalt'));
     } finally {
       setLoggerInn(false);
     }
@@ -393,7 +479,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     setAktivtBarn(null);
   };
 
-  if (laster) {
+  // Keep spinner until access is known (or last-known seeded) so locks never flash.
+  if (laster || (bruker && harAbonnement === null)) {
     return (
       <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -426,11 +513,59 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
             </button>
           )}
           {resetMelding && <p style={{ fontSize: '13px', color: farger.grønn, fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 14px', textAlign: 'center', lineHeight: 1.5 }}>{resetMelding}</p>}
+          {alleredeKonto && (
+            <div style={{ margin: '0 0 16px', padding: '14px', backgroundColor: '#FDF6F0', borderRadius: '12px', border: `1px solid ${farger.kremMørk}`, textAlign: 'center' }}>
+              <p style={{ fontSize: '15px', fontWeight: 600, color: farger.tekst, fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 4px' }}>{t('innlogging.alleredeKontoTittel')}</p>
+              <p style={{ fontSize: '13px', color: farger.tekstLys, fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 14px' }}>{t('innlogging.alleredeKontoTekst')}</p>
+              <button
+                type="button"
+                onClick={gåTilInnlogging}
+                style={{ width: '100%', padding: '12px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif', marginBottom: '10px' }}
+              >
+                {t('innlogging.gåTilInnlogging')}
+              </button>
+              <button
+                type="button"
+                onClick={glemtPassord}
+                disabled={senderReset}
+                style={{ display: 'block', width: '100%', padding: 0, background: 'none', border: 'none', fontSize: '13px', color: farger.terrakotta, cursor: senderReset ? 'default' : 'pointer', fontFamily: 'var(--font-inter), sans-serif', opacity: senderReset ? 0.7 : 1 }}
+              >
+                {senderReset ? '…' : t('innlogging.glemtPassord')}
+              </button>
+            </div>
+          )}
           {innloggingFeil && <p style={{ fontSize: '13px', color: '#C0392B', fontFamily: 'var(--font-inter), sans-serif', margin: '0 0 14px', textAlign: 'center' }}>{innloggingFeil}</p>}
-          <button onClick={erNyBruker ? registrer : loggInn} disabled={loggerInn} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '12px', fontWeight: '600', color: '#FDFAF6', cursor: loggerInn ? 'default' : 'pointer', opacity: loggerInn ? 0.7 : 1, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif', marginBottom: '12px' }}>
+          {erNyBruker && (
+            <ConsentCheckboxes
+              godtarVilkår={godtarVilkår}
+              markedsforing={markedsforing}
+              onGodtarVilkår={setGodtarVilkår}
+              onMarkedsforing={setMarkedsforing}
+            />
+          )}
+          <button
+            onClick={erNyBruker ? registrer : loggInn}
+            disabled={loggerInn || (erNyBruker && !godtarVilkår)}
+            style={{
+              width: '100%',
+              padding: '14px',
+              backgroundColor: farger.grønn,
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '12px',
+              fontWeight: '600',
+              color: '#FDFAF6',
+              cursor: loggerInn || (erNyBruker && !godtarVilkår) ? 'default' : 'pointer',
+              opacity: loggerInn || (erNyBruker && !godtarVilkår) ? 0.5 : 1,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              fontFamily: 'var(--font-inter), sans-serif',
+              marginBottom: '12px',
+            }}
+          >
             {loggerInn ? '…' : (erNyBruker ? t('innlogging.opprettKonto') : t('innlogging.loggInn'))}
           </button>
-          <button onClick={() => { setErNyBruker(!erNyBruker); setInnloggingFeil(''); setResetMelding(''); }} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}>
+          <button onClick={() => { setErNyBruker(!erNyBruker); setInnloggingFeil(''); setResetMelding(''); setAlleredeKonto(false); setGodtarVilkår(false); setMarkedsforing(false); }} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', fontSize: '12px', color: farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter), sans-serif' }}>
             {erNyBruker ? t('innlogging.harAlleredeKonto') : t('innlogging.nyBruker')}
           </button>
         </div>
@@ -438,22 +573,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     );
   }
 
-  // 2. Logged in but no active subscription → show the paywall before the app.
-  //    New users continue to onboarding after purchase; existing users go to home.
-  if (visPaywall && harAbonnement === false && isNativeApp()) {
-    return (
-      <Paywall
-        required
-        onSuccess={() => {
-          setHarAbonnement(true);
-          setVisPaywall(false);
-          if (isNyBruker) setVisOnboarding(true);
-        }}
-      />
-    );
-  }
-
-  // 3. New user with subscription → set up their baby profile.
+  // 2. Freemium: paywall is an overlay (never blocks entering the app).
+  // 3. New user without baby → onboarding (also in free mode).
   if (visOnboarding) return <Onboarding bruker={bruker} onFerdig={async () => {
     if (bruker?.id) await markerOnboardingFullført(bruker.id);
     const { data: barn } = await supabase.from('barn').select('*').eq('bruker_id', bruker.id).order('opprettet', { ascending: true }).limit(1).single();
@@ -462,39 +583,77 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     setIsNyBruker(false);
   }} />;
 
-  // 4. Logged in with active subscription → home screen.
+  // null = still resolving: treat as unlocked (spinner above). false = free with locks.
+  const hasPro = harAbonnement !== false;
+
+  const navigerTil = (side: string, fane?: string) => {
+    if (sideKreverPro(side) && !hasPro) {
+      openPaywall();
+      return;
+    }
+    if (side === 'sovn-morgen') {
+      setÅpneMorgen(true);
+      setÅpneEtterregistrer(false);
+      setAktivSide('sovn');
+      return;
+    }
+    if (side === 'sovn') {
+      setÅpneMorgen(false);
+      setÅpneEtterregistrer(false);
+    }
+    setAktivSide(side);
+    if (fane === 'innsikt') setInnsiktStartFane('innsikt');
+    else if (fane) setInnsiktStartFane('språk');
+  };
+
+  // 4. Logged in → app shell (Pro or free).
   return (
+    <ProProvider
+      value={{
+        hasPro,
+        periodType: proPeriod,
+        expiresAt: proExpiresAt,
+        needsRestore,
+        openPaywall,
+      }}
+    >
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative' }}>
       <div style={{ overflowY: 'auto', height: '100vh', paddingBottom: '90px' }}>
-      {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(side, fane) => {
-        if (side === 'sovn-morgen') {
-          setÅpneMorgen(true);
-          setÅpneEtterregistrer(false);
-          setAktivSide('sovn');
-          return;
-        }
-        if (side === 'sovn') {
-          setÅpneMorgen(false);
-          setÅpneEtterregistrer(false);
-        }
-        setAktivSide(side);
-        if (fane === 'innsikt') setInnsiktStartFane('innsikt');
-        else setInnsiktStartFane('språk');
-      }} onByttBarn={setAktivtBarn} />}
-      {aktivSide === 'sovn' && <Sovn bruker={bruker} aktivtBarn={aktivtBarn} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} onNavigate={setAktivSide} onNavigasjonKonsumert={() => { setÅpneMorgen(false); setÅpneEtterregistrer(false); }} />}
-        {aktivSide === 'bleie' && <Bleie bruker={bruker} />}
-        {aktivSide === 'amming' && <Amming bruker={bruker} />}
-        {aktivSide === 'innsikt' && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} startFane={innsiktStartFane} />}
-        {aktivSide === 'medisin' && <Medisin bruker={bruker} />}
-        {aktivSide === 'notat' && <Notat bruker={bruker} />}
-        {aktivSide === 'vekt' && <Vekt bruker={bruker} aktivtBarn={aktivtBarn} />}
-        {aktivSide === 'aktivitet' && <Aktivitet bruker={bruker} />}
-        {aktivSide === 'signaler' && <Signaler bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
-        {aktivSide === 'kolikk' && <Kolikk bruker={bruker} aktivtBarn={aktivtBarn} />}
-        {aktivSide === 'mat' && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
-        {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} aktivtBarn={aktivtBarn} onByttBarn={setAktivtBarn} onVisPaywall={() => setVisPaywall(true)} />}
-        {aktivSide === 'pumping' && <Pumping bruker={bruker} />}
-        {aktivSide === 'temperatur' && <Temperatur bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={setAktivSide} />}
+      {needsRestore && !hasPro && (
+        <div style={{ margin: '12px 24px 0', padding: '14px 16px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <p style={{ margin: 0, fontSize: 13, fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.5 }}>
+            {t('pro.gjenopprettHint')}
+          </p>
+          <button
+            type="button"
+            onClick={() => void gjenopprettKjøp()}
+            disabled={gjenoppretter}
+            style={{ alignSelf: 'flex-start', padding: '10px 14px', border: 'none', borderRadius: 10, backgroundColor: farger.grønn, color: '#FDFAF6', fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-inter)', cursor: gjenoppretter ? 'default' : 'pointer', opacity: gjenoppretter ? 0.7 : 1 }}
+          >
+            {gjenoppretter ? t('paywall.gjenoppretter') : t('paywall.gjenopprettKjøp')}
+          </button>
+        </div>
+      )}
+      {hasPro && proPeriod === 'trial' && proExpiresAt && (
+        <div style={{ margin: '12px 24px 0', padding: '10px 14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: 12, fontSize: 12, fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>
+          {t('pro.prøveTil', { dato: new Date(proExpiresAt).toLocaleDateString() })}
+        </div>
+      )}
+      {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={navigerTil} onByttBarn={setAktivtBarn} />}
+      {aktivSide === 'sovn' && <Sovn bruker={bruker} aktivtBarn={aktivtBarn} åpneEtterregistrer={åpneEtterregistrer} åpneMorgen={åpneMorgen} onNavigate={(s) => navigerTil(s)} onNavigasjonKonsumert={() => { setÅpneMorgen(false); setÅpneEtterregistrer(false); }} />}
+        {aktivSide === 'bleie' && hasPro && <Bleie bruker={bruker} />}
+        {aktivSide === 'amming' && hasPro && <Amming bruker={bruker} />}
+        {aktivSide === 'innsikt' && hasPro && <Innsikt bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(s) => navigerTil(s)} startFane={innsiktStartFane} />}
+        {aktivSide === 'medisin' && hasPro && <Medisin bruker={bruker} />}
+        {aktivSide === 'notat' && hasPro && <Notat bruker={bruker} />}
+        {aktivSide === 'vekt' && hasPro && <Vekt bruker={bruker} aktivtBarn={aktivtBarn} />}
+        {aktivSide === 'aktivitet' && hasPro && <Aktivitet bruker={bruker} />}
+        {aktivSide === 'signaler' && hasPro && <Signaler bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(s) => navigerTil(s)} />}
+        {aktivSide === 'kolikk' && hasPro && <Kolikk bruker={bruker} aktivtBarn={aktivtBarn} />}
+        {aktivSide === 'mat' && hasPro && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
+        {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} aktivtBarn={aktivtBarn} onByttBarn={setAktivtBarn} onVisPaywall={openPaywall} />}
+        {aktivSide === 'pumping' && hasPro && <Pumping bruker={bruker} />}
+        {aktivSide === 'temperatur' && hasPro && <Temperatur bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(s) => navigerTil(s)} />}
       </div>
 
       {/* Navigasjon */}
@@ -521,12 +680,15 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
           </div>
         </button>
 
-        <button onClick={() => setAktivSide('innsikt')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="12" width="4" height="9" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
-            <rect x="10" y="7" width="4" height="14" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
-            <rect x="17" y="3" width="4" height="18" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
-          </svg>
+        <button onClick={() => navigerTil('innsikt')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', cursor: 'pointer', padding: '6px 0', position: 'relative' }}>
+          <div style={{ position: 'relative' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="12" width="4" height="9" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
+              <rect x="10" y="7" width="4" height="14" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
+              <rect x="17" y="3" width="4" height="18" rx="1" fill={aktivSide === 'innsikt' ? farger.grønn : farger.kremMørk}/>
+            </svg>
+            <LockBadge synlig={!hasPro} />
+          </div>
           <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter), sans-serif', color: aktivSide === 'innsikt' ? farger.grønn : farger.tekstLys, fontWeight: aktivSide === 'innsikt' ? '600' : '400' }}>{t('nav.innsikt')}</span>
         </button>
 
@@ -569,15 +731,40 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   <Viftemeny
     bruker={bruker}
     aktivtBarn={aktivtBarn}
-    onNavigate={setAktivSide}
+    onNavigate={(side) => navigerTil(side)}
     onLukk={() => setVisRegistrer(false)}
   />
 )}
 
-      {visPaywall && bruker && harAbonnement && isNativeApp() && (
+      {visPaywall && bruker && (
         <Paywall
-          onSuccess={() => setVisPaywall(false)}
-          onClose={() => setVisPaywall(false)}
+          email={bruker.email}
+          userId={bruker.id}
+          onSuccess={async () => {
+            setHarAbonnement(true);
+            setNeedsRestore(false);
+            setVisPaywall(false);
+            setVisTrialEnded(false);
+            const access = await getSubscriptionAccess(bruker.email || '', bruker.id);
+            anvendAccess(access);
+            if (isNyBruker) setVisOnboarding(true);
+          }}
+          onClose={lukkPaywallTilGratis}
+        />
+      )}
+
+      {visTrialEnded && bruker && !hasPro && (
+        <TrialEnded
+          bruker={bruker}
+          onAbonner={() => {
+            markTrialEndedSeen();
+            setVisTrialEnded(false);
+            openPaywall();
+          }}
+          onLukk={() => {
+            markTrialEndedSeen();
+            setVisTrialEnded(false);
+          }}
         />
       )}
 
@@ -604,5 +791,6 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         </div>
       )}
     </div>
+    </ProProvider>
   );
 }

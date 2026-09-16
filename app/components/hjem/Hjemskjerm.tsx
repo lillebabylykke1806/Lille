@@ -8,6 +8,8 @@ import { Locale } from '../../lib/i18n/translations';
 import { scheduleBabyNotifications } from '../../lib/notifications';
 import BarnVelger from './BarnVelger';
 import { lærtVåkenvinduMinutter, sisteVåkenTid, erBabySovendeEtter, harSovnetEtter } from '../../lib/søvnUtils';
+import { usePro } from '../abonnement/ProContext';
+import { LockedContent } from '../abonnement/LockedContent';
 
 const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
   no: 'norsk',
@@ -150,10 +152,12 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[], t: (nøkkel: string,
 
 const AIInnsiktKort = ({ bruker, aktivtBarn, babyNavn, onNavigate }: { bruker: any; aktivtBarn: any; babyNavn: string; onNavigate: (side: string, fane?: string) => void }) => {
   const { locale, t } = useLanguage();
+  const { hasPro } = usePro();
   const [innsikt, setInnsikt] = useState('');
   const [laster, setLaster] = useState(false);
 
   useEffect(() => {
+    if (!hasPro) return;
     const hentInnsikt = async () => {
       const profilId = await hentProfilId(aktivtBarn, bruker);
       if (!profilId) return;
@@ -202,9 +206,9 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`
     };
 
     if (babyNavn) hentInnsikt();
-  }, [bruker, aktivtBarn, babyNavn, locale, t]);
+  }, [bruker, aktivtBarn, babyNavn, locale, t, hasPro]);
 
-  return (
+  const kort = (
     <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(235,200,180,0.4)', borderRadius: '20px', padding: '10px 14px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
         <div style={{ fontSize: '20px', flexShrink: 0 }}>✨</div>
@@ -229,10 +233,25 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`
       </div>
     </div>
   );
+
+  if (!hasPro) {
+    return (
+      <LockedContent tittel={t('hjem.seAlleInnsikter')}>
+        <div style={{ background: 'rgba(255,255,255,0.75)', borderRadius: 20, padding: 14 }}>
+          <div style={{ fontSize: 13, lineHeight: 1.6, color: '#3F3A37' }}>
+            {babyNavn || 'Baby'} sover jevnere etter rolige kveldsrutiner, og signalene før lur blir tydeligere dag for dag.
+          </div>
+        </div>
+      </LockedContent>
+    );
+  }
+
+  return kort;
 };
 
 export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn }: Props) {
   const { locale, t } = useLanguage();
+  const { hasPro } = usePro();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
   const [tilstandOverstyrt, setTilstandOverstyrt] = useState(false);
@@ -643,12 +662,16 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       </div>
 
       {/* AI aura-observasjon */}
-      {auraObservasjon && (
+      {(auraObservasjon || !hasPro) && (
         <div style={{ padding: '0 24px 16px' }}>
-          <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '16px', padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <span style={{ fontSize: '14px', flexShrink: 0 }}>✨</span>
-            <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{auraObservasjon}</div>
-          </div>
+          <LockedContent>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '16px', padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+              <span style={{ fontSize: '14px', flexShrink: 0 }}>✨</span>
+              <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
+                {auraObservasjon || `${babyNavn || 'Baby'} virker mer avslappet når kveldsrutinen er forutsigbar.`}
+              </div>
+            </div>
+          </LockedContent>
         </div>
       )}
 
@@ -777,7 +800,8 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       {/* Snarveier */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', padding: '0 24px', marginBottom: '28px' }}>
         {snarveier.map(item => (
-          <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '14px 8px', background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', transition: 'all 0.3s ease', height: '90px' }}>
+          <button key={item.side} onClick={() => onNavigate(item.side)} style={{ padding: '14px 8px', background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(220,207,192,0.4)', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', transition: 'all 0.3s ease', height: '90px', opacity: hasPro ? 1 : 0.55, position: 'relative' }}>
+            {!hasPro && <span style={{ position: 'absolute', top: 8, right: 10, fontSize: 11 }}>🔒</span>}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
               {item.svg}
             </div>
@@ -786,12 +810,16 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
         ))}
       </div>
 
-      {signalOppdagelse && (
+      {(signalOppdagelse || !hasPro) && (
         <div style={{ padding: '0 24px 16px' }}>
-          <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(244,168,83,0.3)', borderRadius: '20px', padding: '14px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-            <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>💛 Lille har oppdaget noe nytt</div>
-            <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>{signalOppdagelse}</div>
-          </div>
+          <LockedContent tittel={t('hjem.seInnsikt')}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', border: '1px solid rgba(244,168,83,0.3)', borderRadius: '20px', padding: '14px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+              <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>💛 Lille</div>
+              <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: '#3F3A37', lineHeight: 1.6 }}>
+                {signalOppdagelse || `${babyNavn || 'Baby'} viser ofte de samme signalene før lur — se mønsteret i Innsikt.`}
+              </div>
+            </div>
+          </LockedContent>
         </div>
       )}
 

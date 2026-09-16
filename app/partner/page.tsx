@@ -7,6 +7,9 @@ import { useSearchParams } from 'next/navigation';
 import { supabase } from '../lib/supabase';
 import { farger } from '../lib/farger';
 import { useLanguage } from '../lib/i18n/LanguageContext';
+import { erAlleredeRegistrert } from '../lib/authSignup';
+import { lagreSamtykkeVedRegistrering } from '../lib/consent';
+import { ConsentCheckboxes } from '../components/consent/ConsentCheckboxes';
 
 function PartnerInnhold() {
   const { t } = useLanguage();
@@ -17,6 +20,11 @@ function PartnerInnhold() {
   const [passord, setPassord] = useState('');
   const [erNy, setErNy] = useState(false);
   const [barnNavn, setBarnNavn] = useState('');
+  const [feilmelding, setFeilmelding] = useState('');
+  const [alleredeKonto, setAlleredeKonto] = useState(false);
+  const [lasterAuth, setLasterAuth] = useState(false);
+  const [godtarVilkår, setGodtarVilkår] = useState(false);
+  const [markedsforing, setMarkedsforing] = useState(false);
 
   useEffect(() => {
     const sjekkKode = async () => {
@@ -30,24 +38,64 @@ function PartnerInnhold() {
   }, [kode]);
 
   const aksepter = async () => {
-    let bruker_id = '';
-    if (erNy) {
-      const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
-      if (error) return;
-      bruker_id = data.user?.id || '';
-    } else {
-      const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
-      if (error) return;
-      bruker_id = data.user?.id || '';
+    setFeilmelding('');
+    setAlleredeKonto(false);
+    if (erNy && !godtarVilkår) {
+      setFeilmelding(t('consent.required'));
+      return;
     }
+    setLasterAuth(true);
+    try {
+      let bruker_id = '';
+      if (erNy) {
+        const { data, error } = await supabase.auth.signUp({ email: epost, password: passord });
+        if (erAlleredeRegistrert(error, data?.user)) {
+          setAlleredeKonto(true);
+          return;
+        }
+        if (error) {
+          setFeilmelding(error.message || t('innlogging.noeGikkGalt'));
+          return;
+        }
+        bruker_id = data.user?.id || '';
+        if (bruker_id) {
+          await lagreSamtykkeVedRegistrering(bruker_id, markedsforing, epost);
+        }
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
+        if (error) {
+          const melding = error.message?.toLowerCase() ?? '';
+          const feilPassord =
+            error.code === 'invalid_credentials' ||
+            melding.includes('invalid login credentials') ||
+            melding.includes('invalid credentials');
+          setFeilmelding(feilPassord ? t('innlogging.feilEpostPassord') : (error.message || t('innlogging.noeGikkGalt')));
+          return;
+        }
+        bruker_id = data.user?.id || '';
+      }
 
-    const { data: inv } = await supabase.from('partner_invitasjoner').select('*').eq('kode', kode).single();
-    if (!inv) return;
+      if (!bruker_id) {
+        setFeilmelding(t('innlogging.noeGikkGalt'));
+        return;
+      }
 
-    await supabase.from('barn_tilgang').insert({ barn_id: inv.barn_id, bruker_id, rolle: 'partner' });
-    await supabase.from('partner_invitasjoner').update({ akseptert: true }).eq('kode', kode);
+      const { data: inv } = await supabase.from('partner_invitasjoner').select('*').eq('kode', kode).single();
+      if (!inv) {
+        setFeilmelding(t('innlogging.noeGikkGalt'));
+        return;
+      }
 
-    setStatus('ferdig');
+      await supabase.from('barn_tilgang').insert({ barn_id: inv.barn_id, bruker_id, rolle: 'partner' });
+      await supabase.from('partner_invitasjoner').update({ akseptert: true }).eq('kode', kode);
+
+      setStatus('ferdig');
+    } catch (e) {
+      const melding = e instanceof Error ? e.message : '';
+      setFeilmelding(melding || t('innlogging.noeGikkGalt'));
+    } finally {
+      setLasterAuth(false);
+    }
   };
 
   if (status === 'laster') return (
@@ -84,13 +132,53 @@ function PartnerInnhold() {
         </div>
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px' }}>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-            <button onClick={() => setErNy(false)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>{t('partner.harKonto')}</button>
-            <button onClick={() => setErNy(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>{t('partner.nyBruker')}</button>
+            <button onClick={() => { setErNy(false); setFeilmelding(''); setAlleredeKonto(false); setGodtarVilkår(false); setMarkedsforing(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>{t('partner.harKonto')}</button>
+            <button onClick={() => { setErNy(true); setFeilmelding(''); setAlleredeKonto(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>{t('partner.nyBruker')}</button>
           </div>
           <input type='email' value={epost} onChange={e => setEpost(e.target.value)} placeholder={t('partner.epost')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
-          <input type='password' value={passord} onChange={e => setPassord(e.target.value)} placeholder={t('partner.passord')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
-          <button onClick={aksepter} style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
-            {erNy ? t('partner.opprettOgGodta') : t('partner.loggInnOgGodta')} 🤍
+          <input type='password' value={passord} onChange={e => setPassord(e.target.value)} placeholder={t('partner.passord')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: erNy ? '12px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+          {erNy && (
+            <ConsentCheckboxes
+              godtarVilkår={godtarVilkår}
+              markedsforing={markedsforing}
+              onGodtarVilkår={setGodtarVilkår}
+              onMarkedsforing={setMarkedsforing}
+            />
+          )}
+          {alleredeKonto && (
+            <div style={{ margin: '0 0 16px', padding: '14px', backgroundColor: '#FDF6F0', borderRadius: '12px', border: `1px solid ${farger.kremMørk}`, textAlign: 'center' }}>
+              <p style={{ fontSize: '15px', fontWeight: 600, color: farger.tekst, fontFamily: 'var(--font-inter)', margin: '0 0 4px' }}>{t('innlogging.alleredeKontoTittel')}</p>
+              <p style={{ fontSize: '13px', color: farger.tekstLys, fontFamily: 'var(--font-inter)', margin: '0 0 14px' }}>{t('innlogging.alleredeKontoTekst')}</p>
+              <button
+                type="button"
+                onClick={() => { setAlleredeKonto(false); setErNy(false); setFeilmelding(''); }}
+                style={{ width: '100%', padding: '12px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
+              >
+                {t('innlogging.gåTilInnlogging')}
+              </button>
+            </div>
+          )}
+          {feilmelding && !alleredeKonto && (
+            <p style={{ fontSize: '13px', color: '#C0392B', fontFamily: 'var(--font-inter)', margin: '0 0 14px', textAlign: 'center' }}>{feilmelding}</p>
+          )}
+          <button
+            onClick={aksepter}
+            disabled={lasterAuth || (erNy && !godtarVilkår)}
+            style={{
+              width: '100%',
+              padding: '14px',
+              backgroundColor: farger.grønn,
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '15px',
+              fontWeight: '600',
+              color: '#FDFAF6',
+              cursor: lasterAuth || (erNy && !godtarVilkår) ? 'default' : 'pointer',
+              opacity: lasterAuth || (erNy && !godtarVilkår) ? 0.5 : 1,
+              fontFamily: 'var(--font-inter)',
+            }}
+          >
+            {lasterAuth ? '…' : (erNy ? t('partner.opprettOgGodta') : t('partner.loggInnOgGodta'))} 🤍
           </button>
         </div>
       </div>
