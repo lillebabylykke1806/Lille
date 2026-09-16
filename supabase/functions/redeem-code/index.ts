@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return jsonResponse({ error: 'You need to be logged in' }, 401);
+      return jsonResponse({ error: 'not_logged_in' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -170,13 +170,13 @@ Deno.serve(async (req) => {
 
     const { data: { user }, error: authError } = await supabaseUser.auth.getUser();
     if (authError || !user) {
-      return jsonResponse({ error: 'Invalid login' }, 401);
+      return jsonResponse({ error: 'not_logged_in' }, 401);
     }
 
     const { code: rawCode } = await req.json();
     const code = typeof rawCode === 'string' ? rawCode.trim().toUpperCase() : '';
     if (!code) {
-      return jsonResponse({ error: 'Missing code' }, 400);
+      return jsonResponse({ error: 'code_missing' }, 400);
     }
 
     const userId = user.id;
@@ -191,13 +191,13 @@ Deno.serve(async (req) => {
       .single();
 
     if (codeError || !discountCode) {
-      return jsonResponse({ error: 'Invalid code' });
+      return jsonResponse({ error: 'code_not_found' });
     }
 
     const dc = discountCode as DiscountCode;
 
     if (!dc.active) {
-      return jsonResponse({ error: 'Invalid code' });
+      return jsonResponse({ error: 'code_inactive' });
     }
 
     if (dc.max_redemptions != null) {
@@ -208,7 +208,7 @@ Deno.serve(async (req) => {
         .eq('status', 'fulfilled');
 
       if (count != null && count >= dc.max_redemptions) {
-        return jsonResponse({ error: 'This code has been fully redeemed' });
+        return jsonResponse({ error: 'code_exhausted' });
       }
     }
 
@@ -227,7 +227,7 @@ Deno.serve(async (req) => {
       .in('status', ['pending', 'fulfilled']);
 
     if ((existingByEmail && existingByEmail.length > 0) || (existingByUser && existingByUser.length > 0)) {
-      return jsonResponse({ error: "You've already used this code" });
+      return jsonResponse({ error: 'code_already_used' });
     }
 
     const { data: redemption, error: insertError } = await supabase

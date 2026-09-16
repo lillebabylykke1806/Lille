@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -10,17 +9,46 @@ import { erAlleredeRegistrert } from '../lib/authSignup';
 import { useLanguage } from '../lib/i18n/LanguageContext';
 import { lagreSamtykkeVedRegistrering } from '../lib/consent';
 import { ConsentCheckboxes } from '../components/consent/ConsentCheckboxes';
+import type { OversettelseNøkkel } from '../lib/i18n/translations';
 
 const SUPABASE_URL = 'https://hicdsrqhgjdvjctxcucr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY2RzcnFoZ2pkdmpjdHhjdWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDMxNDEsImV4cCI6MjA5MzkxOTE0MX0.l8N5-LjFNakStf2ZF0-TyrD9Vg9ooFKihzh53L-NXNo';
 
-type SideStatus = 'laster' | 'klar' | 'suksess' | 'feil';
+type SideStatus = 'laster' | 'skrivKode' | 'klar' | 'suksess';
+
+function normaliserKode(raw: string): string {
+  return raw.trim().toUpperCase();
+}
+
+function mapRedeemError(error: string | undefined, t: (k: OversettelseNøkkel) => string): string {
+  switch (error) {
+    case 'code_not_found':
+    case 'Invalid code':
+      return t('kode.ugyldigKode');
+    case 'code_inactive':
+      return t('kode.inaktivKode');
+    case 'code_exhausted':
+    case 'This code has been fully redeemed':
+      return t('kode.oppbrukt');
+    case 'code_already_used':
+    case "You've already used this code":
+      return t('kode.alleredeBrukt');
+    case 'not_logged_in':
+    case 'code_missing':
+    case 'You need to be logged in to redeem this code.':
+      return t('kode.måVæreInnlogget');
+    default:
+      return t('kode.noeGikkGalt');
+  }
+}
 
 function KodeInnhold() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
-  const kode = searchParams.get('c')?.trim().toUpperCase() ?? '';
+  const kodeFraUrl = normaliserKode(searchParams.get('c') ?? '');
 
+  const [kode, setKode] = useState(kodeFraUrl);
+  const [kodeUtkast, setKodeUtkast] = useState(kodeFraUrl);
   const [sideStatus, setSideStatus] = useState<SideStatus>('laster');
   const [bruker, setBruker] = useState<User | null>(null);
   const [erNy, setErNy] = useState(false);
@@ -34,21 +62,40 @@ function KodeInnhold() {
   const [lasterInnlosning, setLasterInnlosning] = useState(false);
   const [melding, setMelding] = useState('');
   const [feilmelding, setFeilmelding] = useState('');
+  const [kodeFeil, setKodeFeil] = useState('');
 
   useEffect(() => {
-    if (!kode) {
-      setSideStatus('feil');
-      setFeilmelding('No code in this link. Please check that you have the right URL.');
-      return;
-    }
-
     const sjekkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) setBruker(session.user);
-      setSideStatus('klar');
+      if (kodeFraUrl) {
+        setKode(kodeFraUrl);
+        setKodeUtkast(kodeFraUrl);
+        setSideStatus('klar');
+      } else {
+        setSideStatus('skrivKode');
+      }
     };
-    sjekkSession();
-  }, [kode]);
+    void sjekkSession();
+  }, [kodeFraUrl]);
+
+  const bekreftKode = () => {
+    const n = normaliserKode(kodeUtkast);
+    if (!n) {
+      setKodeFeil(t('kode.tomKode'));
+      return;
+    }
+    setKodeFeil('');
+    setFeilmelding('');
+    setKode(n);
+    setSideStatus('klar');
+  };
+
+  const byttKode = () => {
+    setFeilmelding('');
+    setKodeFeil('');
+    setSideStatus('skrivKode');
+  };
 
   const loggInnEllerRegistrer = async () => {
     setAuthFeil('');
@@ -78,11 +125,11 @@ function KodeInnhold() {
 
       const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });
       if (error) {
-        const melding = error.message?.toLowerCase() ?? '';
+        const m = error.message?.toLowerCase() ?? '';
         const feilPassord =
           error.code === 'invalid_credentials' ||
-          melding.includes('invalid login credentials') ||
-          melding.includes('invalid credentials');
+          m.includes('invalid login credentials') ||
+          m.includes('invalid credentials');
         setAuthFeil(feilPassord ? t('innlogging.feilEpostPassord') : (error.message || t('innlogging.noeGikkGalt')));
         return;
       }
@@ -101,7 +148,7 @@ function KodeInnhold() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        setFeilmelding('You need to be logged in to redeem this code.');
+        setFeilmelding(t('kode.måVæreInnlogget'));
         return;
       }
 
@@ -118,7 +165,7 @@ function KodeInnhold() {
       const data = await res.json();
 
       if (!res.ok || data.error) {
-        setFeilmelding(data.error || 'Something went wrong — please try again shortly.');
+        setFeilmelding(mapRedeemError(data.error, t));
         return;
       }
 
@@ -127,14 +174,14 @@ function KodeInnhold() {
         return;
       }
 
-      setMelding(data.message || 'Code redeemed!');
+      setMelding(data.message || t('kode.suksessStandard'));
       setSideStatus('suksess');
     } catch {
-      setFeilmelding('Something went wrong — please try again shortly.');
+      setFeilmelding(t('kode.noeGikkGalt'));
     } finally {
       setLasterInnlosning(false);
     }
-  }, [kode, bruker]);
+  }, [kode, bruker, t]);
 
   const spinner = (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn }}>
@@ -145,23 +192,51 @@ function KodeInnhold() {
 
   if (sideStatus === 'laster') return spinner;
 
-  if (sideStatus === 'feil' && !kode) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn, padding: '24px', textAlign: 'center' }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>😕</div>
-        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Invalid link</div>
-        <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{feilmelding}</div>
-      </div>
-    );
-  }
-
   if (sideStatus === 'suksess') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn, padding: '24px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
-        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Code redeemed!</div>
+        <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('kode.suksessTittel')}</div>
         <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '24px', maxWidth: '360px' }}>{melding}</div>
-        <a href='https://www.lilleapp.no' style={{ padding: '14px 28px', backgroundColor: farger.grønn, color: 'white', borderRadius: '50px', textDecoration: 'none', fontWeight: '600', fontFamily: 'var(--font-inter)' }}>Go to Lille</a>
+        <a href="https://www.lilleapp.no" style={{ padding: '14px 28px', backgroundColor: farger.grønn, color: 'white', borderRadius: '50px', textDecoration: 'none', fontWeight: '600', fontFamily: 'var(--font-inter)' }}>{t('kode.gåTilLille')}</a>
+      </div>
+    );
+  }
+
+  if (sideStatus === 'skrivKode') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn, padding: '24px' }}>
+        <div style={{ width: '100%', maxWidth: '400px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <img src="/leep.png" style={{ width: '100px', marginBottom: '16px', mixBlendMode: 'multiply' }} alt="" />
+            <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('kode.tittel')}</div>
+            <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, lineHeight: 1.5 }}>{t('kode.undertittel')}</div>
+          </div>
+          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px' }}>
+            <input
+              type="text"
+              value={kodeUtkast}
+              onChange={(e) => { setKodeUtkast(e.target.value); setKodeFeil(''); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') bekreftKode(); }}
+              placeholder={t('kode.placeholder')}
+              autoCapitalize="characters"
+              autoCorrect="off"
+              spellCheck={false}
+              autoFocus
+              style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${kodeFeil ? '#B04545' : farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: kodeFeil ? '8px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', letterSpacing: '0.5px' }}
+            />
+            {kodeFeil && (
+              <div style={{ fontSize: '13px', color: '#B04545', fontFamily: 'var(--font-inter)', marginBottom: '16px', textAlign: 'center' }}>{kodeFeil}</div>
+            )}
+            <button
+              type="button"
+              onClick={bekreftKode}
+              style={{ width: '100%', padding: '14px', backgroundColor: farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}
+            >
+              {t('kode.fortsett')}
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -170,18 +245,29 @@ function KodeInnhold() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: farger.bakgrunn, padding: '24px' }}>
       <div style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <img src='/leep.png' style={{ width: '100px', marginBottom: '16px', mixBlendMode: 'multiply' }} alt="" />
-          <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>Redeem code</div>
+          <img src="/leep.png" style={{ width: '100px', marginBottom: '16px', mixBlendMode: 'multiply' }} alt="" />
+          <div style={{ fontSize: '22px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>{t('kode.tittel')}</div>
           <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-            You're redeeming: <strong style={{ color: farger.grønn, letterSpacing: '1px' }}>{kode}</strong>
+            {t('kode.loserInn')}{' '}
+            <strong style={{ color: farger.grønn, letterSpacing: '1px' }}>{kode}</strong>
           </div>
+          {!kodeFraUrl && (
+            <button
+              type="button"
+              onClick={byttKode}
+              style={{ marginTop: '8px', padding: 0, border: 'none', background: 'none', color: farger.terrakotta, fontSize: '13px', fontFamily: 'var(--font-inter)', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              {t('kode.endrekode')}
+            </button>
+          )}
         </div>
 
         <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '24px' }}>
           {bruker ? (
             <>
               <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '20px', textAlign: 'center' }}>
-                Logged in as <strong style={{ color: farger.tekst }}>{bruker.email}</strong>
+                {t('kode.innloggetSom')}{' '}
+                <strong style={{ color: farger.tekst }}>{bruker.email}</strong>
               </div>
               {feilmelding && (
                 <div style={{ padding: '12px', backgroundColor: '#FDEDED', borderRadius: '10px', color: '#B04545', fontSize: '14px', fontFamily: 'var(--font-inter)', marginBottom: '16px', textAlign: 'center' }}>
@@ -189,21 +275,22 @@ function KodeInnhold() {
                 </div>
               )}
               <button
-                onClick={losInnKode}
+                type="button"
+                onClick={() => void losInnKode()}
                 disabled={lasterInnlosning}
                 style={{ width: '100%', padding: '14px', backgroundColor: lasterInnlosning ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: lasterInnlosning ? 'wait' : 'pointer', fontFamily: 'var(--font-inter)' }}
               >
-                {lasterInnlosning ? 'Redeeming…' : 'Redeem code 🤍'}
+                {lasterInnlosning ? t('kode.loserInnLaster') : t('kode.losInn')}
               </button>
             </>
           ) : (
             <>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-                <button onClick={() => { setErNy(false); setAuthFeil(''); setAlleredeKonto(false); setGodtarVilkår(false); setMarkedsforing(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>{t('innlogging.loggInn')}</button>
-                <button onClick={() => { setErNy(true); setAuthFeil(''); setAlleredeKonto(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>{t('innlogging.opprettKonto')}</button>
+                <button type="button" onClick={() => { setErNy(false); setAuthFeil(''); setAlleredeKonto(false); setGodtarVilkår(false); setMarkedsforing(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: !erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: !erNy ? farger.grønnLys : farger.bakgrunn, color: !erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: !erNy ? '600' : '400' }}>{t('innlogging.loggInn')}</button>
+                <button type="button" onClick={() => { setErNy(true); setAuthFeil(''); setAlleredeKonto(false); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: erNy ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: erNy ? farger.grønnLys : farger.bakgrunn, color: erNy ? farger.grønn : farger.tekstLys, cursor: 'pointer', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: erNy ? '600' : '400' }}>{t('innlogging.opprettKonto')}</button>
               </div>
-              <input type='email' value={epost} onChange={e => setEpost(e.target.value)} placeholder={t('innlogging.epostPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
-              <input type='password' value={passord} onChange={e => setPassord(e.target.value)} placeholder={t('innlogging.passordPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: erNy || authFeil || alleredeKonto ? '12px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              <input type="email" value={epost} onChange={(e) => setEpost(e.target.value)} placeholder={t('innlogging.epostPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: '12px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+              <input type="password" value={passord} onChange={(e) => setPassord(e.target.value)} placeholder={t('innlogging.passordPlaceholder')} style={{ width: '100%', padding: '12px 14px', fontSize: '15px', border: `1px solid ${farger.kremMørk}`, borderRadius: '10px', backgroundColor: farger.bakgrunn, color: farger.tekst, marginBottom: erNy || authFeil || alleredeKonto ? '12px' : '20px', outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               {erNy && (
                 <ConsentCheckboxes
                   godtarVilkår={godtarVilkår}
@@ -229,11 +316,12 @@ function KodeInnhold() {
                 <div style={{ fontSize: '13px', color: '#B04545', fontFamily: 'var(--font-inter)', marginBottom: '16px', textAlign: 'center' }}>{authFeil}</div>
               )}
               <button
-                onClick={loggInnEllerRegistrer}
+                type="button"
+                onClick={() => void loggInnEllerRegistrer()}
                 disabled={lasterAuth || !epost || !passord || (erNy && !godtarVilkår)}
                 style={{ width: '100%', padding: '14px', backgroundColor: lasterAuth || (erNy && !godtarVilkår) ? farger.kremMørk : farger.grønn, border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', color: '#FDFAF6', cursor: lasterAuth || (erNy && !godtarVilkår) ? 'default' : 'pointer', fontFamily: 'var(--font-inter)', opacity: erNy && !godtarVilkår ? 0.6 : 1 }}
               >
-                {lasterAuth ? t('innlogging.ventLitt') : erNy ? t('innlogging.opprettOgFortsett') : t('innlogging.loggInnOgFortsett')} 🤍
+                {lasterAuth ? t('innlogging.ventLitt') : erNy ? t('innlogging.opprettOgFortsett') : t('innlogging.loggInnOgFortsett')}
               </button>
             </>
           )}
