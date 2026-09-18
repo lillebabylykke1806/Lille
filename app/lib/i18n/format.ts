@@ -15,6 +15,16 @@ export function formatTime(
   }).format(d);
 }
 
+/**
+ * Stable HH:mm (24h, colon) for DB columns and `<input type="time">`.
+ * Do not use locale formatters here — nb/fi etc. may emit "11.00".
+ */
+export function formatTimeValue(date: Date | string | number): string {
+  const d = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(d.getTime())) return '';
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
 /** Format a calendar date for the active locale. */
 export function formatDate(
   date: Date | string | number,
