@@ -489,6 +489,7 @@ const messages: Record<string, string> = {
   "bleie.innsiktFlott": "{antall} changes aujourd'hui – super suivi ! 🤍",
   "bleie.innsiktAntall": "{antall} changes enregistrés aujourd'hui.",
   "bleie.type": "Type",
+  "bleie.typeHint": "Mouillé et selles peuvent être combinés",
   "bleie.typeVåt": "Mouillée",
   "bleie.typeTørr": "Sèche",
   "bleie.typeAvføring": "Selles",

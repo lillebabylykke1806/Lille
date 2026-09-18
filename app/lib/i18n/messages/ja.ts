@@ -489,6 +489,7 @@ const messages: Record<string, string> = {
   "bleie.innsiktFlott": "今日のおむつ替え {antall}回 – よく把握できています！ 🤍",
   "bleie.innsiktAntall": "今日のおむつ替え {antall}回を記録。",
   "bleie.type": "種類",
+  "bleie.typeHint": "おしっことうんちは同時に選べます",
   "bleie.typeVåt": "おしっこ",
   "bleie.typeTørr": "乾いている",
   "bleie.typeAvføring": "うんち",

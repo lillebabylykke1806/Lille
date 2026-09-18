@@ -19,19 +19,30 @@ export function bleieTypeFromFlags({ vat, avforing }: BleieFlags): 'tørr' | 'v�
   return 'tørr';
 }
 
-/** Prefer new boolean columns; fall back to legacy type for old rows. */
+/**
+ * Prefer boolean columns; fall back to legacy type.
+ * If booleans are both false but type is a wet/soiled value, trust type
+ * (covers partial writes before schema cache refresh).
+ */
 export function bleieFlagsFromRow(row: BleieRowLike): BleieFlags {
+  const fromType = (type: string): BleieFlags => {
+    if (type === 'våt_avføring') return { vat: true, avforing: true };
+    if (type === 'våt') return { vat: true, avforing: false };
+    if (type === 'avføring') return { vat: false, avforing: true };
+    return { vat: false, avforing: false };
+  };
+
   if (typeof row.vat === 'boolean' || typeof row.avforing === 'boolean') {
-    return {
+    const flags = {
       vat: Boolean(row.vat),
       avforing: Boolean(row.avforing),
     };
+    if (!flags.vat && !flags.avforing && row.type && row.type !== 'tørr') {
+      return fromType(row.type);
+    }
+    return flags;
   }
-  const type = row.type || '';
-  if (type === 'våt_avføring') return { vat: true, avforing: true };
-  if (type === 'våt') return { vat: true, avforing: false };
-  if (type === 'avføring') return { vat: false, avforing: true };
-  return { vat: false, avforing: false };
+  return fromType(row.type || '');
 }
 
 type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;

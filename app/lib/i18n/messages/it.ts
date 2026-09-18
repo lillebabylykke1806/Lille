@@ -489,6 +489,7 @@ const messages: Record<string, string> = {
   "bleie.innsiktFlott": "{antall} cambi oggi – ottima panoramica! 🤍",
   "bleie.innsiktAntall": "{antall} cambi pannolino registrati oggi.",
   "bleie.type": "Tipo",
+  "bleie.typeHint": "Bagnato e feci si possono selezionare insieme",
   "bleie.typeVåt": "Bagnato",
   "bleie.typeTørr": "Asciutto",
   "bleie.typeAvføring": "Feci",

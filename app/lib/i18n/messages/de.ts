@@ -489,6 +489,7 @@ const messages: Record<string, string> = {
   "bleie.innsiktFlott": "{antall} Windelwechsel heute – super Überblick! 🤍",
   "bleie.innsiktAntall": "{antall} Windelwechsel heute registriert.",
   "bleie.type": "Typ",
+  "bleie.typeHint": "Nass und Stuhlgang können kombiniert werden",
   "bleie.typeVåt": "Nass",
   "bleie.typeTørr": "Trocken",
   "bleie.typeAvføring": "Stuhlgang",
