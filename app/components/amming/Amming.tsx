@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatTime } from '../../lib/i18n/format';
 
 type Props = { bruker: any; };
 
@@ -19,7 +20,7 @@ const dagensdato = () => new Date().toISOString().split('T')[0];
 const motattBryst = (bryst: string) => bryst === 'venstre' ? 'høyre' : 'venstre';
 
 export default function Amming({ bruker }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [aktiv, setAktiv] = useState(false);
   const [valgtBryst, setValgtBryst] = useState<'venstre' | 'høyre'>('høyre');
   const [startTid, setStartTid] = useState<Date | null>(null);
@@ -57,7 +58,7 @@ export default function Amming({ bruker }: Props) {
 
     const sjekkAktivAmming = async () => {
       if (lagretStart && lagretBryst) {
-        const startTidStrVal = new Date(lagretStart).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+        const startTidStrVal = formatTime(new Date(lagretStart), locale, { hour: '2-digit', minute: '2-digit' });
         const { data } = await supabase
           .from('amming')
           .select('*')
@@ -96,7 +97,7 @@ export default function Amming({ bruker }: Props) {
     const nå = new Date();
     setValgtBryst(bryst);
     setStartTid(nå);
-    setStartTidStr(nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
+    setStartTidStr(formatTime(nå, locale, { hour: '2-digit', minute: '2-digit' }));
     setSekunder(0);
     setAktiv(true);
     localStorage.setItem('lille_amming_start', nå.toISOString());
@@ -114,7 +115,7 @@ export default function Amming({ bruker }: Props) {
   };
 
   const åpneAvslutt = () => {
-    const nå = new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+    const nå = formatTime(new Date(), locale, { hour: '2-digit', minute: '2-digit' });
     setSluttTidStr(nå);
     setVisAvslutt(true);
   };

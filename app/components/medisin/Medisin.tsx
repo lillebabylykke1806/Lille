@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatTime, formatDate } from '../../lib/i18n/format';
 import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; };
@@ -75,7 +76,7 @@ const VaksineIkon = ({ farge }: { farge: string }) => (
 );
 
 export default function Medisin({ bruker }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const frekvensValg = getFrekvensValg(t);
   const finnFrekvensLabel = (id: string) => frekvensValg.find(f => f.id === id)?.label ?? id;
 
@@ -162,7 +163,7 @@ export default function Medisin({ bruker }: Props) {
       profil_id: bruker?.id,
       medisin_id: visGiDose.id,
       dato: dagensdato(),
-      tidspunkt: new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      tidspunkt: formatTime(new Date(), locale, { hour: '2-digit', minute: '2-digit' }),
       bivirkning: påvirkerSøvn ? `${t('medisin.påvirkerSøvnPrefix')} ${bivirkningNotat}` : bivirkningNotat,
     });
     if (visGiDose.tidspunkt) {
@@ -360,7 +361,7 @@ export default function Medisin({ bruker }: Props) {
                     </div>
                     <div>
                       <div style={{ fontSize: '14px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '500' }}>{v.navn}</div>
-                      {v.dato && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{new Date(v.dato).toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' })}</div>}
+                      {v.dato && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{formatDate(v.dato, locale)}</div>}
                       {v.notat && <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontStyle: 'italic' }}>{v.notat}</div>}
                     </div>
                   </div>

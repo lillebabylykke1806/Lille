@@ -1,0 +1,1241 @@
+0 | felles.lagre | NO: Lagre | EN: Save
+1 | felles.avbryt | NO: Avbryt | EN: Cancel
+2 | felles.slett | NO: Slett | EN: Delete
+3 | felles.rediger | NO: Rediger | EN: Edit
+4 | felles.lukk | NO: Lukk | EN: Close
+5 | felles.laster | NO: Laster... | EN: Loading...
+6 | felles.min | NO: min | EN: min
+7 | felles.time | NO: t | EN: h
+8 | felles.måneder | NO: {n} måneder | EN: {n} months
+9 | felles.år | NO: {n} år | EN: {n} years
+10 | felles.nå | NO: Nå! | EN: Now!
+11 | felles.slettHendelse | NO: 🗑️ Slett hendelse | EN: 🗑️ Delete event
+12 | felles.slettRegistrering | NO: 🗑️ Slett registrering | EN: 🗑️ Delete entry
+13 | felles.tilbake | NO: Tilbake | EN: Back
+14 | innstillinger.språk | NO: Språk | EN: Language
+15 | innstillinger.måleenheter | NO: Måleenheter | EN: Units
+16 | innstillinger.metrisk | NO: Metrisk | EN: Metric
+17 | innstillinger.imperisk | NO: Imperisk | EN: Imperial
+18 | innstillinger.imperiskInfo | NO: ✓ Vekt vises i lb/oz · Lengde i ft/in · Væske i fl oz · Temperatur i °F | EN: ✓ Weight shown in lb/oz · Length in ft/in · Fluid in fl oz · Temperature in °F
+19 | innstillinger.varsler | NO: Varsler | EN: Notifications
+20 | innstillinger.varslerBeskrivelse | NO: Påminnelser om lur, trøtthet og daglig oppsummering | EN: Reminders for naps, tiredness and daily summary
+21 | innstillinger.varslerPå | NO: Varsler på | EN: Notifications on
+22 | innstillinger.varslerAv | NO: Varsler av | EN: Notifications off
+23 | barnVelger.velgBarn | NO: Velg barn | EN: Select child
+24 | barnVelger.leggTil | NO: Legg til nytt barn | EN: Add another child
+25 | hjem.glemtLeggetidTittel | NO: Glemte du å logge leggetiden? | EN: Did you forget to log bedtime?
+26 | hjem.glemtLeggetidTekst | NO: Ingen stress – du kan registrere nattøkten i etterkant hvis du vil ha den med i oversikten. | EN: No stress – you can log last night's sleep afterwards if you want it in your overview.
+27 | hjem.registrerLeggetid | NO: Registrer leggetid | EN: Log bedtime
+28 | hjem.startNyDag | NO: Start ny dag | EN: Start new day
+29 | hjem.aiTomTittel | NO: Lille lærer av registreringene dine. | EN: Lille learns from your entries.
+30 | hjem.aiTomTekst | NO: Registrer søvn og signaler noen dager, så begynner AI å oppdage mønstre. | EN: Log sleep and signals for a few days, and AI will start spotting patterns.
+31 | hjem.omMin | NO: Om ca. {n} min | EN: In about {n} min
+32 | hjem.omTimerMin | NO: Om ca. {n}t {m}min | EN: In about {n}h {m}min
+33 | hjem.omTimer | NO: Om ca. {n}t | EN: In about {n}h
+34 | hjem.endreOppvåkningstid | NO: Endre oppvåkningstid | EN: Change wake-up time
+35 | hjem.tidspunkt | NO: Tidspunkt | EN: Time
+36 | søvn.slettRegistrering | NO: 🗑️ Slett registrering | EN: 🗑️ Delete entry
+37 | søvn.nattkvalitet | NO: {kvalitet} natt | EN: {kvalitet} night
+38 | søvn.kvalitetUtmerket | NO: Utmerket | EN: Excellent
+39 | søvn.kvalitetGod | NO: God | EN: Good
+40 | søvn.kvalitetOk | NO: Ok | EN: OK
+41 | søvn.kvalitetUrolig | NO: Urolig | EN: Restless
+42 | søvn.kvalitetUtmerketTekst | NO: Baby sov fantastisk! Du kan være stolt 🤍 | EN: Baby slept amazingly! You can be proud 🤍
+43 | søvn.kvalitetGodTekst | NO: En god natt med lite uro | EN: A good night with little unrest
+44 | søvn.kvalitetOkTekst | NO: Litt urolig, men ok | EN: A bit restless, but okay
+45 | søvn.kvalitetUroligTekst | NO: Tøff natt – du gjør det bra! | EN: Tough night – you're doing great!
+46 | søvn.lurLabel | NO: Lur | EN: Nap
+47 | søvn.signalPlaceholder | NO: F.eks. Klynket, Gned ansiktet... | EN: E.g. Whimpered, Rubbed face...
+48 | søvn.lagreSignal | NO: Lagre signal | EN: Save signal
+49 | søvn.settStarttid | NO: Sett starttid: | EN: Set start time:
+50 | søvn.settSovnetid | NO: Sett sovnetid: | EN: Set fell-asleep time:
+51 | søvn.rediger | NO: Rediger {tekst} | EN: Edit {tekst}
+52 | kolikk.hjalp | NO: 😊 Hjalp | EN: 😊 Helped
+53 | kolikk.littBedre | NO: 😐 Litt bedre | EN: 😐 A little better
+54 | kolikk.ingenEffekt | NO: 😞 Ingen effekt | EN: 😞 No effect
+55 | partner.ugyldig | NO: Ugyldig invitasjon | EN: Invalid invitation
+56 | partner.ugyldigTekst | NO: Lenken er utløpt eller allerede brukt. | EN: The link has expired or has already been used.
+57 | partner.tilgang | NO: Du har fått tilgang! | EN: You have access!
+58 | partner.lastNed | NO: Last ned Lille og logg inn med {epost} | EN: Download Lille and sign in with {epost}
+59 | partner.gåTil | NO: Gå til Lille 🌿 | EN: Go to Lille 🌿
+60 | partner.invitert | NO: Du er invitert! 🤍 | EN: You're invited! 🤍
+61 | partner.invitertTekst | NO: Logg inn eller opprett konto for å følge {navn} | EN: Sign in or create an account to follow {navn}
+62 | partner.harKonto | NO: Har konto | EN: Have an account
+63 | partner.nyBruker | NO: Ny bruker | EN: New user
+64 | partner.opprettOgGodta | NO: Opprett konto og godta | EN: Create account and accept
+65 | partner.loggInnOgGodta | NO: Logg inn og godta | EN: Sign in and accept
+66 | partner.epost | NO: E-post | EN: Email
+67 | partner.passord | NO: Passord | EN: Password
+68 | bekreftelse.tittel | NO: Velkommen til Lille! | EN: Welcome to Lille!
+69 | bekreftelse.prøveperiode | NO: Din 7 dagers gratis prøveperiode er nå aktivert. | EN: Your 7-day free trial is now active.
+70 | bekreftelse.redirect | NO: Du sendes til appen om et øyeblikk... | EN: You'll be redirected to the app in a moment...
+71 | rc.ingenPakker | NO: Ingen abonnementspakker tilgjengelig | EN: No subscription packages available
+72 | rc.kunIApp | NO: Kjøp er kun tilgjengelig i appen | EN: Purchases are only available in the app
+73 | rc.kjøpFeilet | NO: Kjøpet feilet | EN: Purchase failed
+74 | rc.gjenopprettKunIApp | NO: Gjenoppretting er kun tilgjengelig i appen | EN: Restore is only available in the app
+75 | rc.ingenTidligere | NO: Ingen tidligere kjøp funnet | EN: No previous purchases found
+76 | rc.kunneIkkeGjenopprette | NO: Kunne ikke gjenopprette kjøp | EN: Could not restore purchases
+77 | nav.hjem | NO: Hjem | EN: Home
+78 | nav.søvn | NO: Søvn | EN: Sleep
+79 | nav.innsikt | NO: Innsikt | EN: Insights
+80 | nav.profil | NO: Profil | EN: Profile
+81 | hjem.godMorgen | NO: God morgen | EN: Good morning
+82 | hjem.godEttermiddag | NO: God ettermiddag | EN: Good afternoon
+83 | hjem.godKveld | NO: God kveld | EN: Good evening
+84 | hjem.lurPågår | NO: Lur pågår | EN: Nap in progress
+85 | hjem.nesteLur | NO: Neste lur | EN: Next nap
+86 | hjem.dagensFlyt | NO: Dagens flyt | EN: Today's flow
+87 | hjem.seDagbok | NO: Se dagbok | EN: View diary
+88 | hjem.rolig | NO: Rolig og våken | EN: Calm and awake
+89 | hjem.trøtt | NO: Virker trøtt | EN: Seems tired
+90 | hjem.urolig | NO: Litt urolig | EN: A bit restless
+91 | hjem.sover | NO: Sover nå | EN: Sleeping now
+92 | hjem.roligUndertekst | NO: Klar for lek og samspill | EN: Ready for play and interaction
+93 | hjem.trøttUndertekst | NO: Kanskje tid for en lur snart? | EN: Maybe time for a nap soon?
+94 | hjem.uroligUndertekst | NO: Trenger ro og regulering | EN: Needs calm and regulation
+95 | hjem.soverUndertekst | NO: Hvil deg du også 🌙 | EN: Rest too 🌙
+96 | hjem.tilstandRolig | NO: Rolig | EN: Calm
+97 | hjem.tilstandTrøtt | NO: Trøtt | EN: Tired
+98 | hjem.tilstandUrolig | NO: Urolig | EN: Restless
+99 | hjem.tilstandSover | NO: Sover | EN: Sleeping
+100 | hjem.aiInnsiktRolig | NO: Baby virker rolig og mottakelig nå ✦ | EN: Baby seems calm and receptive now ✦
+101 | hjem.aiInnsiktTrøtt | NO: Baby viser trøtthetstegn – kanskje start nedtrapping? | EN: Baby shows signs of tiredness – maybe start winding down?
+102 | hjem.aiInnsiktUrolig | NO: Baby virker litt overstimulert i dag | EN: Baby seems a bit overstimulated today
+103 | hjem.aiInnsiktSover | NO: Baby sover – bruk tiden til å hvile 🌙 | EN: Baby is sleeping – use the time to rest 🌙
+104 | hjem.seInnsikt | NO: Vis innsikt | EN: View insights
+105 | hjem.seAlleInnsikter | NO: Se alle innsikter | EN: View all insights
+106 | hjem.analyserer | NO: Analyserer {navn}s mønstre... | EN: Analyzing {navn}'s patterns...
+107 | hjem.begynnRegistrereInnsikt | NO: Registrer signaler og søvn noen dager, så begynner Lille å oppdage mønstre hos {navn} 🤍 | EN: Register signals and sleep for a few days, then Lille will start discovering patterns for {navn} 🤍
+108 | hjem.oppsummeringLurer | NO: 🌙 {antall} lurer i dag | EN: 🌙 {antall} naps today
+109 | hjem.oppsummeringAmming | NO: 🍼 {antall} amminger | EN: 🍼 {antall} feedings
+110 | hjem.amming | NO: Amming | EN: Feeding
+111 | hjem.signaler | NO: Signaler | EN: Signals
+112 | hjem.uroRo | NO: Uro & ro | EN: Fussiness & calm
+113 | hjem.siden | NO: Siden | EN: Since
+114 | hjem.trykkForSøvnskjerm | NO: Trykk for å se søvnskjermen | EN: Tap to see the sleep screen
+115 | hjem.nærmerSegLeggetid | NO: Nærmer seg leggetid | EN: Approaching bedtime
+116 | hjem.vindu | NO: Vindu ca. | EN: Window approx.
+117 | hjem.våkenSiden | NO: Våken siden | EN: Awake since
+118 | hjem.registrerOppvåkning | NO: Registrer når {navn} våknet i morges for å starte dagen 🤍 | EN: Register when {navn} woke up this morning to start the day 🤍
+119 | hjem.registrerOppvåkningKnapp | NO: Registrer oppvåkning nå | EN: Register wake-up now
+120 | hjem.ingenRegistreringer | NO: Ingen registreringer ennå i dag | EN: No entries yet today
+121 | hjem.trykkForÅBegynne | NO: Trykk + for å begynne | EN: Tap + to begin
+122 | hjem.dagbok | NO: Dagbok | EN: Diary
+123 | hjem.hendelser | NO: hendelser | EN: entries
+124 | hjem.hendelseTilIDag | NO: hendelse{flertall} til i dag – Se dagbok | EN: entr{flertall} today – View diary
+125 | hjem.ingenRegistreringerIDag | NO: Ingen registreringer i dag ennå | EN: No entries yet today
+126 | hjem.delLilleMedVenn | NO: Del Lille med en venn | EN: Share Lille with a friend
+127 | hjem.delBeskrivelse | NO: Del koden med en venn og dere får begge 20% rabatt de første 2 månedene 🤍 | EN: Share the code with a friend and you both get 20% off the first 2 months 🤍
+128 | hjem.dinRabattkode | NO: Din rabattkode | EN: Your discount code
+129 | hjem.rabattBeskrivelse | NO: 20% rabatt i 2 måneder | EN: 20% off for 2 months
+130 | hjem.kopiertBekreftelse | NO: ✅ Kopiert! | EN: ✅ Copied!
+131 | hjem.kopierDelingstekst | NO: 📋 Kopier delingstekst | EN: 📋 Copy share text
+132 | hjem.sendSomSMS | NO: 📱 Send som SMS | EN: 📱 Send as SMS
+133 | hendelse.lur | NO: Lur | EN: Nap
+134 | hendelse.sovnet | NO: Sovnet | EN: Fell asleep
+135 | hendelse.våknet | NO: Våknet | EN: Woke up
+136 | hendelse.nattligOppvåkning | NO: Nattlig oppvåkning | EN: Night wake-up
+137 | hendelse.amming | NO: Amming | EN: Feeding
+138 | hendelse.bleie | NO: Bleie | EN: Diaper
+139 | hendelse.mat | NO: Mat | EN: Food
+140 | hendelse.pumping | NO: Pumping | EN: Pumping
+141 | profil.tittel | NO: Profil | EN: Profile
+142 | profil.loggUt | NO: Logg ut | EN: Log out
+143 | profil.språk | NO: Språk | EN: Language
+144 | profil.babynsNavn | NO: Babyens navn | EN: Baby's name
+145 | profil.skrivNavnHer | NO: Skriv navn her... | EN: Enter name here...
+146 | profil.fødselsdato | NO: Fødselsdato | EN: Date of birth
+147 | profil.lagretBekreftelse | NO: ✓ Lagret! | EN: ✓ Saved!
+148 | profil.lagreProfil | NO: Lagre profil | EN: Save profile
+149 | profil.administrerAbonnement | NO: Administrer abonnementet | EN: Manage subscription
+150 | profil.sendTilbakemelding | NO: Send meg gjerne en tilbakemelding 🤍 | EN: I'd love your feedback 🤍
+151 | profil.tilbakemeldingTittel | NO: Tilbakemelding | EN: Feedback
+152 | profil.tilbakemeldingBeskrivelse | NO: Hva synes du om appen? Hva savner du? Alt hjelper! 🤍 | EN: What do you think of the app? What are you missing? Everything helps! 🤍
+153 | profil.tilbakemeldingPlaceholder | NO: Skriv din tilbakemelding her... | EN: Write your feedback here...
+154 | profil.sender | NO: Sender... | EN: Sending...
+155 | profil.sendTilbakemeldingKnapp | NO: Send tilbakemelding | EN: Send feedback
+156 | profil.tusenTakk | NO: Tusen takk! | EN: Thank you!
+157 | profil.tilbakemeldingHjelper | NO: Din tilbakemelding hjelper meg å bygge Lille best mulig 🌿 | EN: Your feedback helps me build Lille as well as possible 🌿
+158 | profil.basertPåAlder | NO: Basert på alder | EN: Based on age
+159 | profil.erGammel | NO: {navn} er {alder} gammel | EN: {navn} is {alder} old
+160 | profil.babyen | NO: Babyen | EN: Baby
+161 | profil.anbefaltSøvn | NO: Anbefalt søvn | EN: Recommended sleep
+162 | profil.perDøgn | NO: per døgn | EN: per day
+163 | profil.uker | NO: uker | EN: weeks
+164 | profil.måneder | NO: måneder | EN: months
+165 | profil.år | NO: år | EN: years
+166 | profil.lurer45 | NO: 4–5 lurer per dag | EN: 4–5 naps per day
+167 | profil.lurer34 | NO: 3–4 lurer per dag | EN: 3–4 naps per day
+168 | profil.lurer23 | NO: 2–3 lurer per dag | EN: 2–3 naps per day
+169 | profil.lurer12 | NO: 1–2 lurer per dag | EN: 1–2 naps per day
+170 | profil.mer | NO: Mer | EN: More
+171 | profil.barn | NO: Barn | EN: Children
+172 | profil.familie | NO: Familie | EN: Family
+173 | profil.delMedPartner | NO: Del data med partner | EN: Share with partner
+174 | profil.lille | NO: Lille | EN: Lille
+175 | profil.mittAbonnement | NO: Mitt abonnement | EN: My subscription
+176 | profil.premiumAktiv | NO: Premium aktiv | EN: Premium active
+177 | profil.inviterVenn | NO: Inviter en venn | EN: Invite a friend
+178 | profil.inviterVennUndertekst | NO: Gi bort 20% rabatt i 2 måneder | EN: Give 20% off for 2 months
+179 | profil.sendTilbakemeldingUndertekst | NO: Hjelp oss å bli enda bedre | EN: Help us improve
+180 | profil.innstillinger | NO: Innstillinger | EN: Settings
+181 | profil.personvern | NO: Personvern | EN: Privacy
+182 | profil.hjelpOgSupport | NO: Hjelp & support | EN: Help & support
+183 | profil.redigerProfil | NO: Rediger profil | EN: Edit profile
+184 | profil.dittNavn | NO: Ditt navn | EN: Your name
+185 | profil.lagre | NO: Lagre | EN: Save
+186 | profil.bruker | NO: Bruker | EN: User
+187 | profil.navnPlaceholder | NO: F.eks. Isabella | EN: E.g. Isabella
+188 | profil.babyNavnPlaceholder | NO: F.eks. Wilhelm | EN: E.g. William
+189 | profil.motivasjonTittel | NO: Du gjør en fantastisk jobb, | EN: You are doing a fantastic job,
+190 | profil.motivasjonUndertekst | NO: små steg hver dag blir til store fremskritt. | EN: small steps every day become great progress.
+191 | profil.bunnTittel | NO: Lille er her for å støtte deg | EN: Lille is here to support you
+192 | profil.bunnUndertekst | NO: i små og store øyeblikk. | EN: in small and big moments.
+193 | profil.partnerAlleredeLagtTil | NO: Partner er allerede lagt til | EN: Partner already added
+194 | profil.partnerAlleredeInfo | NO: Du kan kun dele med én partner. Ta kontakt med oss hvis du vil endre dette. | EN: You can only share with one partner. Contact us if you want to change this.
+195 | profil.delMedPartnerTittel | NO: Del med partner 🤍 | EN: Share with partner 🤍
+196 | profil.delMedPartnerInfo | NO: Inviter partneren din til å se og registrere data for babyen. De får gratis tilgang – du betaler for begge. | EN: Invite your partner to view and log data for your baby. They get free access – you pay for both.
+197 | profil.partnersEpost | NO: Partners e-post | EN: Partner's email
+198 | profil.partnerEpostPlaceholder | NO: partner@epost.no | EN: partner@email.com
+199 | profil.sendInvitasjon | NO: Send invitasjon 🤍 | EN: Send invitation 🤍
+200 | profil.invitasjonSendt | NO: Invitasjon sendt! | EN: Invitation sent!
+201 | profil.invitasjonSendtInfo | NO: Vi har sendt en e-post til {epost} med en lenke for å komme i gang. | EN: We have sent an email to {epost} with a link to get started.
+202 | profil.inviterVennModalBeskrivelse | NO: Del appen med en venn som har baby | EN: Share the app with a friend who has a baby
+203 | profil.rabattForste2Maaneder | NO: 20% rabatt de første 2 månedene | EN: 20% off for the first 2 months
+204 | profil.kopierDelingstekst | NO: Kopier delingstekst | EN: Copy share text
+205 | profil.kopiert | NO: ✓ Kopiert! | EN: ✓ Copied!
+206 | profil.sendSomSms | NO: Send som SMS | EN: Send as SMS
+207 | profil.delingstekst | NO: Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙
+
+Bruk koden VENN20 for 20% rabatt de første 2 månedene.
+
+Last ned her: https://lilleapp.no | EN: Try Lille – the app that helps you understand your baby better! 🌙
+
+Use code VENN20 for 20% off the first 2 months.
+
+Download here: https://lilleapp.no
+208 | innlogging.velkommen | NO: Velkommen til Lille | EN: Welcome to Lille
+209 | innlogging.heiIgjen | NO: Hei igjen! | EN: Hi again!
+210 | innlogging.loggInn | NO: Logg inn | EN: Log in
+211 | innlogging.opprettKonto | NO: Opprett konto | EN: Create account
+212 | innlogging.tagline | NO: Din babys språk, i dine hender | EN: Your baby's language, in your hands
+213 | innlogging.epostPlaceholder | NO: din@epost.no | EN: you@email.com
+214 | innlogging.passordPlaceholder | NO: Minst 6 tegn | EN: At least 6 characters
+215 | innlogging.feilEpostPassord | NO: Feil e-post eller passord. | EN: Wrong email or password.
+216 | innlogging.noeGikkGalt | NO: Noe gikk galt. Prøv igjen. | EN: Something went wrong. Try again.
+217 | innlogging.harAlleredeKonto | NO: Har allerede konto? Logg inn | EN: Already have an account? Log in
+218 | innlogging.nyBruker | NO: Ny bruker? Opprett konto | EN: New user? Create account
+219 | innlogging.glemtPassord | NO: Glemt passord? | EN: Forgot password?
+220 | innlogging.resetSendt | NO: Sjekk e-posten din – vi har sendt en lenke for å tilbakestille passordet. | EN: Check your email – we sent a link to reset your password.
+221 | innlogging.skrivEpostForReset | NO: Skriv inn e-postadressen din først. | EN: Enter your email address first.
+222 | innlogging.alleredeKontoTittel | NO: Du har allerede en konto | EN: You already have an account
+223 | innlogging.alleredeKontoTekst | NO: Prøv å logge inn i stedet. | EN: Try logging in instead.
+224 | innlogging.gåTilInnlogging | NO: Gå til innlogging | EN: Go to login
+225 | innlogging.ventLitt | NO: Vent litt… | EN: Please wait…
+226 | innlogging.opprettOgFortsett | NO: Opprett konto og fortsett | EN: Create account and continue
+227 | innlogging.loggInnOgFortsett | NO: Logg inn og fortsett | EN: Log in and continue
+228 | kode.tittel | NO: Løs inn kode | EN: Redeem code
+229 | kode.undertittel | NO: Har du fått en rabatt- eller ambassadørkode? Skriv den inn her. | EN: Got a discount or ambassador code? Enter it here.
+230 | kode.placeholder | NO: F.eks. NATASHA20 | EN: E.g. NATASHA20
+231 | kode.fortsett | NO: Fortsett | EN: Continue
+232 | kode.tomKode | NO: Skriv inn koden din for å fortsette. | EN: Enter your code to continue.
+233 | kode.loserInn | NO: Du løser inn: | EN: You're redeeming:
+234 | kode.endrekode | NO: Bytt kode | EN: Change code
+235 | kode.innloggetSom | NO: Logget inn som | EN: Logged in as
+236 | kode.losInn | NO: Løs inn kode | EN: Redeem code
+237 | kode.loserInnLaster | NO: Løser inn… | EN: Redeeming…
+238 | kode.suksessTittel | NO: Koden er innløst! | EN: Code redeemed!
+239 | kode.suksessStandard | NO: Du har nå tilgang. Åpne appen og logg inn med denne kontoen. | EN: You now have access. Open the app and log in with this account.
+240 | kode.gåTilLille | NO: Gå til Lille | EN: Go to Lille
+241 | kode.ugyldigKode | NO: Vi fant ikke den koden. Sjekk stavemåten og prøv igjen. | EN: We couldn't find that code. Check the spelling and try again.
+242 | kode.inaktivKode | NO: Denne koden er ikke lenger aktiv. | EN: This code is no longer active.
+243 | kode.oppbrukt | NO: Denne koden er allerede brukt opp. | EN: This code has already been fully used.
+244 | kode.alleredeBrukt | NO: Du har allerede brukt denne koden. | EN: You've already used this code.
+245 | kode.måVæreInnlogget | NO: Du må være innlogget for å løse inn koden. | EN: You need to be logged in to redeem this code.
+246 | kode.noeGikkGalt | NO: Noe gikk galt — prøv igjen om litt. | EN: Something went wrong — please try again shortly.
+247 | consent.terms | NO: Jeg godtar {terms} og {privacy} | EN: I accept the {terms} and the {privacy}
+248 | consent.terms.link | NO: vilkår for bruk | EN: terms of use
+249 | consent.privacy.link | NO: personvernerklæringen | EN: privacy policy
+250 | consent.marketing | NO: Jeg vil gjerne motta tips og nyheter på e-post (valgfritt) | EN: I would like tips and news by email (optional)
+251 | consent.required | NO: Du må godta vilkårene for å opprette konto | EN: You must accept the terms to create an account
+252 | settings.consent.title | NO: Samtykker | EN: Consents
+253 | settings.consent.withdraw | NO: Trekk tilbake samtykke | EN: Withdraw consent
+254 | settings.consent.vilkaarGodtatt | NO: Vilkår godtatt {dato} (versjon {versjon}) | EN: Terms accepted {dato} (version {versjon})
+255 | settings.consent.personvernGodtatt | NO: Personvern godtatt {dato} (versjon {versjon}) | EN: Privacy accepted {dato} (version {versjon})
+256 | settings.consent.ikkeDokumentert | NO: Ikke dokumentert | EN: Not recorded
+257 | settings.consent.markedsforing | NO: Tips og nyheter på e-post | EN: Tips and news by email
+258 | settings.consent.slettKonto | NO: Slett konto og data | EN: Delete account and data
+259 | settings.consent.slettKontoInfo | NO: Dette sletter kontoen din og alle registrerte data permanent. Handling kan ikke angres. | EN: This permanently deletes your account and all logged data. This cannot be undone.
+260 | settings.consent.slettKontoBekreft | NO: Ja, slett kontoen min | EN: Yes, delete my account
+261 | settings.consent.slettFeilet | NO: Kunne ikke slette kontoen. Prøv igjen. | EN: Could not delete the account. Try again.
+262 | settings.consent.vilkaarLenke | NO: Les vilkår for bruk | EN: Read terms of use
+263 | tilbakestillPassord.tittel | NO: Velg nytt passord | EN: Choose a new password
+264 | tilbakestillPassord.nyttPassord | NO: Nytt passord | EN: New password
+265 | tilbakestillPassord.lagre | NO: Lagre nytt passord | EN: Save new password
+266 | tilbakestillPassord.suksess | NO: Passordet er oppdatert! Du sendes til innlogging... | EN: Password updated! Redirecting to login...
+267 | tilbakestillPassord.ugyldigLenke | NO: Lenken er ugyldig eller utløpt. Be om en ny fra innloggingssiden. | EN: The link is invalid or expired. Request a new one from the login page.
+268 | paywall.tittel | NO: Lille Pro | EN: Lille Pro
+269 | paywall.beskrivelse | NO: Forstå babyens unike rytme med full tilgang til alle funksjoner. | EN: Understand your baby's unique rhythm with full access to all features.
+270 | paywall.årlig | NO: Årlig abonnement | EN: Yearly subscription
+271 | paywall.årligUndertekst | NO: Spar sammenlignet med månedlig | EN: Save compared to monthly
+272 | paywall.årligPris | NO: Se pris | EN: See price
+273 | paywall.månedlig | NO: Månedlig abonnement | EN: Monthly subscription
+274 | paywall.månedligUndertekst | NO: 7 dagers gratis prøveperiode | EN: 7-day free trial
+275 | paywall.månedligPris | NO: Se pris | EN: See price
+276 | paywall.bestVerdi | NO: BEST VERDI | EN: BEST VALUE
+277 | paywall.fordel1 | NO: Søvnsporing og AI-innsikt | EN: Sleep tracking and AI insights
+278 | paywall.fordel2 | NO: Mat, amming og signaler | EN: Feeding, nursing and signals
+279 | paywall.fordel3 | NO: Del med partner | EN: Share with partner
+280 | paywall.gjenopprettKjøp | NO: Gjenopprett kjøp | EN: Restore purchases
+281 | paywall.gjenoppretter | NO: Gjenoppretter... | EN: Restoring...
+282 | paywall.kjøpFullført | NO: Abonnement aktivert! | EN: Subscription activated!
+283 | paywall.gjenopprettet | NO: Kjøp gjenopprettet! | EN: Purchases restored!
+284 | paywall.kjøpFeilet | NO: Kjøpet feilet. Prøv igjen. | EN: Purchase failed. Try again.
+285 | paywall.ingentingÅGjenopprette | NO: Ingen tidligere kjøp funnet. | EN: No previous purchases found.
+286 | paywall.vilkår | NO: Abonnementet fornyes automatisk. Du kan si opp når som helst i App Store-innstillingene. | EN: Subscription renews automatically. You can cancel anytime in App Store settings.
+287 | paywall.personvernerklæring | NO: Personvernerklæring | EN: Privacy Policy
+288 | paywall.vilkårForBruk | NO: Vilkår for bruk | EN: Terms of Use
+289 | paywall.administrerInfo | NO: Administrer abonnementet i App Store-innstillingene på enheten din. | EN: Manage your subscription in App Store settings on your device.
+290 | paywall.gratisPrøveTittel | NO: Start din 7-dagers gratis prøveperiode | EN: Start your 7-day free trial
+291 | paywall.startGratisPrøve | NO: Start gratis prøveperiode | EN: Start Free Trial
+292 | paywall.starterPrøve | NO: Starter... | EN: Starting...
+293 | paywall.avbrytNårSomHelst | NO: Si opp når som helst før 7 dager – ingen betaling | EN: Cancel anytime before 7 days – no charge
+294 | paywall.etterPrøve | NO: etter prøveperioden | EN: after free trial
+295 | paywall.perMåned | NO: /måned | EN: /month
+296 | paywall.perÅr | NO: /år | EN: /year
+297 | paywall.klarPrisinfo | NO: 7 dager gratis, deretter {pris}/mnd. Fornyes automatisk. Si opp når som helst i abonnementsinnstillingene. | EN: 7 days free, then {pris}/mo. Renews automatically. Cancel anytime in subscription settings.
+298 | paywall.gratisMerke | NO: Du kan også logge søvn gratis — uten kort | EN: You can also log sleep for free — no card needed
+299 | paywall.faqTittel | NO: Vanlige spørsmål | EN: FAQ
+300 | paywall.faq1q | NO: Hva skjer når prøveperioden er over? | EN: What happens when the trial ends?
+301 | paywall.faq1a | NO: Hvis du ikke sier opp, går abonnementet over til betalt plan til prisen du valgte. Sier du opp i tide, belastes du ikke. | EN: If you don’t cancel, your plan continues at the price you chose. If you cancel in time, you won’t be charged.
+302 | paywall.faq2q | NO: Blir jeg trukket automatisk? | EN: Will I be charged automatically?
+303 | paywall.faq2a | NO: Ja, etter prøveperioden — med mindre du sier opp før den er over. | EN: Yes, after the trial — unless you cancel before it ends.
+304 | paywall.faq3q | NO: Kan jeg avslutte når som helst? | EN: Can I cancel anytime?
+305 | paywall.faq3a | NO: Ja. Si opp i App Store-, Google Play- eller Stripe-innstillingene. Du beholder tilgang ut perioden du allerede har betalt/prøvd. | EN: Yes. Cancel in App Store, Google Play or Stripe settings. You keep access until the end of the period you already paid for or tried.
+306 | paywall.faq4q | NO: Hva får jeg gratis? | EN: What’s free?
+307 | paywall.faq4a | NO: Du kan logge søvn (lur og natt) gratis uten tidsbegrensning. Øvrige funksjoner krever Lille Pro. | EN: You can log sleep (naps and nights) for free with no time limit. Other features need Lille Pro.
+308 | trialEnded.tittel | NO: Prøveperioden er over | EN: Your trial has ended
+309 | trialEnded.oppsummering | NO: Du logget {lurer} lurer og {amming} amminger. | EN: You logged {lurer} naps and {amming} feedings.
+310 | trialEnded.oppsummeringTom | NO: Dataene dine er trygge — de er ikke slettet. | EN: Your data is safe — nothing was deleted.
+311 | trialEnded.gratisSøvn | NO: Du kan fortsatt logge søvn gratis. | EN: You can still log sleep for free.
+312 | trialEnded.abonner | NO: Abonner på Lille Pro | EN: Subscribe to Lille Pro
+313 | trialEnded.fortsettGratis | NO: Fortsett med gratis søvnlogging | EN: Continue with free sleep logging
+314 | pro.prøveTil | NO: Prøveperioden varer til {dato} | EN: Trial lasts until {dato}
+315 | pro.gjenopprettHint | NO: Vi får ikke bekreftet abonnementet ditt akkurat nå. Har du allerede betalt? Gjenopprett kjøp. | EN: We can’t confirm your subscription right now. Already paid? Restore purchases.
+316 | søvn.hvaSlagsSøvn | NO: Hva slags søvn skal du registrere? | EN: What kind of sleep do you want to register?
+317 | søvn.velgType | NO: Velg type for best mulig innsikt | EN: Choose type for the best insight
+318 | søvn.dagtidssøvn | NO: Dagtidssøvn | EN: Daytime sleep
+319 | søvn.natta | NO: Natta | EN: Night
+320 | søvn.nattesøvn | NO: Nattesøvn | EN: Night sleep
+321 | søvn.tips | NO: Tips | EN: Tip
+322 | søvn.tipsBeskrivelse | NO: Ved å registrere riktig søvntype får du mer treffsikre innsikter. | EN: By registering the correct sleep type, you get more accurate insights.
+323 | søvn.lurenPågår | NO: Luren pågår | EN: Nap in progress
+324 | søvn.trykkForJustere | NO: Trykk for å justere tid | EN: Tap to adjust time
+325 | søvn.avsluttLur | NO: Avslutt lur | EN: End nap
+326 | søvn.avsluttNatta | NO: Avslutt natta | EN: End the night
+327 | søvn.signalerFørLur | NO: Signaler før lur | EN: Signals before nap
+328 | søvn.hvaHarBabyenVist | NO: Hva har babyen vist før luren? | EN: What has the baby shown before the nap?
+329 | søvn.leggTilEgetSignal | NO: Legg til eget signal | EN: Add your own signal
+330 | søvn.iDag | NO: I dag | EN: Today
+331 | søvn.trykkForRedigereTid | NO: Trykk på en lur for å redigere tid | EN: Tap a nap to edit the time
+332 | søvn.lurAvsluttet | NO: LUR AVSLUTTET | EN: NAP ENDED
+333 | søvn.lur_caps | NO: LUR | EN: NAP
+334 | søvn.lurRegistrert | NO: Lur registrert! | EN: Nap registered!
+335 | søvn.tilbake | NO: Tilbake 🌿 | EN: Back 🌿
+336 | søvn.justerTidspunkt | NO: Juster tidspunkt | EN: Adjust time
+337 | søvn.natta_caps | NO: NATTA | EN: NIGHT
+338 | søvn.babySover | NO: Baby sover | EN: Baby is sleeping
+339 | søvn.nattensInnsikt | NO: Nattens innsikt | EN: Tonight's insight
+340 | søvn.signalerIKveld | NO: Signaler i kveld | EN: Signals tonight
+341 | søvn.nattensTidslinje | NO: De siste 24 timene | EN: The last 24 hours
+342 | søvn.skapRo | NO: Skap ro | EN: Create calm
+343 | søvn.lyder | NO: Lyder | EN: Sounds
+344 | søvn.nattlys | NO: Nattlys | EN: Night light
+345 | søvn.pustMedMeg | NO: 🌿 Reguler deg først | EN: 🌿 Regulate yourself first
+346 | søvn.etterregistrer | NO: Etterregistrer søvn | EN: Add past sleep
+347 | søvn.etterregistrerBeskrivelse | NO: Legg til søvn fra tidligere i dag eller i går | EN: Add sleep from earlier today or yesterday
+348 | søvn.nattligOppvåkningKnapp | NO: Nattlig
+oppvåkning | EN: Night
+wake-up
+349 | søvn.startSøvnenIgjen | NO: Start søvnen
+igjen | EN: Start sleep
+again
+350 | søvn.våkenSiden | NO: Våken siden | EN: Awake since
+351 | søvn.siden | NO: Siden | EN: Since
+352 | søvn.godMorgen | NO: God morgen! 🌿 | EN: Good morning! 🌿
+353 | søvn.nattaErOver | NO: Natta er over – ny dag begynner | EN: The night is over – a new day begins
+354 | søvn.babySovI | NO: Baby sov i {timer} timer og {minutter} minutter | EN: Baby slept for {timer} hours and {minutter} minutes
+355 | søvn.nattensSammendrag | NO: Nattens sammendrag | EN: Night's summary
+356 | søvn.totalSøvntid | NO: Total søvntid | EN: Total sleep time
+357 | søvn.oppvåkninger | NO: Oppvåkninger | EN: Wake-ups
+358 | søvn.lengsteStrekk | NO: Lengste strekk | EN: Longest stretch
+359 | søvn.startDagen | NO: Start dagen 🌿 | EN: Start the day 🌿
+360 | søvn.ikkeRiktigTidspunkt | NO: Ikke riktig tidspunkt? Juster oppvåkning | EN: Wrong time? Adjust wake-up
+361 | søvn.nårVåknetBabyen | NO: Når våknet babyen? | EN: When did the baby wake up?
+362 | søvn.lagreOppvåkning | NO: Lagre oppvåkning | EN: Save wake-up
+363 | søvn.leggTilTidligereSøvn | NO: Legg til tidligere søvn | EN: Add earlier sleep
+364 | søvn.dato | NO: Dato | EN: Date
+365 | søvn.starttid | NO: Starttid | EN: Start time
+366 | søvn.sluttid | NO: Sluttid | EN: End time
+367 | søvn.soverBabyenFortsatt | NO: Sover babyen fortsatt? La sluttid stå tom. | EN: Is the baby still sleeping? Leave end time empty.
+368 | søvn.registrerNoeAnnet | NO: Registrer noe annet | EN: Register something else
+369 | søvn.annetPlaceholder | NO: F.eks. trøstet, ga vann, skiftet pyjamas... | EN: E.g. comforted, gave water, changed pajamas...
+370 | søvn.signalGnedØynene | NO: Gned øynene | EN: Rubbing eyes
+371 | søvn.signalGjesping | NO: Gjesping | EN: Yawning
+372 | søvn.signalStirretTomt | NO: Stirret tomt | EN: Blank stare
+373 | søvn.signalVendteHodet | NO: Vendte hodet | EN: Turning head away
+374 | innsikt.tittel | NO: Innsikt | EN: Insights
+375 | innsikt.basertPå7Dager | NO: Basert på de siste 7 dagene | EN: Based on the last 7 days
+376 | innsikt.babyensSpråk | NO: 💛 Babyens språk | EN: 💛 Baby's language
+377 | innsikt.innsiktFane | NO: ✨ Innsikt | EN: ✨ Insights
+378 | innsikt.velkommen | NO: Velkommen til Babyens språk! | EN: Welcome to Baby's Language!
+379 | innsikt.velkommenBeskrivelse | NO: Her lærer vi å forstå de små signalene som forteller oss hvordan {navn} har det. | EN: Here we learn to understand the small signals that tell us how {navn} is doing.
+380 | innsikt.joMerViRegistrerer | NO: Jo mer vi registrerer, desto bedre innsikt får du. | EN: The more we register, the better insight you get.
+381 | innsikt.registrerFørsteSignal | NO: Registrer første signal | EN: Register first signal
+382 | innsikt.detteVilDuFåInnsiktI | NO: Dette vil du få innsikt i | EN: This is what you'll gain insight into
+383 | innsikt.vanligsteSignaler | NO: Vanligste signaler | EN: Most common signals
+384 | innsikt.vanligsteSignalerTekst | NO: Se hvilke signaler som brukes oftest av barnet ditt. | EN: See which signals your child uses most often.
+385 | innsikt.signalrekkefølge | NO: Signalrekkefølge | EN: Signal sequence
+386 | innsikt.signalrekkefølgeTekst | NO: Oppdag rekkefølgen babyen din bruker før noe skjer. | EN: Discover the sequence your baby uses before something happens.
+387 | innsikt.overganger | NO: Overganger | EN: Transitions
+388 | innsikt.overgangerTekst | NO: Forstå overgangen fra rolig → trøtt → sover og mer. | EN: Understand the transition from calm → tired → asleep and more.
+389 | innsikt.personligeMønstre | NO: Personlige mønstre | EN: Personal patterns
+390 | innsikt.personligeMønstreTekst | NO: AI finner mønstre som er unike for barnet ditt. | EN: AI finds patterns unique to your child.
+391 | innsikt.slikKommerDuIGang | NO: Slik kommer du i gang | EN: How to get started
+392 | innsikt.registrerSmåSignaler | NO: Registrer små signaler i hverdagen. Det kan være ansiktsuttrykk, lyder, bevegelser eller kroppsspråk. | EN: Register small signals in everyday life. It could be facial expressions, sounds, movements or body language.
+393 | innsikt.stegTrykkPlus | NO: Trykk på + for å registrere et signal | EN: Tap + to register a signal
+394 | innsikt.stegVelgHvaDuObserverte | NO: Velg hva du observerte | EN: Choose what you observed
+395 | innsikt.stegViLærer | NO: Vi lærer og finner mønstre sammen | EN: We learn and find patterns together
+396 | innsikt.nyligRegistrerteSignaler | NO: Nylig registrerte signaler | EN: Recently registered signals
+397 | innsikt.herVilDineSignalerVises | NO: Her vil dine registrerte signaler vises. | EN: Your registered signals will appear here.
+398 | innsikt.duHarIkkeRegistrertSignaler | NO: Du har ikke registrert noen signaler enda. | EN: You haven't registered any signals yet.
+399 | innsikt.analysererMønstre | NO: Analyserer {navn}s mønstre... | EN: Analyzing {navn}'s patterns...
+400 | innsikt.aiObservasjon | NO: ✦ AI-OBSERVASJON | EN: ✦ AI OBSERVATION
+401 | innsikt.viserOfteDisseSignalene | NO: {navn} viser ofte disse signalene før han/hun blir trøtt: | EN: {navn} often shows these signals before getting tired:
+402 | innsikt.viserOftest | NO: viser oftest | EN: most often shows
+403 | innsikt.førHanBlirTrøtt | NO: før han blir trøtt. | EN: before getting tired.
+404 | innsikt.registrertGanger | NO: Registrert {antall} ganger. | EN: Registered {antall} times.
+405 | innsikt.gjennomsnittMinutterFraSignal | NO: Gjennomsnitt {min} minutter fra første signal til søvn | EN: Average {min} minutes from first signal to sleep
+406 | innsikt.sover | NO: Sover | EN: Sleeping
+407 | innsikt.vanligsteMønster | NO: Et av de vanligste mønstrene vi ser hos {navn} | EN: One of the most common patterns we see in {navn}
+408 | innsikt.mønsterFørProsent | NO: Et mønster vi ser før {pst}% av lurene | EN: A pattern we see before {pst}% of naps
+409 | innsikt.aiLærerFortsatt | NO: AI-en lærer fortsatt {navn}s mønstre – registrer gjerne flere | EN: The AI is still learning {navn}'s patterns – feel free to register more
+410 | innsikt.oppdaterAnalyse | NO: Oppdater analyse | EN: Update analysis
+411 | innsikt.overgangerViSerHos | NO: Overganger vi ser hos {navn} | EN: Transitions we see in {navn}
+412 | innsikt.seAlle | NO: Se alle | EN: See all
+413 | innsikt.registrerFlereForSikrere | NO: Registrer flere signaler for sikrere innsikt | EN: Register more signals for more reliable insight
+414 | innsikt.basertPåRegistreringer | NO: Basert på {antall} registreringer | EN: Based on {antall} registrations
+415 | innsikt.typiskVeiModSøvn | NO: Typisk vei mot søvn | EN: Typical path to sleep
+416 | innsikt.registrertIProsentAvLurene | NO: Registrert i {pst}% av lurene. | EN: Registered in {pst}% of naps.
+417 | innsikt.typiskVeiTilUro | NO: Typisk vei til uro | EN: Typical path to fussiness
+418 | innsikt.registrertI61Prosent | NO: Registrert i 61% av gangene. | EN: Registered in 61% of cases.
+419 | innsikt.roligTilFørsteSignal | NO: Rolig → første signal | EN: Calm → first signal
+420 | innsikt.førsteSignalTilSøvn | NO: Første signal → søvn | EN: First signal → sleep
+421 | innsikt.førsteSignalTilUro | NO: Første signal → uro | EN: First signal → fussiness
+422 | innsikt.gjennomsnitt | NO: Gjennomsnitt | EN: Average
+423 | innsikt.denneUkenHarViLært | NO: 💛 Denne uken har vi lært | EN: 💛 This week we learned
+424 | innsikt.sisteRegistrerteSignaler | NO: Siste registrerte signaler | EN: Recently registered signals
+425 | innsikt.varighet | NO: Varighet | EN: Duration
+426 | innsikt.signalmønster | NO: {navn}s signalmønster | EN: {navn}'s signal pattern
+427 | innsikt.aiAnalysererKommunikasjon | NO: AI analyserer {navn}s unike kommunikasjon | EN: AI analyzes {navn}'s unique communication
+428 | innsikt.dagensSøvnbehov | NO: Dagens søvnbehov | EN: Today's sleep need
+429 | innsikt.basertPåAlder | NO: Basert på {navn}s alder | EN: Based on {navn}'s age
+430 | innsikt.sovetIDag | NO: Sovet i dag | EN: Slept today
+431 | innsikt.avBehov | NO: av {timer}t behov | EN: of {timer}h need
+432 | innsikt.fåttNokSøvn | NO: {navn} har fått nok søvn i dag! 🌿 | EN: {navn} has had enough sleep today! 🌿
+433 | innsikt.prosentAvDagsbehovetBraJobbet | NO: {pst}% av dagsbehovet – bra jobbet! | EN: {pst}% of the daily need – well done!
+434 | innsikt.prosentAvDagsbehovetSåLangt | NO: {pst}% av dagsbehovet så langt | EN: {pst}% of the daily need so far
+435 | innsikt.søvnSiste7Dager | NO: Søvn siste 7 dager | EN: Sleep last 7 days
+436 | innsikt.lurerRegistrert | NO: {antall} lurer registrert | EN: {antall} naps registered
+437 | innsikt.amminger | NO: Amminger | EN: Feedings
+438 | innsikt.siste7Dager | NO: siste 7 dager | EN: last 7 days
+439 | innsikt.bleieskift | NO: Bleieskift | EN: Diaper changes
+440 | innsikt.alder | NO: Alder | EN: Age
+441 | innsikt.måned | NO: mnd | EN: mo
+442 | innsikt.personligeInnsikter | NO: Personlige innsikter | EN: Personal insights
+443 | innsikt.aiAnalysererMønstre | NO: AI analyserer {navn}s mønstre | EN: AI analyzes {navn}'s patterns
+444 | innsikt.analyserData | NO: Se hva Lille har lært om {navn} | EN: See what Lille has learned about {navn}
+445 | innsikt.ingenDataEnnå | NO: Registrer søvn og amming noen dager, så vil Lille begynne å oppdage mønstre 🤍 | EN: Register sleep and feeding for a few days, then Lille will start discovering patterns 🤍
+446 | innsikt.oppdaterInnsikter | NO: Oppdater innsikter | EN: Update insights
+447 | innsikt.kunneIkkeLasteInnsikter | NO: ✨ Kunne ikke laste innsikter akkurat nå. | EN: ✨ Could not load insights right now.
+448 | innsikt.kunneIkkeLasteSpråk | NO: 💛 Kunne ikke laste babyens språk akkurat nå. | EN: 💛 Could not load baby's language right now.
+449 | amming.tittel | NO: Amming | EN: Feeding
+450 | amming.venstre | NO: Venstre | EN: Left
+451 | amming.høyre | NO: Høyre | EN: Right
+452 | amming.venstrePil | NO: ← Venstre | EN: ← Left
+453 | amming.høyrePil | NO: Høyre → | EN: Right →
+454 | amming.venstre_bryst | NO: ← Venstre bryst | EN: ← Left breast
+455 | amming.høyre_bryst | NO: Høyre bryst → | EN: Right breast →
+456 | amming.aktivtBryst | NO: {retning} bryst | EN: {retning} breast
+457 | amming.anbefalt | NO: Anbefalt: {bryst} bryst | EN: Recommended: {bryst} breast
+458 | amming.ammerNå | NO: Ammer nå | EN: Feeding now
+459 | amming.siden | NO: Siden {tid} | EN: Since {tid}
+460 | amming.trykkForÅStarte | NO: Trykk for å starte | EN: Tap to start
+461 | amming.byttBryst | NO: Bytt bryst | EN: Switch breast
+462 | amming.avsluttAmming | NO: Avslutt amming | EN: End feeding
+463 | amming.startBryst | NO: 🤍 Start {bryst} bryst | EN: 🤍 Start {bryst} breast
+464 | amming.sisteAmming | NO: Siste amming | EN: Last feeding
+465 | amming.neste | NO: Neste: | EN: Next:
+466 | amming.iDag | NO: ✨ I dag | EN: ✨ Today
+467 | amming.nesteBryst | NO: Neste bryst | EN: Next breast
+468 | amming.ammingFlertall | NO: amminger | EN: feedings
+469 | amming.ammingEntall | NO: amming | EN: feeding
+470 | amming.minutterTotalt | NO: minutter totalt | EN: minutes total
+471 | amming.ammeloggIDag | NO: Ammelogg i dag | EN: Today's feeding log
+472 | amming.nårStartetAmmingen | NO: Når startet ammingen? | EN: When did feeding start?
+473 | amming.lagre | NO: Lagre | EN: Save
+474 | amming.startet | NO: Startet | EN: Started
+475 | amming.sluttet | NO: Sluttet | EN: Ended
+476 | amming.lagrer | NO: Lagrer... | EN: Saving...
+477 | amming.lagreAmming | NO: Lagre amming | EN: Save feeding
+478 | amming.redigerAmming | NO: Rediger amming | EN: Edit feeding
+479 | amming.lagreEndringer | NO: Lagre endringer | EN: Save changes
+480 | amming.slettAmming | NO: Slett amming | EN: Delete feeding
+481 | bleie.tittel | NO: Bleie | EN: Diaper
+482 | bleie.undertittel | NO: Registrer bleieskift raskt og enkelt | EN: Register diaper changes quickly and easily
+483 | bleie.registrert | NO: Registrert! | EN: Registered!
+484 | bleie.sisteBleieskift | NO: Siste bleieskift | EN: Last diaper change
+485 | bleie.innsikt | NO: ✨ Innsikt | EN: ✨ Insight
+486 | bleie.innsiktFlott | NO: {antall} bleieskift i dag – flott oversikt! 🤍 | EN: {antall} diaper changes today – great overview! 🤍
+487 | bleie.innsiktAntall | NO: {antall} bleieskift registrert i dag. | EN: {antall} diaper changes registered today.
+488 | bleie.type | NO: Type | EN: Type
+489 | bleie.typeVåt | NO: Våt | EN: Wet
+490 | bleie.typeTørr | NO: Tørr | EN: Dry
+491 | bleie.typeAvføring | NO: Avføring | EN: Soiled
+492 | bleie.tidspunkt | NO: Tidspunkt | EN: Time
+493 | bleie.notatValgfritt | NO: Bleie (valgfritt) | EN: Note (optional)
+494 | bleie.notatPlaceholder | NO: Skriv en liten notat... | EN: Write a small note...
+495 | bleie.lagrer | NO: Lagrer... | EN: Saving...
+496 | bleie.lagre | NO: Lagre | EN: Save
+497 | bleie.bleieskiftIDag | NO: Bleieskift i dag | EN: Today's diaper changes
+498 | bleie.totalt | NO: {antall} totalt | EN: {antall} total
+499 | aktivitet.tittel | NO: Aktivitet | EN: Activity
+500 | aktivitet.undertittel | NO: Registrer aktiviteter og milepæler | EN: Register activities and milestones
+501 | aktivitet.registrert | NO: Registrert! | EN: Registered!
+502 | aktivitet.faneAktivitet | NO: 🌿 Aktivitet | EN: 🌿 Activity
+503 | aktivitet.faneMilepæler | NO: ⭐ Milepæler | EN: ⭐ Milestones
+504 | aktivitet.aktiviteterIDag | NO: aktiviteter i dag | EN: activities today
+505 | aktivitet.minutterTotalt | NO: minutter totalt | EN: minutes total
+506 | aktivitet.aktiviteterLoggtittel | NO: Aktiviteter i dag | EN: Activities today
+507 | aktivitet.ingenAktiviteter | NO: Ingen aktiviteter registrert i dag | EN: No activities registered today
+508 | aktivitet.registrerAktivitetKnapp | NO: + Registrer aktivitet | EN: + Register activity
+509 | aktivitet.ingenMilepæler | NO: Ingen milepæler registrert ennå | EN: No milestones registered yet
+510 | aktivitet.leggTilMilepæl | NO: ⭐ Legg til milepæl | EN: ⭐ Add milestone
+511 | aktivitet.registrerAktivitetTittel | NO: Registrer aktivitet | EN: Register activity
+512 | aktivitet.typeAktivitet | NO: Type aktivitet | EN: Activity type
+513 | aktivitet.varighet | NO: Varighet | EN: Duration
+514 | aktivitet.notatValgfritt | NO: Notat (valgfritt) | EN: Note (optional)
+515 | aktivitet.notatPlaceholder | NO: F.eks. lekte med baller i parken... | EN: E.g. played with balls in the park...
+516 | aktivitet.lagrer | NO: Lagrer... | EN: Saving...
+517 | aktivitet.lagreAktivitet | NO: Lagre aktivitet | EN: Save activity
+518 | aktivitet.leggTilMilepælTittel | NO: Legg til milepæl ⭐ | EN: Add milestone ⭐
+519 | aktivitet.velgEllerSkriv | NO: Velg eller skriv selv | EN: Choose or write your own
+520 | aktivitet.ellerSkrivEgen | NO: Eller skriv din egen... | EN: Or write your own...
+521 | aktivitet.dato | NO: Dato | EN: Date
+522 | aktivitet.lagreMilepæl | NO: ⭐ Lagre milepæl | EN: ⭐ Save milestone
+523 | aktivitet.typeLek | NO: Lek | EN: Play
+524 | aktivitet.typeTur | NO: Tur | EN: Walk
+525 | aktivitet.typeBad | NO: Bad | EN: Bath
+526 | aktivitet.typeMassasje | NO: Massasje | EN: Massage
+527 | aktivitet.typeLesing | NO: Lesing | EN: Reading
+528 | aktivitet.typeSang | NO: Sang | EN: Singing
+529 | aktivitet.typeMagelek | NO: Magelek | EN: Tummy time
+530 | aktivitet.typeSansestund | NO: Sansestund | EN: Sensory play
+531 | aktivitet.typeBøker | NO: Bøker | EN: Books
+532 | aktivitet.typeUtetid | NO: Utetid | EN: Outdoor time
+533 | aktivitet.typeBabysang | NO: Babysang | EN: Baby singing
+534 | aktivitet.typeSvømming | NO: Svømming | EN: Swimming
+535 | aktivitet.typeAnnet | NO: Annet | EN: Other
+536 | aktivitet.aiAntall | NO: {antall} aktiviteter denne uken 🌿 | EN: {antall} activities this week 🌿
+537 | aktivitet.aiMestPopulær | NO: Mest populære aktivitet: {aktivitet} | EN: Most popular activity: {aktivitet}
+538 | aktivitet.milepælFørsteSmil | NO: Første smil | EN: First smile
+539 | aktivitet.milepælFørsteLatter | NO: Første latter | EN: First laugh
+540 | aktivitet.milepælRulletMageTilRygg | NO: Rullet fra mage til rygg | EN: Rolled from tummy to back
+541 | aktivitet.milepælRulletRyggTilMage | NO: Rullet fra rygg til mage | EN: Rolled from back to tummy
+542 | aktivitet.milepælFantTærne | NO: Fant tærne | EN: Found toes
+543 | aktivitet.milepælSattUtenStøtte | NO: Satt uten støtte | EN: Sat without support
+544 | aktivitet.milepælKrabbet | NO: Krabbet | EN: Crawled
+545 | aktivitet.milepælReisteSeg | NO: Reiste seg opp | EN: Pulled up to stand
+546 | aktivitet.milepælFørsteOrd | NO: Første ord | EN: First word
+547 | aktivitet.milepælFørsteSteg | NO: Første steg | EN: First steps
+548 | aktivitet.milepælSattAlene | NO: Satt alene | EN: Sat alone
+549 | aktivitet.milepælSnudde | NO: Snudde seg | EN: Rolled over
+550 | aktivitet.milepælHoldtHodet | NO: Holdt hodet oppe | EN: Held head up
+551 | aktivitet.milepælFørsteTann | NO: Første tann | EN: First tooth
+552 | aktivitet.milepælSpisteFastFøde | NO: Spiste fast føde | EN: Ate solid food
+553 | aktivitet.milepælVinket | NO: Vinket hei/hadet | EN: Waved hello/goodbye
+554 | aktivitet.notatMilepælPlaceholder | NO: F.eks. lo for første gang da vi kildret ham... | EN: E.g. laughed for the first time when we tickled him...
+555 | kolikk.tittel | NO: 🌙 Uro & Ro | EN: 🌙 Fussiness & Calm
+556 | kolikk.undertittel | NO: Forstå mønstrene bak de vanskelige stundene | EN: Understand the patterns behind the difficult moments
+557 | kolikk.nåAkkurat | NO: Nå akkurat | EN: Right now
+558 | kolikk.påVeiInnIUroperiode | NO: På vei inn i uroperiode | EN: Entering a fussy period
+559 | kolikk.påVeiInnBeskrivelse | NO: Vi har registrert signaler som ofte kommer før uro hos {navn}. | EN: We have registered signals that often come before fussiness in {navn}.
+560 | kolikk.nesteForventedeUro | NO: Neste forventede uro | EN: Next expected fussiness
+561 | kolikk.vanligStart | NO: Vanlig start: {tid} | EN: Usual start: {tid}
+562 | kolikk.varsleMe45min | NO: Varsle meg 45 min før | EN: Notify me 45 min before
+563 | kolikk.vanligeSignalerFørUro | NO: Vanlige signaler før uro | EN: Common signals before fussiness
+564 | kolikk.seSignalhistorikk | NO: Se signalhistorikk → | EN: See signal history →
+565 | kolikk.registrerEpisoder | NO: Registrer episoder for å se mønstre | EN: Register episodes to see patterns
+566 | kolikk.tiltakSomHjelper | NO: Tiltak som hjelper | EN: Measures that help
+567 | kolikk.seAlleTiltak | NO: Se alle tiltak → | EN: See all measures →
+568 | kolikk.mønsterViSer | NO: Mønstre vi ser | EN: Patterns we see
+569 | kolikk.seAlleInnsikter | NO: Se alle innsikter → | EN: See all insights →
+570 | kolikk.historikk | NO: Historikk | EN: History
+571 | kolikk.seAlle | NO: Se alle | EN: See all
+572 | kolikk.varighet | NO: 🕐 Varighet: {min} min | EN: 🕐 Duration: {min} min
+573 | kolikk.signaler | NO: Signaler | EN: Signals
+574 | kolikk.tiltak | NO: Tiltak | EN: Measures
+575 | kolikk.resultat | NO: Resultat | EN: Result
+576 | kolikk.roetSegEtter | NO: Roet seg etter {min} min | EN: Calmed down after {min} min
+577 | kolikk.delvisEffekt | NO: Delvis effekt | EN: Partial effect
+578 | kolikk.velkommenTittel | NO: Velkommen til Uro & Ro | EN: Welcome to Fussiness & Calm
+579 | kolikk.velkommenBeskrivelse | NO: Vi hjelper deg å forstå uroen og hva som kan hjelpe {navn}. Jo mer du registrerer, desto bedre kan vi finne mønstre og gi deg innsikt. | EN: We help you understand the fussiness and what can help {navn}. The more you register, the better we can find patterns and give you insights.
+580 | kolikk.registrerFørsteUroperiode | NO: Registrer første uroperiode | EN: Register first fussy period
+581 | kolikk.herVilDuFåInnsikt | NO: ✨ Her vil du etter hvert få innsikt om: | EN: ✨ Here you will gradually get insights about:
+582 | kolikk.innsiktNårUroen | NO: Når uroen pleier å komme | EN: When fussiness usually occurs
+583 | kolikk.innsiktTegnFørUro | NO: Tegn før uro | EN: Signs before fussiness
+584 | kolikk.innsiktTiltakSomKanHjelpe | NO: Tiltak som kan hjelpe | EN: Measures that can help
+585 | kolikk.innsiktMønstreOverTid | NO: Mønstre over tid | EN: Patterns over time
+586 | kolikk.komIGang | NO: Kom i gang | EN: Get started
+587 | kolikk.komIGangBeskrivelse | NO: Når du registrerer uroperioder, hjelper du oss å forstå {navn} bedre. | EN: When you register fussy periods, you help us understand {navn} better.
+588 | kolikk.stegRegistrer | NO: Registrer når uroen starter | EN: Register when fussiness starts
+589 | kolikk.stegLeggTilSignaler | NO: Legg til hvilke signaler du ser | EN: Add which signals you see
+590 | kolikk.stegNoterHvaDere | NO: Noter hva dere prøvde og hvordan det gikk | EN: Note what you tried and how it went
+591 | kolikk.varslingInfo | NO: Du kan varsling 45 min før uroen vanligvis starter. Dette kan du slå på senere. | EN: You can get notified 45 min before fussiness usually starts. You can turn this on later.
+592 | kolikk.registrerUroEpisode | NO: Registrer uro-episode | EN: Register fussy episode
+593 | kolikk.tidspunkt | NO: Tidspunkt | EN: Time
+594 | kolikk.hvaSerDuNå | NO: Hva ser du nå? | EN: What do you see now?
+595 | kolikk.hvaPrøvdeDere | NO: Hva prøvde dere? | EN: What did you try?
+596 | kolikk.hvordanGikkDet | NO: Hvordan gikk det? | EN: How did it go?
+597 | kolikk.hjalpGodt | NO: 😊 Hjalp godt | EN: 😊 Helped well
+598 | kolikk.hjalpLitt | NO: 😐 Hjalp litt | EN: 😐 Helped a bit
+599 | kolikk.hjalpIkke | NO: 😔 Hjalp ikke | EN: 😔 Did not help
+600 | kolikk.varighetMinutter | NO: Varighet (minutter, valgfritt) | EN: Duration (minutes, optional)
+601 | kolikk.varighetPlaceholder | NO: F.eks. 25 | EN: E.g. 25
+602 | kolikk.notatValgfritt | NO: Notat (valgfritt) | EN: Note (optional)
+603 | kolikk.notatPlaceholder | NO: Noe du la merke til... | EN: Something you noticed...
+604 | kolikk.lagrer | NO: Lagrer... | EN: Saving...
+605 | kolikk.lagreEpisode | NO: Lagre episode | EN: Save episode
+606 | kolikk.signalhistorikk | NO: Signalhistorikk | EN: Signal history
+607 | kolikk.ingenSignalerRegistrert | NO: Ingen signaler registrert ennå | EN: No signals registered yet
+608 | kolikk.alleTiltak | NO: Alle tiltak | EN: All measures
+609 | kolikk.rangertEtterEffekt | NO: Rangert etter effekt | EN: Ranked by effectiveness
+610 | kolikk.ingenTiltakRegistrert | NO: Ingen tiltak registrert ennå | EN: No measures registered yet
+611 | kolikk.ganger | NO: {antall} ganger | EN: {antall} times
+612 | kolikk.prosent | NO: {pst}% effekt | EN: {pst}% effectiveness
+613 | kolikk.tiltakBabymassasje | NO: Babymassasje | EN: Baby massage
+614 | kolikk.tiltakBæresjal | NO: Bæresjal | EN: Baby carrier
+615 | kolikk.tiltakAmming | NO: Amming | EN: Breastfeeding
+616 | kolikk.tiltakFlaske | NO: Flaske | EN: Bottle
+617 | kolikk.tiltakHudMotHud | NO: Hud mot hud | EN: Skin to skin
+618 | kolikk.tiltakMørktRom | NO: Mørkt rom | EN: Dark room
+619 | kolikk.tiltakVugging | NO: Vugging | EN: Rocking
+620 | kolikk.tiltakHvitStøy | NO: Hvit støy | EN: White noise
+621 | kolikk.tiltakSmokk | NO: Smokk | EN: Pacifier
+622 | kolikk.signalTrekkerBenaOpp | NO: Trekker bena opp | EN: Pulls legs up
+623 | kolikk.signalBøyerRyggen | NO: Bøyer ryggen | EN: Arches back
+624 | kolikk.signalVrirSeg | NO: Vrir seg | EN: Writhes
+625 | kolikk.signalKlynker | NO: Klynker | EN: Whimpers
+626 | kolikk.signalHøyGråt | NO: Høy gråt | EN: Loud crying
+627 | kolikk.signalVilBæres | NO: Vil bæres | EN: Wants to be carried
+628 | kolikk.signalVanskeligÅLeggeNed | NO: Vanskelig å legge ned | EN: Hard to put down
+629 | kolikk.signalMyeLuft | NO: Mye luft | EN: Lots of gas
+630 | kolikk.signalSlårMedArmer | NO: Slår med armer og ben | EN: Flails arms and legs
+631 | mat.tittel | NO: 🍽️ Mat & Smak | EN: 🍽️ Food & Taste
+632 | mat.undertittel | NO: Små skjeer. Store oppdagelser. 🧡 | EN: Small spoons. Big discoveries. 🧡
+633 | mat.velkommenTittel | NO: Velkommen til Mat & Smak! 🧡 | EN: Welcome to Food & Taste! 🧡
+634 | mat.velkommenBeskrivelse | NO: {navn} har ikke registrert noen måltider enda.
+
+Når dere begynner med fast føde vil vi hjelpe deg å følge smaker, reaksjoner og oppdage favoritter over tid. | EN: {navn} has not registered any meals yet.
+
+When you start with solid food we will help you track tastes, reactions and discover favorites over time.
+635 | mat.registrerFørsteMåltid | NO: Registrer første måltid | EN: Register first meal
+636 | mat.detteVilDuFåInnsiktI | NO: Dette vil du få innsikt i | EN: This is what you'll get insights into
+637 | mat.favorittmat | NO: Favorittmat | EN: Favorite food
+638 | mat.favorittmatTekst | NO: Vi lærer hvilke smaker barnet ditt liker best. | EN: We learn which tastes your child likes best.
+639 | mat.reaksjoner | NO: Reaksjoner | EN: Reactions
+640 | mat.reaksjonerTekst | NO: Se hvilke matvarer som gir glede, grimaser eller magevondt. | EN: See which foods bring joy, grimaces or tummy aches.
+641 | mat.smaksreise | NO: Smaksreise | EN: Taste journey
+642 | mat.smaksreiseTekst | NO: Følg hvilke matgrupper barnet har utforsket. | EN: Follow which food groups the child has explored.
+643 | mat.personligeMønstre | NO: Personlige mønstre | EN: Personal patterns
+644 | mat.personligeMønstreTekst | NO: AI finner sammenhenger og gir deg innsikt. | EN: AI finds connections and gives you insights.
+645 | mat.smakskart | NO: Smakskart | EN: Taste map
+646 | mat.smakskartBeskrivelse | NO: Utforskning starter her. Hver smak er et nytt eventyr! | EN: Exploration starts here. Every taste is a new adventure!
+647 | mat.prøvd | NO: {antall} prøvd | EN: {antall} tried
+648 | mat.nullPrøvd | NO: 0 prøvd | EN: 0 tried
+649 | mat.snartKommer | NO: Snart kommer dette | EN: Coming soon
+650 | mat.snartKommerBeskrivelse | NO: Når du har registrert noen måltider vil du få: | EN: When you have registered some meals you will get:
+651 | mat.babyMatspråk | NO: {navn} sitt matspråk | EN: {navn}'s food language
+652 | mat.favorittsmaker | NO: Favorittsmaker | EN: Favorite tastes
+653 | mat.matSomIkkeFaltISmak | NO: Mat som ikke falt i smak | EN: Food that did not go down well
+654 | mat.personligeAiInnsikter | NO: Personlige AI-innsikter | EN: Personal AI insights
+655 | mat.tipsTitle | NO: 🌿 Tips til første måltider | EN: 🌿 Tips for first meals
+656 | mat.tipRoligStemningTittel | NO: Rolig stemning | EN: Calm atmosphere
+657 | mat.tipRoligStemningTekst | NO: Skap en hyggelig atmosfære rundt måltidet. | EN: Create a pleasant atmosphere around the meal.
+658 | mat.tipSmåMengderTittel | NO: Små mengder | EN: Small amounts
+659 | mat.tipSmåMengderTekst | NO: Det viktigste er å utforske, ikke å spise mye. | EN: The most important thing is to explore, not to eat a lot.
+660 | mat.tipTålmodighet | NO: Tålmodighet | EN: Patience
+661 | mat.tipTålmodighetTekst | NO: Noen smaker trenger tid. Prøv igjen senere. | EN: Some tastes need time. Try again later.
+662 | mat.dagsObservasjon | NO: DAGENS OBSERVASJON | EN: TODAY'S OBSERVATION
+663 | mat.harPrøvd | NO: {navn} har prøvd {antall} ulike matvarer. | EN: {navn} has tried {antall} different foods.
+664 | mat.favorittenSerUtTilÅVære | NO: Favoritten ser ut til å være | EN: The favorite seems to be
+665 | mat.smaksreiseHeader | NO: 🌿 SMAKSREISE | EN: 🌿 TASTE JOURNEY
+666 | mat.totalt | NO: {antall} totalt → | EN: {antall} total →
+667 | mat.favoritterHeader | NO: ❤️ FAVORITTER | EN: ❤️ FAVORITES
+668 | mat.ingenEnnå | NO: Ingen ennå | EN: None yet
+669 | mat.seAlle | NO: Se alle → | EN: See all →
+670 | mat.ikkeSåPopulærtHeader | NO: 😕 IKKE SÅ POPULÆRT | EN: 😕 NOT SO POPULAR
+671 | mat.seMer | NO: Se mer → | EN: See more →
+672 | mat.innsiktFraAi | NO: ✦ INNSIKT FRA AI | EN: ✦ INSIGHTS FROM AI
+673 | mat.analysererMatmønstre | NO: Analyserer matmønstre... | EN: Analyzing food patterns...
+674 | mat.sisteMåltider | NO: Siste måltider | EN: Latest meals
+675 | mat.registrerMåltid | NO: + Registrer måltid | EN: + Register meal
+676 | mat.nyttMåltid | NO: Nytt måltid 🍽️ | EN: New meal 🍽️
+677 | mat.matvare | NO: Matvare | EN: Food item
+678 | mat.matvarePlaceholder | NO: f.eks. Avokado, Gulrot, Havregrøt... | EN: e.g. Avocado, Carrot, Oatmeal...
+679 | mat.nyMatvare | NO: Ny matvare? | EN: New food?
+680 | mat.ja | NO: Ja | EN: Yes
+681 | mat.nei | NO: Nei | EN: No
+682 | mat.førstegangBadge | NO: 🌱 Første gang {navn} prøver dette! | EN: 🌱 First time {navn} tries this!
+683 | mat.kategori | NO: Kategori | EN: Category
+684 | mat.reaksjon | NO: Reaksjon | EN: Reaction
+685 | mat.mengdeSpist | NO: Mengde spist | EN: Amount eaten
+686 | mat.allergiValgfritt | NO: Allergireaksjon (valgfritt) | EN: Allergic reaction (optional)
+687 | mat.allergiSpørsmål | NO: Viste babyen tegn på reaksjon etter måltidet? | EN: Did the baby show signs of reaction after the meal?
+688 | mat.dato | NO: Dato | EN: Date
+689 | mat.tidspunkt | NO: Tidspunkt | EN: Time
+690 | mat.notaterValgfritt | NO: Notater (valgfritt) | EN: Notes (optional)
+691 | mat.notaterPlaceholder | NO: Noe spesielt du vil huske? | EN: Something special you want to remember?
+692 | mat.lagrer | NO: Lagrer... | EN: Saving...
+693 | mat.lagreMåltid | NO: Lagre måltid | EN: Save meal
+694 | mat.lagreFeil | NO: Kunne ikke lagre måltidet. Prøv igjen. | EN: Could not save the meal. Please try again.
+695 | mat.manglerFelter | NO: Fyll ut matvare, kategori, reaksjon og mengde. | EN: Please fill in food item, category, reaction and amount.
+696 | mat.ikkeInnlogget | NO: Du er ikke innlogget. Logg inn på nytt og prøv igjen. | EN: You are not logged in. Sign in again and try again.
+697 | mat.profilMangler | NO: Profilen din er ikke klar ennå. Logg ut og inn igjen, så prøv på nytt. | EN: Your profile is not ready yet. Sign out and back in, then try again.
+698 | mat.kategoriFrukt | NO: Frukt | EN: Fruit
+699 | mat.kategoriGrønnsaker | NO: Grønnsaker | EN: Vegetables
+700 | mat.kategoriFisk | NO: Fisk | EN: Fish
+701 | mat.kategoriKorn | NO: Korn | EN: Grain
+702 | mat.kategoriBær | NO: Bær | EN: Berries
+703 | mat.kategoriAnnet | NO: Annet | EN: Other
+704 | mat.reaksjonElsket | NO: Likte veldig godt | EN: Loved it
+705 | mat.reaksjonLikte | NO: Likte det | EN: Liked it
+706 | mat.reaksjonNøytral | NO: Verken eller | EN: Neither/nor
+707 | mat.reaksjonSmakte | NO: Smakte litt | EN: Tasted a bit
+708 | mat.reaksjonAvslo | NO: Avslo helt | EN: Refused completely
+709 | mat.mengdeLite | NO: Ca. 1–2 skjeer | EN: Approx. 1–2 spoons
+710 | mat.mengdeMiddels | NO: Ca. 3–5 skjeer | EN: Approx. 3–5 spoons
+711 | mat.mengdeHalvparten | NO: Halvparten | EN: Half
+712 | mat.mengdeMeste | NO: Det meste | EN: Most of it
+713 | mat.allergiIngenReaksjon | NO: Ingen reaksjon | EN: No reaction
+714 | mat.allergiUsikker | NO: Usikker reaksjon | EN: Uncertain reaction
+715 | mat.allergiTydelig | NO: Tydelig reaksjon | EN: Clear reaction
+716 | pumping.tittel | NO: 🍼 Pumping | EN: 🍼 Pumping
+717 | pumping.undertittel | NO: Din tid. Din melk. Din styrke. 🧡 | EN: Your time. Your milk. Your strength. 🧡
+718 | pumping.velkommenTittel | NO: Velkommen til Pumping! 🧡 | EN: Welcome to Pumping! 🧡
+719 | pumping.velkommenBeskrivelse | NO: Her kan du følge din pumpereise og få innsikt som gjør hverdagen enklere. | EN: Here you can follow your pumping journey and get insights that make everyday life easier.
+720 | pumping.steg1 | NO: Registrer pumpingene dine | EN: Register your pumping sessions
+721 | pumping.steg2 | NO: Få oversikt over melkeproduksjonen | EN: Get an overview of milk production
+722 | pumping.steg3 | NO: Se mønstre og få personlige innsikter | EN: See patterns and get personal insights
+723 | pumping.steg4 | NO: Bygg opp ditt melkelager | EN: Build up your milk supply
+724 | pumping.registrerFørstePumping | NO: Registrer første pumping | EN: Register first pumping
+725 | pumping.detteVilDuFåInnsiktI | NO: Dette vil du få innsikt i | EN: This is what you'll get insights into
+726 | pumping.mengdeTittel | NO: Mengde | EN: Amount
+727 | pumping.mengdeTekst | NO: Se hvor mye melk du pumper over tid og dine daglige mønstre. | EN: See how much milk you pump over time and your daily patterns.
+728 | pumping.frekvens | NO: Frekvens | EN: Frequency
+729 | pumping.frekvensTekst | NO: Oppdag når på dagen du vanligvis pumper mest effektivt. | EN: Discover when during the day you usually pump most effectively.
+730 | pumping.melkelager | NO: Melkelager | EN: Milk supply
+731 | pumping.melkelagerTekst | NO: Få oversikt over lageret ditt og hvordan det vokser. | EN: Get an overview of your supply and how it grows.
+732 | pumping.aiInnsikt | NO: Innsikt fra AI | EN: Insights from AI
+733 | pumping.aiInnsiktTekst | NO: AI finner mønstre og gir deg personlige anbefalinger. | EN: AI finds patterns and gives you personal recommendations.
+734 | pumping.slikKommerDuIGang | NO: Slik kommer du i gang | EN: How to get started
+735 | pumping.joMerDuRegistrerer | NO: Jo mer du registrerer, desto bedre innsikt får du. | EN: The more you register, the better insights you get.
+736 | pumping.gangSteg1 | NO: Registrer hver pumping du gjennomfører | EN: Register each pumping session you complete
+737 | pumping.gangSteg2 | NO: Noter mengden melk du får ut | EN: Note the amount of milk you get out
+738 | pumping.gangSteg3 | NO: Se hvordan kroppen din responderer over tid | EN: See how your body responds over time
+739 | pumping.gangSteg4 | NO: Få personlige tips som passer for deg | EN: Get personal tips that suit you
+740 | pumping.ingenRegistrert | NO: Ingen registrerte pumpinger ennå | EN: No registered pumping sessions yet
+741 | pumping.historikkHer | NO: Når du har registrert pumpinger vil du se historikken din her. | EN: When you have registered pumping sessions you will see your history here.
+742 | pumping.snartKanDuSe | NO: Snart kan du se | EN: Soon you can see
+743 | pumping.produksjonsgraf | NO: Produksjonsgraf | EN: Production graph
+744 | pumping.produksjonsgrafTekst | NO: Se utviklingen av melkeproduksjonen din over tid. | EN: See the development of your milk production over time.
+745 | pumping.besteTidspunkt | NO: Beste tidspunkt | EN: Best time
+746 | pumping.besteTidspunktTekst | NO: Oppdag når på dagen du får mest melk. | EN: Discover when during the day you get the most milk.
+747 | pumping.økterOgVarighet | NO: Øker & varighet | EN: Sessions & duration
+748 | pumping.økterOgVarighetTekst | NO: Se gjennomsnittlig varighet og effektivitet på øktene dine. | EN: See average duration and efficiency of your sessions.
+749 | pumping.melkelagerOversikt | NO: Melkelager­oversikt | EN: Milk supply overview
+750 | pumping.melkelagerOversiktTekst | NO: Få full oversikt over lageret ditt og forbruket. | EN: Get a full overview of your supply and consumption.
+751 | pumping.duGjørEnFantastiskJobb | NO: Du gjør en fantastisk jobb! 🧡 | EN: You are doing a fantastic job! 🧡
+752 | pumping.duGjørEnFantastiskJobbTekst | NO: Hver dråpe du pumper er verdifull for babyen din. Vi er her for å hjelpe deg hele veien! | EN: Every drop you pump is valuable for your baby. We are here to help you all the way!
+753 | pumping.dagensOversikt | NO: DAGENS OVERSIKT | EN: TODAY'S OVERVIEW
+754 | pumping.harPumpet | NO: Du har pumpet {antall} {gang} i dag | EN: You have pumped {antall} {gang} today
+755 | pumping.gang | NO: gang | EN: time
+756 | pumping.ganger | NO: ganger | EN: times
+757 | pumping.totalt | NO: Totalt {mengde} ml | EN: Total {mengde} ml
+758 | pumping.totalMengde | NO: Total mengde | EN: Total amount
+759 | pumping.totalTid | NO: Total tid | EN: Total time
+760 | pumping.økter | NO: Økter | EN: Sessions
+761 | pumping.iDag | NO: I DAG | EN: TODAY
+762 | pumping.denneUken | NO: DENNE UKEN | EN: THIS WEEK
+763 | pumping.gjennomsnitt | NO: GJENNOMSNITT | EN: AVERAGE
+764 | pumping.melkelagerLabel | NO: MELKELAGER | EN: MILK SUPPLY
+765 | pumping.perDag | NO: per dag | EN: per day
+766 | pumping.iFryseren | NO: i fryseren | EN: in the freezer
+767 | pumping.aiInnsiktHeader | NO: ✦ AI-INNSIKT | EN: ✦ AI INSIGHT
+768 | pumping.analysererPumpemønstre | NO: Analyserer pumpemønstre... | EN: Analyzing pumping patterns...
+769 | pumping.sistePumpingøkter | NO: SISTE PUMPINGØKTER | EN: LATEST PUMPING SESSIONS
+770 | pumping.seAlle | NO: Se alle | EN: See all
+771 | pumping.iDagLabel | NO: I dag | EN: Today
+772 | pumping.iGår | NO: I går | EN: Yesterday
+773 | pumping.registrerPumpingøkt | NO: + Registrer pumpingøkt | EN: + Register pumping session
+774 | pumping.nyPumpingøkt | NO: Ny pumpingøkt 🍼 | EN: New pumping session 🍼
+775 | pumping.typePumping | NO: Type pumping | EN: Pumping type
+776 | pumping.typeDobbel | NO: Dobbel pumping | EN: Double pumping
+777 | pumping.typeEnkelVenstre | NO: Enkel – venstre | EN: Single – left
+778 | pumping.typeEnkelHøyre | NO: Enkel – høyre | EN: Single – right
+779 | pumping.mengdeML | NO: Mengde (ml) | EN: Amount (ml)
+780 | pumping.mengdePlaceholder | NO: f.eks. 150 | EN: e.g. 150
+781 | pumping.varighetMinutter | NO: Varighet (minutter) | EN: Duration (minutes)
+782 | pumping.varighetPlaceholder | NO: f.eks. 20 | EN: e.g. 20
+783 | pumping.dato | NO: Dato | EN: Date
+784 | pumping.tidspunkt | NO: Tidspunkt | EN: Time
+785 | pumping.notatValgfritt | NO: Notat (valgfritt) | EN: Note (optional)
+786 | pumping.notatPlaceholder | NO: Noe du vil huske fra denne økten? | EN: Something you want to remember from this session?
+787 | pumping.lagrer | NO: Lagrer... | EN: Saving...
+788 | pumping.lagrePumpingøkt | NO: Lagre pumpingøkt | EN: Save pumping session
+789 | pumping.morgen | NO: Morgen | EN: Morning
+790 | pumping.formiddag | NO: Formiddag | EN: Late morning
+791 | pumping.ettermiddag | NO: Ettermiddag | EN: Afternoon
+792 | pumping.kveld | NO: Kveld | EN: Evening
+793 | pumping.natt | NO: Natt | EN: Night
+794 | pumping.fryser | NO: 🥶 Fryser (ml) | EN: 🥶 Freezer (ml)
+795 | pumping.kjøleskap | NO: 🍼 Kjøleskap (ml) | EN: 🍼 Fridge (ml)
+796 | notat.milepælFørsteSmil | NO: ⭐ Første smil | EN: ⭐ First smile
+797 | notat.milepælFørsteSmilMal | NO: ⭐ Første smil! 🤍 | EN: ⭐ First smile! 🤍
+798 | notat.milepælFørsteLatter | NO: ⭐ Første latter | EN: ⭐ First laugh
+799 | notat.milepælFørsteLatterMal | NO: ⭐ Første latter! 😄 | EN: ⭐ First laugh! 😄
+800 | notat.milepælRulletMageRygg | NO: ⭐ Rullet fra mage til rygg | EN: ⭐ Rolled tummy to back
+801 | notat.milepælRulletMageRyggMal | NO: ⭐ Rullet fra mage til rygg! 🎉 | EN: ⭐ Rolled tummy to back! 🎉
+802 | notat.milepælRulletRyggMage | NO: ⭐ Rullet fra rygg til mage | EN: ⭐ Rolled back to tummy
+803 | notat.milepælRulletRyggMageMal | NO: ⭐ Rullet fra rygg til mage! 🎉 | EN: ⭐ Rolled back to tummy! 🎉
+804 | notat.milepælFantTærne | NO: ⭐ Fant tærne | EN: ⭐ Found toes
+805 | notat.milepælFantTærneMal | NO: ⭐ Fant tærne! 🦶 | EN: ⭐ Found toes! 🦶
+806 | notat.milepælSattUtenStøtte | NO: ⭐ Satt uten støtte | EN: ⭐ Sat without support
+807 | notat.milepælSattUtenStøtteMal | NO: ⭐ Satt uten støtte! 💪 | EN: ⭐ Sat without support! 💪
+808 | notat.milepælKrabbet | NO: ⭐ Krabbet | EN: ⭐ Crawled
+809 | notat.milepælKrabbetMal | NO: ⭐ Krabbet for første gang! 🐛 | EN: ⭐ Crawled for the first time! 🐛
+810 | notat.milepælReisteSeg | NO: ⭐ Reiste seg opp | EN: ⭐ Stood up
+811 | notat.milepælReisteSegMal | NO: ⭐ Reiste seg opp! 🙌 | EN: ⭐ Stood up! 🙌
+812 | notat.tittel | NO: Babybok | EN: Baby book
+813 | notat.undertittel | NO: Skriv ned minner, tanker og små øyeblikk | EN: Write down memories, thoughts and small moments
+814 | notat.søkPlaceholder | NO: Søk i notater... | EN: Search notes...
+815 | notat.alle | NO: Alle | EN: All
+816 | notat.ingenFunnet | NO: Ingen notater funnet | EN: No notes found
+817 | notat.ingenEnnå | NO: Ingen notater ennå | EN: No notes yet
+818 | notat.trykkPlus | NO: Trykk + for å skrive ditt første notat | EN: Tap + to write your first note
+819 | notat.iDag | NO: I dag | EN: Today
+820 | notat.iGår | NO: I går | EN: Yesterday
+821 | notat.nyttNotat | NO: Nytt notat | EN: New note
+822 | notat.kategori | NO: Kategori | EN: Category
+823 | notat.alderMilepæler | NO: Alder-milepæler | EN: Age milestones
+824 | notat.månedMilepæl | NO: {mnd} mnd! 🎉 | EN: {mnd} mo! 🎉
+825 | notat.mnd | NO: mnd | EN: mo
+826 | notat.leggTilBilde | NO: Legg til bilde | EN: Add photo
+827 | notat.lasterOpp | NO: Laster opp... | EN: Uploading...
+828 | notat.trykkForBilde | NO: Trykk for å legge til bilde | EN: Tap to add a photo
+829 | notat.fjernBilde | NO: Fjern bilde | EN: Remove photo
+830 | notat.notat | NO: Notat | EN: Note
+831 | notat.skrivHer | NO: Skriv her... | EN: Write here...
+832 | notat.lagrer | NO: Lagrer... | EN: Saving...
+833 | notat.lagreNotat | NO: Lagre notat | EN: Save note
+834 | notat.slettNotat | NO: Slett notat | EN: Delete note
+835 | notat.kategoriGenerelt | NO: Generelt | EN: General
+836 | notat.kategoriSøvn | NO: Søvn | EN: Sleep
+837 | notat.kategoriAmming | NO: Amming | EN: Feeding
+838 | notat.kategoriMilepæl | NO: Milepæl ⭐ | EN: Milestone ⭐
+839 | notat.kategoriBekymring | NO: Bekymring | EN: Concern
+840 | temp.tittel | NO: 🌡️ Temperatur | EN: 🌡️ Temperature
+841 | temp.undertittel | NO: Følg temperatur, sykdomsforløp
+og medisiner på ett sted. | EN: Track temperature, illness progress
+and medicines in one place.
+842 | temp.ingenMålinger | NO: Ingen målinger ennå | EN: No measurements yet
+843 | temp.ingenMålingerBeskrivelse | NO: Registrer {navn}s temperatur for å følge utviklingen og få varsler om feber. | EN: Register {navn}'s temperature to track development and get fever alerts.
+844 | temp.registrerFørsteMåling | NO: Registrer første måling | EN: Register first measurement
+845 | temp.visstedu | NO: 💡 Visste du? | EN: 💡 Did you know?
+846 | temp.normal | NO: Normal temperatur | EN: Normal temperature
+847 | temp.lettForhøyet | NO: Lett forhøyet | EN: Slightly elevated
+848 | temp.feber | NO: Feber | EN: Fever
+849 | temp.høyFeber | NO: Høy feber | EN: High fever
+850 | temp.lavt | NO: Lavt | EN: Low
+851 | temp.sisteMåling | NO: Siste måling | EN: Last measurement
+852 | temp.registrertKl | NO: Registrert {tid} | EN: Registered at {tid}
+853 | temp.innsiktFlereMålinger | NO: {navn} har hatt {antall} målinger i dag. Siste: {temp}°C. | EN: {navn} has had {antall} measurements today. Latest: {temp}°C.
+854 | temp.innsiktEnMåling | NO: Første måling i dag registrert kl. {tid}. | EN: First measurement today registered at {tid}.
+855 | temp.innsiktIngen | NO: Ingen målinger i dag ennå. | EN: No measurements today yet.
+856 | temp.temperaturutvikling | NO: Temperaturutvikling | EN: Temperature development
+857 | temp.trenger2Målinger | NO: Trenger minst 2 målinger | EN: Need at least 2 measurements
+858 | temp.sisteMedisin | NO: Siste medisin | EN: Last medicine
+859 | temp.seMediasinSide | NO: Se medisin-siden for oversikt over medisiner og doser. | EN: See the medicine page for an overview of medicines and doses.
+860 | temp.gåTilMedisin | NO: Gå til medisin → | EN: Go to medicine →
+861 | temp.symptomer | NO: Symptomer | EN: Symptoms
+862 | temp.leggTil | NO: + Legg til | EN: + Add
+863 | temp.sykdomsdagbok | NO: Sykdomsdagbok | EN: Illness diary
+864 | temp.iDag | NO: I dag | EN: Today
+865 | temp.registrerTemperatur | NO: + Registrer temperatur | EN: + Register temperature
+866 | temp.registrerTemperaturTittel | NO: Registrer temperatur 🌡️ | EN: Register temperature 🌡️
+867 | temp.temperaturGrad | NO: Temperatur (°C) | EN: Temperature (°C)
+868 | temp.temperaturPlaceholder | NO: f.eks. 38.5 | EN: e.g. 38.5
+869 | temp.symptomerValgfritt | NO: Symptomer (valgfritt) | EN: Symptoms (optional)
+870 | temp.dato | NO: Dato | EN: Date
+871 | temp.tidspunkt | NO: Tidspunkt | EN: Time
+872 | temp.notatValgfritt | NO: Notat (valgfritt) | EN: Note (optional)
+873 | temp.notatPlaceholder | NO: Hvordan ser babyen ut? Andre observasjoner? | EN: How does the baby look? Other observations?
+874 | temp.lagrer | NO: Lagrer... | EN: Saving...
+875 | temp.lagreTemperatur | NO: Lagre temperatur | EN: Save temperature
+876 | temp.symptomFeber | NO: Feber | EN: Fever
+877 | temp.symptomTettNese | NO: Tett nese | EN: Blocked nose
+878 | temp.symptomHoste | NO: Hoste | EN: Cough
+879 | temp.symptomOppkast | NO: Oppkast | EN: Vomiting
+880 | temp.symptomDiaré | NO: Diaré | EN: Diarrhoea
+881 | temp.symptomSlapp | NO: Slapp | EN: Lethargic
+882 | temp.symptomUtslett | NO: Utslett | EN: Rash
+883 | medisin.tittel | NO: Medisin & Vaksine | EN: Medicine & Vaccines
+884 | medisin.undertittel | NO: Hold oversikt over medisiner og vaksiner | EN: Keep track of medicines and vaccines
+885 | medisin.loggført | NO: Loggført! | EN: Logged!
+886 | medisin.nesteDose | NO: Neste dose | EN: Next dose
+887 | medisin.iMorgen | NO: I morgen {tid} | EN: Tomorrow {tid}
+888 | medisin.tidForDose | NO: Tid for dose | EN: Time for dose
+889 | medisin.jegHarGittDosen | NO: Jeg har gitt dosen ✓ | EN: I have given the dose ✓
+890 | medisin.senere | NO: Senere | EN: Later
+891 | medisin.faneMedisin | NO: 💊 Medisin | EN: 💊 Medicine
+892 | medisin.faneVaksiner | NO: 💉 Vaksiner | EN: 💉 Vaccines
+893 | medisin.nestePåminnelse | NO: 🔔 Neste påminnelse | EN: 🔔 Next reminder
+894 | medisin.giDose | NO: Gi dose | EN: Give dose
+895 | medisin.medisinoversikt | NO: Medisinoversikt | EN: Medicine overview
+896 | medisin.vanligeMedisiner | NO: Vanlige medisiner | EN: Common medicines
+897 | medisin.leggTil | NO: + Legg til | EN: + Add
+898 | medisin.ingenMedisiner | NO: Ingen medisiner lagt til | EN: No medicines added
+899 | medisin.leggTilMedisin | NO: + Legg til medisin | EN: + Add medicine
+900 | medisin.vaksineoversikt | NO: Vaksineoversikt | EN: Vaccine overview
+901 | medisin.norskVaksinasjonsprogram | NO: Norsk vaksinasjonsprogram | EN: Norwegian vaccination programme
+902 | medisin.leggTilVaksine | NO: + Legg til vaksine | EN: + Add vaccine
+903 | medisin.leggTilMedisinTittel | NO: Legg til medisin | EN: Add medicine
+904 | medisin.navnPåMedisin | NO: Navn på medisin | EN: Name of medicine
+905 | medisin.navnPlaceholder | NO: F.eks. D-vitamindråper | EN: E.g. Vitamin D drops
+906 | medisin.dosering | NO: Dosering | EN: Dosage
+907 | medisin.doseringPlaceholder | NO: F.eks. 5 dråper | EN: E.g. 5 drops
+908 | medisin.frekvens | NO: Frekvens | EN: Frequency
+909 | medisin.frekvensDaily | NO: Daglig | EN: Daily
+910 | medisin.frekvensTwoDaily | NO: To ganger daglig | EN: Twice daily
+911 | medisin.frekvensWeekly | NO: Ukentlig | EN: Weekly
+912 | medisin.frekvensAsNeeded | NO: Ved behov | EN: As needed
+913 | medisin.frekvensAtFever | NO: Ved feber | EN: At fever
+914 | medisin.tidspunktPåminnelse | NO: Tidspunkt for påminnelse | EN: Time for reminder
+915 | medisin.notatValgfritt | NO: Notat (valgfritt) | EN: Note (optional)
+916 | medisin.notatMedisinPlaceholder | NO: F.eks. gi med mat... | EN: E.g. give with food...
+917 | medisin.lagrer | NO: Lagrer... | EN: Saving...
+918 | medisin.lagreMedPåminnelse | NO: 🔔 Lagre med påminnelse | EN: 🔔 Save with reminder
+919 | medisin.leggTilVaksineTittel | NO: Legg til vaksine | EN: Add vaccine
+920 | medisin.navn | NO: Navn | EN: Name
+921 | medisin.vaksinNavnPlaceholder | NO: F.eks. 3 måneder vaksine | EN: E.g. 3 months vaccine
+922 | medisin.datoForTime | NO: Dato for time (valgfritt) | EN: Date for appointment (optional)
+923 | medisin.notatVaksinePlaceholder | NO: F.eks. bivirkninger, klinikk... | EN: E.g. side effects, clinic...
+924 | medisin.lagreVaksine | NO: Lagre vaksine | EN: Save vaccine
+925 | medisin.giDoseTittel | NO: Gi dose | EN: Give dose
+926 | medisin.bivirkningerNotat | NO: Bivirkninger / notat (valgfritt) | EN: Side effects / note (optional)
+927 | medisin.bivirkningerPlaceholder | NO: F.eks. virket trøtt etterpå... | EN: E.g. seemed tired afterwards...
+928 | medisin.påvirkerSøvn | NO: 🌙 Kan påvirke søvn | EN: 🌙 May affect sleep
+929 | medisin.påvirkerSøvnPrefix | NO: Påvirker søvn. | EN: May affect sleep.
+930 | medisin.påvirkerSøvnTekst | NO: Appen vil ta hensyn til dette i søvnanalysen | EN: The app will take this into account in the sleep analysis
+931 | medisin.stdVitaminD | NO: D-vitamindråper | EN: Vitamin D drops
+932 | medisin.stdVitaminDDosering | NO: 5 dråper | EN: 5 drops
+933 | medisin.stdInfacol | NO: Infacol | EN: Infacol
+934 | medisin.stdInfacolDosering | NO: 0.5 ml | EN: 0.5 ml
+935 | medisin.stdParacet | NO: Paracet | EN: Paracetamol
+936 | medisin.stdParacetDosering | NO: Se pakningsvedlegg | EN: See package leaflet
+937 | medisin.vaksin6Uker | NO: 6 uker vaksine | EN: 6 weeks vaccine
+938 | medisin.vaksin6UkerAlder | NO: 6 uker | EN: 6 weeks
+939 | medisin.vaksin3Mnd | NO: 3 måneder vaksine | EN: 3 months vaccine
+940 | medisin.vaksin5Mnd | NO: 5 måneder vaksine | EN: 5 months vaccine
+941 | medisin.vaksin12Mnd | NO: 12 måneder vaksine | EN: 12 months vaccine
+942 | medisin.vaksin15Mnd | NO: 15 måneder vaksine | EN: 15 months vaccine
+943 | vekt.tittel | NO: Vekst & størrelser | EN: Growth & sizes
+944 | vekt.undertittel | NO: Følg barnets vekst over tid | EN: Follow the child's growth over time
+945 | vekt.sisteRegistrering | NO: Siste registrering · {dato} | EN: Last entry · {dato}
+946 | vekt.vekt | NO: Vekt | EN: Weight
+947 | vekt.lengde | NO: Lengde | EN: Length
+948 | vekt.klærstørrelse | NO: Klærstørrelse | EN: Clothing size
+949 | vekt.skostørrelse | NO: Skostørrelse | EN: Shoe size
+950 | vekt.vekstkurve | NO: Vekstkurve | EN: Growth curve
+951 | vekt.basertPåRegistreringer | NO: Basert på dine registreringer | EN: Based on your registrations
+952 | vekt.registrerNyMåling | NO: + Registrer ny måling | EN: + Register new measurement
+953 | vekt.historikk | NO: Historikk | EN: History
+954 | vekt.siste | NO: Siste | EN: Latest
+955 | vekt.nyMåling | NO: Ny måling | EN: New measurement
+956 | vekt.dato | NO: Dato | EN: Date
+957 | vekt.vektKg | NO: Vekt (kg) | EN: Weight (kg)
+958 | vekt.vektPlaceholder | NO: F.eks. 5.2 | EN: E.g. 5.2
+959 | vekt.lengdeCm | NO: Lengde (cm) | EN: Length (cm)
+960 | vekt.lengdePlaceholder | NO: F.eks. 58 | EN: E.g. 58
+961 | vekt.klærstørrelsePlaceholder | NO: F.eks. 62 eller 3-6 mnd | EN: E.g. 62 or 3-6 months
+962 | vekt.skostørrelsePlaceholder | NO: F.eks. 17 | EN: E.g. 17
+963 | vekt.notatValgfritt | NO: Notat (valgfritt) | EN: Note (optional)
+964 | vekt.notatPlaceholder | NO: F.eks. legevaktsbesøk, sjekket av lege... | EN: E.g. emergency room visit, checked by doctor...
+965 | vekt.lagrer | NO: Lagrer... | EN: Saving...
+966 | vekt.lagreMåling | NO: Lagre måling | EN: Save measurement
+967 | viftemeny.sovn | NO: Søvn / lur | EN: Sleep / nap
+968 | viftemeny.amming | NO: Amming | EN: Feeding
+969 | viftemeny.bleie | NO: Bleie | EN: Diaper
+970 | viftemeny.medisin | NO: Medisin | EN: Medicine
+971 | viftemeny.signaler | NO: Signaler | EN: Signals
+972 | viftemeny.pumping | NO: Pumping | EN: Pumping
+973 | viftemeny.mat | NO: Mat | EN: Food
+974 | viftemeny.aktivitet | NO: Aktivitet | EN: Activity
+975 | viftemeny.notat | NO: Babybok | EN: Baby book
+976 | viftemeny.temperatur | NO: Temperatur | EN: Temperature
+977 | viftemeny.vekt | NO: Vekt / lengde | EN: Weight / length
+978 | viftemeny.kolikk | NO: Uro & ro | EN: Fussiness & calm
+979 | viftemeny.kommerSnart | NO: kommer snart | EN: coming soon
+980 | viftemeny.velgFavoritter | NO: Velg dine favoritter | EN: Choose your favourites
+981 | viftemeny.velgOpptil6 | NO: Velg snarveiene du bruker mest 🤍 | EN: Choose the shortcuts you use most 🤍
+982 | viftemeny.valgt | NO: {antall}/6 valgt | EN: {antall}/6 selected
+983 | viftemeny.lagre | NO: Lagre | EN: Save
+984 | viftemeny.dineFavoritter | NO: Dine favoritter | EN: Your favourites
+985 | viftemeny.velgSnarveier | NO: Velg hvilke snarveier du vil ha i menyen | EN: Choose which shortcuts you want in the menu
+986 | viftemeny.seAlle | NO: Se alle | EN: See all
+987 | onboarding.velkommenTittel | NO: Velkommen til Lille | EN: Welcome to Lille
+988 | onboarding.velkommenBeskrivelse | NO: Din babys språk, i dine hender. La oss sette opp appen for deg og din lille en. | EN: Your baby's language, in your hands. Let us set up the app for you and your little one.
+989 | onboarding.komIGang | NO: Kom i gang 🌿 | EN: Get started 🌿
+990 | onboarding.hvemErBabyen | NO: Hvem er babyen? 🤍 | EN: Who is the baby? 🤍
+991 | onboarding.fortellOmBabyen | NO: Fortell oss litt om din lille en | EN: Tell us a little about your little one
+992 | onboarding.leggTilBilde | NO: Legg til bilde | EN: Add photo
+993 | onboarding.babyensNavn | NO: Babyens navn | EN: Baby's name
+994 | onboarding.navnPlaceholder | NO: F.eks. Emma | EN: E.g. Emma
+995 | onboarding.fødselsdato | NO: Fødselsdato | EN: Date of birth
+996 | onboarding.tilbake | NO: Tilbake | EN: Back
+997 | onboarding.neste | NO: Neste → | EN: Next →
+998 | onboarding.velgFavoritter | NO: Velg dine favoritter ✨ | EN: Choose your favourites ✨
+999 | onboarding.velgOpptil6 | NO: Velg opptil 6 ting du vil ha rask tilgang til | EN: Choose up to 6 things you want quick access to
+1000 | onboarding.basertPåAlder | NO: Basert på {navn}s alder ({alder}) | EN: Based on {navn}'s age ({alder})
+1001 | onboarding.valgt | NO: {antall}/6 valgt | EN: {antall}/6 selected
+1002 | onboarding.altErKlart | NO: Alt er klart{navn}! 🤍 | EN: All set{navn}! 🤍
+1003 | onboarding.gledOssBeskrivelse | NO: Appen er nå tilpasset deg og din lille en. Vi gleder oss til å hjelpe deg i babytiden. | EN: The app is now tailored for you and your little one. We look forward to helping you through the baby days.
+1004 | onboarding.lagrer | NO: Lagrer... | EN: Saving...
+1005 | onboarding.startLille | NO: Start Lille 🌙 | EN: Start Lille 🌙
+1006 | onboarding.nyfødt | NO: Nyfødt | EN: Newborn
+1007 | onboarding.måneder | NO: {alder} måneder | EN: {alder} months
+1008 | onboarding.årOgMåneder | NO: {år} år og {mnd} måneder | EN: {år} years and {mnd} months
+1009 | onboarding.år | NO: {år} år | EN: {år} years
+1010 | onboarding.amming | NO: Amming | EN: Feeding
+1011 | onboarding.sovn | NO: Søvn / lur | EN: Sleep / nap
+1012 | onboarding.medisin | NO: Medisin / vaksine | EN: Medicine / vaccine
+1013 | onboarding.bleie | NO: Bleie | EN: Diaper
+1014 | onboarding.signaler | NO: Signaler | EN: Signals
+1015 | onboarding.pumping | NO: Pumping | EN: Pumping
+1016 | onboarding.mat | NO: Mat (fast føde) | EN: Food (solid food)
+1017 | onboarding.aktivitet | NO: Aktivitet | EN: Activity
+1018 | onboarding.notat | NO: Notat | EN: Note
+1019 | onboarding.temperatur | NO: Temperatur | EN: Temperature
+1020 | onboarding.vaksine | NO: Vaksine | EN: Vaccine
+1021 | onboarding.vekt | NO: Vekt / lengde | EN: Weight / length
+1022 | lyd.skapRo | NO: Skap ro | EN: Create calm
+1023 | lyd.undertittel | NO: Når du finner ro, hjelper du også babyen å finne ro 🤍 | EN: When you find calm, you also help the baby find calm 🤍
+1024 | lyd.velgEnLyd | NO: Velg en lyd som roer dere begge 🌙 | EN: Choose a sound that calms you both 🌙
+1025 | lyd.roligeLyder | NO: Rolige lyder | EN: Calm sounds
+1026 | lyd.regulering | NO: Regulering | EN: Regulation
+1027 | lyd.foreldrero | NO: Foreldrero | EN: Parent calm
+1028 | lyd.regn | NO: Regn | EN: Rain
+1029 | lyd.hav | NO: Hav | EN: Ocean
+1030 | lyd.whiteNoise | NO: White noise | EN: White noise
+1031 | lyd.vifte | NO: Vifte | EN: Fan
+1032 | lyd.hjertelyd | NO: Hjertelyd | EN: Heartbeat
+1033 | lyd.pustelyder | NO: Pustelyder | EN: Breathing sounds
+1034 | lyd.womb | NO: Womb sounds | EN: Womb sounds
+1035 | lyd.rytmer | NO: Myke rytmer | EN: Soft rhythms
+1036 | lyd.frekvenser | NO: Beroligende frekvenser | EN: Soothing frequencies
+1037 | lyd.nattpust | NO: Nattpust | EN: Night breathing
+1038 | lyd.piano | NO: Rolig piano | EN: Calm piano
+1039 | lyd.grounding | NO: Grounding-lyder | EN: Grounding sounds
+1040 | nattlys.tittel | NO: Nattlys | EN: Night light
+1041 | nattlys.avsluttNattlys | NO: Avslutt nattlys | EN: Turn off night light
+1042 | nattlys.farger | NO: Farger | EN: Colors
+1043 | nattlys.scener | NO: Scener | EN: Scenes
+1044 | nattlys.lysstyrke | NO: Lysstyrke | EN: Brightness
+1045 | nattlys.timer | NO: Timer | EN: Timer
+1046 | nattlys.alltidPå | NO: Alltid på | EN: Always on
+1047 | nattlys.minutter | NO: {min} min | EN: {min} min
+1048 | nattlys.slåPå | NO: Slå på nattlys 🌙 | EN: Turn on night light 🌙
+1049 | nattlys.måneskinn | NO: 🌙 Måneskinn | EN: 🌙 Moonlight
+1050 | nattlys.måneskinnBeskrivelse | NO: Mørk blå med svak måneglow. Perfekt under nattamming. | EN: Dark blue with soft moon glow. Perfect during night feeding.
+1051 | nattlys.roligVarm | NO: 🕯️ Rolig varm | EN: 🕯️ Calm warm
+1052 | nattlys.roligVarmBeskrivelse | NO: Dyp amber som en saltlampe. Beroligende og varm. | EN: Deep amber like a salt lamp. Soothing and warm.
+1053 | nattlys.stjernehimmel | NO: ✨ Stjernehimmel | EN: ✨ Starry sky
+1054 | nattlys.stjernehimmelBeskrivelse | NO: Dyp lilla natt med glitrende stjerner. | EN: Deep purple night with glittering stars.
+1055 | nattlys.havlys | NO: 🌊 Havlys | EN: 🌊 Ocean light
+1056 | nattlys.havlysBeskrivelse | NO: Dyp turkis-blå med myke bølger som beveger seg. | EN: Deep turquoise-blue with soft waves moving.
+1057 | nattlys.varmHvit | NO: Varm hvit | EN: Warm white
+1058 | nattlys.solnedgang | NO: Solnedgang | EN: Sunset
+1059 | nattlys.lavendel | NO: Lavendel | EN: Lavender
+1060 | nattlys.himmelblå | NO: Himmelblå | EN: Sky blue
+1061 | nattlys.skoggrønn | NO: Skoggrønn | EN: Forest green
+1062 | pust.tittel | NO: Pust med meg | EN: Breathe with me
+1063 | pust.forklaring | NO: Når du senker pusten din, kan det hjelpe kroppen å gå fra stress til ro. | EN: When you slow your breathing, it can help your body move from stress to calm.
+1064 | pust.finnRo | NO: Finn ro | EN: Find calm
+1065 | pust.roligPust | NO: Rolig pust | EN: Calm breathing
+1066 | pust.roligPustBeskrivelse | NO: 4 sek inn – 6 sek ut | EN: 4 sec in – 6 sec out
+1067 | pust.pust478 | NO: 4-7-8 pust | EN: 4-7-8 breathing
+1068 | pust.pust478Beskrivelse | NO: 4 sek inn – 7 sek hold – 8 sek ut | EN: 4 sec in – 7 sec hold – 8 sec out
+1069 | pust.boksPust | NO: Boks pust | EN: Box breathing
+1070 | pust.boksPustBeskrivelse | NO: 4 sek inn – 4 sek hold – 4 sek ut | EN: 4 sec in – 4 sec hold – 4 sec out
+1071 | pust.varighet | NO: Varighet | EN: Duration
+1072 | pust.startØvelse | NO: Start øvelse | EN: Start exercise
+1073 | pust.pustInn | NO: Pust inn | EN: Breathe in
+1074 | pust.hold | NO: Hold | EN: Hold
+1075 | pust.pustUt | NO: Pust ut | EN: Breathe out
+1076 | pust.avsluttØvelse | NO: Avslutt øvelse | EN: End exercise
+1077 | signaler.tittel | NO: Signaler | EN: Signals
+1078 | signaler.laerBabyensSprak | NO: Små signaler kan fortelle mye om hva babyen trenger 💛 | EN: Small signals can tell a lot about what the baby needs 💛
+1079 | signaler.forstaHvaSignalerBetyr | NO: Forstå hva ulike signaler kan bety. | EN: Understand what different signals can mean.
+1080 | signaler.tidligSignal | NO: Tidlig signal | EN: Early signal
+1081 | signaler.sentSignal | NO: Sent signal | EN: Late signal
+1082 | signaler.kanBety | NO: Kan bety | EN: Can mean
+1083 | signaler.tips | NO: 💡 Tips | EN: 💡 Tips
+1084 | signaler.registrerDetteSignaletNa | NO: Registrer dette signalet nå | EN: Register this signal now
+1085 | signaler.lesMer | NO: Les mer | EN: Read more
+1086 | signaler.registrer | NO: Registrer | EN: Register
+1087 | signaler.registrerSignal | NO: Registrer signal | EN: Register signal
+1088 | signaler.dato | NO: Dato | EN: Date
+1089 | signaler.tidspunkt | NO: Tidspunkt | EN: Time
+1090 | signaler.notatValgfritt | NO: Notat (valgfritt) | EN: Note (optional)
+1091 | signaler.notatPlaceholder | NO: Noe spesielt du vil huske? | EN: Anything special you want to remember?
+1092 | signaler.lagrer | NO: Lagrer... | EN: Saving...
+1093 | signaler.lagreSignal | NO: Lagre signal | EN: Save signal
+1094 | signaler.signaletErRegistrert | NO: Signalet er registrert! | EN: Signal registered!
+1095 | signaler.viserOftest | NO: {navn}s vanligste vei til søvn | EN: {navn}'s most common path to sleep
+1096 | signaler.registrertGang | NO: Dette mønsteret går igjen i {antall} av {total} registrerte lurer. | EN: This pattern appears in {antall} of {total} registered naps.
+1097 | signaler.registrertGanger | NO: Dette mønsteret går igjen i {antall} av {total} registrerte lurer. | EN: This pattern appears in {antall} of {total} registered naps.
+1098 | signaler.vanligsteSignalene | NO: Vanligste signalene | EN: Most common signals
+1099 | signaler.sisteRegistrerteSignaler | NO: Siste registrerte signaler | EN: Recently registered signals
+1100 | signaler.visteDetteGanger | NO: {navn} viste dette {antall} ganger | EN: {navn} showed this {antall} times
+1101 | signaler.seInnsikt | NO: Se {navn} sin innsikt › | EN: See {navn}'s insights ›
+1102 | signaler.signalerAntall | NO: {antall} signaler | EN: {antall} signals
+1103 | signaler.sovn | NO: Søvn | EN: Sleep
+1104 | signaler.vissteDu | NO: Visste du? | EN: Did you know?
+1105 | signaler.vissteDuTekst | NO: Et signal alene betyr sjelden noe. Det er ofte kombinasjonen av flere signaler som forteller hva babyen trenger. | EN: A single signal rarely tells the whole story. It is often the combination of several signals that shows what your baby needs.
+1106 | signaler.babyenFallback | NO: babyen | EN: your baby
+1107 | signaler.kategoriSovnTittel | NO: Søvnsignaler | EN: Sleep signals
+1108 | signaler.kategoriSovnUndertittel | NO: Signaler som vises når babyen begynner å bli trøtt. | EN: Signals that appear when your baby starts getting tired.
+1109 | signaler.kategoriPauseTittel | NO: Trenger en pause | EN: Needs a break
+1110 | signaler.kategoriPauseUndertittel | NO: Tegn på overstimulering eller behov for ro. | EN: Signs of overstimulation or need for calm.
+1111 | signaler.kategoriMageTittel | NO: Mage og ubehag | EN: Tummy and discomfort
+1112 | signaler.kategoriMageUndertittel | NO: Signaler knyttet til luft, mage eller uro. | EN: Signals related to gas, tummy or fussiness.
+1113 | signaler.kategoriSultTittel | NO: Sultsignaler | EN: Hunger signals
+1114 | signaler.kategoriSultUndertittel | NO: Tegn på at babyen ønsker mat. | EN: Signs that your baby wants food.
+1115 | signaler.sovnStirrerTomtVisningsNavn | NO: Stirrer tomt | EN: Blank stare
+1116 | signaler.sovnStirrerTomtBeskrivelse | NO: Babyen ser tomt ut i blikket og virker fjern. | EN: Your baby has a distant, unfocused look.
+1117 | signaler.sovnStirrerTomtKanBety1 | NO: Tidlig trøtthetssignal | EN: Early tiredness cue
+1118 | signaler.sovnStirrerTomtKanBety2 | NO: Babyen begynner å koble av | EN: Your baby is starting to switch off
+1119 | signaler.sovnStirrerTomtKanBety3 | NO: Tid for å starte nedtrapping | EN: Time to start winding down
+1120 | signaler.sovnStirrerTomtTips | NO: Begynn å roe ned miljøet når du ser dette. | EN: Start calming the environment when you notice this.
+1121 | signaler.sovnGjesperVisningsNavn | NO: Gjesper | EN: Yawning
+1122 | signaler.sovnGjesperBeskrivelse | NO: Gjesping er et vanlig tegn på tretthet. | EN: Yawning is a common sign of tiredness.
+1123 | signaler.sovnGjesperKanBety1 | NO: Tidlig eller sent signal avhengig av kontekst | EN: Can be early or late depending on context
+1124 | signaler.sovnGjesperKanBety2 | NO: Kombinert med andre signaler = søvn nærmer seg | EN: Combined with other cues means sleep is near
+1125 | signaler.sovnGjesperTips | NO: Ett gjesp er ikke nok – se etter kombinasjoner. | EN: One yawn alone is not enough – look for combinations.
+1126 | signaler.sovnGnirOyneneVisningsNavn | NO: Gnir øynene | EN: Rubbing eyes
+1127 | signaler.sovnGnirOyneneBeskrivelse | NO: Babyen gnir eller klør seg i øynene. | EN: Your baby rubs or scratches their eyes.
+1128 | signaler.sovnGnirOyneneKanBety1 | NO: Sent søvnsignal | EN: Late sleep cue
+1129 | signaler.sovnGnirOyneneKanBety2 | NO: Babyen er overtrøtt om dette vedvarer | EN: Your baby may be overtired if this continues
+1130 | signaler.sovnGnirOyneneKanBety3 | NO: Søvn nærmer seg | EN: Sleep is approaching
+1131 | signaler.sovnGnirOyneneTips | NO: Er dette første signal du ser, kan babyen allerede være overtrøtt. | EN: If this is the first cue you notice, your baby may already be overtired.
+1132 | signaler.sovnVenderHodetBortVisningsNavn | NO: Vender hodet bort | EN: Turning head away
+1133 | signaler.sovnVenderHodetBortBeskrivelse | NO: Babyen vender hodet bort fra deg eller stimuli. | EN: Your baby turns away from you or stimulation.
+1134 | signaler.sovnVenderHodetBortKanBety1 | NO: Overstimulering | EN: Overstimulation
+1135 | signaler.sovnVenderHodetBortKanBety2 | NO: Behov for pause | EN: Needs a break
+1136 | signaler.sovnVenderHodetBortKanBety3 | NO: Tidlig trøtthetssignal | EN: Early tiredness cue
+1137 | signaler.sovnVenderHodetBortTips | NO: Respekter signalet – ikke prøv å få kontakt igjen med én gang. | EN: Respect the cue – do not try to reconnect immediately.
+1138 | signaler.sovnMisterInteressenVisningsNavn | NO: Mister interessen | EN: Loses interest
+1139 | signaler.sovnMisterInteressenBeskrivelse | NO: Babyen mister interessen for det som skjer rundt. | EN: Your baby loses interest in what is happening around them.
+1140 | signaler.sovnMisterInteressenKanBety1 | NO: Tidlig søvnsignal | EN: Early sleep cue
+1141 | signaler.sovnMisterInteressenKanBety2 | NO: Behov for roligere omgivelser | EN: Needs a calmer environment
+1142 | signaler.sovnMisterInteressenTips | NO: Reduser stimuli og gå til et roligere rom. | EN: Reduce stimulation and move to a calmer room.
+1143 | signaler.sovnTungeOyelokkVisningsNavn | NO: Tunge øyelokk | EN: Heavy eyelids
+1144 | signaler.sovnTungeOyelokkBeskrivelse | NO: Øyelokkene blir tunge og halvveis lukkede. | EN: The eyelids become heavy and half-closed.
+1145 | signaler.sovnTungeOyelokkKanBety1 | NO: Sent søvnsignal | EN: Late sleep cue
+1146 | signaler.sovnTungeOyelokkKanBety2 | NO: Søvn er nært forestående | EN: Sleep is very close
+1147 | signaler.sovnTungeOyelokkTips | NO: Legg ned nå – babyen er klar. | EN: Put your baby down now – they are ready.
+1148 | signaler.pauseVenderHodetBortVisningsNavn | NO: Vender hodet bort | EN: Turning head away
+1149 | signaler.pauseVenderHodetBortBeskrivelse | NO: Babyen vender hodet bort fra deg eller fra stimuli. | EN: Your baby turns their head away from you or stimulation.
+1150 | signaler.pauseVenderHodetBortKanBety1 | NO: Overstimulering | EN: Overstimulation
+1151 | signaler.pauseVenderHodetBortKanBety2 | NO: Behov for pause | EN: Needs a break
+1152 | signaler.pauseVenderHodetBortTips | NO: Vent til babyen vender seg tilbake av seg selv. | EN: Wait until your baby turns back on their own.
+1153 | signaler.pauseUroligIKroppenVisningsNavn | NO: Urolig i kroppen | EN: Restless body
+1154 | signaler.pauseUroligIKroppenBeskrivelse | NO: Babyen virker rastløs og urolig i kroppen. | EN: Your baby seems fidgety and physically restless.
+1155 | signaler.pauseUroligIKroppenKanBety1 | NO: Overstimulering | EN: Overstimulation
+1156 | signaler.pauseUroligIKroppenKanBety2 | NO: Ubehag | EN: Discomfort
+1157 | signaler.pauseUroligIKroppenKanBety3 | NO: Behov for ro og nærhet | EN: Needs calm and closeness
+1158 | signaler.pauseUroligIKroppenTips | NO: Prøv å dempe lys og lyd i rommet. | EN: Try lowering light and sound in the room.
+1159 | signaler.pauseKnytterNeveneVisningsNavn | NO: Knytter nevene | EN: Clenches fists
+1160 | signaler.pauseKnytterNeveneBeskrivelse | NO: Babyen knytter hendene hardt. | EN: Your baby clenches their hands tightly.
+1161 | signaler.pauseKnytterNeveneKanBety1 | NO: Stress eller ubehag | EN: Stress or discomfort
+1162 | signaler.pauseKnytterNeveneKanBety2 | NO: Kan komme før gråt | EN: May come before crying
+1163 | signaler.pauseKnytterNeveneTips | NO: Ta babyen opp og gi ro før situasjonen eskalerer. | EN: Pick your baby up and offer calm before it escalates.
+1164 | signaler.pauseBuerRyggenBakoverVisningsNavn | NO: Buer ryggen bakover | EN: Arches back
+1165 | signaler.pauseBuerRyggenBakoverBeskrivelse | NO: Babyen buer ryggen bakover. | EN: Your baby arches their back backward.
+1166 | signaler.pauseBuerRyggenBakoverKanBety1 | NO: Ubehag | EN: Discomfort
+1167 | signaler.pauseBuerRyggenBakoverKanBety2 | NO: Protest | EN: Protest
+1168 | signaler.pauseBuerRyggenBakoverKanBety3 | NO: Kan være kolikk | EN: Could be colic
+1169 | signaler.pauseBuerRyggenBakoverTips | NO: Sjekk om det er luft i magen. | EN: Check whether trapped gas might be the cause.
+1170 | signaler.pauseUnngarOyekontaktVisningsNavn | NO: Unngår øyekontakt | EN: Avoids eye contact
+1171 | signaler.pauseUnngarOyekontaktBeskrivelse | NO: Babyen ser bort og unngår å møte blikket ditt. | EN: Your baby looks away and avoids meeting your gaze.
+1172 | signaler.pauseUnngarOyekontaktKanBety1 | NO: Trenger en pause fra stimuli | EN: Needs a break from stimulation
+1173 | signaler.pauseUnngarOyekontaktKanBety2 | NO: Overstimulering | EN: Overstimulation
+1174 | signaler.pauseUnngarOyekontaktTips | NO: Gi babyen litt tid uten press om kontakt. | EN: Give your baby a little time without pressure to connect.
+1175 | signaler.mageTrekkerBenaOppVisningsNavn | NO: Trekker bena opp | EN: Pulls legs up
+1176 | signaler.mageTrekkerBenaOppBeskrivelse | NO: Babyen trekker bena opp mot magen. | EN: Your baby pulls their legs up toward the tummy.
+1177 | signaler.mageTrekkerBenaOppKanBety1 | NO: Luft i magen | EN: Gas in the tummy
+1178 | signaler.mageTrekkerBenaOppKanBety2 | NO: Mageubehag | EN: Tummy discomfort
+1179 | signaler.mageTrekkerBenaOppKanBety3 | NO: Kolikk | EN: Colic
+1180 | signaler.mageTrekkerBenaOppTips | NO: Prøv sykkelbevegelser med bena eller magemassasje. | EN: Try gentle bicycle leg movements or a tummy massage.
+1181 | signaler.mageKrummerRyggenVisningsNavn | NO: Krummer ryggen | EN: Curves back
+1182 | signaler.mageKrummerRyggenBeskrivelse | NO: Babyen krummer ryggen og virker anspent. | EN: Your baby curves their back and seems tense.
+1183 | signaler.mageKrummerRyggenKanBety1 | NO: Magesmerter | EN: Stomach pain
+1184 | signaler.mageKrummerRyggenKanBety2 | NO: Luft i magen | EN: Gas in the tummy
+1185 | signaler.mageKrummerRyggenTips | NO: Hold babyen oppreist etter mating. | EN: Hold your baby upright after feeding.
+1186 | signaler.mageRapperMyeVisningsNavn | NO: Rapper mye | EN: Burps a lot
+1187 | signaler.mageRapperMyeBeskrivelse | NO: Babyen rapper ofte eller har synlig oppblåst mage. | EN: Your baby burps often or has a visibly bloated tummy.
+1188 | signaler.mageRapperMyeKanBety1 | NO: Trenger å rape | EN: Needs to burp
+1189 | signaler.mageRapperMyeKanBety2 | NO: Kolikk | EN: Colic
+1190 | signaler.mageRapperMyeKanBety3 | NO: Mageubehag | EN: Tummy discomfort
+1191 | signaler.mageRapperMyeTips | NO: Klapp forsiktig på ryggen og hold oppreist. | EN: Pat gently on the back and keep your baby upright.
+1192 | signaler.mageAnspentAnsiktVisningsNavn | NO: Anspent ansikt | EN: Tense face
+1193 | signaler.mageAnspentAnsiktBeskrivelse | NO: Babyen grimaser og ser anspent ut. | EN: Your baby grimaces and looks tense.
+1194 | signaler.mageAnspentAnsiktKanBety1 | NO: Smerte eller ubehag | EN: Pain or discomfort
+1195 | signaler.mageAnspentAnsiktKanBety2 | NO: Magetrøbbel | EN: Tummy trouble
+1196 | signaler.mageAnspentAnsiktTips | NO: Kombiner med andre signaler for å tolke. | EN: Combine with other signals to interpret.
+1197 | signaler.mageGraterVedMatingVisningsNavn | NO: Gråter ved mating | EN: Cries during feeding
+1198 | signaler.mageGraterVedMatingBeskrivelse | NO: Babyen begynner å gråte under eller etter mating. | EN: Your baby starts crying during or after feeding.
+1199 | signaler.mageGraterVedMatingKanBety1 | NO: Refluks | EN: Reflux
+1200 | signaler.mageGraterVedMatingKanBety2 | NO: Luft | EN: Gas
+1201 | signaler.mageGraterVedMatingKanBety3 | NO: Ubehag | EN: Discomfort
+1202 | signaler.mageGraterVedMatingTips | NO: Prøv å mate i mer oppreist stilling. | EN: Try feeding in a more upright position.
+1203 | signaler.sultSugerPaHendeneVisningsNavn | NO: Suger på hendene | EN: Sucks hands
+1204 | signaler.sultSugerPaHendeneBeskrivelse | NO: Babyen suger på egne hender eller fingre. | EN: Your baby sucks on their hands or fingers.
+1205 | signaler.sultSugerPaHendeneKanBety1 | NO: Tidlig sultsignal | EN: Early hunger cue
+1206 | signaler.sultSugerPaHendeneKanBety2 | NO: Vil ha mat snart | EN: Wants food soon
+1207 | signaler.sultSugerPaHendeneTips | NO: Mat nå – ikke vent til babyen gråter. | EN: Feed now – do not wait until your baby cries.
+1208 | signaler.sultSmatterMedMunnenVisningsNavn | NO: Smatter med munnen | EN: Smacks lips
+1209 | signaler.sultSmatterMedMunnenBeskrivelse | NO: Babyen smatter med munnen. | EN: Your baby makes smacking sounds with the mouth.
+1210 | signaler.sultSmatterMedMunnenKanBety1 | NO: Sultent | EN: Hungry
+1211 | signaler.sultSmatterMedMunnenKanBety2 | NO: Søker suging | EN: Seeking to suck
+1212 | signaler.sultSmatterMedMunnenTips | NO: Tidlig signal – ideelt tidspunkt å mate. | EN: Early cue – an ideal moment to feed.
+1213 | signaler.sultSokerBrystEllerFlaskeVisningsNavn | NO: Søker bryst eller flaske | EN: Looks for breast or bottle
+1214 | signaler.sultSokerBrystEllerFlaskeBeskrivelse | NO: Babyen vrir hodet og søker etter bryst eller flaske. | EN: Your baby turns the head and searches for breast or bottle.
+1215 | signaler.sultSokerBrystEllerFlaskeKanBety1 | NO: Sultent | EN: Hungry
+1216 | signaler.sultSokerBrystEllerFlaskeKanBety2 | NO: Rooting-refleks aktiv | EN: Rooting reflex is active
+1217 | signaler.sultSokerBrystEllerFlaskeTips | NO: Typisk tidlig sultsignal hos nyfødte. | EN: A typical early hunger cue in newborns.
+1218 | signaler.sultRastlosOgUroligVisningsNavn | NO: Rastløs og urolig | EN: Restless and unsettled
+1219 | signaler.sultRastlosOgUroligBeskrivelse | NO: Babyen beveger seg mye og virker rastløs. | EN: Your baby moves a lot and seems restless.
+1220 | signaler.sultRastlosOgUroligKanBety1 | NO: Sent sultsignal | EN: Late hunger cue
+1221 | signaler.sultRastlosOgUroligKanBety2 | NO: Snart gråt om ikke matet | EN: Crying may come soon if not fed
+1222 | signaler.sultRastlosOgUroligTips | NO: Mat snart – gråt er siste sultsignal. | EN: Feed soon – crying is the last hunger cue.

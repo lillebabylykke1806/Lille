@@ -115,7 +115,9 @@ async function grantAmbassadorAccess(userId: string, email: string): Promise<voi
   }
 }
 
-function stripeCheckoutLocale(raw: unknown): 'auto' | 'nb' | 'en' | 'sv' | 'da' | 'de' {
+function stripeCheckoutLocale(
+  raw: unknown,
+): 'auto' | 'nb' | 'en' | 'sv' | 'da' | 'de' | 'es' | 'fr' | 'it' | 'nl' | 'pl' | 'fi' | 'ja' {
   const code = typeof raw === 'string' ? raw.trim().toLowerCase() : '';
   switch (code) {
     case 'no':
@@ -128,6 +130,20 @@ function stripeCheckoutLocale(raw: unknown): 'auto' | 'nb' | 'en' | 'sv' | 'da' 
       return 'da';
     case 'de':
       return 'de';
+    case 'es':
+      return 'es';
+    case 'fr':
+      return 'fr';
+    case 'it':
+      return 'it';
+    case 'nl':
+      return 'nl';
+    case 'pl':
+      return 'pl';
+    case 'fi':
+      return 'fi';
+    case 'ja':
+      return 'ja';
     default:
       return 'auto';
   }

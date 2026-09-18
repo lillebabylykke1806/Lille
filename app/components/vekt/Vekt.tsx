@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatDate, formatDateShort } from '../../lib/i18n/format';
 import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
 
 type Props = { bruker: any; aktivtBarn?: any; };
@@ -132,16 +133,9 @@ Svar KUN med innsikten, ingen introduksjon.`
 
   const sisteLogg = logg[0];
 
-  const dateLocale = locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB';
+  const formatDato = (dato: string) => formatDate(dato, locale);
 
-  const formatDato = (dato: string) => {
-    return new Date(dato).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' });
-  };
-
-  const formatKortDato = (dato: string) => {
-    const d = new Date(dato);
-    return `${d.getDate()}. ${d.toLocaleDateString(dateLocale, { month: 'short' })}`;
-  };
+  const formatKortDato = (dato: string) => formatDateShort(dato, locale);
 
   if (laster) return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

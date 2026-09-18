@@ -24,6 +24,7 @@ import TrialEnded from './components/abonnement/TrialEnded';
 import { ProProvider } from './components/abonnement/ProContext';
 import { LockBadge } from './components/abonnement/LockedContent';
 import { useLanguage } from './lib/i18n/LanguageContext';
+import { formatDate } from './lib/i18n/format';
 import { isNativeApp } from './lib/subscription';
 import { syncRevenueCatUser } from './lib/revenuecat';
 import { requestNotificationPermissionIfNeeded } from './lib/notifications';
@@ -46,7 +47,7 @@ import {
 } from './lib/abonnementAccess';
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [aktivSide, setAktivSide] = useState('hjem');
   const [bruker, setBruker] = useState<any>(null);
   const [laster, setLaster] = useState(true);
@@ -636,7 +637,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
       )}
       {hasPro && proPeriod === 'trial' && proExpiresAt && (
         <div style={{ margin: '12px 24px 0', padding: '10px 14px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: 12, fontSize: 12, fontFamily: 'var(--font-inter)', color: farger.grønn, textAlign: 'center' }}>
-          {t('pro.prøveTil', { dato: new Date(proExpiresAt).toLocaleDateString() })}
+          {t('pro.prøveTil', { dato: formatDate(proExpiresAt, locale, { day: 'numeric', month: 'short', year: 'numeric' }) })}
         </div>
       )}
       {aktivSide === 'hjem' && <Hjemskjerm bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={navigerTil} onByttBarn={setAktivtBarn} />}

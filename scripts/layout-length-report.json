@@ -1,0 +1,487 @@
+{
+  "de": [
+    {
+      "k": "hjem.glemtLeggetidTittel",
+      "no": "Glemte du å logge leggetiden?",
+      "de": "Hast du vergessen, die Schlafenszeit zu protokollieren?",
+      "delta": 26
+    },
+    {
+      "k": "innlogging.noeGikkGalt",
+      "no": "Noe gikk galt. Prøv igjen.",
+      "de": "Etwas ist schiefgelaufen. Versuche es erneut.",
+      "delta": 19
+    },
+    {
+      "k": "vekt.undertittel",
+      "no": "Følg barnets vekst over tid",
+      "de": "Verfolge das Wachstum des Kindes über die Zeit",
+      "delta": 19
+    },
+    {
+      "k": "signaler.pauseBuerRyggenBakoverTips",
+      "no": "Sjekk om det er luft i magen.",
+      "de": "Prüfe, ob Luft im Bauch die Ursache sein könnte.",
+      "delta": 19
+    },
+    {
+      "k": "rc.kunneIkkeGjenopprette",
+      "no": "Kunne ikke gjenopprette kjøp",
+      "de": "Käufe konnten nicht wiederhergestellt werden",
+      "delta": 16
+    },
+    {
+      "k": "signaler.kategoriSultUndertittel",
+      "no": "Tegn på at babyen ønsker mat.",
+      "de": "Anzeichen dafür, dass dein Baby essen möchte.",
+      "delta": 16
+    },
+    {
+      "k": "paywall.kjøpFeilet",
+      "no": "Kjøpet feilet. Prøv igjen.",
+      "de": "Kauf fehlgeschlagen. Versuche es erneut.",
+      "delta": 14
+    },
+    {
+      "k": "kolikk.innsiktNårUroen",
+      "no": "Når uroen pleier å komme",
+      "de": "Wann die Unruhe normalerweise auftritt",
+      "delta": 14
+    },
+    {
+      "k": "signaler.sultRastlosOgUroligKanBety2",
+      "no": "Snart gråt om ikke matet",
+      "de": "Bald Weinen, wenn nicht gefüttert wird",
+      "delta": 14
+    },
+    {
+      "k": "hjem.trykkForSøvnskjerm",
+      "no": "Trykk for å se søvnskjermen",
+      "de": "Tippen, um den Schlafbildschirm zu sehen",
+      "delta": 13
+    },
+    {
+      "k": "consent.terms",
+      "no": "Jeg godtar {terms} og {privacy}",
+      "de": "Ich akzeptiere die {terms} und die {privacy}",
+      "delta": 13
+    },
+    {
+      "k": "søvn.nattaErOver",
+      "no": "Natta er over – ny dag begynner",
+      "de": "Die Nacht ist vorbei – ein neuer Tag beginnt",
+      "delta": 13
+    },
+    {
+      "k": "innstillinger.varslerAv",
+      "no": "Varsler av",
+      "de": "Benachrichtigungen aus",
+      "delta": 12
+    },
+    {
+      "k": "innlogging.tagline",
+      "no": "Din babys språk, i dine hender",
+      "de": "Die Sprache deines Babys, in deinen Händen",
+      "delta": 12
+    },
+    {
+      "k": "innlogging.feilEpostPassord",
+      "no": "Feil e-post eller passord.",
+      "de": "Falsche E-Mail oder falsches Passwort.",
+      "delta": 12
+    },
+    {
+      "k": "trialEnded.fortsettGratis",
+      "no": "Fortsett med gratis søvnlogging",
+      "de": "Mit kostenlosem Schlaf-Logging weitermachen",
+      "delta": 12
+    },
+    {
+      "k": "søvn.hvaHarBabyenVist",
+      "no": "Hva har babyen vist før luren?",
+      "de": "Was hat das Baby vor dem Schlafen gezeigt?",
+      "delta": 12
+    },
+    {
+      "k": "kolikk.varsleMe45min",
+      "no": "Varsle meg 45 min før",
+      "de": "Benachrichtige mich 45 Min vorher",
+      "delta": 12
+    },
+    {
+      "k": "kolikk.hjalpLitt",
+      "no": "😐 Hjalp litt",
+      "de": "😐 Hat ein wenig geholfen",
+      "delta": 12
+    },
+    {
+      "k": "innstillinger.varsler",
+      "no": "Varsler",
+      "de": "Benachrichtigungen",
+      "delta": 11
+    },
+    {
+      "k": "innstillinger.varslerPå",
+      "no": "Varsler på",
+      "de": "Benachrichtigungen an",
+      "delta": 11
+    },
+    {
+      "k": "søvn.nårVåknetBabyen",
+      "no": "Når våknet babyen?",
+      "de": "Wann ist das Baby aufgewacht?",
+      "delta": 11
+    },
+    {
+      "k": "aktivitet.milepælSattUtenStøtte",
+      "no": "Satt uten støtte",
+      "de": "Ohne Unterstützung gesessen",
+      "delta": 11
+    },
+    {
+      "k": "kolikk.signalVilBæres",
+      "no": "Vil bæres",
+      "de": "Will getragen werden",
+      "delta": 11
+    },
+    {
+      "k": "pumping.gangSteg2",
+      "no": "Noter mengden melk du får ut",
+      "de": "Notiere die Menge Milch die du erhältst",
+      "delta": 11
+    },
+    {
+      "k": "medisin.påvirkerSøvnPrefix",
+      "no": "Påvirker søvn.",
+      "de": "Kann Schlaf beeinflussen.",
+      "delta": 11
+    },
+    {
+      "k": "signaler.sovnTungeOyelokkTips",
+      "no": "Legg ned nå – babyen er klar.",
+      "de": "Leg dein Baby jetzt hin – es ist bereit.",
+      "delta": 11
+    },
+    {
+      "k": "signaler.pauseKnytterNeveneKanBety2",
+      "no": "Kan komme før gråt",
+      "de": "Kann vor dem Weinen auftreten",
+      "delta": 11
+    },
+    {
+      "k": "hjem.registrerLeggetid",
+      "no": "Registrer leggetid",
+      "de": "Schlafenszeit protokollieren",
+      "delta": 10
+    },
+    {
+      "k": "søvn.settSovnetid",
+      "no": "Sett sovnetid:",
+      "de": "Einschlafzeit festlegen:",
+      "delta": 10
+    },
+    {
+      "k": "hjem.nesteLur",
+      "no": "Neste lur",
+      "de": "Nächstes Nickerchen",
+      "delta": 10
+    },
+    {
+      "k": "profil.bunnTittel",
+      "no": "Lille er her for å støtte deg",
+      "de": "Lille ist hier, um dich zu unterstützen",
+      "delta": 10
+    },
+    {
+      "k": "signaler.sovnTungeOyelokkKanBety2",
+      "no": "Søvn er nært forestående",
+      "de": "Der Schlaf steht unmittelbar bevor",
+      "delta": 10
+    },
+    {
+      "k": "partner.opprettOgGodta",
+      "no": "Opprett konto og godta",
+      "de": "Konto erstellen und akzeptieren",
+      "delta": 9
+    },
+    {
+      "k": "paywall.gjenoppretter",
+      "no": "Gjenoppretter...",
+      "de": "Wird wiederhergestellt...",
+      "delta": 9
+    },
+    {
+      "k": "innsikt.velkommen",
+      "no": "Velkommen til Babyens språk!",
+      "de": "Willkommen bei der Sprache des Babys!",
+      "delta": 9
+    },
+    {
+      "k": "kolikk.stegRegistrer",
+      "no": "Registrer når uroen starter",
+      "de": "Registriere, wann die Unruhe beginnt",
+      "delta": 9
+    },
+    {
+      "k": "viftemeny.sovn",
+      "no": "Søvn / lur",
+      "de": "Schlaf / Nickerchen",
+      "delta": 9
+    },
+    {
+      "k": "onboarding.sovn",
+      "no": "Søvn / lur",
+      "de": "Schlaf / Nickerchen",
+      "delta": 9
+    },
+    {
+      "k": "lyd.womb",
+      "no": "Womb sounds",
+      "de": "Mutterleib-Geräusche",
+      "delta": 9
+    }
+  ],
+  "fi": [
+    {
+      "k": "kolikk.innsiktTegnFørUro",
+      "no": "Tegn før uro",
+      "fi": "Merkit ennen levottomuutta",
+      "delta": 14
+    },
+    {
+      "k": "innsikt.førsteSignalTilUro",
+      "no": "Første signal → uro",
+      "fi": "Ensimmäinen viesti → levottomuus",
+      "delta": 13
+    },
+    {
+      "k": "innsikt.typiskVeiTilUro",
+      "no": "Typisk vei til uro",
+      "fi": "Tyypillinen tie levottomuuteen",
+      "delta": 12
+    },
+    {
+      "k": "medisin.bivirkningerNotat",
+      "no": "Bivirkninger / notat (valgfritt)",
+      "fi": "Sivuvaikutukset / muistiinpano (valinnainen)",
+      "delta": 12
+    },
+    {
+      "k": "hjem.uroRo",
+      "no": "Uro & ro",
+      "fi": "Levottomuus & rauha",
+      "delta": 11
+    },
+    {
+      "k": "innsikt.roligTilFørsteSignal",
+      "no": "Rolig → første signal",
+      "fi": "Rauhallinen → ensimmäinen viesti",
+      "delta": 11
+    },
+    {
+      "k": "kolikk.tittel",
+      "no": "🌙 Uro & Ro",
+      "fi": "🌙 Levottomuus & rauha",
+      "delta": 11
+    },
+    {
+      "k": "kolikk.vanligeSignalerFørUro",
+      "no": "Vanlige signaler før uro",
+      "fi": "Yleiset viestit ennen levottomuutta",
+      "delta": 11
+    },
+    {
+      "k": "viftemeny.kolikk",
+      "no": "Uro & ro",
+      "fi": "Levottomuus & rauha",
+      "delta": 11
+    },
+    {
+      "k": "innlogging.noeGikkGalt",
+      "no": "Noe gikk galt. Prøv igjen.",
+      "fi": "Jotain meni vikaan. Yritä uudelleen.",
+      "delta": 10
+    },
+    {
+      "k": "notat.lagreNotat",
+      "no": "Lagre notat",
+      "fi": "Tallenna muistiinpano",
+      "delta": 10
+    },
+    {
+      "k": "pust.roligPust",
+      "no": "Rolig pust",
+      "fi": "Rauhallinen hengitys",
+      "delta": 10
+    },
+    {
+      "k": "signaler.sultRastlosOgUroligKanBety2",
+      "no": "Snart gråt om ikke matet",
+      "fi": "Itku voi tulla pian jos ei ruokita",
+      "delta": 10
+    },
+    {
+      "k": "hjem.rolig",
+      "no": "Rolig og våken",
+      "fi": "Rauhallinen ja hereillä",
+      "delta": 9
+    },
+    {
+      "k": "bleie.notatValgfritt",
+      "no": "Bleie (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "aktivitet.notatValgfritt",
+      "no": "Notat (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "aktivitet.lagreMilepæl",
+      "no": "⭐ Lagre milepæl",
+      "fi": "⭐ Tallenna virstanpylväs",
+      "delta": 9
+    },
+    {
+      "k": "aktivitet.milepælFørsteSteg",
+      "no": "Første steg",
+      "fi": "Ensimmäiset askeleet",
+      "delta": 9
+    },
+    {
+      "k": "kolikk.nesteForventedeUro",
+      "no": "Neste forventede uro",
+      "fi": "Seuraava odotettu levottomuus",
+      "delta": 9
+    },
+    {
+      "k": "kolikk.innsiktNårUroen",
+      "no": "Når uroen pleier å komme",
+      "fi": "Milloin levottomuus yleensä alkaa",
+      "delta": 9
+    },
+    {
+      "k": "kolikk.notatValgfritt",
+      "no": "Notat (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "pumping.notatValgfritt",
+      "no": "Notat (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "temp.notatValgfritt",
+      "no": "Notat (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "medisin.notatValgfritt",
+      "no": "Notat (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "vekt.notatValgfritt",
+      "no": "Notat (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "signaler.notatValgfritt",
+      "no": "Notat (valgfritt)",
+      "fi": "Muistiinpano (valinnainen)",
+      "delta": 9
+    },
+    {
+      "k": "signaler.pauseUroligIKroppenKanBety3",
+      "no": "Behov for ro og nærhet",
+      "fi": "Tarvitsee rauhaa ja läheisyyttä",
+      "delta": 9
+    },
+    {
+      "k": "paywall.kjøpFeilet",
+      "no": "Kjøpet feilet. Prøv igjen.",
+      "fi": "Osto epäonnistui. Yritä uudelleen.",
+      "delta": 8
+    },
+    {
+      "k": "innsikt.prosentAvDagsbehovetSåLangt",
+      "no": "{pst}% av dagsbehovet så langt",
+      "fi": "{pst}% päivän tarpeesta tähän mennessä",
+      "delta": 8
+    },
+    {
+      "k": "kolikk.påVeiInnIUroperiode",
+      "no": "På vei inn i uroperiode",
+      "fi": "Siirtymässä levottomaan jaksoon",
+      "delta": 8
+    },
+    {
+      "k": "kolikk.velkommenTittel",
+      "no": "Velkommen til Uro & Ro",
+      "fi": "Tervetuloa Levottomuus & rauha",
+      "delta": 8
+    },
+    {
+      "k": "mat.tipsTitle",
+      "no": "🌿 Tips til første måltider",
+      "fi": "🌿 Vinkkejä ensimmäisiin aterioihin",
+      "delta": 8
+    },
+    {
+      "k": "temp.trenger2Målinger",
+      "no": "Trenger minst 2 målinger",
+      "fi": "Tarvitaan vähintään 2 mittausta",
+      "delta": 7
+    },
+    {
+      "k": "innsikt.analyserData",
+      "no": "Se hva Lille har lært om {navn}",
+      "fi": "Katso mitä Lille on oppinut {navn}sta",
+      "delta": 6
+    },
+    {
+      "k": "signaler.sovnMisterInteressenKanBety2",
+      "no": "Behov for roligere omgivelser",
+      "fi": "Tarvitsee rauhallisemman ympäristön",
+      "delta": 6
+    },
+    {
+      "k": "settings.consent.markedsforing",
+      "no": "Tips og nyheter på e-post",
+      "fi": "Vinkit ja uutiset sähköpostiin",
+      "delta": 5
+    },
+    {
+      "k": "kolikk.registrerFørsteUroperiode",
+      "no": "Registrer første uroperiode",
+      "fi": "Kirjaa ensimmäinen levoton jakso",
+      "delta": 5
+    },
+    {
+      "k": "signaler.kategoriSultUndertittel",
+      "no": "Tegn på at babyen ønsker mat.",
+      "fi": "Merkkejä että vauva haluaa ruokaa.",
+      "delta": 5
+    },
+    {
+      "k": "innlogging.feilEpostPassord",
+      "no": "Feil e-post eller passord.",
+      "fi": "Väärä sähköposti tai salasana.",
+      "delta": 4
+    },
+    {
+      "k": "paywall.fordel1",
+      "no": "Søvnsporing og AI-innsikt",
+      "fi": "Unen seuranta ja AI-havainnot",
+      "delta": 4
+    }
+  ],
+  "ja": []
+}

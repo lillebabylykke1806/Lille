@@ -3,8 +3,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatDateShort } from '../../lib/i18n/format';
 import { hentProfilId, sikreProfilerRad, erGyldigProfilId } from '../../lib/profilId';
-import { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
+import { LOCALE_SPRÅKNAVN, type OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -21,14 +22,6 @@ type MatRegistrering = {
   };
 
 type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
-
-const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
-  no: 'norsk',
-  en: 'English',
-  sv: 'svenska',
-  da: 'dansk',
-  de: 'Deutsch',
-};
 
 const getKategorier = (t: TFn) => [
   { id: 'frukt', label: t('mat.kategoriFrukt'), ikon: '🍎', farge: '#FFF1F2', border: '#FECDD3', tekstFarge: '#BE123C' },
@@ -313,10 +306,7 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
     { ikon: '✨', tekst: t('mat.personligeAiInnsikter') },
   ];
 
-  const formatDato = (dato: string) => {
-    const d = new Date(dato);
-    return `${d.getDate()}. ${d.toLocaleDateString(locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB', { month: 'short' })}`;
-  };
+  const formatDato = (dato: string) => formatDateShort(dato, locale);
 
   if (laster) return (
     <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

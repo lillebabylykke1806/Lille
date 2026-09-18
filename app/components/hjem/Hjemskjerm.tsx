@@ -4,20 +4,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { hentProfilId } from '../../lib/profilId';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
-import { Locale } from '../../lib/i18n/translations';
+import { formatTime, formatDateHeading } from '../../lib/i18n/format';
+import { LOCALE_SPRÅKNAVN, type Locale } from '../../lib/i18n/translations';
 import { scheduleBabyNotifications } from '../../lib/notifications';
 import BarnVelger from './BarnVelger';
 import { lærtVåkenvinduMinutter, sisteVåkenTid, erBabySovendeEtter, harSovnetEtter } from '../../lib/søvnUtils';
 import { usePro } from '../abonnement/ProContext';
 import { LockedContent } from '../abonnement/LockedContent';
-
-const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
-  no: 'norsk',
-  en: 'English',
-  sv: 'svenska',
-  da: 'dansk',
-  de: 'Deutsch',
-};
+import { bleieFlagsFromRow, bleieTypeLabel } from '../../lib/bleie';
 
 type Props = {
   bruker: any;
@@ -121,7 +115,7 @@ const IkonKomponent = ({ type }: { type: string }) => {
   );
   };
 
-const beregnNesteLur = (fødselsdato: string, lurer: any[], t: (nøkkel: string, variabler?: Record<string, string | number>) => string) => {
+const beregnNesteLur = (fødselsdato: string, lurer: any[], t: (nøkkel: string, variabler?: Record<string, string | number>) => string, locale: Locale) => {
   const våkenvindu = lærtVåkenvinduMinutter(lurer, fødselsdato);
 
   // Always reset from the most recent ACTUAL wake (oppvåkning or completed sleep end)
@@ -138,7 +132,7 @@ const beregnNesteLur = (fødselsdato: string, lurer: any[], t: (nøkkel: string,
   const omMinutter = Math.round((nesteLurTid.getTime() - nå.getTime()) / 60000);
   if (omMinutter < -30) return null;
 
-  const klokkeslett = nesteLurTid.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+  const klokkeslett = formatTime(nesteLurTid, locale, { hour: '2-digit', minute: '2-digit' });
   const nåTimer = nå.getHours();
   const erLeggetid = nåTimer >= 18 || nesteLurTid.getHours() >= 18;
 
@@ -258,6 +252,7 @@ export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn 
   const [babyBilde, setBabyBilde] = useState<string | null>(null);
   const [dagensFlyt, setDagensFlyt] = useState<any[]>([]);
   const [nesteLur, setNesteLur] = useState<{ tid: string; om: string; type: 'lur' | 'natt'; erNå: boolean } | null>(null);
+  const [sisteVåken, setSisteVåken] = useState<Date | null>(null);
   const [lurPågår, setLurPågår] = useState(false);
   const [lurStartTid, setLurStartTid] = useState<string | null>(null);
   const [lurType, setLurType] = useState<'lur' | 'natt'>('lur');
@@ -398,7 +393,34 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       supabase.from('uro_logg').select('tidspunkt').eq('profil_id', profilId).order('dato', { ascending: false }).limit(15),
     ]);
 
-    const lurItems = (lurRes.data || []).filter((l: { dato: string }) => l.dato === dagensdato).map((l: any) => ({
+    const lurData = lurRes.data || [];
+    const completedSleeps = lurData.filter((l: any) =>
+      (l.type === 'lur' || l.type === 'natt') && l.slutt && l.start
+    );
+
+    const isPairedNapWake = (opp: { dato?: string; start?: string }) => {
+      if (!opp.start || !opp.dato) return false;
+      const wakeMin = (() => {
+        const [h, m] = opp.start.replace(/\./g, ':').slice(0, 5).split(':').map(Number);
+        return (h || 0) * 60 + (m || 0);
+      })();
+      return completedSleeps.some((s: any) => {
+        if (s.dato !== opp.dato) return false;
+        const [sh, sm] = (s.start || '00:00').replace(/\./g, ':').slice(0, 5).split(':').map(Number);
+        const [eh, em] = (s.slutt || '00:00').replace(/\./g, ':').slice(0, 5).split(':').map(Number);
+        const startMin = (sh || 0) * 60 + (sm || 0);
+        const endMin = (eh || 0) * 60 + (em || 0);
+        if (startMin >= wakeMin) return false;
+        let diff = Math.abs(endMin - wakeMin);
+        if (diff > 12 * 60) diff = 24 * 60 - diff;
+        return diff <= 45;
+      });
+    };
+
+    const lurItems = lurData.filter((l: { dato: string }) => l.dato === dagensdato).filter((l: any) => {
+      if (l.type !== 'oppvåkning') return true;
+      return !isPairedNapWake(l);
+    }).map((l: any) => ({
       id: l.id,
       tid: l.start,
       slutt: l.slutt || null,
@@ -421,16 +443,19 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       varighet: a.varighet ? `${a.varighet} min` : null,
     }));
 
-    const bleieItems = (bleieRes.data || []).map((b: any) => ({
-      tid: b.tidspunkt,
-      slutt: null,
-      tekst: t('hendelse.bleie'),
-      type: 'bleie',
-      varighet: null,
-    }));
+    const bleieItems = (bleieRes.data || []).map((b: any) => {
+      const typeLabel = bleieTypeLabel(t, bleieFlagsFromRow(b));
+      return {
+        tid: b.tidspunkt,
+        slutt: null,
+        tekst: `${t('hendelse.bleie')} · ${typeLabel}`,
+        type: 'bleie',
+        varighet: null,
+      };
+    });
 
     const milepælItems = (milepælRes.data || []).map((m: any) => ({
-      tid: m.opprettet ? new Date(m.opprettet).toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) : '00:00',
+      tid: m.opprettet ? formatTime(new Date(m.opprettet), locale, { hour: '2-digit', minute: '2-digit' }) : '00:00',
       slutt: null,
       tekst: `🏆 ${m.navn}`,
       type: 'milepæl',
@@ -461,14 +486,15 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     setDagensFlyt(alle);
     setAlleDagensHendelser(alle);
 
-    const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurRes.data || [], t);
+    const lurResult = beregnNesteLur(aktivtBarn?.fødselsdato || '', lurData, t, locale);
     setNesteLur(lurResult);
+    setSisteVåken(sisteVåkenTid(lurData));
 
     scheduleBabyNotifications({
       babyName: babyNavn || aktivtBarn?.navn || '',
       fødselsdato: aktivtBarn?.fødselsdato || '',
-      lastWakeTime: sisteVåkenTid(lurRes.data || []),
-      lurer: lurRes.data || [],
+      lastWakeTime: sisteVåkenTid(lurData),
+      lurer: lurData,
       uroLogg: uroRes.data || [],
       locale,
     });
@@ -481,7 +507,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       setLurPågår(true);
       setLurType(lagretType as 'lur' | 'natt');
       const start = new Date(lagretStartTid);
-      setLurStartTid(start.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
+      setLurStartTid(formatTime(start, locale, { hour: '2-digit', minute: '2-digit' }));
     } else {
       setLurPågår(false);
       setLurStartTid(null);
@@ -568,10 +594,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     },
   ];
 
-  const formatDato = () => {
-    const d = new Date();
-    return d.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long' });
-  };
+  const formatDato = () => formatDateHeading(new Date(), locale);
 
   return (
     <div style={{ backgroundColor: '#F7F3EC', minHeight: '100vh', overflowX: 'hidden' }}>
@@ -741,23 +764,8 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
                 {t('hjem.vindu')} {nesteLur.tid}
               </div>
               {(() => {
-  // Finn siste hendelse som indikerer at babyen er våken: oppvåkning, eller en avsluttet lur
-  const oppvåkninger = (dagensFlyt || []).filter(h => h.type === 'oppvåkning' || h.type === 'nattOppvåkning');
-  const avsluttedeLurer = (dagensFlyt || []).filter(h => h.type === 'lur' && h.slutt);
-
-  const kandidater: { tid: string }[] = [
-    ...oppvåkninger.map(h => ({ tid: h.tid })),
-    ...avsluttedeLurer.map(h => ({ tid: h.slutt })),
-  ];
-
-  if (kandidater.length === 0) return null;
-  const siste = kandidater.sort((a, b) => b.tid.localeCompare(a.tid))[0];
-  if (!siste?.tid) return null;
-
-  const [h, m] = siste.tid.split(':').map(Number);
-  const tid = new Date();
-  tid.setHours(h, m, 0, 0);
-  const våkentMinutter = Math.round((new Date().getTime() - tid.getTime()) / 60000);
+  if (!sisteVåken) return null;
+  const våkentMinutter = Math.round((Date.now() - sisteVåken.getTime()) / 60000);
   if (våkentMinutter < 0 || våkentMinutter > 600) return null;
   const våkentTekst = våkentMinutter < 60 ? `${våkentMinutter} min` : `${Math.floor(våkentMinutter / 60)} t ${våkentMinutter % 60 > 0 ? `${våkentMinutter % 60} min` : ''}`;
   return (
@@ -899,7 +907,32 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       <input type="time" value={nyOppvåkningTid} onChange={e => setNyOppvåkningTid(e.target.value)} style={{ width: '100%', padding: '14px 16px', fontSize: '22px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box', marginBottom: '20px', textAlign: 'center' }} />
       <button onClick={async () => {
         if (!redigerOppvåkning?.id) return;
+        const gammelTid = (redigerOppvåkning.tid || '').replace(/\./g, ':').slice(0, 5);
+        const nyTid = nyOppvåkningTid.slice(0, 5);
         await supabase.from('lurer').update({ start: nyOppvåkningTid }).eq('id', redigerOppvåkning.id);
+
+        // If this wake was paired with a completed lur/natt, keep slutt in sync
+        if (gammelTid && nyTid && gammelTid !== nyTid) {
+          const profilId = await hentProfilId(aktivtBarn, bruker);
+          if (profilId) {
+            const dagensdato = new Date().toISOString().split('T')[0];
+            const { data: treff } = await supabase
+              .from('lurer')
+              .select('id, start, slutt')
+              .eq('profil_id', profilId)
+              .eq('dato', dagensdato)
+              .in('type', ['lur', 'natt'])
+              .eq('slutt', gammelTid);
+            for (const lur of treff || []) {
+              const [sh, sm] = (lur.start || '00:00').slice(0, 5).split(':').map(Number);
+              const [eh, em] = nyTid.split(':').map(Number);
+              let varighet = (eh * 60 + em) - (sh * 60 + sm);
+              if (varighet < 0) varighet += 24 * 60;
+              await supabase.from('lurer').update({ slutt: nyTid, varighet }).eq('id', lur.id);
+            }
+          }
+        }
+
         setRedigerOppvåkning(null);
         lastDagensFlyt();
       }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>

@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import BloggInnhold, { type Artikkel } from './BloggInnhold'
+import { formatDate } from '../lib/i18n/format'
 
 export const metadata = {
   title: 'Blogg – Lille',
@@ -18,7 +19,7 @@ function getArtikler(): Artikkel[] {
     return {
       slug: fil.replace(/\.mdx?$/, ''),
       tittel: data.tittel || 'Uten tittel',
-      dato: data.dato ? new Date(data.dato).toLocaleDateString('nb-NO') : '',
+      dato: data.dato ? formatDate(data.dato, 'no', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '',
       datoRaw: data.dato || '',
       ingress: data.ingress || '',
       kategori: data.kategori || 'Søvn',

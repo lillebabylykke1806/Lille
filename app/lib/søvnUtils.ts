@@ -98,22 +98,45 @@ function sortKey(entry: LurEntry): string {
 }
 
 /**
- * Most recent actual wake time: latest of
- * - explicit oppvåkning registrations
- * - end times of completed lur/natt sessions
+ * How close an explicit oppvåkning may be to a sleep end and still count as the
+ * same wake (covers "stopp lur" dual-writes that later got end-time edits).
  */
-export function sisteVåkenTid(lurer: LurEntry[]): Date | null {
-  let latest: Date | null = null;
+const PAIRED_WAKE_MS = 45 * 60_000;
+
+/**
+ * Unique wake moments. Sleep ends (lur/natt.slutt) win over near-duplicate
+ * oppvåkning rows so adjusting nap end time is the source of truth.
+ */
+export function collectWakeMoments(lurer: LurEntry[]): Date[] {
+  const sleepEnds: Date[] = [];
+  const explicitWakes: Date[] = [];
 
   for (const entry of lurer) {
-    const wake = wakeStartTime(entry);
-    if (!wake) continue;
-    if (!latest || wake.getTime() > latest.getTime()) {
-      latest = wake;
+    if (entry.type === 'lur' || entry.type === 'natt') {
+      const end = sleepEndTime(entry);
+      if (end) sleepEnds.push(end);
+    } else if (entry.type === 'oppvåkning') {
+      const wake = wakeStartTime(entry);
+      if (wake) explicitWakes.push(wake);
     }
   }
 
-  return latest;
+  const moments = [...sleepEnds];
+  for (const wake of explicitWakes) {
+    const paired = moments.some((m) => Math.abs(m.getTime() - wake.getTime()) < PAIRED_WAKE_MS);
+    if (!paired) moments.push(wake);
+  }
+
+  return moments.sort((a, b) => a.getTime() - b.getTime());
+}
+
+/**
+ * Most recent actual wake time: latest of completed lur/natt ends and
+ * standalone oppvåkning rows (paired nap dual-writes are collapsed).
+ */
+export function sisteVåkenTid(lurer: LurEntry[]): Date | null {
+  const moments = collectWakeMoments(lurer);
+  return moments.length ? moments[moments.length - 1] : null;
 }
 
 /**
@@ -167,14 +190,7 @@ export function lærtVåkenvinduMinutter(lurer: LurEntry[], fødselsdato: string
     .filter((l) => l.start && l.dato)
     .sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
 
-  // Collect unique wake moments (dedupe oppvåkning + sleep-end within 5 min)
-  const wakeMoments: Date[] = [];
-  for (const entry of sorted) {
-    const wakeStart = wakeStartTime(entry);
-    if (!wakeStart) continue;
-    const dup = wakeMoments.some((w) => Math.abs(w.getTime() - wakeStart.getTime()) < 5 * 60_000);
-    if (!dup) wakeMoments.push(wakeStart);
-  }
+  const wakeMoments = collectWakeMoments(sorted);
 
   const wakeWindows: number[] = [];
 

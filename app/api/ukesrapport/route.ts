@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
+import { formatDate } from '../../lib/i18n/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -103,7 +104,7 @@ export async function GET(req: Request) {
     const html = `
       <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
         <h2 style="color: #2D5C45;">📊 Lille – Ukesrapport</h2>
-        <p style="color: #7B746D; font-size: 13px;">${nå.toLocaleDateString('no-NO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        <p style="color: #7B746D; font-size: 13px;">${formatDate(nå, 'no', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
         
         <h3 style="color: #3F3A37; margin-top: 24px;">Brukere</h3>
         <ul style="line-height: 1.8;">
@@ -132,7 +133,7 @@ export async function GET(req: Request) {
     await resend.emails.send({
       from: 'rapport@lilleapp.no',
       to: 'lillebabylykke@outlook.com',
-      subject: `📊 Lille – Ukesrapport ${nå.toLocaleDateString('no-NO')}`,
+      subject: `📊 Lille – Ukesrapport ${formatDate(nå, 'no', { day: 'numeric', month: 'numeric', year: 'numeric' })}`,
       html,
     });
 

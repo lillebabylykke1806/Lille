@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ArtikkelMarkdown from './ArtikkelMarkdown';
+import { formatDate } from '../lib/i18n/format';
 
 const GRØNN = '#3D6B4F';
 const BAKGRUNN = '#F5F0EA';
@@ -23,11 +24,7 @@ export type ArtikkelData = {
 
 export default function ArtikkelInnhold({ artikkel }: { artikkel: ArtikkelData }) {
   const datoFormatert = artikkel.dato
-    ? new Date(artikkel.dato).toLocaleDateString('nb-NO', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
+    ? formatDate(artikkel.dato, 'no')
     : '';
 
   return (

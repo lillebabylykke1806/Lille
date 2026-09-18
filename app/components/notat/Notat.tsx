@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatTime, formatDateHeading } from '../../lib/i18n/format';
 import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; };
@@ -150,7 +151,7 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
         tekst: nyTekst,
         kategori: nyKategori,
         dato: nå.toISOString().split('T')[0],
-        tidspunkt: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+        tidspunkt: formatTime(nå, locale, { hour: '2-digit', minute: '2-digit' }),
         bilde_url: nyBilde || null,
       });
       setNyBilde(null);
@@ -178,16 +179,13 @@ const håndterBilde = async (e: React.ChangeEvent<HTMLInputElement>) => {
     return acc;
   }, {});
 
-  const dateLocale = locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB';
-
   const formatDato = (dato: string) => {
     const dagensdato = new Date().toISOString().split('T')[0];
     if (dato === dagensdato) return t('notat.iDag');
     const igår = new Date();
     igår.setDate(igår.getDate() - 1);
     if (dato === igår.toISOString().split('T')[0]) return t('notat.iGår');
-    const d = new Date(dato);
-    return d.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' });
+    return formatDateHeading(dato, locale);
   };
 
   return (

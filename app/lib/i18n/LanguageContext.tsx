@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Locale, oversettelser, OversettelseNøkkel } from './translations';
+import { Locale, isLocale } from './locales';
+import { getMessage, type OversettelseNøkkel } from './messages';
 
 type LanguageContextType = {
   locale: Locale;
@@ -12,14 +13,22 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const detekterSpråk = (): Locale => {
   if (typeof window === 'undefined') return 'en';
-  const lagret = localStorage.getItem('lille_språk') as Locale | null;
-  if (lagret && ['no', 'en', 'sv', 'da', 'de'].includes(lagret)) return lagret;
+  const lagret = localStorage.getItem('lille_språk');
+  // Keep accepting stored `no` as-is (no migration). New locales are also valid.
+  if (isLocale(lagret)) return lagret;
 
   const browserSpråk = navigator.language.toLowerCase();
-  if (browserSpråk.startsWith('no')) return 'no';
+  if (browserSpråk.startsWith('nb') || browserSpråk.startsWith('no') || browserSpråk.startsWith('nn')) return 'no';
   if (browserSpråk.startsWith('sv')) return 'sv';
   if (browserSpråk.startsWith('da')) return 'da';
   if (browserSpråk.startsWith('de')) return 'de';
+  if (browserSpråk.startsWith('es')) return 'es';
+  if (browserSpråk.startsWith('fr')) return 'fr';
+  if (browserSpråk.startsWith('it')) return 'it';
+  if (browserSpråk.startsWith('nl')) return 'nl';
+  if (browserSpråk.startsWith('pl')) return 'pl';
+  if (browserSpråk.startsWith('fi')) return 'fi';
+  if (browserSpråk.startsWith('ja')) return 'ja';
   return 'en';
 };
 
@@ -36,9 +45,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const t = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>): string => {
-    const oversettelse = oversettelser[nøkkel];
-    if (!oversettelse) return nøkkel;
-    let tekst: string = oversettelse[locale] || oversettelse.en;
+    let tekst = getMessage(locale, nøkkel);
     if (variabler) {
       Object.entries(variabler).forEach(([key, value]) => {
         tekst = tekst.replace(`{${key}}`, String(value));

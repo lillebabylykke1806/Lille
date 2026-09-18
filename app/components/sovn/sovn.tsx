@@ -7,20 +7,13 @@ import NattlysPanel from './NattlysPanel';
 import PustMedMeg from './PustMedMeg';
 import LydPanel from './LydPanel';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatTime } from '../../lib/i18n/format';
 import { søvnMinutterForDag, sisteVåkenTid } from '../../lib/søvnUtils';
 import { cancelNapNotifications, scheduleBabyNotifications } from '../../lib/notifications';
-import type { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
-
-const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
-  no: 'norsk',
-  en: 'English',
-  sv: 'svenska',
-  da: 'dansk',
-  de: 'Deutsch',
-};
+import { LOCALE_SPRÅKNAVN, type OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; åpneEtterregistrer?: boolean; åpneMorgen?: boolean; onNavigate?: (side: string) => void; onNavigasjonKonsumert?: () => void; };
-type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; };
+type TidslinjeItem = { id?: number; tid: string; slutt?: string; tekst: string; type: string; varighet?: number; dato?: string };
 
 const tilTidsformat = (tid: string): string => {
   if (!tid) return '';
@@ -156,16 +149,37 @@ const [aiLurInnsikt, setAiLurInnsikt] = useState('');
       const bTime = new Date(`${b.dato}T${b.start}:00`).getTime();
       return aTime - bTime;
     });
-    const items: TidslinjeItem[] = filtered.map((l: any) => ({
+    const completedSleeps = filtered.filter((l: any) =>
+      (l.type === 'lur' || l.type === 'natt') && l.slutt && l.start
+    );
+    const isPairedNapWake = (opp: any) => {
+      if (opp.type !== 'oppvåkning' || !opp.start) return false;
+      const [wh, wm] = opp.start.replace(/\./g, ':').slice(0, 5).split(':').map(Number);
+      const wakeMin = (wh || 0) * 60 + (wm || 0);
+      return completedSleeps.some((s: any) => {
+        if (s.dato !== opp.dato) return false;
+        const [sh, sm] = (s.start || '00:00').replace(/\./g, ':').slice(0, 5).split(':').map(Number);
+        const [eh, em] = (s.slutt || '00:00').replace(/\./g, ':').slice(0, 5).split(':').map(Number);
+        const startMin = (sh || 0) * 60 + (sm || 0);
+        const endMin = (eh || 0) * 60 + (em || 0);
+        if (startMin >= wakeMin) return false;
+        let diff = Math.abs(endMin - wakeMin);
+        if (diff > 12 * 60) diff = 24 * 60 - diff;
+        return diff <= 45;
+      });
+    };
+    const visible = filtered.filter((l: any) => !isPairedNapWake(l));
+    const items: TidslinjeItem[] = visible.map((l: any) => ({
       id: l.id,
       tid: l.start,
       slutt: l.slutt,
+      dato: l.dato,
       tekst: l.type === 'lur' ? t('hendelse.lur') : l.type === 'natt' ? t('hendelse.sovnet') : l.type === 'oppvåkning' ? t('hendelse.våknet') : l.type === 'amming' ? t('hendelse.amming') : l.tekst || l.type,
       type: l.type,
       varighet: l.varighet,
     }));
     setTidslinje(items);
-    const oppvåkninger = filtered.filter((l: any) => l.type === 'oppvåkning').length;
+    const oppvåkninger = visible.filter((l: any) => l.type === 'oppvåkning').length;
     if (oppvåkninger === 0) setSøvnkvalitet('Utmerket');
     else if (oppvåkninger <= 2) setSøvnkvalitet('God');
     else if (oppvåkninger <= 4) setSøvnkvalitet('Ok');
@@ -402,7 +416,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
     localStorage.setItem('lille_sovtype', type);
     const { data } = await supabase.from('lurer').insert({
       profil_id: profilId, dato: dagensdato(), type,
-      start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      start: formatTime(nå, locale, { hour: '2-digit', minute: '2-digit' }),
       slutt: null, varighet: 0, signaler: '',
     }).select();
     if (data?.[0]) {
@@ -429,7 +443,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
     const nå = new Date();
     await supabase.from('lurer').insert({
       profil_id: profilId, dato: dagensdato(), type: 'oppvåkning',
-      start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      start: formatTime(nå, locale, { hour: '2-digit', minute: '2-digit' }),
       slutt: null, varighet: 0, signaler: '',
     });
     setNattligOppvåkning(true);
@@ -446,7 +460,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
     const nå = new Date();
     const { data } = await supabase.from('lurer').insert({
       profil_id: profilId, dato: dagensdato(), type: 'natt',
-      start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      start: formatTime(nå, locale, { hour: '2-digit', minute: '2-digit' }),
       slutt: null, varighet: 0, signaler: '',
     }).select();
     if (data?.[0]) {
@@ -484,23 +498,15 @@ Svar KUN med observasjonen, ingen introduksjon.`
     const slutt = new Date();
     const diff = Math.floor((slutt.getTime() - startTid.getTime()) / 1000);
     const varighetMinutter = Math.floor(diff / 60);
-    const sluttStr = slutt.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+    const sluttStr = formatTime(slutt, locale, { hour: '2-digit', minute: '2-digit' });
     if (lurId) {
       await supabase.from('lurer').update({
         slutt: sluttStr,
         varighet: varighetMinutter,
       }).eq('id', lurId);
     }
-    // For daytime naps, also register an explicit wake so next prediction resets from ACTUAL wake
-    if (søvnType === 'lur') {
-      const profilId = await hentProfilId(aktivtBarn, bruker);
-      if (profilId) {
-        await supabase.from('lurer').insert({
-          profil_id: profilId, dato: dagensdato(), type: 'oppvåkning',
-          start: sluttStr, slutt: null, varighet: 0, signaler: '',
-        });
-      }
-    }
+    // Wake time is derived from lur.slutt — do not insert a separate oppvåkning row
+    // (that used to desync when the end time was edited later).
     localStorage.removeItem('lille_starttid');
     localStorage.removeItem('lille_sovtype');
     localStorage.removeItem('lille_lurid');
@@ -537,12 +543,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
       profil_id: profilId, dato: nyDato, type: nyType,
       start: nyStart, slutt: nySlutt || null, varighet, signaler: '',
     });
-    if (nySlutt) {
-      await supabase.from('lurer').insert({
-        profil_id: profilId, dato: dagensdato(), type: 'oppvåkning',
-        start: nySlutt, slutt: null, varighet: 0, signaler: '',
-      });
-    }
+    // Wake is derived from slutt — no separate oppvåkning row
     setNyStart(''); setNySlutt('');
     setVisning('velg'); lastTidslinje();
     await oppdaterVarsler();
@@ -557,13 +558,43 @@ Svar KUN med observasjonen, ingen introduksjon.`
       varighet = (eh * 60 + em) - (sh * 60 + sm);
       if (varighet < 0) varighet += 24 * 60;
     }
+    const gammelSlutt = redigerLur.slutt ? tilTidsformat(redigerLur.slutt) : '';
+    const nySlutt = redigerSlutt ? tilTidsformat(redigerSlutt) : '';
     await supabase.from('lurer').update({
       start: redigerStart,
       slutt: redigerSlutt || null,
       varighet,
     }).eq('id', redigerLur.id);
+
+    // Keep legacy dual-written oppvåkning rows in sync with lur.slutt (or remove them)
+    if (gammelSlutt && gammelSlutt !== nySlutt) {
+      const profilId = await hentProfilId(aktivtBarn, bruker);
+      if (profilId) {
+        if (nySlutt) {
+          let q = supabase
+            .from('lurer')
+            .update({ start: nySlutt })
+            .eq('profil_id', profilId)
+            .eq('type', 'oppvåkning')
+            .eq('start', gammelSlutt);
+          if (redigerLur.dato) q = q.eq('dato', redigerLur.dato);
+          await q;
+        } else {
+          let del = supabase
+            .from('lurer')
+            .delete()
+            .eq('profil_id', profilId)
+            .eq('type', 'oppvåkning')
+            .eq('start', gammelSlutt);
+          if (redigerLur.dato) del = del.eq('dato', redigerLur.dato);
+          await del;
+        }
+      }
+    }
+
     setRedigerLur(null);
     lastTidslinje();
+    await oppdaterVarsler();
   };
 
   const circumference = 2 * Math.PI * 95;
@@ -596,9 +627,24 @@ Svar KUN med observasjonen, ingen introduksjon.`
 </div>
 <button onClick={async () => {
   if (!redigerLur?.id) return;
+  const gammelSlutt = redigerLur.slutt ? tilTidsformat(redigerLur.slutt) : '';
   await supabase.from('lurer').delete().eq('id', redigerLur.id);
+  if (gammelSlutt && (redigerLur.type === 'lur' || redigerLur.type === 'natt')) {
+    const profilId = await hentProfilId(aktivtBarn, bruker);
+    if (profilId) {
+      let del = supabase
+        .from('lurer')
+        .delete()
+        .eq('profil_id', profilId)
+        .eq('type', 'oppvåkning')
+        .eq('start', gammelSlutt);
+      if (redigerLur.dato) del = del.eq('dato', redigerLur.dato);
+      await del;
+    }
+  }
   setRedigerLur(null);
   lastTidslinje();
+  await oppdaterVarsler();
 }} style={{ width: '100%', padding: '14px', backgroundColor: 'transparent', border: '1px solid #C48E7B', borderRadius: '12px', fontSize: '14px', color: '#C48E7B', cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
   {t('søvn.slettRegistrering')}
 </button>
@@ -690,7 +736,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
           <button onClick={async () => { await registrerOppvåkning(); setVisning('velg'); lastTidslinje(); }} style={{ width: '100%', padding: '16px', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '16px', fontSize: '15px', fontWeight: '600', color: farger.grønn, cursor: 'pointer', fontFamily: 'var(--font-inter)' }}>
             {t('søvn.startDagen')}
           </button>
-          <button onClick={() => { setNyTidStr(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(true); }} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
+          <button onClick={() => { setNyTidStr(formatTime(new Date(), locale, { hour: '2-digit', minute: '2-digit' })); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(true); }} style={{ background: 'none', border: 'none', fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, cursor: 'pointer', textDecoration: 'underline', padding: '4px' }}>
             {t('søvn.ikkeRiktigTidspunkt')}
           </button>
           {visJusterTid && (
@@ -853,7 +899,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
           ) : (
             <>
               <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px', minHeight: '260px', zIndex: 1 }}>
-                <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', width: '220px', height: '220px' }}>
+                <button onClick={() => { setNyTidStr(startTid ? formatTime(startTid, locale, { hour: '2-digit', minute: '2-digit' }) : ''); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', width: '220px', height: '220px' }}>
                   <svg width="220" height="220" viewBox="0 0 220 220">
                     <defs>
                       <linearGradient id="lurGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1036,8 +1082,8 @@ Svar KUN med observasjonen, ingen introduksjon.`
       ? `${String(Math.floor(oppvåkningMinutter / 60)).padStart(2, '0')}:${String(oppvåkningMinutter % 60).padStart(2, '0')}`
       : timerTekst}
   </div>
-  <button onClick={() => { setNyTidStr(startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }) || ''); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
-    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>{t('søvn.siden')} {startTid?.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' })}</div>
+  <button onClick={() => { setNyTidStr(startTid ? formatTime(startTid, locale, { hour: '2-digit', minute: '2-digit' }) : ''); setNyDatoJuster(startTid ? startTid.toISOString().split('T')[0] : dagensdato()); setVisJusterTid(!visJusterTid); }} style={{ background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px' }}>
+    <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#8A8FA8', textDecoration: 'underline' }}>{t('søvn.siden')} {startTid ? formatTime(startTid, locale, { hour: '2-digit', minute: '2-digit' }) : undefined}</div>
   </button>
 </div>
             </div>
@@ -1174,7 +1220,7 @@ Svar KUN med observasjonen, ingen introduksjon.`
                 const nå = new Date();
                 await supabase.from('lurer').insert({
                   profil_id: profilId, dato: dagensdato(), type: 'annet',
-                  start: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+                  start: formatTime(nå, locale, { hour: '2-digit', minute: '2-digit' }),
                   slutt: null, varighet: 0, signaler: annetTekst.trim(),
                 });
                 setAnnetTekst('');

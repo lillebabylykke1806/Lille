@@ -1,0 +1,3669 @@
+felles.lagre
+  NO: "Lagre"
+  EN: "Save"
+felles.avbryt
+  NO: "Avbryt"
+  EN: "Cancel"
+felles.slett
+  NO: "Slett"
+  EN: "Delete"
+felles.rediger
+  NO: "Rediger"
+  EN: "Edit"
+felles.lukk
+  NO: "Lukk"
+  EN: "Close"
+felles.laster
+  NO: "Laster..."
+  EN: "Loading..."
+felles.min
+  NO: "min"
+  EN: "min"
+felles.time
+  NO: "t"
+  EN: "h"
+felles.måneder
+  NO: "{n} måneder"
+  EN: "{n} months"
+felles.år
+  NO: "{n} år"
+  EN: "{n} years"
+felles.nå
+  NO: "Nå!"
+  EN: "Now!"
+felles.slettHendelse
+  NO: "🗑️ Slett hendelse"
+  EN: "🗑️ Delete event"
+felles.slettRegistrering
+  NO: "🗑️ Slett registrering"
+  EN: "🗑️ Delete entry"
+felles.tilbake
+  NO: "Tilbake"
+  EN: "Back"
+innstillinger.språk
+  NO: "Språk"
+  EN: "Language"
+innstillinger.måleenheter
+  NO: "Måleenheter"
+  EN: "Units"
+innstillinger.metrisk
+  NO: "Metrisk"
+  EN: "Metric"
+innstillinger.imperisk
+  NO: "Imperisk"
+  EN: "Imperial"
+innstillinger.imperiskInfo
+  NO: "✓ Vekt vises i lb/oz · Lengde i ft/in · Væske i fl oz · Temperatur i °F"
+  EN: "✓ Weight shown in lb/oz · Length in ft/in · Fluid in fl oz · Temperature in °F"
+innstillinger.varsler
+  NO: "Varsler"
+  EN: "Notifications"
+innstillinger.varslerBeskrivelse
+  NO: "Påminnelser om lur, trøtthet og daglig oppsummering"
+  EN: "Reminders for naps, tiredness and daily summary"
+innstillinger.varslerPå
+  NO: "Varsler på"
+  EN: "Notifications on"
+innstillinger.varslerAv
+  NO: "Varsler av"
+  EN: "Notifications off"
+barnVelger.velgBarn
+  NO: "Velg barn"
+  EN: "Select child"
+barnVelger.leggTil
+  NO: "Legg til nytt barn"
+  EN: "Add another child"
+hjem.glemtLeggetidTittel
+  NO: "Glemte du å logge leggetiden?"
+  EN: "Did you forget to log bedtime?"
+hjem.glemtLeggetidTekst
+  NO: "Ingen stress – du kan registrere nattøkten i etterkant hvis du vil ha den med i oversikten."
+  EN: "No stress – you can log last night's sleep afterwards if you want it in your overview."
+hjem.registrerLeggetid
+  NO: "Registrer leggetid"
+  EN: "Log bedtime"
+hjem.startNyDag
+  NO: "Start ny dag"
+  EN: "Start new day"
+hjem.aiTomTittel
+  NO: "Lille lærer av registreringene dine."
+  EN: "Lille learns from your entries."
+hjem.aiTomTekst
+  NO: "Registrer søvn og signaler noen dager, så begynner AI å oppdage mønstre."
+  EN: "Log sleep and signals for a few days, and AI will start spotting patterns."
+hjem.omMin
+  NO: "Om ca. {n} min"
+  EN: "In about {n} min"
+hjem.omTimerMin
+  NO: "Om ca. {n}t {m}min"
+  EN: "In about {n}h {m}min"
+hjem.omTimer
+  NO: "Om ca. {n}t"
+  EN: "In about {n}h"
+hjem.endreOppvåkningstid
+  NO: "Endre oppvåkningstid"
+  EN: "Change wake-up time"
+hjem.tidspunkt
+  NO: "Tidspunkt"
+  EN: "Time"
+søvn.slettRegistrering
+  NO: "🗑️ Slett registrering"
+  EN: "🗑️ Delete entry"
+søvn.nattkvalitet
+  NO: "{kvalitet} natt"
+  EN: "{kvalitet} night"
+søvn.kvalitetUtmerket
+  NO: "Utmerket"
+  EN: "Excellent"
+søvn.kvalitetGod
+  NO: "God"
+  EN: "Good"
+søvn.kvalitetOk
+  NO: "Ok"
+  EN: "OK"
+søvn.kvalitetUrolig
+  NO: "Urolig"
+  EN: "Restless"
+søvn.kvalitetUtmerketTekst
+  NO: "Baby sov fantastisk! Du kan være stolt 🤍"
+  EN: "Baby slept amazingly! You can be proud 🤍"
+søvn.kvalitetGodTekst
+  NO: "En god natt med lite uro"
+  EN: "A good night with little unrest"
+søvn.kvalitetOkTekst
+  NO: "Litt urolig, men ok"
+  EN: "A bit restless, but okay"
+søvn.kvalitetUroligTekst
+  NO: "Tøff natt – du gjør det bra!"
+  EN: "Tough night – you're doing great!"
+søvn.lurLabel
+  NO: "Lur"
+  EN: "Nap"
+søvn.signalPlaceholder
+  NO: "F.eks. Klynket, Gned ansiktet..."
+  EN: "E.g. Whimpered, Rubbed face..."
+søvn.lagreSignal
+  NO: "Lagre signal"
+  EN: "Save signal"
+søvn.settStarttid
+  NO: "Sett starttid:"
+  EN: "Set start time:"
+søvn.settSovnetid
+  NO: "Sett sovnetid:"
+  EN: "Set fell-asleep time:"
+søvn.rediger
+  NO: "Rediger {tekst}"
+  EN: "Edit {tekst}"
+kolikk.hjalp
+  NO: "😊 Hjalp"
+  EN: "😊 Helped"
+kolikk.littBedre
+  NO: "😐 Litt bedre"
+  EN: "😐 A little better"
+kolikk.ingenEffekt
+  NO: "😞 Ingen effekt"
+  EN: "😞 No effect"
+partner.ugyldig
+  NO: "Ugyldig invitasjon"
+  EN: "Invalid invitation"
+partner.ugyldigTekst
+  NO: "Lenken er utløpt eller allerede brukt."
+  EN: "The link has expired or has already been used."
+partner.tilgang
+  NO: "Du har fått tilgang!"
+  EN: "You have access!"
+partner.lastNed
+  NO: "Last ned Lille og logg inn med {epost}"
+  EN: "Download Lille and sign in with {epost}"
+partner.gåTil
+  NO: "Gå til Lille 🌿"
+  EN: "Go to Lille 🌿"
+partner.invitert
+  NO: "Du er invitert! 🤍"
+  EN: "You're invited! 🤍"
+partner.invitertTekst
+  NO: "Logg inn eller opprett konto for å følge {navn}"
+  EN: "Sign in or create an account to follow {navn}"
+partner.harKonto
+  NO: "Har konto"
+  EN: "Have an account"
+partner.nyBruker
+  NO: "Ny bruker"
+  EN: "New user"
+partner.opprettOgGodta
+  NO: "Opprett konto og godta"
+  EN: "Create account and accept"
+partner.loggInnOgGodta
+  NO: "Logg inn og godta"
+  EN: "Sign in and accept"
+partner.epost
+  NO: "E-post"
+  EN: "Email"
+partner.passord
+  NO: "Passord"
+  EN: "Password"
+bekreftelse.tittel
+  NO: "Velkommen til Lille!"
+  EN: "Welcome to Lille!"
+bekreftelse.prøveperiode
+  NO: "Din 7 dagers gratis prøveperiode er nå aktivert."
+  EN: "Your 7-day free trial is now active."
+bekreftelse.redirect
+  NO: "Du sendes til appen om et øyeblikk..."
+  EN: "You'll be redirected to the app in a moment..."
+rc.ingenPakker
+  NO: "Ingen abonnementspakker tilgjengelig"
+  EN: "No subscription packages available"
+rc.kunIApp
+  NO: "Kjøp er kun tilgjengelig i appen"
+  EN: "Purchases are only available in the app"
+rc.kjøpFeilet
+  NO: "Kjøpet feilet"
+  EN: "Purchase failed"
+rc.gjenopprettKunIApp
+  NO: "Gjenoppretting er kun tilgjengelig i appen"
+  EN: "Restore is only available in the app"
+rc.ingenTidligere
+  NO: "Ingen tidligere kjøp funnet"
+  EN: "No previous purchases found"
+rc.kunneIkkeGjenopprette
+  NO: "Kunne ikke gjenopprette kjøp"
+  EN: "Could not restore purchases"
+nav.hjem
+  NO: "Hjem"
+  EN: "Home"
+nav.søvn
+  NO: "Søvn"
+  EN: "Sleep"
+nav.innsikt
+  NO: "Innsikt"
+  EN: "Insights"
+nav.profil
+  NO: "Profil"
+  EN: "Profile"
+hjem.godMorgen
+  NO: "God morgen"
+  EN: "Good morning"
+hjem.godEttermiddag
+  NO: "God ettermiddag"
+  EN: "Good afternoon"
+hjem.godKveld
+  NO: "God kveld"
+  EN: "Good evening"
+hjem.lurPågår
+  NO: "Lur pågår"
+  EN: "Nap in progress"
+hjem.nesteLur
+  NO: "Neste lur"
+  EN: "Next nap"
+hjem.dagensFlyt
+  NO: "Dagens flyt"
+  EN: "Today's flow"
+hjem.seDagbok
+  NO: "Se dagbok"
+  EN: "View diary"
+hjem.rolig
+  NO: "Rolig og våken"
+  EN: "Calm and awake"
+hjem.trøtt
+  NO: "Virker trøtt"
+  EN: "Seems tired"
+hjem.urolig
+  NO: "Litt urolig"
+  EN: "A bit restless"
+hjem.sover
+  NO: "Sover nå"
+  EN: "Sleeping now"
+hjem.roligUndertekst
+  NO: "Klar for lek og samspill"
+  EN: "Ready for play and interaction"
+hjem.trøttUndertekst
+  NO: "Kanskje tid for en lur snart?"
+  EN: "Maybe time for a nap soon?"
+hjem.uroligUndertekst
+  NO: "Trenger ro og regulering"
+  EN: "Needs calm and regulation"
+hjem.soverUndertekst
+  NO: "Hvil deg du også 🌙"
+  EN: "Rest too 🌙"
+hjem.tilstandRolig
+  NO: "Rolig"
+  EN: "Calm"
+hjem.tilstandTrøtt
+  NO: "Trøtt"
+  EN: "Tired"
+hjem.tilstandUrolig
+  NO: "Urolig"
+  EN: "Restless"
+hjem.tilstandSover
+  NO: "Sover"
+  EN: "Sleeping"
+hjem.aiInnsiktRolig
+  NO: "Baby virker rolig og mottakelig nå ✦"
+  EN: "Baby seems calm and receptive now ✦"
+hjem.aiInnsiktTrøtt
+  NO: "Baby viser trøtthetstegn – kanskje start nedtrapping?"
+  EN: "Baby shows signs of tiredness – maybe start winding down?"
+hjem.aiInnsiktUrolig
+  NO: "Baby virker litt overstimulert i dag"
+  EN: "Baby seems a bit overstimulated today"
+hjem.aiInnsiktSover
+  NO: "Baby sover – bruk tiden til å hvile 🌙"
+  EN: "Baby is sleeping – use the time to rest 🌙"
+hjem.seInnsikt
+  NO: "Vis innsikt"
+  EN: "View insights"
+hjem.seAlleInnsikter
+  NO: "Se alle innsikter"
+  EN: "View all insights"
+hjem.analyserer
+  NO: "Analyserer {navn}s mønstre..."
+  EN: "Analyzing {navn}'s patterns..."
+hjem.begynnRegistrereInnsikt
+  NO: "Registrer signaler og søvn noen dager, så begynner Lille å oppdage mønstre hos {navn} 🤍"
+  EN: "Register signals and sleep for a few days, then Lille will start discovering patterns for {navn} 🤍"
+hjem.oppsummeringLurer
+  NO: "🌙 {antall} lurer i dag"
+  EN: "🌙 {antall} naps today"
+hjem.oppsummeringAmming
+  NO: "🍼 {antall} amminger"
+  EN: "🍼 {antall} feedings"
+hjem.amming
+  NO: "Amming"
+  EN: "Feeding"
+hjem.signaler
+  NO: "Signaler"
+  EN: "Signals"
+hjem.uroRo
+  NO: "Uro & ro"
+  EN: "Fussiness & calm"
+hjem.siden
+  NO: "Siden"
+  EN: "Since"
+hjem.trykkForSøvnskjerm
+  NO: "Trykk for å se søvnskjermen"
+  EN: "Tap to see the sleep screen"
+hjem.nærmerSegLeggetid
+  NO: "Nærmer seg leggetid"
+  EN: "Approaching bedtime"
+hjem.vindu
+  NO: "Vindu ca."
+  EN: "Window approx."
+hjem.våkenSiden
+  NO: "Våken siden"
+  EN: "Awake since"
+hjem.registrerOppvåkning
+  NO: "Registrer når {navn} våknet i morges for å starte dagen 🤍"
+  EN: "Register when {navn} woke up this morning to start the day 🤍"
+hjem.registrerOppvåkningKnapp
+  NO: "Registrer oppvåkning nå"
+  EN: "Register wake-up now"
+hjem.ingenRegistreringer
+  NO: "Ingen registreringer ennå i dag"
+  EN: "No entries yet today"
+hjem.trykkForÅBegynne
+  NO: "Trykk + for å begynne"
+  EN: "Tap + to begin"
+hjem.dagbok
+  NO: "Dagbok"
+  EN: "Diary"
+hjem.hendelser
+  NO: "hendelser"
+  EN: "entries"
+hjem.hendelseTilIDag
+  NO: "hendelse{flertall} til i dag – Se dagbok"
+  EN: "entr{flertall} today – View diary"
+hjem.ingenRegistreringerIDag
+  NO: "Ingen registreringer i dag ennå"
+  EN: "No entries yet today"
+hjem.delLilleMedVenn
+  NO: "Del Lille med en venn"
+  EN: "Share Lille with a friend"
+hjem.delBeskrivelse
+  NO: "Del koden med en venn og dere får begge 20% rabatt de første 2 månedene 🤍"
+  EN: "Share the code with a friend and you both get 20% off the first 2 months 🤍"
+hjem.dinRabattkode
+  NO: "Din rabattkode"
+  EN: "Your discount code"
+hjem.rabattBeskrivelse
+  NO: "20% rabatt i 2 måneder"
+  EN: "20% off for 2 months"
+hjem.kopiertBekreftelse
+  NO: "✅ Kopiert!"
+  EN: "✅ Copied!"
+hjem.kopierDelingstekst
+  NO: "📋 Kopier delingstekst"
+  EN: "📋 Copy share text"
+hjem.sendSomSMS
+  NO: "📱 Send som SMS"
+  EN: "📱 Send as SMS"
+hendelse.lur
+  NO: "Lur"
+  EN: "Nap"
+hendelse.sovnet
+  NO: "Sovnet"
+  EN: "Fell asleep"
+hendelse.våknet
+  NO: "Våknet"
+  EN: "Woke up"
+hendelse.nattligOppvåkning
+  NO: "Nattlig oppvåkning"
+  EN: "Night wake-up"
+hendelse.amming
+  NO: "Amming"
+  EN: "Feeding"
+hendelse.bleie
+  NO: "Bleie"
+  EN: "Diaper"
+hendelse.mat
+  NO: "Mat"
+  EN: "Food"
+hendelse.pumping
+  NO: "Pumping"
+  EN: "Pumping"
+profil.tittel
+  NO: "Profil"
+  EN: "Profile"
+profil.loggUt
+  NO: "Logg ut"
+  EN: "Log out"
+profil.språk
+  NO: "Språk"
+  EN: "Language"
+profil.babynsNavn
+  NO: "Babyens navn"
+  EN: "Baby's name"
+profil.skrivNavnHer
+  NO: "Skriv navn her..."
+  EN: "Enter name here..."
+profil.fødselsdato
+  NO: "Fødselsdato"
+  EN: "Date of birth"
+profil.lagretBekreftelse
+  NO: "✓ Lagret!"
+  EN: "✓ Saved!"
+profil.lagreProfil
+  NO: "Lagre profil"
+  EN: "Save profile"
+profil.administrerAbonnement
+  NO: "Administrer abonnementet"
+  EN: "Manage subscription"
+profil.sendTilbakemelding
+  NO: "Send meg gjerne en tilbakemelding 🤍"
+  EN: "I'd love your feedback 🤍"
+profil.tilbakemeldingTittel
+  NO: "Tilbakemelding"
+  EN: "Feedback"
+profil.tilbakemeldingBeskrivelse
+  NO: "Hva synes du om appen? Hva savner du? Alt hjelper! 🤍"
+  EN: "What do you think of the app? What are you missing? Everything helps! 🤍"
+profil.tilbakemeldingPlaceholder
+  NO: "Skriv din tilbakemelding her..."
+  EN: "Write your feedback here..."
+profil.sender
+  NO: "Sender..."
+  EN: "Sending..."
+profil.sendTilbakemeldingKnapp
+  NO: "Send tilbakemelding"
+  EN: "Send feedback"
+profil.tusenTakk
+  NO: "Tusen takk!"
+  EN: "Thank you!"
+profil.tilbakemeldingHjelper
+  NO: "Din tilbakemelding hjelper meg å bygge Lille best mulig 🌿"
+  EN: "Your feedback helps me build Lille as well as possible 🌿"
+profil.basertPåAlder
+  NO: "Basert på alder"
+  EN: "Based on age"
+profil.erGammel
+  NO: "{navn} er {alder} gammel"
+  EN: "{navn} is {alder} old"
+profil.babyen
+  NO: "Babyen"
+  EN: "Baby"
+profil.anbefaltSøvn
+  NO: "Anbefalt søvn"
+  EN: "Recommended sleep"
+profil.perDøgn
+  NO: "per døgn"
+  EN: "per day"
+profil.uker
+  NO: "uker"
+  EN: "weeks"
+profil.måneder
+  NO: "måneder"
+  EN: "months"
+profil.år
+  NO: "år"
+  EN: "years"
+profil.lurer45
+  NO: "4–5 lurer per dag"
+  EN: "4–5 naps per day"
+profil.lurer34
+  NO: "3–4 lurer per dag"
+  EN: "3–4 naps per day"
+profil.lurer23
+  NO: "2–3 lurer per dag"
+  EN: "2–3 naps per day"
+profil.lurer12
+  NO: "1–2 lurer per dag"
+  EN: "1–2 naps per day"
+profil.mer
+  NO: "Mer"
+  EN: "More"
+profil.barn
+  NO: "Barn"
+  EN: "Children"
+profil.familie
+  NO: "Familie"
+  EN: "Family"
+profil.delMedPartner
+  NO: "Del data med partner"
+  EN: "Share with partner"
+profil.lille
+  NO: "Lille"
+  EN: "Lille"
+profil.mittAbonnement
+  NO: "Mitt abonnement"
+  EN: "My subscription"
+profil.premiumAktiv
+  NO: "Premium aktiv"
+  EN: "Premium active"
+profil.inviterVenn
+  NO: "Inviter en venn"
+  EN: "Invite a friend"
+profil.inviterVennUndertekst
+  NO: "Gi bort 20% rabatt i 2 måneder"
+  EN: "Give 20% off for 2 months"
+profil.sendTilbakemeldingUndertekst
+  NO: "Hjelp oss å bli enda bedre"
+  EN: "Help us improve"
+profil.innstillinger
+  NO: "Innstillinger"
+  EN: "Settings"
+profil.personvern
+  NO: "Personvern"
+  EN: "Privacy"
+profil.hjelpOgSupport
+  NO: "Hjelp & support"
+  EN: "Help & support"
+profil.redigerProfil
+  NO: "Rediger profil"
+  EN: "Edit profile"
+profil.dittNavn
+  NO: "Ditt navn"
+  EN: "Your name"
+profil.lagre
+  NO: "Lagre"
+  EN: "Save"
+profil.bruker
+  NO: "Bruker"
+  EN: "User"
+profil.navnPlaceholder
+  NO: "F.eks. Isabella"
+  EN: "E.g. Isabella"
+profil.babyNavnPlaceholder
+  NO: "F.eks. Wilhelm"
+  EN: "E.g. William"
+profil.motivasjonTittel
+  NO: "Du gjør en fantastisk jobb,"
+  EN: "You are doing a fantastic job,"
+profil.motivasjonUndertekst
+  NO: "små steg hver dag blir til store fremskritt."
+  EN: "small steps every day become great progress."
+profil.bunnTittel
+  NO: "Lille er her for å støtte deg"
+  EN: "Lille is here to support you"
+profil.bunnUndertekst
+  NO: "i små og store øyeblikk."
+  EN: "in small and big moments."
+profil.partnerAlleredeLagtTil
+  NO: "Partner er allerede lagt til"
+  EN: "Partner already added"
+profil.partnerAlleredeInfo
+  NO: "Du kan kun dele med én partner. Ta kontakt med oss hvis du vil endre dette."
+  EN: "You can only share with one partner. Contact us if you want to change this."
+profil.delMedPartnerTittel
+  NO: "Del med partner 🤍"
+  EN: "Share with partner 🤍"
+profil.delMedPartnerInfo
+  NO: "Inviter partneren din til å se og registrere data for babyen. De får gratis tilgang – du betaler for begge."
+  EN: "Invite your partner to view and log data for your baby. They get free access – you pay for both."
+profil.partnersEpost
+  NO: "Partners e-post"
+  EN: "Partner's email"
+profil.partnerEpostPlaceholder
+  NO: "partner@epost.no"
+  EN: "partner@email.com"
+profil.sendInvitasjon
+  NO: "Send invitasjon 🤍"
+  EN: "Send invitation 🤍"
+profil.invitasjonSendt
+  NO: "Invitasjon sendt!"
+  EN: "Invitation sent!"
+profil.invitasjonSendtInfo
+  NO: "Vi har sendt en e-post til {epost} med en lenke for å komme i gang."
+  EN: "We have sent an email to {epost} with a link to get started."
+profil.inviterVennModalBeskrivelse
+  NO: "Del appen med en venn som har baby"
+  EN: "Share the app with a friend who has a baby"
+profil.rabattForste2Maaneder
+  NO: "20% rabatt de første 2 månedene"
+  EN: "20% off for the first 2 months"
+profil.kopierDelingstekst
+  NO: "Kopier delingstekst"
+  EN: "Copy share text"
+profil.kopiert
+  NO: "✓ Kopiert!"
+  EN: "✓ Copied!"
+profil.sendSomSms
+  NO: "Send som SMS"
+  EN: "Send as SMS"
+profil.delingstekst
+  NO: "Prøv Lille – appen som hjelper deg å forstå babyen din bedre! 🌙\n\nBruk koden VENN20 for 20% rabatt de første 2 månedene.\n\nLast ned her: https://lilleapp.no"
+  EN: "Try Lille – the app that helps you understand your baby better! 🌙\n\nUse code VENN20 for 20% off the first 2 months.\n\nDownload here: https://lilleapp.no"
+innlogging.velkommen
+  NO: "Velkommen til Lille"
+  EN: "Welcome to Lille"
+innlogging.heiIgjen
+  NO: "Hei igjen!"
+  EN: "Hi again!"
+innlogging.loggInn
+  NO: "Logg inn"
+  EN: "Log in"
+innlogging.opprettKonto
+  NO: "Opprett konto"
+  EN: "Create account"
+innlogging.tagline
+  NO: "Din babys språk, i dine hender"
+  EN: "Your baby's language, in your hands"
+innlogging.epostPlaceholder
+  NO: "din@epost.no"
+  EN: "you@email.com"
+innlogging.passordPlaceholder
+  NO: "Minst 6 tegn"
+  EN: "At least 6 characters"
+innlogging.feilEpostPassord
+  NO: "Feil e-post eller passord."
+  EN: "Wrong email or password."
+innlogging.noeGikkGalt
+  NO: "Noe gikk galt. Prøv igjen."
+  EN: "Something went wrong. Try again."
+innlogging.harAlleredeKonto
+  NO: "Har allerede konto? Logg inn"
+  EN: "Already have an account? Log in"
+innlogging.nyBruker
+  NO: "Ny bruker? Opprett konto"
+  EN: "New user? Create account"
+innlogging.glemtPassord
+  NO: "Glemt passord?"
+  EN: "Forgot password?"
+innlogging.resetSendt
+  NO: "Sjekk e-posten din – vi har sendt en lenke for å tilbakestille passordet."
+  EN: "Check your email – we sent a link to reset your password."
+innlogging.skrivEpostForReset
+  NO: "Skriv inn e-postadressen din først."
+  EN: "Enter your email address first."
+innlogging.alleredeKontoTittel
+  NO: "Du har allerede en konto"
+  EN: "You already have an account"
+innlogging.alleredeKontoTekst
+  NO: "Prøv å logge inn i stedet."
+  EN: "Try logging in instead."
+innlogging.gåTilInnlogging
+  NO: "Gå til innlogging"
+  EN: "Go to login"
+innlogging.ventLitt
+  NO: "Vent litt…"
+  EN: "Please wait…"
+innlogging.opprettOgFortsett
+  NO: "Opprett konto og fortsett"
+  EN: "Create account and continue"
+innlogging.loggInnOgFortsett
+  NO: "Logg inn og fortsett"
+  EN: "Log in and continue"
+kode.tittel
+  NO: "Løs inn kode"
+  EN: "Redeem code"
+kode.undertittel
+  NO: "Har du fått en rabatt- eller ambassadørkode? Skriv den inn her."
+  EN: "Got a discount or ambassador code? Enter it here."
+kode.placeholder
+  NO: "F.eks. NATASHA20"
+  EN: "E.g. NATASHA20"
+kode.fortsett
+  NO: "Fortsett"
+  EN: "Continue"
+kode.tomKode
+  NO: "Skriv inn koden din for å fortsette."
+  EN: "Enter your code to continue."
+kode.loserInn
+  NO: "Du løser inn:"
+  EN: "You're redeeming:"
+kode.endrekode
+  NO: "Bytt kode"
+  EN: "Change code"
+kode.innloggetSom
+  NO: "Logget inn som"
+  EN: "Logged in as"
+kode.losInn
+  NO: "Løs inn kode"
+  EN: "Redeem code"
+kode.loserInnLaster
+  NO: "Løser inn…"
+  EN: "Redeeming…"
+kode.suksessTittel
+  NO: "Koden er innløst!"
+  EN: "Code redeemed!"
+kode.suksessStandard
+  NO: "Du har nå tilgang. Åpne appen og logg inn med denne kontoen."
+  EN: "You now have access. Open the app and log in with this account."
+kode.gåTilLille
+  NO: "Gå til Lille"
+  EN: "Go to Lille"
+kode.ugyldigKode
+  NO: "Vi fant ikke den koden. Sjekk stavemåten og prøv igjen."
+  EN: "We couldn't find that code. Check the spelling and try again."
+kode.inaktivKode
+  NO: "Denne koden er ikke lenger aktiv."
+  EN: "This code is no longer active."
+kode.oppbrukt
+  NO: "Denne koden er allerede brukt opp."
+  EN: "This code has already been fully used."
+kode.alleredeBrukt
+  NO: "Du har allerede brukt denne koden."
+  EN: "You've already used this code."
+kode.måVæreInnlogget
+  NO: "Du må være innlogget for å løse inn koden."
+  EN: "You need to be logged in to redeem this code."
+kode.noeGikkGalt
+  NO: "Noe gikk galt — prøv igjen om litt."
+  EN: "Something went wrong — please try again shortly."
+consent.terms
+  NO: "Jeg godtar {terms} og {privacy}"
+  EN: "I accept the {terms} and the {privacy}"
+consent.terms.link
+  NO: "vilkår for bruk"
+  EN: "terms of use"
+consent.privacy.link
+  NO: "personvernerklæringen"
+  EN: "privacy policy"
+consent.marketing
+  NO: "Jeg vil gjerne motta tips og nyheter på e-post (valgfritt)"
+  EN: "I would like tips and news by email (optional)"
+consent.required
+  NO: "Du må godta vilkårene for å opprette konto"
+  EN: "You must accept the terms to create an account"
+settings.consent.title
+  NO: "Samtykker"
+  EN: "Consents"
+settings.consent.withdraw
+  NO: "Trekk tilbake samtykke"
+  EN: "Withdraw consent"
+settings.consent.vilkaarGodtatt
+  NO: "Vilkår godtatt {dato} (versjon {versjon})"
+  EN: "Terms accepted {dato} (version {versjon})"
+settings.consent.personvernGodtatt
+  NO: "Personvern godtatt {dato} (versjon {versjon})"
+  EN: "Privacy accepted {dato} (version {versjon})"
+settings.consent.ikkeDokumentert
+  NO: "Ikke dokumentert"
+  EN: "Not recorded"
+settings.consent.markedsforing
+  NO: "Tips og nyheter på e-post"
+  EN: "Tips and news by email"
+settings.consent.slettKonto
+  NO: "Slett konto og data"
+  EN: "Delete account and data"
+settings.consent.slettKontoInfo
+  NO: "Dette sletter kontoen din og alle registrerte data permanent. Handling kan ikke angres."
+  EN: "This permanently deletes your account and all logged data. This cannot be undone."
+settings.consent.slettKontoBekreft
+  NO: "Ja, slett kontoen min"
+  EN: "Yes, delete my account"
+settings.consent.slettFeilet
+  NO: "Kunne ikke slette kontoen. Prøv igjen."
+  EN: "Could not delete the account. Try again."
+settings.consent.vilkaarLenke
+  NO: "Les vilkår for bruk"
+  EN: "Read terms of use"
+tilbakestillPassord.tittel
+  NO: "Velg nytt passord"
+  EN: "Choose a new password"
+tilbakestillPassord.nyttPassord
+  NO: "Nytt passord"
+  EN: "New password"
+tilbakestillPassord.lagre
+  NO: "Lagre nytt passord"
+  EN: "Save new password"
+tilbakestillPassord.suksess
+  NO: "Passordet er oppdatert! Du sendes til innlogging..."
+  EN: "Password updated! Redirecting to login..."
+tilbakestillPassord.ugyldigLenke
+  NO: "Lenken er ugyldig eller utløpt. Be om en ny fra innloggingssiden."
+  EN: "The link is invalid or expired. Request a new one from the login page."
+paywall.tittel
+  NO: "Lille Pro"
+  EN: "Lille Pro"
+paywall.beskrivelse
+  NO: "Forstå babyens unike rytme med full tilgang til alle funksjoner."
+  EN: "Understand your baby's unique rhythm with full access to all features."
+paywall.årlig
+  NO: "Årlig abonnement"
+  EN: "Yearly subscription"
+paywall.årligUndertekst
+  NO: "Spar sammenlignet med månedlig"
+  EN: "Save compared to monthly"
+paywall.årligPris
+  NO: "Se pris"
+  EN: "See price"
+paywall.månedlig
+  NO: "Månedlig abonnement"
+  EN: "Monthly subscription"
+paywall.månedligUndertekst
+  NO: "7 dagers gratis prøveperiode"
+  EN: "7-day free trial"
+paywall.månedligPris
+  NO: "Se pris"
+  EN: "See price"
+paywall.bestVerdi
+  NO: "BEST VERDI"
+  EN: "BEST VALUE"
+paywall.fordel1
+  NO: "Søvnsporing og AI-innsikt"
+  EN: "Sleep tracking and AI insights"
+paywall.fordel2
+  NO: "Mat, amming og signaler"
+  EN: "Feeding, nursing and signals"
+paywall.fordel3
+  NO: "Del med partner"
+  EN: "Share with partner"
+paywall.gjenopprettKjøp
+  NO: "Gjenopprett kjøp"
+  EN: "Restore purchases"
+paywall.gjenoppretter
+  NO: "Gjenoppretter..."
+  EN: "Restoring..."
+paywall.kjøpFullført
+  NO: "Abonnement aktivert!"
+  EN: "Subscription activated!"
+paywall.gjenopprettet
+  NO: "Kjøp gjenopprettet!"
+  EN: "Purchases restored!"
+paywall.kjøpFeilet
+  NO: "Kjøpet feilet. Prøv igjen."
+  EN: "Purchase failed. Try again."
+paywall.ingentingÅGjenopprette
+  NO: "Ingen tidligere kjøp funnet."
+  EN: "No previous purchases found."
+paywall.vilkår
+  NO: "Abonnementet fornyes automatisk. Du kan si opp når som helst i App Store-innstillingene."
+  EN: "Subscription renews automatically. You can cancel anytime in App Store settings."
+paywall.personvernerklæring
+  NO: "Personvernerklæring"
+  EN: "Privacy Policy"
+paywall.vilkårForBruk
+  NO: "Vilkår for bruk"
+  EN: "Terms of Use"
+paywall.administrerInfo
+  NO: "Administrer abonnementet i App Store-innstillingene på enheten din."
+  EN: "Manage your subscription in App Store settings on your device."
+paywall.gratisPrøveTittel
+  NO: "Start din 7-dagers gratis prøveperiode"
+  EN: "Start your 7-day free trial"
+paywall.startGratisPrøve
+  NO: "Start gratis prøveperiode"
+  EN: "Start Free Trial"
+paywall.starterPrøve
+  NO: "Starter..."
+  EN: "Starting..."
+paywall.avbrytNårSomHelst
+  NO: "Si opp når som helst før 7 dager – ingen betaling"
+  EN: "Cancel anytime before 7 days – no charge"
+paywall.etterPrøve
+  NO: "etter prøveperioden"
+  EN: "after free trial"
+paywall.perMåned
+  NO: "/måned"
+  EN: "/month"
+paywall.perÅr
+  NO: "/år"
+  EN: "/year"
+paywall.klarPrisinfo
+  NO: "7 dager gratis, deretter {pris}/mnd. Fornyes automatisk. Si opp når som helst i abonnementsinnstillingene."
+  EN: "7 days free, then {pris}/mo. Renews automatically. Cancel anytime in subscription settings."
+paywall.gratisMerke
+  NO: "Du kan også logge søvn gratis — uten kort"
+  EN: "You can also log sleep for free — no card needed"
+paywall.faqTittel
+  NO: "Vanlige spørsmål"
+  EN: "FAQ"
+paywall.faq1q
+  NO: "Hva skjer når prøveperioden er over?"
+  EN: "What happens when the trial ends?"
+paywall.faq1a
+  NO: "Hvis du ikke sier opp, går abonnementet over til betalt plan til prisen du valgte. Sier du opp i tide, belastes du ikke."
+  EN: "If you don’t cancel, your plan continues at the price you chose. If you cancel in time, you won’t be charged."
+paywall.faq2q
+  NO: "Blir jeg trukket automatisk?"
+  EN: "Will I be charged automatically?"
+paywall.faq2a
+  NO: "Ja, etter prøveperioden — med mindre du sier opp før den er over."
+  EN: "Yes, after the trial — unless you cancel before it ends."
+paywall.faq3q
+  NO: "Kan jeg avslutte når som helst?"
+  EN: "Can I cancel anytime?"
+paywall.faq3a
+  NO: "Ja. Si opp i App Store-, Google Play- eller Stripe-innstillingene. Du beholder tilgang ut perioden du allerede har betalt/prøvd."
+  EN: "Yes. Cancel in App Store, Google Play or Stripe settings. You keep access until the end of the period you already paid for or tried."
+paywall.faq4q
+  NO: "Hva får jeg gratis?"
+  EN: "What’s free?"
+paywall.faq4a
+  NO: "Du kan logge søvn (lur og natt) gratis uten tidsbegrensning. Øvrige funksjoner krever Lille Pro."
+  EN: "You can log sleep (naps and nights) for free with no time limit. Other features need Lille Pro."
+trialEnded.tittel
+  NO: "Prøveperioden er over"
+  EN: "Your trial has ended"
+trialEnded.oppsummering
+  NO: "Du logget {lurer} lurer og {amming} amminger."
+  EN: "You logged {lurer} naps and {amming} feedings."
+trialEnded.oppsummeringTom
+  NO: "Dataene dine er trygge — de er ikke slettet."
+  EN: "Your data is safe — nothing was deleted."
+trialEnded.gratisSøvn
+  NO: "Du kan fortsatt logge søvn gratis."
+  EN: "You can still log sleep for free."
+trialEnded.abonner
+  NO: "Abonner på Lille Pro"
+  EN: "Subscribe to Lille Pro"
+trialEnded.fortsettGratis
+  NO: "Fortsett med gratis søvnlogging"
+  EN: "Continue with free sleep logging"
+pro.prøveTil
+  NO: "Prøveperioden varer til {dato}"
+  EN: "Trial lasts until {dato}"
+pro.gjenopprettHint
+  NO: "Vi får ikke bekreftet abonnementet ditt akkurat nå. Har du allerede betalt? Gjenopprett kjøp."
+  EN: "We can’t confirm your subscription right now. Already paid? Restore purchases."
+søvn.hvaSlagsSøvn
+  NO: "Hva slags søvn skal du registrere?"
+  EN: "What kind of sleep do you want to register?"
+søvn.velgType
+  NO: "Velg type for best mulig innsikt"
+  EN: "Choose type for the best insight"
+søvn.dagtidssøvn
+  NO: "Dagtidssøvn"
+  EN: "Daytime sleep"
+søvn.natta
+  NO: "Natta"
+  EN: "Night"
+søvn.nattesøvn
+  NO: "Nattesøvn"
+  EN: "Night sleep"
+søvn.tips
+  NO: "Tips"
+  EN: "Tip"
+søvn.tipsBeskrivelse
+  NO: "Ved å registrere riktig søvntype får du mer treffsikre innsikter."
+  EN: "By registering the correct sleep type, you get more accurate insights."
+søvn.lurenPågår
+  NO: "Luren pågår"
+  EN: "Nap in progress"
+søvn.trykkForJustere
+  NO: "Trykk for å justere tid"
+  EN: "Tap to adjust time"
+søvn.avsluttLur
+  NO: "Avslutt lur"
+  EN: "End nap"
+søvn.avsluttNatta
+  NO: "Avslutt natta"
+  EN: "End the night"
+søvn.signalerFørLur
+  NO: "Signaler før lur"
+  EN: "Signals before nap"
+søvn.hvaHarBabyenVist
+  NO: "Hva har babyen vist før luren?"
+  EN: "What has the baby shown before the nap?"
+søvn.leggTilEgetSignal
+  NO: "Legg til eget signal"
+  EN: "Add your own signal"
+søvn.iDag
+  NO: "I dag"
+  EN: "Today"
+søvn.trykkForRedigereTid
+  NO: "Trykk på en lur for å redigere tid"
+  EN: "Tap a nap to edit the time"
+søvn.lurAvsluttet
+  NO: "LUR AVSLUTTET"
+  EN: "NAP ENDED"
+søvn.lur_caps
+  NO: "LUR"
+  EN: "NAP"
+søvn.lurRegistrert
+  NO: "Lur registrert!"
+  EN: "Nap registered!"
+søvn.tilbake
+  NO: "Tilbake 🌿"
+  EN: "Back 🌿"
+søvn.justerTidspunkt
+  NO: "Juster tidspunkt"
+  EN: "Adjust time"
+søvn.natta_caps
+  NO: "NATTA"
+  EN: "NIGHT"
+søvn.babySover
+  NO: "Baby sover"
+  EN: "Baby is sleeping"
+søvn.nattensInnsikt
+  NO: "Nattens innsikt"
+  EN: "Tonight's insight"
+søvn.signalerIKveld
+  NO: "Signaler i kveld"
+  EN: "Signals tonight"
+søvn.nattensTidslinje
+  NO: "De siste 24 timene"
+  EN: "The last 24 hours"
+søvn.skapRo
+  NO: "Skap ro"
+  EN: "Create calm"
+søvn.lyder
+  NO: "Lyder"
+  EN: "Sounds"
+søvn.nattlys
+  NO: "Nattlys"
+  EN: "Night light"
+søvn.pustMedMeg
+  NO: "🌿 Reguler deg først"
+  EN: "🌿 Regulate yourself first"
+søvn.etterregistrer
+  NO: "Etterregistrer søvn"
+  EN: "Add past sleep"
+søvn.etterregistrerBeskrivelse
+  NO: "Legg til søvn fra tidligere i dag eller i går"
+  EN: "Add sleep from earlier today or yesterday"
+søvn.nattligOppvåkningKnapp
+  NO: "Nattlig\noppvåkning"
+  EN: "Night\nwake-up"
+søvn.startSøvnenIgjen
+  NO: "Start søvnen\nigjen"
+  EN: "Start sleep\nagain"
+søvn.våkenSiden
+  NO: "Våken siden"
+  EN: "Awake since"
+søvn.siden
+  NO: "Siden"
+  EN: "Since"
+søvn.godMorgen
+  NO: "God morgen! 🌿"
+  EN: "Good morning! 🌿"
+søvn.nattaErOver
+  NO: "Natta er over – ny dag begynner"
+  EN: "The night is over – a new day begins"
+søvn.babySovI
+  NO: "Baby sov i {timer} timer og {minutter} minutter"
+  EN: "Baby slept for {timer} hours and {minutter} minutes"
+søvn.nattensSammendrag
+  NO: "Nattens sammendrag"
+  EN: "Night's summary"
+søvn.totalSøvntid
+  NO: "Total søvntid"
+  EN: "Total sleep time"
+søvn.oppvåkninger
+  NO: "Oppvåkninger"
+  EN: "Wake-ups"
+søvn.lengsteStrekk
+  NO: "Lengste strekk"
+  EN: "Longest stretch"
+søvn.startDagen
+  NO: "Start dagen 🌿"
+  EN: "Start the day 🌿"
+søvn.ikkeRiktigTidspunkt
+  NO: "Ikke riktig tidspunkt? Juster oppvåkning"
+  EN: "Wrong time? Adjust wake-up"
+søvn.nårVåknetBabyen
+  NO: "Når våknet babyen?"
+  EN: "When did the baby wake up?"
+søvn.lagreOppvåkning
+  NO: "Lagre oppvåkning"
+  EN: "Save wake-up"
+søvn.leggTilTidligereSøvn
+  NO: "Legg til tidligere søvn"
+  EN: "Add earlier sleep"
+søvn.dato
+  NO: "Dato"
+  EN: "Date"
+søvn.starttid
+  NO: "Starttid"
+  EN: "Start time"
+søvn.sluttid
+  NO: "Sluttid"
+  EN: "End time"
+søvn.soverBabyenFortsatt
+  NO: "Sover babyen fortsatt? La sluttid stå tom."
+  EN: "Is the baby still sleeping? Leave end time empty."
+søvn.registrerNoeAnnet
+  NO: "Registrer noe annet"
+  EN: "Register something else"
+søvn.annetPlaceholder
+  NO: "F.eks. trøstet, ga vann, skiftet pyjamas..."
+  EN: "E.g. comforted, gave water, changed pajamas..."
+søvn.signalGnedØynene
+  NO: "Gned øynene"
+  EN: "Rubbing eyes"
+søvn.signalGjesping
+  NO: "Gjesping"
+  EN: "Yawning"
+søvn.signalStirretTomt
+  NO: "Stirret tomt"
+  EN: "Blank stare"
+søvn.signalVendteHodet
+  NO: "Vendte hodet"
+  EN: "Turning head away"
+innsikt.tittel
+  NO: "Innsikt"
+  EN: "Insights"
+innsikt.basertPå7Dager
+  NO: "Basert på de siste 7 dagene"
+  EN: "Based on the last 7 days"
+innsikt.babyensSpråk
+  NO: "💛 Babyens språk"
+  EN: "💛 Baby's language"
+innsikt.innsiktFane
+  NO: "✨ Innsikt"
+  EN: "✨ Insights"
+innsikt.velkommen
+  NO: "Velkommen til Babyens språk!"
+  EN: "Welcome to Baby's Language!"
+innsikt.velkommenBeskrivelse
+  NO: "Her lærer vi å forstå de små signalene som forteller oss hvordan {navn} har det."
+  EN: "Here we learn to understand the small signals that tell us how {navn} is doing."
+innsikt.joMerViRegistrerer
+  NO: "Jo mer vi registrerer, desto bedre innsikt får du."
+  EN: "The more we register, the better insight you get."
+innsikt.registrerFørsteSignal
+  NO: "Registrer første signal"
+  EN: "Register first signal"
+innsikt.detteVilDuFåInnsiktI
+  NO: "Dette vil du få innsikt i"
+  EN: "This is what you'll gain insight into"
+innsikt.vanligsteSignaler
+  NO: "Vanligste signaler"
+  EN: "Most common signals"
+innsikt.vanligsteSignalerTekst
+  NO: "Se hvilke signaler som brukes oftest av barnet ditt."
+  EN: "See which signals your child uses most often."
+innsikt.signalrekkefølge
+  NO: "Signalrekkefølge"
+  EN: "Signal sequence"
+innsikt.signalrekkefølgeTekst
+  NO: "Oppdag rekkefølgen babyen din bruker før noe skjer."
+  EN: "Discover the sequence your baby uses before something happens."
+innsikt.overganger
+  NO: "Overganger"
+  EN: "Transitions"
+innsikt.overgangerTekst
+  NO: "Forstå overgangen fra rolig → trøtt → sover og mer."
+  EN: "Understand the transition from calm → tired → asleep and more."
+innsikt.personligeMønstre
+  NO: "Personlige mønstre"
+  EN: "Personal patterns"
+innsikt.personligeMønstreTekst
+  NO: "AI finner mønstre som er unike for barnet ditt."
+  EN: "AI finds patterns unique to your child."
+innsikt.slikKommerDuIGang
+  NO: "Slik kommer du i gang"
+  EN: "How to get started"
+innsikt.registrerSmåSignaler
+  NO: "Registrer små signaler i hverdagen. Det kan være ansiktsuttrykk, lyder, bevegelser eller kroppsspråk."
+  EN: "Register small signals in everyday life. It could be facial expressions, sounds, movements or body language."
+innsikt.stegTrykkPlus
+  NO: "Trykk på + for å registrere et signal"
+  EN: "Tap + to register a signal"
+innsikt.stegVelgHvaDuObserverte
+  NO: "Velg hva du observerte"
+  EN: "Choose what you observed"
+innsikt.stegViLærer
+  NO: "Vi lærer og finner mønstre sammen"
+  EN: "We learn and find patterns together"
+innsikt.nyligRegistrerteSignaler
+  NO: "Nylig registrerte signaler"
+  EN: "Recently registered signals"
+innsikt.herVilDineSignalerVises
+  NO: "Her vil dine registrerte signaler vises."
+  EN: "Your registered signals will appear here."
+innsikt.duHarIkkeRegistrertSignaler
+  NO: "Du har ikke registrert noen signaler enda."
+  EN: "You haven't registered any signals yet."
+innsikt.analysererMønstre
+  NO: "Analyserer {navn}s mønstre..."
+  EN: "Analyzing {navn}'s patterns..."
+innsikt.aiObservasjon
+  NO: "✦ AI-OBSERVASJON"
+  EN: "✦ AI OBSERVATION"
+innsikt.viserOfteDisseSignalene
+  NO: "{navn} viser ofte disse signalene før han/hun blir trøtt:"
+  EN: "{navn} often shows these signals before getting tired:"
+innsikt.viserOftest
+  NO: "viser oftest"
+  EN: "most often shows"
+innsikt.førHanBlirTrøtt
+  NO: "før han blir trøtt."
+  EN: "before getting tired."
+innsikt.registrertGanger
+  NO: "Registrert {antall} ganger."
+  EN: "Registered {antall} times."
+innsikt.gjennomsnittMinutterFraSignal
+  NO: "Gjennomsnitt {min} minutter fra første signal til søvn"
+  EN: "Average {min} minutes from first signal to sleep"
+innsikt.sover
+  NO: "Sover"
+  EN: "Sleeping"
+innsikt.vanligsteMønster
+  NO: "Et av de vanligste mønstrene vi ser hos {navn}"
+  EN: "One of the most common patterns we see in {navn}"
+innsikt.mønsterFørProsent
+  NO: "Et mønster vi ser før {pst}% av lurene"
+  EN: "A pattern we see before {pst}% of naps"
+innsikt.aiLærerFortsatt
+  NO: "AI-en lærer fortsatt {navn}s mønstre – registrer gjerne flere"
+  EN: "The AI is still learning {navn}'s patterns – feel free to register more"
+innsikt.oppdaterAnalyse
+  NO: "Oppdater analyse"
+  EN: "Update analysis"
+innsikt.overgangerViSerHos
+  NO: "Overganger vi ser hos {navn}"
+  EN: "Transitions we see in {navn}"
+innsikt.seAlle
+  NO: "Se alle"
+  EN: "See all"
+innsikt.registrerFlereForSikrere
+  NO: "Registrer flere signaler for sikrere innsikt"
+  EN: "Register more signals for more reliable insight"
+innsikt.basertPåRegistreringer
+  NO: "Basert på {antall} registreringer"
+  EN: "Based on {antall} registrations"
+innsikt.typiskVeiModSøvn
+  NO: "Typisk vei mot søvn"
+  EN: "Typical path to sleep"
+innsikt.registrertIProsentAvLurene
+  NO: "Registrert i {pst}% av lurene."
+  EN: "Registered in {pst}% of naps."
+innsikt.typiskVeiTilUro
+  NO: "Typisk vei til uro"
+  EN: "Typical path to fussiness"
+innsikt.registrertI61Prosent
+  NO: "Registrert i 61% av gangene."
+  EN: "Registered in 61% of cases."
+innsikt.roligTilFørsteSignal
+  NO: "Rolig → første signal"
+  EN: "Calm → first signal"
+innsikt.førsteSignalTilSøvn
+  NO: "Første signal → søvn"
+  EN: "First signal → sleep"
+innsikt.førsteSignalTilUro
+  NO: "Første signal → uro"
+  EN: "First signal → fussiness"
+innsikt.gjennomsnitt
+  NO: "Gjennomsnitt"
+  EN: "Average"
+innsikt.denneUkenHarViLært
+  NO: "💛 Denne uken har vi lært"
+  EN: "💛 This week we learned"
+innsikt.sisteRegistrerteSignaler
+  NO: "Siste registrerte signaler"
+  EN: "Recently registered signals"
+innsikt.varighet
+  NO: "Varighet"
+  EN: "Duration"
+innsikt.signalmønster
+  NO: "{navn}s signalmønster"
+  EN: "{navn}'s signal pattern"
+innsikt.aiAnalysererKommunikasjon
+  NO: "AI analyserer {navn}s unike kommunikasjon"
+  EN: "AI analyzes {navn}'s unique communication"
+innsikt.dagensSøvnbehov
+  NO: "Dagens søvnbehov"
+  EN: "Today's sleep need"
+innsikt.basertPåAlder
+  NO: "Basert på {navn}s alder"
+  EN: "Based on {navn}'s age"
+innsikt.sovetIDag
+  NO: "Sovet i dag"
+  EN: "Slept today"
+innsikt.avBehov
+  NO: "av {timer}t behov"
+  EN: "of {timer}h need"
+innsikt.fåttNokSøvn
+  NO: "{navn} har fått nok søvn i dag! 🌿"
+  EN: "{navn} has had enough sleep today! 🌿"
+innsikt.prosentAvDagsbehovetBraJobbet
+  NO: "{pst}% av dagsbehovet – bra jobbet!"
+  EN: "{pst}% of the daily need – well done!"
+innsikt.prosentAvDagsbehovetSåLangt
+  NO: "{pst}% av dagsbehovet så langt"
+  EN: "{pst}% of the daily need so far"
+innsikt.søvnSiste7Dager
+  NO: "Søvn siste 7 dager"
+  EN: "Sleep last 7 days"
+innsikt.lurerRegistrert
+  NO: "{antall} lurer registrert"
+  EN: "{antall} naps registered"
+innsikt.amminger
+  NO: "Amminger"
+  EN: "Feedings"
+innsikt.siste7Dager
+  NO: "siste 7 dager"
+  EN: "last 7 days"
+innsikt.bleieskift
+  NO: "Bleieskift"
+  EN: "Diaper changes"
+innsikt.alder
+  NO: "Alder"
+  EN: "Age"
+innsikt.måned
+  NO: "mnd"
+  EN: "mo"
+innsikt.personligeInnsikter
+  NO: "Personlige innsikter"
+  EN: "Personal insights"
+innsikt.aiAnalysererMønstre
+  NO: "AI analyserer {navn}s mønstre"
+  EN: "AI analyzes {navn}'s patterns"
+innsikt.analyserData
+  NO: "Se hva Lille har lært om {navn}"
+  EN: "See what Lille has learned about {navn}"
+innsikt.ingenDataEnnå
+  NO: "Registrer søvn og amming noen dager, så vil Lille begynne å oppdage mønstre 🤍"
+  EN: "Register sleep and feeding for a few days, then Lille will start discovering patterns 🤍"
+innsikt.oppdaterInnsikter
+  NO: "Oppdater innsikter"
+  EN: "Update insights"
+innsikt.kunneIkkeLasteInnsikter
+  NO: "✨ Kunne ikke laste innsikter akkurat nå."
+  EN: "✨ Could not load insights right now."
+innsikt.kunneIkkeLasteSpråk
+  NO: "💛 Kunne ikke laste babyens språk akkurat nå."
+  EN: "💛 Could not load baby's language right now."
+amming.tittel
+  NO: "Amming"
+  EN: "Feeding"
+amming.venstre
+  NO: "Venstre"
+  EN: "Left"
+amming.høyre
+  NO: "Høyre"
+  EN: "Right"
+amming.venstrePil
+  NO: "← Venstre"
+  EN: "← Left"
+amming.høyrePil
+  NO: "Høyre →"
+  EN: "Right →"
+amming.venstre_bryst
+  NO: "← Venstre bryst"
+  EN: "← Left breast"
+amming.høyre_bryst
+  NO: "Høyre bryst →"
+  EN: "Right breast →"
+amming.aktivtBryst
+  NO: "{retning} bryst"
+  EN: "{retning} breast"
+amming.anbefalt
+  NO: "Anbefalt: {bryst} bryst"
+  EN: "Recommended: {bryst} breast"
+amming.ammerNå
+  NO: "Ammer nå"
+  EN: "Feeding now"
+amming.siden
+  NO: "Siden {tid}"
+  EN: "Since {tid}"
+amming.trykkForÅStarte
+  NO: "Trykk for å starte"
+  EN: "Tap to start"
+amming.byttBryst
+  NO: "Bytt bryst"
+  EN: "Switch breast"
+amming.avsluttAmming
+  NO: "Avslutt amming"
+  EN: "End feeding"
+amming.startBryst
+  NO: "🤍 Start {bryst} bryst"
+  EN: "🤍 Start {bryst} breast"
+amming.sisteAmming
+  NO: "Siste amming"
+  EN: "Last feeding"
+amming.neste
+  NO: "Neste:"
+  EN: "Next:"
+amming.iDag
+  NO: "✨ I dag"
+  EN: "✨ Today"
+amming.nesteBryst
+  NO: "Neste bryst"
+  EN: "Next breast"
+amming.ammingFlertall
+  NO: "amminger"
+  EN: "feedings"
+amming.ammingEntall
+  NO: "amming"
+  EN: "feeding"
+amming.minutterTotalt
+  NO: "minutter totalt"
+  EN: "minutes total"
+amming.ammeloggIDag
+  NO: "Ammelogg i dag"
+  EN: "Today's feeding log"
+amming.nårStartetAmmingen
+  NO: "Når startet ammingen?"
+  EN: "When did feeding start?"
+amming.lagre
+  NO: "Lagre"
+  EN: "Save"
+amming.startet
+  NO: "Startet"
+  EN: "Started"
+amming.sluttet
+  NO: "Sluttet"
+  EN: "Ended"
+amming.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+amming.lagreAmming
+  NO: "Lagre amming"
+  EN: "Save feeding"
+amming.redigerAmming
+  NO: "Rediger amming"
+  EN: "Edit feeding"
+amming.lagreEndringer
+  NO: "Lagre endringer"
+  EN: "Save changes"
+amming.slettAmming
+  NO: "Slett amming"
+  EN: "Delete feeding"
+bleie.tittel
+  NO: "Bleie"
+  EN: "Diaper"
+bleie.undertittel
+  NO: "Registrer bleieskift raskt og enkelt"
+  EN: "Register diaper changes quickly and easily"
+bleie.registrert
+  NO: "Registrert!"
+  EN: "Registered!"
+bleie.sisteBleieskift
+  NO: "Siste bleieskift"
+  EN: "Last diaper change"
+bleie.innsikt
+  NO: "✨ Innsikt"
+  EN: "✨ Insight"
+bleie.innsiktFlott
+  NO: "{antall} bleieskift i dag – flott oversikt! 🤍"
+  EN: "{antall} diaper changes today – great overview! 🤍"
+bleie.innsiktAntall
+  NO: "{antall} bleieskift registrert i dag."
+  EN: "{antall} diaper changes registered today."
+bleie.type
+  NO: "Type"
+  EN: "Type"
+bleie.typeVåt
+  NO: "Våt"
+  EN: "Wet"
+bleie.typeTørr
+  NO: "Tørr"
+  EN: "Dry"
+bleie.typeAvføring
+  NO: "Avføring"
+  EN: "Soiled"
+bleie.tidspunkt
+  NO: "Tidspunkt"
+  EN: "Time"
+bleie.notatValgfritt
+  NO: "Bleie (valgfritt)"
+  EN: "Note (optional)"
+bleie.notatPlaceholder
+  NO: "Skriv en liten notat..."
+  EN: "Write a small note..."
+bleie.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+bleie.lagre
+  NO: "Lagre"
+  EN: "Save"
+bleie.bleieskiftIDag
+  NO: "Bleieskift i dag"
+  EN: "Today's diaper changes"
+bleie.totalt
+  NO: "{antall} totalt"
+  EN: "{antall} total"
+aktivitet.tittel
+  NO: "Aktivitet"
+  EN: "Activity"
+aktivitet.undertittel
+  NO: "Registrer aktiviteter og milepæler"
+  EN: "Register activities and milestones"
+aktivitet.registrert
+  NO: "Registrert!"
+  EN: "Registered!"
+aktivitet.faneAktivitet
+  NO: "🌿 Aktivitet"
+  EN: "🌿 Activity"
+aktivitet.faneMilepæler
+  NO: "⭐ Milepæler"
+  EN: "⭐ Milestones"
+aktivitet.aktiviteterIDag
+  NO: "aktiviteter i dag"
+  EN: "activities today"
+aktivitet.minutterTotalt
+  NO: "minutter totalt"
+  EN: "minutes total"
+aktivitet.aktiviteterLoggtittel
+  NO: "Aktiviteter i dag"
+  EN: "Activities today"
+aktivitet.ingenAktiviteter
+  NO: "Ingen aktiviteter registrert i dag"
+  EN: "No activities registered today"
+aktivitet.registrerAktivitetKnapp
+  NO: "+ Registrer aktivitet"
+  EN: "+ Register activity"
+aktivitet.ingenMilepæler
+  NO: "Ingen milepæler registrert ennå"
+  EN: "No milestones registered yet"
+aktivitet.leggTilMilepæl
+  NO: "⭐ Legg til milepæl"
+  EN: "⭐ Add milestone"
+aktivitet.registrerAktivitetTittel
+  NO: "Registrer aktivitet"
+  EN: "Register activity"
+aktivitet.typeAktivitet
+  NO: "Type aktivitet"
+  EN: "Activity type"
+aktivitet.varighet
+  NO: "Varighet"
+  EN: "Duration"
+aktivitet.notatValgfritt
+  NO: "Notat (valgfritt)"
+  EN: "Note (optional)"
+aktivitet.notatPlaceholder
+  NO: "F.eks. lekte med baller i parken..."
+  EN: "E.g. played with balls in the park..."
+aktivitet.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+aktivitet.lagreAktivitet
+  NO: "Lagre aktivitet"
+  EN: "Save activity"
+aktivitet.leggTilMilepælTittel
+  NO: "Legg til milepæl ⭐"
+  EN: "Add milestone ⭐"
+aktivitet.velgEllerSkriv
+  NO: "Velg eller skriv selv"
+  EN: "Choose or write your own"
+aktivitet.ellerSkrivEgen
+  NO: "Eller skriv din egen..."
+  EN: "Or write your own..."
+aktivitet.dato
+  NO: "Dato"
+  EN: "Date"
+aktivitet.lagreMilepæl
+  NO: "⭐ Lagre milepæl"
+  EN: "⭐ Save milestone"
+aktivitet.typeLek
+  NO: "Lek"
+  EN: "Play"
+aktivitet.typeTur
+  NO: "Tur"
+  EN: "Walk"
+aktivitet.typeBad
+  NO: "Bad"
+  EN: "Bath"
+aktivitet.typeMassasje
+  NO: "Massasje"
+  EN: "Massage"
+aktivitet.typeLesing
+  NO: "Lesing"
+  EN: "Reading"
+aktivitet.typeSang
+  NO: "Sang"
+  EN: "Singing"
+aktivitet.typeMagelek
+  NO: "Magelek"
+  EN: "Tummy time"
+aktivitet.typeSansestund
+  NO: "Sansestund"
+  EN: "Sensory play"
+aktivitet.typeBøker
+  NO: "Bøker"
+  EN: "Books"
+aktivitet.typeUtetid
+  NO: "Utetid"
+  EN: "Outdoor time"
+aktivitet.typeBabysang
+  NO: "Babysang"
+  EN: "Baby singing"
+aktivitet.typeSvømming
+  NO: "Svømming"
+  EN: "Swimming"
+aktivitet.typeAnnet
+  NO: "Annet"
+  EN: "Other"
+aktivitet.aiAntall
+  NO: "{antall} aktiviteter denne uken 🌿"
+  EN: "{antall} activities this week 🌿"
+aktivitet.aiMestPopulær
+  NO: "Mest populære aktivitet: {aktivitet}"
+  EN: "Most popular activity: {aktivitet}"
+aktivitet.milepælFørsteSmil
+  NO: "Første smil"
+  EN: "First smile"
+aktivitet.milepælFørsteLatter
+  NO: "Første latter"
+  EN: "First laugh"
+aktivitet.milepælRulletMageTilRygg
+  NO: "Rullet fra mage til rygg"
+  EN: "Rolled from tummy to back"
+aktivitet.milepælRulletRyggTilMage
+  NO: "Rullet fra rygg til mage"
+  EN: "Rolled from back to tummy"
+aktivitet.milepælFantTærne
+  NO: "Fant tærne"
+  EN: "Found toes"
+aktivitet.milepælSattUtenStøtte
+  NO: "Satt uten støtte"
+  EN: "Sat without support"
+aktivitet.milepælKrabbet
+  NO: "Krabbet"
+  EN: "Crawled"
+aktivitet.milepælReisteSeg
+  NO: "Reiste seg opp"
+  EN: "Pulled up to stand"
+aktivitet.milepælFørsteOrd
+  NO: "Første ord"
+  EN: "First word"
+aktivitet.milepælFørsteSteg
+  NO: "Første steg"
+  EN: "First steps"
+aktivitet.milepælSattAlene
+  NO: "Satt alene"
+  EN: "Sat alone"
+aktivitet.milepælSnudde
+  NO: "Snudde seg"
+  EN: "Rolled over"
+aktivitet.milepælHoldtHodet
+  NO: "Holdt hodet oppe"
+  EN: "Held head up"
+aktivitet.milepælFørsteTann
+  NO: "Første tann"
+  EN: "First tooth"
+aktivitet.milepælSpisteFastFøde
+  NO: "Spiste fast føde"
+  EN: "Ate solid food"
+aktivitet.milepælVinket
+  NO: "Vinket hei/hadet"
+  EN: "Waved hello/goodbye"
+aktivitet.notatMilepælPlaceholder
+  NO: "F.eks. lo for første gang da vi kildret ham..."
+  EN: "E.g. laughed for the first time when we tickled him..."
+kolikk.tittel
+  NO: "🌙 Uro & Ro"
+  EN: "🌙 Fussiness & Calm"
+kolikk.undertittel
+  NO: "Forstå mønstrene bak de vanskelige stundene"
+  EN: "Understand the patterns behind the difficult moments"
+kolikk.nåAkkurat
+  NO: "Nå akkurat"
+  EN: "Right now"
+kolikk.påVeiInnIUroperiode
+  NO: "På vei inn i uroperiode"
+  EN: "Entering a fussy period"
+kolikk.påVeiInnBeskrivelse
+  NO: "Vi har registrert signaler som ofte kommer før uro hos {navn}."
+  EN: "We have registered signals that often come before fussiness in {navn}."
+kolikk.nesteForventedeUro
+  NO: "Neste forventede uro"
+  EN: "Next expected fussiness"
+kolikk.vanligStart
+  NO: "Vanlig start: {tid}"
+  EN: "Usual start: {tid}"
+kolikk.varsleMe45min
+  NO: "Varsle meg 45 min før"
+  EN: "Notify me 45 min before"
+kolikk.vanligeSignalerFørUro
+  NO: "Vanlige signaler før uro"
+  EN: "Common signals before fussiness"
+kolikk.seSignalhistorikk
+  NO: "Se signalhistorikk →"
+  EN: "See signal history →"
+kolikk.registrerEpisoder
+  NO: "Registrer episoder for å se mønstre"
+  EN: "Register episodes to see patterns"
+kolikk.tiltakSomHjelper
+  NO: "Tiltak som hjelper"
+  EN: "Measures that help"
+kolikk.seAlleTiltak
+  NO: "Se alle tiltak →"
+  EN: "See all measures →"
+kolikk.mønsterViSer
+  NO: "Mønstre vi ser"
+  EN: "Patterns we see"
+kolikk.seAlleInnsikter
+  NO: "Se alle innsikter →"
+  EN: "See all insights →"
+kolikk.historikk
+  NO: "Historikk"
+  EN: "History"
+kolikk.seAlle
+  NO: "Se alle"
+  EN: "See all"
+kolikk.varighet
+  NO: "🕐 Varighet: {min} min"
+  EN: "🕐 Duration: {min} min"
+kolikk.signaler
+  NO: "Signaler"
+  EN: "Signals"
+kolikk.tiltak
+  NO: "Tiltak"
+  EN: "Measures"
+kolikk.resultat
+  NO: "Resultat"
+  EN: "Result"
+kolikk.roetSegEtter
+  NO: "Roet seg etter {min} min"
+  EN: "Calmed down after {min} min"
+kolikk.delvisEffekt
+  NO: "Delvis effekt"
+  EN: "Partial effect"
+kolikk.velkommenTittel
+  NO: "Velkommen til Uro & Ro"
+  EN: "Welcome to Fussiness & Calm"
+kolikk.velkommenBeskrivelse
+  NO: "Vi hjelper deg å forstå uroen og hva som kan hjelpe {navn}. Jo mer du registrerer, desto bedre kan vi finne mønstre og gi deg innsikt."
+  EN: "We help you understand the fussiness and what can help {navn}. The more you register, the better we can find patterns and give you insights."
+kolikk.registrerFørsteUroperiode
+  NO: "Registrer første uroperiode"
+  EN: "Register first fussy period"
+kolikk.herVilDuFåInnsikt
+  NO: "✨ Her vil du etter hvert få innsikt om:"
+  EN: "✨ Here you will gradually get insights about:"
+kolikk.innsiktNårUroen
+  NO: "Når uroen pleier å komme"
+  EN: "When fussiness usually occurs"
+kolikk.innsiktTegnFørUro
+  NO: "Tegn før uro"
+  EN: "Signs before fussiness"
+kolikk.innsiktTiltakSomKanHjelpe
+  NO: "Tiltak som kan hjelpe"
+  EN: "Measures that can help"
+kolikk.innsiktMønstreOverTid
+  NO: "Mønstre over tid"
+  EN: "Patterns over time"
+kolikk.komIGang
+  NO: "Kom i gang"
+  EN: "Get started"
+kolikk.komIGangBeskrivelse
+  NO: "Når du registrerer uroperioder, hjelper du oss å forstå {navn} bedre."
+  EN: "When you register fussy periods, you help us understand {navn} better."
+kolikk.stegRegistrer
+  NO: "Registrer når uroen starter"
+  EN: "Register when fussiness starts"
+kolikk.stegLeggTilSignaler
+  NO: "Legg til hvilke signaler du ser"
+  EN: "Add which signals you see"
+kolikk.stegNoterHvaDere
+  NO: "Noter hva dere prøvde og hvordan det gikk"
+  EN: "Note what you tried and how it went"
+kolikk.varslingInfo
+  NO: "Du kan varsling 45 min før uroen vanligvis starter. Dette kan du slå på senere."
+  EN: "You can get notified 45 min before fussiness usually starts. You can turn this on later."
+kolikk.registrerUroEpisode
+  NO: "Registrer uro-episode"
+  EN: "Register fussy episode"
+kolikk.tidspunkt
+  NO: "Tidspunkt"
+  EN: "Time"
+kolikk.hvaSerDuNå
+  NO: "Hva ser du nå?"
+  EN: "What do you see now?"
+kolikk.hvaPrøvdeDere
+  NO: "Hva prøvde dere?"
+  EN: "What did you try?"
+kolikk.hvordanGikkDet
+  NO: "Hvordan gikk det?"
+  EN: "How did it go?"
+kolikk.hjalpGodt
+  NO: "😊 Hjalp godt"
+  EN: "😊 Helped well"
+kolikk.hjalpLitt
+  NO: "😐 Hjalp litt"
+  EN: "😐 Helped a bit"
+kolikk.hjalpIkke
+  NO: "😔 Hjalp ikke"
+  EN: "😔 Did not help"
+kolikk.varighetMinutter
+  NO: "Varighet (minutter, valgfritt)"
+  EN: "Duration (minutes, optional)"
+kolikk.varighetPlaceholder
+  NO: "F.eks. 25"
+  EN: "E.g. 25"
+kolikk.notatValgfritt
+  NO: "Notat (valgfritt)"
+  EN: "Note (optional)"
+kolikk.notatPlaceholder
+  NO: "Noe du la merke til..."
+  EN: "Something you noticed..."
+kolikk.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+kolikk.lagreEpisode
+  NO: "Lagre episode"
+  EN: "Save episode"
+kolikk.signalhistorikk
+  NO: "Signalhistorikk"
+  EN: "Signal history"
+kolikk.ingenSignalerRegistrert
+  NO: "Ingen signaler registrert ennå"
+  EN: "No signals registered yet"
+kolikk.alleTiltak
+  NO: "Alle tiltak"
+  EN: "All measures"
+kolikk.rangertEtterEffekt
+  NO: "Rangert etter effekt"
+  EN: "Ranked by effectiveness"
+kolikk.ingenTiltakRegistrert
+  NO: "Ingen tiltak registrert ennå"
+  EN: "No measures registered yet"
+kolikk.ganger
+  NO: "{antall} ganger"
+  EN: "{antall} times"
+kolikk.prosent
+  NO: "{pst}% effekt"
+  EN: "{pst}% effectiveness"
+kolikk.tiltakBabymassasje
+  NO: "Babymassasje"
+  EN: "Baby massage"
+kolikk.tiltakBæresjal
+  NO: "Bæresjal"
+  EN: "Baby carrier"
+kolikk.tiltakAmming
+  NO: "Amming"
+  EN: "Breastfeeding"
+kolikk.tiltakFlaske
+  NO: "Flaske"
+  EN: "Bottle"
+kolikk.tiltakHudMotHud
+  NO: "Hud mot hud"
+  EN: "Skin to skin"
+kolikk.tiltakMørktRom
+  NO: "Mørkt rom"
+  EN: "Dark room"
+kolikk.tiltakVugging
+  NO: "Vugging"
+  EN: "Rocking"
+kolikk.tiltakHvitStøy
+  NO: "Hvit støy"
+  EN: "White noise"
+kolikk.tiltakSmokk
+  NO: "Smokk"
+  EN: "Pacifier"
+kolikk.signalTrekkerBenaOpp
+  NO: "Trekker bena opp"
+  EN: "Pulls legs up"
+kolikk.signalBøyerRyggen
+  NO: "Bøyer ryggen"
+  EN: "Arches back"
+kolikk.signalVrirSeg
+  NO: "Vrir seg"
+  EN: "Writhes"
+kolikk.signalKlynker
+  NO: "Klynker"
+  EN: "Whimpers"
+kolikk.signalHøyGråt
+  NO: "Høy gråt"
+  EN: "Loud crying"
+kolikk.signalVilBæres
+  NO: "Vil bæres"
+  EN: "Wants to be carried"
+kolikk.signalVanskeligÅLeggeNed
+  NO: "Vanskelig å legge ned"
+  EN: "Hard to put down"
+kolikk.signalMyeLuft
+  NO: "Mye luft"
+  EN: "Lots of gas"
+kolikk.signalSlårMedArmer
+  NO: "Slår med armer og ben"
+  EN: "Flails arms and legs"
+mat.tittel
+  NO: "🍽️ Mat & Smak"
+  EN: "🍽️ Food & Taste"
+mat.undertittel
+  NO: "Små skjeer. Store oppdagelser. 🧡"
+  EN: "Small spoons. Big discoveries. 🧡"
+mat.velkommenTittel
+  NO: "Velkommen til Mat & Smak! 🧡"
+  EN: "Welcome to Food & Taste! 🧡"
+mat.velkommenBeskrivelse
+  NO: "{navn} har ikke registrert noen måltider enda.\n\nNår dere begynner med fast føde vil vi hjelpe deg å følge smaker, reaksjoner og oppdage favoritter over tid."
+  EN: "{navn} has not registered any meals yet.\n\nWhen you start with solid food we will help you track tastes, reactions and discover favorites over time."
+mat.registrerFørsteMåltid
+  NO: "Registrer første måltid"
+  EN: "Register first meal"
+mat.detteVilDuFåInnsiktI
+  NO: "Dette vil du få innsikt i"
+  EN: "This is what you'll get insights into"
+mat.favorittmat
+  NO: "Favorittmat"
+  EN: "Favorite food"
+mat.favorittmatTekst
+  NO: "Vi lærer hvilke smaker barnet ditt liker best."
+  EN: "We learn which tastes your child likes best."
+mat.reaksjoner
+  NO: "Reaksjoner"
+  EN: "Reactions"
+mat.reaksjonerTekst
+  NO: "Se hvilke matvarer som gir glede, grimaser eller magevondt."
+  EN: "See which foods bring joy, grimaces or tummy aches."
+mat.smaksreise
+  NO: "Smaksreise"
+  EN: "Taste journey"
+mat.smaksreiseTekst
+  NO: "Følg hvilke matgrupper barnet har utforsket."
+  EN: "Follow which food groups the child has explored."
+mat.personligeMønstre
+  NO: "Personlige mønstre"
+  EN: "Personal patterns"
+mat.personligeMønstreTekst
+  NO: "AI finner sammenhenger og gir deg innsikt."
+  EN: "AI finds connections and gives you insights."
+mat.smakskart
+  NO: "Smakskart"
+  EN: "Taste map"
+mat.smakskartBeskrivelse
+  NO: "Utforskning starter her. Hver smak er et nytt eventyr!"
+  EN: "Exploration starts here. Every taste is a new adventure!"
+mat.prøvd
+  NO: "{antall} prøvd"
+  EN: "{antall} tried"
+mat.nullPrøvd
+  NO: "0 prøvd"
+  EN: "0 tried"
+mat.snartKommer
+  NO: "Snart kommer dette"
+  EN: "Coming soon"
+mat.snartKommerBeskrivelse
+  NO: "Når du har registrert noen måltider vil du få:"
+  EN: "When you have registered some meals you will get:"
+mat.babyMatspråk
+  NO: "{navn} sitt matspråk"
+  EN: "{navn}'s food language"
+mat.favorittsmaker
+  NO: "Favorittsmaker"
+  EN: "Favorite tastes"
+mat.matSomIkkeFaltISmak
+  NO: "Mat som ikke falt i smak"
+  EN: "Food that did not go down well"
+mat.personligeAiInnsikter
+  NO: "Personlige AI-innsikter"
+  EN: "Personal AI insights"
+mat.tipsTitle
+  NO: "🌿 Tips til første måltider"
+  EN: "🌿 Tips for first meals"
+mat.tipRoligStemningTittel
+  NO: "Rolig stemning"
+  EN: "Calm atmosphere"
+mat.tipRoligStemningTekst
+  NO: "Skap en hyggelig atmosfære rundt måltidet."
+  EN: "Create a pleasant atmosphere around the meal."
+mat.tipSmåMengderTittel
+  NO: "Små mengder"
+  EN: "Small amounts"
+mat.tipSmåMengderTekst
+  NO: "Det viktigste er å utforske, ikke å spise mye."
+  EN: "The most important thing is to explore, not to eat a lot."
+mat.tipTålmodighet
+  NO: "Tålmodighet"
+  EN: "Patience"
+mat.tipTålmodighetTekst
+  NO: "Noen smaker trenger tid. Prøv igjen senere."
+  EN: "Some tastes need time. Try again later."
+mat.dagsObservasjon
+  NO: "DAGENS OBSERVASJON"
+  EN: "TODAY'S OBSERVATION"
+mat.harPrøvd
+  NO: "{navn} har prøvd {antall} ulike matvarer."
+  EN: "{navn} has tried {antall} different foods."
+mat.favorittenSerUtTilÅVære
+  NO: "Favoritten ser ut til å være"
+  EN: "The favorite seems to be"
+mat.smaksreiseHeader
+  NO: "🌿 SMAKSREISE"
+  EN: "🌿 TASTE JOURNEY"
+mat.totalt
+  NO: "{antall} totalt →"
+  EN: "{antall} total →"
+mat.favoritterHeader
+  NO: "❤️ FAVORITTER"
+  EN: "❤️ FAVORITES"
+mat.ingenEnnå
+  NO: "Ingen ennå"
+  EN: "None yet"
+mat.seAlle
+  NO: "Se alle →"
+  EN: "See all →"
+mat.ikkeSåPopulærtHeader
+  NO: "😕 IKKE SÅ POPULÆRT"
+  EN: "😕 NOT SO POPULAR"
+mat.seMer
+  NO: "Se mer →"
+  EN: "See more →"
+mat.innsiktFraAi
+  NO: "✦ INNSIKT FRA AI"
+  EN: "✦ INSIGHTS FROM AI"
+mat.analysererMatmønstre
+  NO: "Analyserer matmønstre..."
+  EN: "Analyzing food patterns..."
+mat.sisteMåltider
+  NO: "Siste måltider"
+  EN: "Latest meals"
+mat.registrerMåltid
+  NO: "+ Registrer måltid"
+  EN: "+ Register meal"
+mat.nyttMåltid
+  NO: "Nytt måltid 🍽️"
+  EN: "New meal 🍽️"
+mat.matvare
+  NO: "Matvare"
+  EN: "Food item"
+mat.matvarePlaceholder
+  NO: "f.eks. Avokado, Gulrot, Havregrøt..."
+  EN: "e.g. Avocado, Carrot, Oatmeal..."
+mat.nyMatvare
+  NO: "Ny matvare?"
+  EN: "New food?"
+mat.ja
+  NO: "Ja"
+  EN: "Yes"
+mat.nei
+  NO: "Nei"
+  EN: "No"
+mat.førstegangBadge
+  NO: "🌱 Første gang {navn} prøver dette!"
+  EN: "🌱 First time {navn} tries this!"
+mat.kategori
+  NO: "Kategori"
+  EN: "Category"
+mat.reaksjon
+  NO: "Reaksjon"
+  EN: "Reaction"
+mat.mengdeSpist
+  NO: "Mengde spist"
+  EN: "Amount eaten"
+mat.allergiValgfritt
+  NO: "Allergireaksjon (valgfritt)"
+  EN: "Allergic reaction (optional)"
+mat.allergiSpørsmål
+  NO: "Viste babyen tegn på reaksjon etter måltidet?"
+  EN: "Did the baby show signs of reaction after the meal?"
+mat.dato
+  NO: "Dato"
+  EN: "Date"
+mat.tidspunkt
+  NO: "Tidspunkt"
+  EN: "Time"
+mat.notaterValgfritt
+  NO: "Notater (valgfritt)"
+  EN: "Notes (optional)"
+mat.notaterPlaceholder
+  NO: "Noe spesielt du vil huske?"
+  EN: "Something special you want to remember?"
+mat.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+mat.lagreMåltid
+  NO: "Lagre måltid"
+  EN: "Save meal"
+mat.lagreFeil
+  NO: "Kunne ikke lagre måltidet. Prøv igjen."
+  EN: "Could not save the meal. Please try again."
+mat.manglerFelter
+  NO: "Fyll ut matvare, kategori, reaksjon og mengde."
+  EN: "Please fill in food item, category, reaction and amount."
+mat.ikkeInnlogget
+  NO: "Du er ikke innlogget. Logg inn på nytt og prøv igjen."
+  EN: "You are not logged in. Sign in again and try again."
+mat.profilMangler
+  NO: "Profilen din er ikke klar ennå. Logg ut og inn igjen, så prøv på nytt."
+  EN: "Your profile is not ready yet. Sign out and back in, then try again."
+mat.kategoriFrukt
+  NO: "Frukt"
+  EN: "Fruit"
+mat.kategoriGrønnsaker
+  NO: "Grønnsaker"
+  EN: "Vegetables"
+mat.kategoriFisk
+  NO: "Fisk"
+  EN: "Fish"
+mat.kategoriKorn
+  NO: "Korn"
+  EN: "Grain"
+mat.kategoriBær
+  NO: "Bær"
+  EN: "Berries"
+mat.kategoriAnnet
+  NO: "Annet"
+  EN: "Other"
+mat.reaksjonElsket
+  NO: "Likte veldig godt"
+  EN: "Loved it"
+mat.reaksjonLikte
+  NO: "Likte det"
+  EN: "Liked it"
+mat.reaksjonNøytral
+  NO: "Verken eller"
+  EN: "Neither/nor"
+mat.reaksjonSmakte
+  NO: "Smakte litt"
+  EN: "Tasted a bit"
+mat.reaksjonAvslo
+  NO: "Avslo helt"
+  EN: "Refused completely"
+mat.mengdeLite
+  NO: "Ca. 1–2 skjeer"
+  EN: "Approx. 1–2 spoons"
+mat.mengdeMiddels
+  NO: "Ca. 3–5 skjeer"
+  EN: "Approx. 3–5 spoons"
+mat.mengdeHalvparten
+  NO: "Halvparten"
+  EN: "Half"
+mat.mengdeMeste
+  NO: "Det meste"
+  EN: "Most of it"
+mat.allergiIngenReaksjon
+  NO: "Ingen reaksjon"
+  EN: "No reaction"
+mat.allergiUsikker
+  NO: "Usikker reaksjon"
+  EN: "Uncertain reaction"
+mat.allergiTydelig
+  NO: "Tydelig reaksjon"
+  EN: "Clear reaction"
+pumping.tittel
+  NO: "🍼 Pumping"
+  EN: "🍼 Pumping"
+pumping.undertittel
+  NO: "Din tid. Din melk. Din styrke. 🧡"
+  EN: "Your time. Your milk. Your strength. 🧡"
+pumping.velkommenTittel
+  NO: "Velkommen til Pumping! 🧡"
+  EN: "Welcome to Pumping! 🧡"
+pumping.velkommenBeskrivelse
+  NO: "Her kan du følge din pumpereise og få innsikt som gjør hverdagen enklere."
+  EN: "Here you can follow your pumping journey and get insights that make everyday life easier."
+pumping.steg1
+  NO: "Registrer pumpingene dine"
+  EN: "Register your pumping sessions"
+pumping.steg2
+  NO: "Få oversikt over melkeproduksjonen"
+  EN: "Get an overview of milk production"
+pumping.steg3
+  NO: "Se mønstre og få personlige innsikter"
+  EN: "See patterns and get personal insights"
+pumping.steg4
+  NO: "Bygg opp ditt melkelager"
+  EN: "Build up your milk supply"
+pumping.registrerFørstePumping
+  NO: "Registrer første pumping"
+  EN: "Register first pumping"
+pumping.detteVilDuFåInnsiktI
+  NO: "Dette vil du få innsikt i"
+  EN: "This is what you'll get insights into"
+pumping.mengdeTittel
+  NO: "Mengde"
+  EN: "Amount"
+pumping.mengdeTekst
+  NO: "Se hvor mye melk du pumper over tid og dine daglige mønstre."
+  EN: "See how much milk you pump over time and your daily patterns."
+pumping.frekvens
+  NO: "Frekvens"
+  EN: "Frequency"
+pumping.frekvensTekst
+  NO: "Oppdag når på dagen du vanligvis pumper mest effektivt."
+  EN: "Discover when during the day you usually pump most effectively."
+pumping.melkelager
+  NO: "Melkelager"
+  EN: "Milk supply"
+pumping.melkelagerTekst
+  NO: "Få oversikt over lageret ditt og hvordan det vokser."
+  EN: "Get an overview of your supply and how it grows."
+pumping.aiInnsikt
+  NO: "Innsikt fra AI"
+  EN: "Insights from AI"
+pumping.aiInnsiktTekst
+  NO: "AI finner mønstre og gir deg personlige anbefalinger."
+  EN: "AI finds patterns and gives you personal recommendations."
+pumping.slikKommerDuIGang
+  NO: "Slik kommer du i gang"
+  EN: "How to get started"
+pumping.joMerDuRegistrerer
+  NO: "Jo mer du registrerer, desto bedre innsikt får du."
+  EN: "The more you register, the better insights you get."
+pumping.gangSteg1
+  NO: "Registrer hver pumping du gjennomfører"
+  EN: "Register each pumping session you complete"
+pumping.gangSteg2
+  NO: "Noter mengden melk du får ut"
+  EN: "Note the amount of milk you get out"
+pumping.gangSteg3
+  NO: "Se hvordan kroppen din responderer over tid"
+  EN: "See how your body responds over time"
+pumping.gangSteg4
+  NO: "Få personlige tips som passer for deg"
+  EN: "Get personal tips that suit you"
+pumping.ingenRegistrert
+  NO: "Ingen registrerte pumpinger ennå"
+  EN: "No registered pumping sessions yet"
+pumping.historikkHer
+  NO: "Når du har registrert pumpinger vil du se historikken din her."
+  EN: "When you have registered pumping sessions you will see your history here."
+pumping.snartKanDuSe
+  NO: "Snart kan du se"
+  EN: "Soon you can see"
+pumping.produksjonsgraf
+  NO: "Produksjonsgraf"
+  EN: "Production graph"
+pumping.produksjonsgrafTekst
+  NO: "Se utviklingen av melkeproduksjonen din over tid."
+  EN: "See the development of your milk production over time."
+pumping.besteTidspunkt
+  NO: "Beste tidspunkt"
+  EN: "Best time"
+pumping.besteTidspunktTekst
+  NO: "Oppdag når på dagen du får mest melk."
+  EN: "Discover when during the day you get the most milk."
+pumping.økterOgVarighet
+  NO: "Øker & varighet"
+  EN: "Sessions & duration"
+pumping.økterOgVarighetTekst
+  NO: "Se gjennomsnittlig varighet og effektivitet på øktene dine."
+  EN: "See average duration and efficiency of your sessions."
+pumping.melkelagerOversikt
+  NO: "Melkelager­oversikt"
+  EN: "Milk supply overview"
+pumping.melkelagerOversiktTekst
+  NO: "Få full oversikt over lageret ditt og forbruket."
+  EN: "Get a full overview of your supply and consumption."
+pumping.duGjørEnFantastiskJobb
+  NO: "Du gjør en fantastisk jobb! 🧡"
+  EN: "You are doing a fantastic job! 🧡"
+pumping.duGjørEnFantastiskJobbTekst
+  NO: "Hver dråpe du pumper er verdifull for babyen din. Vi er her for å hjelpe deg hele veien!"
+  EN: "Every drop you pump is valuable for your baby. We are here to help you all the way!"
+pumping.dagensOversikt
+  NO: "DAGENS OVERSIKT"
+  EN: "TODAY'S OVERVIEW"
+pumping.harPumpet
+  NO: "Du har pumpet {antall} {gang} i dag"
+  EN: "You have pumped {antall} {gang} today"
+pumping.gang
+  NO: "gang"
+  EN: "time"
+pumping.ganger
+  NO: "ganger"
+  EN: "times"
+pumping.totalt
+  NO: "Totalt {mengde} ml"
+  EN: "Total {mengde} ml"
+pumping.totalMengde
+  NO: "Total mengde"
+  EN: "Total amount"
+pumping.totalTid
+  NO: "Total tid"
+  EN: "Total time"
+pumping.økter
+  NO: "Økter"
+  EN: "Sessions"
+pumping.iDag
+  NO: "I DAG"
+  EN: "TODAY"
+pumping.denneUken
+  NO: "DENNE UKEN"
+  EN: "THIS WEEK"
+pumping.gjennomsnitt
+  NO: "GJENNOMSNITT"
+  EN: "AVERAGE"
+pumping.melkelagerLabel
+  NO: "MELKELAGER"
+  EN: "MILK SUPPLY"
+pumping.perDag
+  NO: "per dag"
+  EN: "per day"
+pumping.iFryseren
+  NO: "i fryseren"
+  EN: "in the freezer"
+pumping.aiInnsiktHeader
+  NO: "✦ AI-INNSIKT"
+  EN: "✦ AI INSIGHT"
+pumping.analysererPumpemønstre
+  NO: "Analyserer pumpemønstre..."
+  EN: "Analyzing pumping patterns..."
+pumping.sistePumpingøkter
+  NO: "SISTE PUMPINGØKTER"
+  EN: "LATEST PUMPING SESSIONS"
+pumping.seAlle
+  NO: "Se alle"
+  EN: "See all"
+pumping.iDagLabel
+  NO: "I dag"
+  EN: "Today"
+pumping.iGår
+  NO: "I går"
+  EN: "Yesterday"
+pumping.registrerPumpingøkt
+  NO: "+ Registrer pumpingøkt"
+  EN: "+ Register pumping session"
+pumping.nyPumpingøkt
+  NO: "Ny pumpingøkt 🍼"
+  EN: "New pumping session 🍼"
+pumping.typePumping
+  NO: "Type pumping"
+  EN: "Pumping type"
+pumping.typeDobbel
+  NO: "Dobbel pumping"
+  EN: "Double pumping"
+pumping.typeEnkelVenstre
+  NO: "Enkel – venstre"
+  EN: "Single – left"
+pumping.typeEnkelHøyre
+  NO: "Enkel – høyre"
+  EN: "Single – right"
+pumping.mengdeML
+  NO: "Mengde (ml)"
+  EN: "Amount (ml)"
+pumping.mengdePlaceholder
+  NO: "f.eks. 150"
+  EN: "e.g. 150"
+pumping.varighetMinutter
+  NO: "Varighet (minutter)"
+  EN: "Duration (minutes)"
+pumping.varighetPlaceholder
+  NO: "f.eks. 20"
+  EN: "e.g. 20"
+pumping.dato
+  NO: "Dato"
+  EN: "Date"
+pumping.tidspunkt
+  NO: "Tidspunkt"
+  EN: "Time"
+pumping.notatValgfritt
+  NO: "Notat (valgfritt)"
+  EN: "Note (optional)"
+pumping.notatPlaceholder
+  NO: "Noe du vil huske fra denne økten?"
+  EN: "Something you want to remember from this session?"
+pumping.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+pumping.lagrePumpingøkt
+  NO: "Lagre pumpingøkt"
+  EN: "Save pumping session"
+pumping.morgen
+  NO: "Morgen"
+  EN: "Morning"
+pumping.formiddag
+  NO: "Formiddag"
+  EN: "Late morning"
+pumping.ettermiddag
+  NO: "Ettermiddag"
+  EN: "Afternoon"
+pumping.kveld
+  NO: "Kveld"
+  EN: "Evening"
+pumping.natt
+  NO: "Natt"
+  EN: "Night"
+pumping.fryser
+  NO: "🥶 Fryser (ml)"
+  EN: "🥶 Freezer (ml)"
+pumping.kjøleskap
+  NO: "🍼 Kjøleskap (ml)"
+  EN: "🍼 Fridge (ml)"
+notat.milepælFørsteSmil
+  NO: "⭐ Første smil"
+  EN: "⭐ First smile"
+notat.milepælFørsteSmilMal
+  NO: "⭐ Første smil! 🤍"
+  EN: "⭐ First smile! 🤍"
+notat.milepælFørsteLatter
+  NO: "⭐ Første latter"
+  EN: "⭐ First laugh"
+notat.milepælFørsteLatterMal
+  NO: "⭐ Første latter! 😄"
+  EN: "⭐ First laugh! 😄"
+notat.milepælRulletMageRygg
+  NO: "⭐ Rullet fra mage til rygg"
+  EN: "⭐ Rolled tummy to back"
+notat.milepælRulletMageRyggMal
+  NO: "⭐ Rullet fra mage til rygg! 🎉"
+  EN: "⭐ Rolled tummy to back! 🎉"
+notat.milepælRulletRyggMage
+  NO: "⭐ Rullet fra rygg til mage"
+  EN: "⭐ Rolled back to tummy"
+notat.milepælRulletRyggMageMal
+  NO: "⭐ Rullet fra rygg til mage! 🎉"
+  EN: "⭐ Rolled back to tummy! 🎉"
+notat.milepælFantTærne
+  NO: "⭐ Fant tærne"
+  EN: "⭐ Found toes"
+notat.milepælFantTærneMal
+  NO: "⭐ Fant tærne! 🦶"
+  EN: "⭐ Found toes! 🦶"
+notat.milepælSattUtenStøtte
+  NO: "⭐ Satt uten støtte"
+  EN: "⭐ Sat without support"
+notat.milepælSattUtenStøtteMal
+  NO: "⭐ Satt uten støtte! 💪"
+  EN: "⭐ Sat without support! 💪"
+notat.milepælKrabbet
+  NO: "⭐ Krabbet"
+  EN: "⭐ Crawled"
+notat.milepælKrabbetMal
+  NO: "⭐ Krabbet for første gang! 🐛"
+  EN: "⭐ Crawled for the first time! 🐛"
+notat.milepælReisteSeg
+  NO: "⭐ Reiste seg opp"
+  EN: "⭐ Stood up"
+notat.milepælReisteSegMal
+  NO: "⭐ Reiste seg opp! 🙌"
+  EN: "⭐ Stood up! 🙌"
+notat.tittel
+  NO: "Babybok"
+  EN: "Baby book"
+notat.undertittel
+  NO: "Skriv ned minner, tanker og små øyeblikk"
+  EN: "Write down memories, thoughts and small moments"
+notat.søkPlaceholder
+  NO: "Søk i notater..."
+  EN: "Search notes..."
+notat.alle
+  NO: "Alle"
+  EN: "All"
+notat.ingenFunnet
+  NO: "Ingen notater funnet"
+  EN: "No notes found"
+notat.ingenEnnå
+  NO: "Ingen notater ennå"
+  EN: "No notes yet"
+notat.trykkPlus
+  NO: "Trykk + for å skrive ditt første notat"
+  EN: "Tap + to write your first note"
+notat.iDag
+  NO: "I dag"
+  EN: "Today"
+notat.iGår
+  NO: "I går"
+  EN: "Yesterday"
+notat.nyttNotat
+  NO: "Nytt notat"
+  EN: "New note"
+notat.kategori
+  NO: "Kategori"
+  EN: "Category"
+notat.alderMilepæler
+  NO: "Alder-milepæler"
+  EN: "Age milestones"
+notat.månedMilepæl
+  NO: "{mnd} mnd! 🎉"
+  EN: "{mnd} mo! 🎉"
+notat.mnd
+  NO: "mnd"
+  EN: "mo"
+notat.leggTilBilde
+  NO: "Legg til bilde"
+  EN: "Add photo"
+notat.lasterOpp
+  NO: "Laster opp..."
+  EN: "Uploading..."
+notat.trykkForBilde
+  NO: "Trykk for å legge til bilde"
+  EN: "Tap to add a photo"
+notat.fjernBilde
+  NO: "Fjern bilde"
+  EN: "Remove photo"
+notat.notat
+  NO: "Notat"
+  EN: "Note"
+notat.skrivHer
+  NO: "Skriv her..."
+  EN: "Write here..."
+notat.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+notat.lagreNotat
+  NO: "Lagre notat"
+  EN: "Save note"
+notat.slettNotat
+  NO: "Slett notat"
+  EN: "Delete note"
+notat.kategoriGenerelt
+  NO: "Generelt"
+  EN: "General"
+notat.kategoriSøvn
+  NO: "Søvn"
+  EN: "Sleep"
+notat.kategoriAmming
+  NO: "Amming"
+  EN: "Feeding"
+notat.kategoriMilepæl
+  NO: "Milepæl ⭐"
+  EN: "Milestone ⭐"
+notat.kategoriBekymring
+  NO: "Bekymring"
+  EN: "Concern"
+temp.tittel
+  NO: "🌡️ Temperatur"
+  EN: "🌡️ Temperature"
+temp.undertittel
+  NO: "Følg temperatur, sykdomsforløp\nog medisiner på ett sted."
+  EN: "Track temperature, illness progress\nand medicines in one place."
+temp.ingenMålinger
+  NO: "Ingen målinger ennå"
+  EN: "No measurements yet"
+temp.ingenMålingerBeskrivelse
+  NO: "Registrer {navn}s temperatur for å følge utviklingen og få varsler om feber."
+  EN: "Register {navn}'s temperature to track development and get fever alerts."
+temp.registrerFørsteMåling
+  NO: "Registrer første måling"
+  EN: "Register first measurement"
+temp.visstedu
+  NO: "💡 Visste du?"
+  EN: "💡 Did you know?"
+temp.normal
+  NO: "Normal temperatur"
+  EN: "Normal temperature"
+temp.lettForhøyet
+  NO: "Lett forhøyet"
+  EN: "Slightly elevated"
+temp.feber
+  NO: "Feber"
+  EN: "Fever"
+temp.høyFeber
+  NO: "Høy feber"
+  EN: "High fever"
+temp.lavt
+  NO: "Lavt"
+  EN: "Low"
+temp.sisteMåling
+  NO: "Siste måling"
+  EN: "Last measurement"
+temp.registrertKl
+  NO: "Registrert {tid}"
+  EN: "Registered at {tid}"
+temp.innsiktFlereMålinger
+  NO: "{navn} har hatt {antall} målinger i dag. Siste: {temp}°C."
+  EN: "{navn} has had {antall} measurements today. Latest: {temp}°C."
+temp.innsiktEnMåling
+  NO: "Første måling i dag registrert kl. {tid}."
+  EN: "First measurement today registered at {tid}."
+temp.innsiktIngen
+  NO: "Ingen målinger i dag ennå."
+  EN: "No measurements today yet."
+temp.temperaturutvikling
+  NO: "Temperaturutvikling"
+  EN: "Temperature development"
+temp.trenger2Målinger
+  NO: "Trenger minst 2 målinger"
+  EN: "Need at least 2 measurements"
+temp.sisteMedisin
+  NO: "Siste medisin"
+  EN: "Last medicine"
+temp.seMediasinSide
+  NO: "Se medisin-siden for oversikt over medisiner og doser."
+  EN: "See the medicine page for an overview of medicines and doses."
+temp.gåTilMedisin
+  NO: "Gå til medisin →"
+  EN: "Go to medicine →"
+temp.symptomer
+  NO: "Symptomer"
+  EN: "Symptoms"
+temp.leggTil
+  NO: "+ Legg til"
+  EN: "+ Add"
+temp.sykdomsdagbok
+  NO: "Sykdomsdagbok"
+  EN: "Illness diary"
+temp.iDag
+  NO: "I dag"
+  EN: "Today"
+temp.registrerTemperatur
+  NO: "+ Registrer temperatur"
+  EN: "+ Register temperature"
+temp.registrerTemperaturTittel
+  NO: "Registrer temperatur 🌡️"
+  EN: "Register temperature 🌡️"
+temp.temperaturGrad
+  NO: "Temperatur (°C)"
+  EN: "Temperature (°C)"
+temp.temperaturPlaceholder
+  NO: "f.eks. 38.5"
+  EN: "e.g. 38.5"
+temp.symptomerValgfritt
+  NO: "Symptomer (valgfritt)"
+  EN: "Symptoms (optional)"
+temp.dato
+  NO: "Dato"
+  EN: "Date"
+temp.tidspunkt
+  NO: "Tidspunkt"
+  EN: "Time"
+temp.notatValgfritt
+  NO: "Notat (valgfritt)"
+  EN: "Note (optional)"
+temp.notatPlaceholder
+  NO: "Hvordan ser babyen ut? Andre observasjoner?"
+  EN: "How does the baby look? Other observations?"
+temp.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+temp.lagreTemperatur
+  NO: "Lagre temperatur"
+  EN: "Save temperature"
+temp.symptomFeber
+  NO: "Feber"
+  EN: "Fever"
+temp.symptomTettNese
+  NO: "Tett nese"
+  EN: "Blocked nose"
+temp.symptomHoste
+  NO: "Hoste"
+  EN: "Cough"
+temp.symptomOppkast
+  NO: "Oppkast"
+  EN: "Vomiting"
+temp.symptomDiaré
+  NO: "Diaré"
+  EN: "Diarrhoea"
+temp.symptomSlapp
+  NO: "Slapp"
+  EN: "Lethargic"
+temp.symptomUtslett
+  NO: "Utslett"
+  EN: "Rash"
+medisin.tittel
+  NO: "Medisin & Vaksine"
+  EN: "Medicine & Vaccines"
+medisin.undertittel
+  NO: "Hold oversikt over medisiner og vaksiner"
+  EN: "Keep track of medicines and vaccines"
+medisin.loggført
+  NO: "Loggført!"
+  EN: "Logged!"
+medisin.nesteDose
+  NO: "Neste dose"
+  EN: "Next dose"
+medisin.iMorgen
+  NO: "I morgen {tid}"
+  EN: "Tomorrow {tid}"
+medisin.tidForDose
+  NO: "Tid for dose"
+  EN: "Time for dose"
+medisin.jegHarGittDosen
+  NO: "Jeg har gitt dosen ✓"
+  EN: "I have given the dose ✓"
+medisin.senere
+  NO: "Senere"
+  EN: "Later"
+medisin.faneMedisin
+  NO: "💊 Medisin"
+  EN: "💊 Medicine"
+medisin.faneVaksiner
+  NO: "💉 Vaksiner"
+  EN: "💉 Vaccines"
+medisin.nestePåminnelse
+  NO: "🔔 Neste påminnelse"
+  EN: "🔔 Next reminder"
+medisin.giDose
+  NO: "Gi dose"
+  EN: "Give dose"
+medisin.medisinoversikt
+  NO: "Medisinoversikt"
+  EN: "Medicine overview"
+medisin.vanligeMedisiner
+  NO: "Vanlige medisiner"
+  EN: "Common medicines"
+medisin.leggTil
+  NO: "+ Legg til"
+  EN: "+ Add"
+medisin.ingenMedisiner
+  NO: "Ingen medisiner lagt til"
+  EN: "No medicines added"
+medisin.leggTilMedisin
+  NO: "+ Legg til medisin"
+  EN: "+ Add medicine"
+medisin.vaksineoversikt
+  NO: "Vaksineoversikt"
+  EN: "Vaccine overview"
+medisin.norskVaksinasjonsprogram
+  NO: "Norsk vaksinasjonsprogram"
+  EN: "Norwegian vaccination programme"
+medisin.leggTilVaksine
+  NO: "+ Legg til vaksine"
+  EN: "+ Add vaccine"
+medisin.leggTilMedisinTittel
+  NO: "Legg til medisin"
+  EN: "Add medicine"
+medisin.navnPåMedisin
+  NO: "Navn på medisin"
+  EN: "Name of medicine"
+medisin.navnPlaceholder
+  NO: "F.eks. D-vitamindråper"
+  EN: "E.g. Vitamin D drops"
+medisin.dosering
+  NO: "Dosering"
+  EN: "Dosage"
+medisin.doseringPlaceholder
+  NO: "F.eks. 5 dråper"
+  EN: "E.g. 5 drops"
+medisin.frekvens
+  NO: "Frekvens"
+  EN: "Frequency"
+medisin.frekvensDaily
+  NO: "Daglig"
+  EN: "Daily"
+medisin.frekvensTwoDaily
+  NO: "To ganger daglig"
+  EN: "Twice daily"
+medisin.frekvensWeekly
+  NO: "Ukentlig"
+  EN: "Weekly"
+medisin.frekvensAsNeeded
+  NO: "Ved behov"
+  EN: "As needed"
+medisin.frekvensAtFever
+  NO: "Ved feber"
+  EN: "At fever"
+medisin.tidspunktPåminnelse
+  NO: "Tidspunkt for påminnelse"
+  EN: "Time for reminder"
+medisin.notatValgfritt
+  NO: "Notat (valgfritt)"
+  EN: "Note (optional)"
+medisin.notatMedisinPlaceholder
+  NO: "F.eks. gi med mat..."
+  EN: "E.g. give with food..."
+medisin.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+medisin.lagreMedPåminnelse
+  NO: "🔔 Lagre med påminnelse"
+  EN: "🔔 Save with reminder"
+medisin.leggTilVaksineTittel
+  NO: "Legg til vaksine"
+  EN: "Add vaccine"
+medisin.navn
+  NO: "Navn"
+  EN: "Name"
+medisin.vaksinNavnPlaceholder
+  NO: "F.eks. 3 måneder vaksine"
+  EN: "E.g. 3 months vaccine"
+medisin.datoForTime
+  NO: "Dato for time (valgfritt)"
+  EN: "Date for appointment (optional)"
+medisin.notatVaksinePlaceholder
+  NO: "F.eks. bivirkninger, klinikk..."
+  EN: "E.g. side effects, clinic..."
+medisin.lagreVaksine
+  NO: "Lagre vaksine"
+  EN: "Save vaccine"
+medisin.giDoseTittel
+  NO: "Gi dose"
+  EN: "Give dose"
+medisin.bivirkningerNotat
+  NO: "Bivirkninger / notat (valgfritt)"
+  EN: "Side effects / note (optional)"
+medisin.bivirkningerPlaceholder
+  NO: "F.eks. virket trøtt etterpå..."
+  EN: "E.g. seemed tired afterwards..."
+medisin.påvirkerSøvn
+  NO: "🌙 Kan påvirke søvn"
+  EN: "🌙 May affect sleep"
+medisin.påvirkerSøvnPrefix
+  NO: "Påvirker søvn."
+  EN: "May affect sleep."
+medisin.påvirkerSøvnTekst
+  NO: "Appen vil ta hensyn til dette i søvnanalysen"
+  EN: "The app will take this into account in the sleep analysis"
+medisin.stdVitaminD
+  NO: "D-vitamindråper"
+  EN: "Vitamin D drops"
+medisin.stdVitaminDDosering
+  NO: "5 dråper"
+  EN: "5 drops"
+medisin.stdInfacol
+  NO: "Infacol"
+  EN: "Infacol"
+medisin.stdInfacolDosering
+  NO: "0.5 ml"
+  EN: "0.5 ml"
+medisin.stdParacet
+  NO: "Paracet"
+  EN: "Paracetamol"
+medisin.stdParacetDosering
+  NO: "Se pakningsvedlegg"
+  EN: "See package leaflet"
+medisin.vaksin6Uker
+  NO: "6 uker vaksine"
+  EN: "6 weeks vaccine"
+medisin.vaksin6UkerAlder
+  NO: "6 uker"
+  EN: "6 weeks"
+medisin.vaksin3Mnd
+  NO: "3 måneder vaksine"
+  EN: "3 months vaccine"
+medisin.vaksin5Mnd
+  NO: "5 måneder vaksine"
+  EN: "5 months vaccine"
+medisin.vaksin12Mnd
+  NO: "12 måneder vaksine"
+  EN: "12 months vaccine"
+medisin.vaksin15Mnd
+  NO: "15 måneder vaksine"
+  EN: "15 months vaccine"
+vekt.tittel
+  NO: "Vekst & størrelser"
+  EN: "Growth & sizes"
+vekt.undertittel
+  NO: "Følg barnets vekst over tid"
+  EN: "Follow the child's growth over time"
+vekt.sisteRegistrering
+  NO: "Siste registrering · {dato}"
+  EN: "Last entry · {dato}"
+vekt.vekt
+  NO: "Vekt"
+  EN: "Weight"
+vekt.lengde
+  NO: "Lengde"
+  EN: "Length"
+vekt.klærstørrelse
+  NO: "Klærstørrelse"
+  EN: "Clothing size"
+vekt.skostørrelse
+  NO: "Skostørrelse"
+  EN: "Shoe size"
+vekt.vekstkurve
+  NO: "Vekstkurve"
+  EN: "Growth curve"
+vekt.basertPåRegistreringer
+  NO: "Basert på dine registreringer"
+  EN: "Based on your registrations"
+vekt.registrerNyMåling
+  NO: "+ Registrer ny måling"
+  EN: "+ Register new measurement"
+vekt.historikk
+  NO: "Historikk"
+  EN: "History"
+vekt.siste
+  NO: "Siste"
+  EN: "Latest"
+vekt.nyMåling
+  NO: "Ny måling"
+  EN: "New measurement"
+vekt.dato
+  NO: "Dato"
+  EN: "Date"
+vekt.vektKg
+  NO: "Vekt (kg)"
+  EN: "Weight (kg)"
+vekt.vektPlaceholder
+  NO: "F.eks. 5.2"
+  EN: "E.g. 5.2"
+vekt.lengdeCm
+  NO: "Lengde (cm)"
+  EN: "Length (cm)"
+vekt.lengdePlaceholder
+  NO: "F.eks. 58"
+  EN: "E.g. 58"
+vekt.klærstørrelsePlaceholder
+  NO: "F.eks. 62 eller 3-6 mnd"
+  EN: "E.g. 62 or 3-6 months"
+vekt.skostørrelsePlaceholder
+  NO: "F.eks. 17"
+  EN: "E.g. 17"
+vekt.notatValgfritt
+  NO: "Notat (valgfritt)"
+  EN: "Note (optional)"
+vekt.notatPlaceholder
+  NO: "F.eks. legevaktsbesøk, sjekket av lege..."
+  EN: "E.g. emergency room visit, checked by doctor..."
+vekt.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+vekt.lagreMåling
+  NO: "Lagre måling"
+  EN: "Save measurement"
+viftemeny.sovn
+  NO: "Søvn / lur"
+  EN: "Sleep / nap"
+viftemeny.amming
+  NO: "Amming"
+  EN: "Feeding"
+viftemeny.bleie
+  NO: "Bleie"
+  EN: "Diaper"
+viftemeny.medisin
+  NO: "Medisin"
+  EN: "Medicine"
+viftemeny.signaler
+  NO: "Signaler"
+  EN: "Signals"
+viftemeny.pumping
+  NO: "Pumping"
+  EN: "Pumping"
+viftemeny.mat
+  NO: "Mat"
+  EN: "Food"
+viftemeny.aktivitet
+  NO: "Aktivitet"
+  EN: "Activity"
+viftemeny.notat
+  NO: "Babybok"
+  EN: "Baby book"
+viftemeny.temperatur
+  NO: "Temperatur"
+  EN: "Temperature"
+viftemeny.vekt
+  NO: "Vekt / lengde"
+  EN: "Weight / length"
+viftemeny.kolikk
+  NO: "Uro & ro"
+  EN: "Fussiness & calm"
+viftemeny.kommerSnart
+  NO: "kommer snart"
+  EN: "coming soon"
+viftemeny.velgFavoritter
+  NO: "Velg dine favoritter"
+  EN: "Choose your favourites"
+viftemeny.velgOpptil6
+  NO: "Velg snarveiene du bruker mest 🤍"
+  EN: "Choose the shortcuts you use most 🤍"
+viftemeny.valgt
+  NO: "{antall}/6 valgt"
+  EN: "{antall}/6 selected"
+viftemeny.lagre
+  NO: "Lagre"
+  EN: "Save"
+viftemeny.dineFavoritter
+  NO: "Dine favoritter"
+  EN: "Your favourites"
+viftemeny.velgSnarveier
+  NO: "Velg hvilke snarveier du vil ha i menyen"
+  EN: "Choose which shortcuts you want in the menu"
+viftemeny.seAlle
+  NO: "Se alle"
+  EN: "See all"
+onboarding.velkommenTittel
+  NO: "Velkommen til Lille"
+  EN: "Welcome to Lille"
+onboarding.velkommenBeskrivelse
+  NO: "Din babys språk, i dine hender. La oss sette opp appen for deg og din lille en."
+  EN: "Your baby's language, in your hands. Let us set up the app for you and your little one."
+onboarding.komIGang
+  NO: "Kom i gang 🌿"
+  EN: "Get started 🌿"
+onboarding.hvemErBabyen
+  NO: "Hvem er babyen? 🤍"
+  EN: "Who is the baby? 🤍"
+onboarding.fortellOmBabyen
+  NO: "Fortell oss litt om din lille en"
+  EN: "Tell us a little about your little one"
+onboarding.leggTilBilde
+  NO: "Legg til bilde"
+  EN: "Add photo"
+onboarding.babyensNavn
+  NO: "Babyens navn"
+  EN: "Baby's name"
+onboarding.navnPlaceholder
+  NO: "F.eks. Emma"
+  EN: "E.g. Emma"
+onboarding.fødselsdato
+  NO: "Fødselsdato"
+  EN: "Date of birth"
+onboarding.tilbake
+  NO: "Tilbake"
+  EN: "Back"
+onboarding.neste
+  NO: "Neste →"
+  EN: "Next →"
+onboarding.velgFavoritter
+  NO: "Velg dine favoritter ✨"
+  EN: "Choose your favourites ✨"
+onboarding.velgOpptil6
+  NO: "Velg opptil 6 ting du vil ha rask tilgang til"
+  EN: "Choose up to 6 things you want quick access to"
+onboarding.basertPåAlder
+  NO: "Basert på {navn}s alder ({alder})"
+  EN: "Based on {navn}'s age ({alder})"
+onboarding.valgt
+  NO: "{antall}/6 valgt"
+  EN: "{antall}/6 selected"
+onboarding.altErKlart
+  NO: "Alt er klart{navn}! 🤍"
+  EN: "All set{navn}! 🤍"
+onboarding.gledOssBeskrivelse
+  NO: "Appen er nå tilpasset deg og din lille en. Vi gleder oss til å hjelpe deg i babytiden."
+  EN: "The app is now tailored for you and your little one. We look forward to helping you through the baby days."
+onboarding.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+onboarding.startLille
+  NO: "Start Lille 🌙"
+  EN: "Start Lille 🌙"
+onboarding.nyfødt
+  NO: "Nyfødt"
+  EN: "Newborn"
+onboarding.måneder
+  NO: "{alder} måneder"
+  EN: "{alder} months"
+onboarding.årOgMåneder
+  NO: "{år} år og {mnd} måneder"
+  EN: "{år} years and {mnd} months"
+onboarding.år
+  NO: "{år} år"
+  EN: "{år} years"
+onboarding.amming
+  NO: "Amming"
+  EN: "Feeding"
+onboarding.sovn
+  NO: "Søvn / lur"
+  EN: "Sleep / nap"
+onboarding.medisin
+  NO: "Medisin / vaksine"
+  EN: "Medicine / vaccine"
+onboarding.bleie
+  NO: "Bleie"
+  EN: "Diaper"
+onboarding.signaler
+  NO: "Signaler"
+  EN: "Signals"
+onboarding.pumping
+  NO: "Pumping"
+  EN: "Pumping"
+onboarding.mat
+  NO: "Mat (fast føde)"
+  EN: "Food (solid food)"
+onboarding.aktivitet
+  NO: "Aktivitet"
+  EN: "Activity"
+onboarding.notat
+  NO: "Notat"
+  EN: "Note"
+onboarding.temperatur
+  NO: "Temperatur"
+  EN: "Temperature"
+onboarding.vaksine
+  NO: "Vaksine"
+  EN: "Vaccine"
+onboarding.vekt
+  NO: "Vekt / lengde"
+  EN: "Weight / length"
+lyd.skapRo
+  NO: "Skap ro"
+  EN: "Create calm"
+lyd.undertittel
+  NO: "Når du finner ro, hjelper du også babyen å finne ro 🤍"
+  EN: "When you find calm, you also help the baby find calm 🤍"
+lyd.velgEnLyd
+  NO: "Velg en lyd som roer dere begge 🌙"
+  EN: "Choose a sound that calms you both 🌙"
+lyd.roligeLyder
+  NO: "Rolige lyder"
+  EN: "Calm sounds"
+lyd.regulering
+  NO: "Regulering"
+  EN: "Regulation"
+lyd.foreldrero
+  NO: "Foreldrero"
+  EN: "Parent calm"
+lyd.regn
+  NO: "Regn"
+  EN: "Rain"
+lyd.hav
+  NO: "Hav"
+  EN: "Ocean"
+lyd.whiteNoise
+  NO: "White noise"
+  EN: "White noise"
+lyd.vifte
+  NO: "Vifte"
+  EN: "Fan"
+lyd.hjertelyd
+  NO: "Hjertelyd"
+  EN: "Heartbeat"
+lyd.pustelyder
+  NO: "Pustelyder"
+  EN: "Breathing sounds"
+lyd.womb
+  NO: "Womb sounds"
+  EN: "Womb sounds"
+lyd.rytmer
+  NO: "Myke rytmer"
+  EN: "Soft rhythms"
+lyd.frekvenser
+  NO: "Beroligende frekvenser"
+  EN: "Soothing frequencies"
+lyd.nattpust
+  NO: "Nattpust"
+  EN: "Night breathing"
+lyd.piano
+  NO: "Rolig piano"
+  EN: "Calm piano"
+lyd.grounding
+  NO: "Grounding-lyder"
+  EN: "Grounding sounds"
+nattlys.tittel
+  NO: "Nattlys"
+  EN: "Night light"
+nattlys.avsluttNattlys
+  NO: "Avslutt nattlys"
+  EN: "Turn off night light"
+nattlys.farger
+  NO: "Farger"
+  EN: "Colors"
+nattlys.scener
+  NO: "Scener"
+  EN: "Scenes"
+nattlys.lysstyrke
+  NO: "Lysstyrke"
+  EN: "Brightness"
+nattlys.timer
+  NO: "Timer"
+  EN: "Timer"
+nattlys.alltidPå
+  NO: "Alltid på"
+  EN: "Always on"
+nattlys.minutter
+  NO: "{min} min"
+  EN: "{min} min"
+nattlys.slåPå
+  NO: "Slå på nattlys 🌙"
+  EN: "Turn on night light 🌙"
+nattlys.måneskinn
+  NO: "🌙 Måneskinn"
+  EN: "🌙 Moonlight"
+nattlys.måneskinnBeskrivelse
+  NO: "Mørk blå med svak måneglow. Perfekt under nattamming."
+  EN: "Dark blue with soft moon glow. Perfect during night feeding."
+nattlys.roligVarm
+  NO: "🕯️ Rolig varm"
+  EN: "🕯️ Calm warm"
+nattlys.roligVarmBeskrivelse
+  NO: "Dyp amber som en saltlampe. Beroligende og varm."
+  EN: "Deep amber like a salt lamp. Soothing and warm."
+nattlys.stjernehimmel
+  NO: "✨ Stjernehimmel"
+  EN: "✨ Starry sky"
+nattlys.stjernehimmelBeskrivelse
+  NO: "Dyp lilla natt med glitrende stjerner."
+  EN: "Deep purple night with glittering stars."
+nattlys.havlys
+  NO: "🌊 Havlys"
+  EN: "🌊 Ocean light"
+nattlys.havlysBeskrivelse
+  NO: "Dyp turkis-blå med myke bølger som beveger seg."
+  EN: "Deep turquoise-blue with soft waves moving."
+nattlys.varmHvit
+  NO: "Varm hvit"
+  EN: "Warm white"
+nattlys.solnedgang
+  NO: "Solnedgang"
+  EN: "Sunset"
+nattlys.lavendel
+  NO: "Lavendel"
+  EN: "Lavender"
+nattlys.himmelblå
+  NO: "Himmelblå"
+  EN: "Sky blue"
+nattlys.skoggrønn
+  NO: "Skoggrønn"
+  EN: "Forest green"
+pust.tittel
+  NO: "Pust med meg"
+  EN: "Breathe with me"
+pust.forklaring
+  NO: "Når du senker pusten din, kan det hjelpe kroppen å gå fra stress til ro."
+  EN: "When you slow your breathing, it can help your body move from stress to calm."
+pust.finnRo
+  NO: "Finn ro"
+  EN: "Find calm"
+pust.roligPust
+  NO: "Rolig pust"
+  EN: "Calm breathing"
+pust.roligPustBeskrivelse
+  NO: "4 sek inn – 6 sek ut"
+  EN: "4 sec in – 6 sec out"
+pust.pust478
+  NO: "4-7-8 pust"
+  EN: "4-7-8 breathing"
+pust.pust478Beskrivelse
+  NO: "4 sek inn – 7 sek hold – 8 sek ut"
+  EN: "4 sec in – 7 sec hold – 8 sec out"
+pust.boksPust
+  NO: "Boks pust"
+  EN: "Box breathing"
+pust.boksPustBeskrivelse
+  NO: "4 sek inn – 4 sek hold – 4 sek ut"
+  EN: "4 sec in – 4 sec hold – 4 sec out"
+pust.varighet
+  NO: "Varighet"
+  EN: "Duration"
+pust.startØvelse
+  NO: "Start øvelse"
+  EN: "Start exercise"
+pust.pustInn
+  NO: "Pust inn"
+  EN: "Breathe in"
+pust.hold
+  NO: "Hold"
+  EN: "Hold"
+pust.pustUt
+  NO: "Pust ut"
+  EN: "Breathe out"
+pust.avsluttØvelse
+  NO: "Avslutt øvelse"
+  EN: "End exercise"
+signaler.tittel
+  NO: "Signaler"
+  EN: "Signals"
+signaler.laerBabyensSprak
+  NO: "Små signaler kan fortelle mye om hva babyen trenger 💛"
+  EN: "Small signals can tell a lot about what the baby needs 💛"
+signaler.forstaHvaSignalerBetyr
+  NO: "Forstå hva ulike signaler kan bety."
+  EN: "Understand what different signals can mean."
+signaler.tidligSignal
+  NO: "Tidlig signal"
+  EN: "Early signal"
+signaler.sentSignal
+  NO: "Sent signal"
+  EN: "Late signal"
+signaler.kanBety
+  NO: "Kan bety"
+  EN: "Can mean"
+signaler.tips
+  NO: "💡 Tips"
+  EN: "💡 Tips"
+signaler.registrerDetteSignaletNa
+  NO: "Registrer dette signalet nå"
+  EN: "Register this signal now"
+signaler.lesMer
+  NO: "Les mer"
+  EN: "Read more"
+signaler.registrer
+  NO: "Registrer"
+  EN: "Register"
+signaler.registrerSignal
+  NO: "Registrer signal"
+  EN: "Register signal"
+signaler.dato
+  NO: "Dato"
+  EN: "Date"
+signaler.tidspunkt
+  NO: "Tidspunkt"
+  EN: "Time"
+signaler.notatValgfritt
+  NO: "Notat (valgfritt)"
+  EN: "Note (optional)"
+signaler.notatPlaceholder
+  NO: "Noe spesielt du vil huske?"
+  EN: "Anything special you want to remember?"
+signaler.lagrer
+  NO: "Lagrer..."
+  EN: "Saving..."
+signaler.lagreSignal
+  NO: "Lagre signal"
+  EN: "Save signal"
+signaler.signaletErRegistrert
+  NO: "Signalet er registrert!"
+  EN: "Signal registered!"
+signaler.viserOftest
+  NO: "{navn}s vanligste vei til søvn"
+  EN: "{navn}'s most common path to sleep"
+signaler.registrertGang
+  NO: "Dette mønsteret går igjen i {antall} av {total} registrerte lurer."
+  EN: "This pattern appears in {antall} of {total} registered naps."
+signaler.registrertGanger
+  NO: "Dette mønsteret går igjen i {antall} av {total} registrerte lurer."
+  EN: "This pattern appears in {antall} of {total} registered naps."
+signaler.vanligsteSignalene
+  NO: "Vanligste signalene"
+  EN: "Most common signals"
+signaler.sisteRegistrerteSignaler
+  NO: "Siste registrerte signaler"
+  EN: "Recently registered signals"
+signaler.visteDetteGanger
+  NO: "{navn} viste dette {antall} ganger"
+  EN: "{navn} showed this {antall} times"
+signaler.seInnsikt
+  NO: "Se {navn} sin innsikt ›"
+  EN: "See {navn}'s insights ›"
+signaler.signalerAntall
+  NO: "{antall} signaler"
+  EN: "{antall} signals"
+signaler.sovn
+  NO: "Søvn"
+  EN: "Sleep"
+signaler.vissteDu
+  NO: "Visste du?"
+  EN: "Did you know?"
+signaler.vissteDuTekst
+  NO: "Et signal alene betyr sjelden noe. Det er ofte kombinasjonen av flere signaler som forteller hva babyen trenger."
+  EN: "A single signal rarely tells the whole story. It is often the combination of several signals that shows what your baby needs."
+signaler.babyenFallback
+  NO: "babyen"
+  EN: "your baby"
+signaler.kategoriSovnTittel
+  NO: "Søvnsignaler"
+  EN: "Sleep signals"
+signaler.kategoriSovnUndertittel
+  NO: "Signaler som vises når babyen begynner å bli trøtt."
+  EN: "Signals that appear when your baby starts getting tired."
+signaler.kategoriPauseTittel
+  NO: "Trenger en pause"
+  EN: "Needs a break"
+signaler.kategoriPauseUndertittel
+  NO: "Tegn på overstimulering eller behov for ro."
+  EN: "Signs of overstimulation or need for calm."
+signaler.kategoriMageTittel
+  NO: "Mage og ubehag"
+  EN: "Tummy and discomfort"
+signaler.kategoriMageUndertittel
+  NO: "Signaler knyttet til luft, mage eller uro."
+  EN: "Signals related to gas, tummy or fussiness."
+signaler.kategoriSultTittel
+  NO: "Sultsignaler"
+  EN: "Hunger signals"
+signaler.kategoriSultUndertittel
+  NO: "Tegn på at babyen ønsker mat."
+  EN: "Signs that your baby wants food."
+signaler.sovnStirrerTomtVisningsNavn
+  NO: "Stirrer tomt"
+  EN: "Blank stare"
+signaler.sovnStirrerTomtBeskrivelse
+  NO: "Babyen ser tomt ut i blikket og virker fjern."
+  EN: "Your baby has a distant, unfocused look."
+signaler.sovnStirrerTomtKanBety1
+  NO: "Tidlig trøtthetssignal"
+  EN: "Early tiredness cue"
+signaler.sovnStirrerTomtKanBety2
+  NO: "Babyen begynner å koble av"
+  EN: "Your baby is starting to switch off"
+signaler.sovnStirrerTomtKanBety3
+  NO: "Tid for å starte nedtrapping"
+  EN: "Time to start winding down"
+signaler.sovnStirrerTomtTips
+  NO: "Begynn å roe ned miljøet når du ser dette."
+  EN: "Start calming the environment when you notice this."
+signaler.sovnGjesperVisningsNavn
+  NO: "Gjesper"
+  EN: "Yawning"
+signaler.sovnGjesperBeskrivelse
+  NO: "Gjesping er et vanlig tegn på tretthet."
+  EN: "Yawning is a common sign of tiredness."
+signaler.sovnGjesperKanBety1
+  NO: "Tidlig eller sent signal avhengig av kontekst"
+  EN: "Can be early or late depending on context"
+signaler.sovnGjesperKanBety2
+  NO: "Kombinert med andre signaler = søvn nærmer seg"
+  EN: "Combined with other cues means sleep is near"
+signaler.sovnGjesperTips
+  NO: "Ett gjesp er ikke nok – se etter kombinasjoner."
+  EN: "One yawn alone is not enough – look for combinations."
+signaler.sovnGnirOyneneVisningsNavn
+  NO: "Gnir øynene"
+  EN: "Rubbing eyes"
+signaler.sovnGnirOyneneBeskrivelse
+  NO: "Babyen gnir eller klør seg i øynene."
+  EN: "Your baby rubs or scratches their eyes."
+signaler.sovnGnirOyneneKanBety1
+  NO: "Sent søvnsignal"
+  EN: "Late sleep cue"
+signaler.sovnGnirOyneneKanBety2
+  NO: "Babyen er overtrøtt om dette vedvarer"
+  EN: "Your baby may be overtired if this continues"
+signaler.sovnGnirOyneneKanBety3
+  NO: "Søvn nærmer seg"
+  EN: "Sleep is approaching"
+signaler.sovnGnirOyneneTips
+  NO: "Er dette første signal du ser, kan babyen allerede være overtrøtt."
+  EN: "If this is the first cue you notice, your baby may already be overtired."
+signaler.sovnVenderHodetBortVisningsNavn
+  NO: "Vender hodet bort"
+  EN: "Turning head away"
+signaler.sovnVenderHodetBortBeskrivelse
+  NO: "Babyen vender hodet bort fra deg eller stimuli."
+  EN: "Your baby turns away from you or stimulation."
+signaler.sovnVenderHodetBortKanBety1
+  NO: "Overstimulering"
+  EN: "Overstimulation"
+signaler.sovnVenderHodetBortKanBety2
+  NO: "Behov for pause"
+  EN: "Needs a break"
+signaler.sovnVenderHodetBortKanBety3
+  NO: "Tidlig trøtthetssignal"
+  EN: "Early tiredness cue"
+signaler.sovnVenderHodetBortTips
+  NO: "Respekter signalet – ikke prøv å få kontakt igjen med én gang."
+  EN: "Respect the cue – do not try to reconnect immediately."
+signaler.sovnMisterInteressenVisningsNavn
+  NO: "Mister interessen"
+  EN: "Loses interest"
+signaler.sovnMisterInteressenBeskrivelse
+  NO: "Babyen mister interessen for det som skjer rundt."
+  EN: "Your baby loses interest in what is happening around them."
+signaler.sovnMisterInteressenKanBety1
+  NO: "Tidlig søvnsignal"
+  EN: "Early sleep cue"
+signaler.sovnMisterInteressenKanBety2
+  NO: "Behov for roligere omgivelser"
+  EN: "Needs a calmer environment"
+signaler.sovnMisterInteressenTips
+  NO: "Reduser stimuli og gå til et roligere rom."
+  EN: "Reduce stimulation and move to a calmer room."
+signaler.sovnTungeOyelokkVisningsNavn
+  NO: "Tunge øyelokk"
+  EN: "Heavy eyelids"
+signaler.sovnTungeOyelokkBeskrivelse
+  NO: "Øyelokkene blir tunge og halvveis lukkede."
+  EN: "The eyelids become heavy and half-closed."
+signaler.sovnTungeOyelokkKanBety1
+  NO: "Sent søvnsignal"
+  EN: "Late sleep cue"
+signaler.sovnTungeOyelokkKanBety2
+  NO: "Søvn er nært forestående"
+  EN: "Sleep is very close"
+signaler.sovnTungeOyelokkTips
+  NO: "Legg ned nå – babyen er klar."
+  EN: "Put your baby down now – they are ready."
+signaler.pauseVenderHodetBortVisningsNavn
+  NO: "Vender hodet bort"
+  EN: "Turning head away"
+signaler.pauseVenderHodetBortBeskrivelse
+  NO: "Babyen vender hodet bort fra deg eller fra stimuli."
+  EN: "Your baby turns their head away from you or stimulation."
+signaler.pauseVenderHodetBortKanBety1
+  NO: "Overstimulering"
+  EN: "Overstimulation"
+signaler.pauseVenderHodetBortKanBety2
+  NO: "Behov for pause"
+  EN: "Needs a break"
+signaler.pauseVenderHodetBortTips
+  NO: "Vent til babyen vender seg tilbake av seg selv."
+  EN: "Wait until your baby turns back on their own."
+signaler.pauseUroligIKroppenVisningsNavn
+  NO: "Urolig i kroppen"
+  EN: "Restless body"
+signaler.pauseUroligIKroppenBeskrivelse
+  NO: "Babyen virker rastløs og urolig i kroppen."
+  EN: "Your baby seems fidgety and physically restless."
+signaler.pauseUroligIKroppenKanBety1
+  NO: "Overstimulering"
+  EN: "Overstimulation"
+signaler.pauseUroligIKroppenKanBety2
+  NO: "Ubehag"
+  EN: "Discomfort"
+signaler.pauseUroligIKroppenKanBety3
+  NO: "Behov for ro og nærhet"
+  EN: "Needs calm and closeness"
+signaler.pauseUroligIKroppenTips
+  NO: "Prøv å dempe lys og lyd i rommet."
+  EN: "Try lowering light and sound in the room."
+signaler.pauseKnytterNeveneVisningsNavn
+  NO: "Knytter nevene"
+  EN: "Clenches fists"
+signaler.pauseKnytterNeveneBeskrivelse
+  NO: "Babyen knytter hendene hardt."
+  EN: "Your baby clenches their hands tightly."
+signaler.pauseKnytterNeveneKanBety1
+  NO: "Stress eller ubehag"
+  EN: "Stress or discomfort"
+signaler.pauseKnytterNeveneKanBety2
+  NO: "Kan komme før gråt"
+  EN: "May come before crying"
+signaler.pauseKnytterNeveneTips
+  NO: "Ta babyen opp og gi ro før situasjonen eskalerer."
+  EN: "Pick your baby up and offer calm before it escalates."
+signaler.pauseBuerRyggenBakoverVisningsNavn
+  NO: "Buer ryggen bakover"
+  EN: "Arches back"
+signaler.pauseBuerRyggenBakoverBeskrivelse
+  NO: "Babyen buer ryggen bakover."
+  EN: "Your baby arches their back backward."
+signaler.pauseBuerRyggenBakoverKanBety1
+  NO: "Ubehag"
+  EN: "Discomfort"
+signaler.pauseBuerRyggenBakoverKanBety2
+  NO: "Protest"
+  EN: "Protest"
+signaler.pauseBuerRyggenBakoverKanBety3
+  NO: "Kan være kolikk"
+  EN: "Could be colic"
+signaler.pauseBuerRyggenBakoverTips
+  NO: "Sjekk om det er luft i magen."
+  EN: "Check whether trapped gas might be the cause."
+signaler.pauseUnngarOyekontaktVisningsNavn
+  NO: "Unngår øyekontakt"
+  EN: "Avoids eye contact"
+signaler.pauseUnngarOyekontaktBeskrivelse
+  NO: "Babyen ser bort og unngår å møte blikket ditt."
+  EN: "Your baby looks away and avoids meeting your gaze."
+signaler.pauseUnngarOyekontaktKanBety1
+  NO: "Trenger en pause fra stimuli"
+  EN: "Needs a break from stimulation"
+signaler.pauseUnngarOyekontaktKanBety2
+  NO: "Overstimulering"
+  EN: "Overstimulation"
+signaler.pauseUnngarOyekontaktTips
+  NO: "Gi babyen litt tid uten press om kontakt."
+  EN: "Give your baby a little time without pressure to connect."
+signaler.mageTrekkerBenaOppVisningsNavn
+  NO: "Trekker bena opp"
+  EN: "Pulls legs up"
+signaler.mageTrekkerBenaOppBeskrivelse
+  NO: "Babyen trekker bena opp mot magen."
+  EN: "Your baby pulls their legs up toward the tummy."
+signaler.mageTrekkerBenaOppKanBety1
+  NO: "Luft i magen"
+  EN: "Gas in the tummy"
+signaler.mageTrekkerBenaOppKanBety2
+  NO: "Mageubehag"
+  EN: "Tummy discomfort"
+signaler.mageTrekkerBenaOppKanBety3
+  NO: "Kolikk"
+  EN: "Colic"
+signaler.mageTrekkerBenaOppTips
+  NO: "Prøv sykkelbevegelser med bena eller magemassasje."
+  EN: "Try gentle bicycle leg movements or a tummy massage."
+signaler.mageKrummerRyggenVisningsNavn
+  NO: "Krummer ryggen"
+  EN: "Curves back"
+signaler.mageKrummerRyggenBeskrivelse
+  NO: "Babyen krummer ryggen og virker anspent."
+  EN: "Your baby curves their back and seems tense."
+signaler.mageKrummerRyggenKanBety1
+  NO: "Magesmerter"
+  EN: "Stomach pain"
+signaler.mageKrummerRyggenKanBety2
+  NO: "Luft i magen"
+  EN: "Gas in the tummy"
+signaler.mageKrummerRyggenTips
+  NO: "Hold babyen oppreist etter mating."
+  EN: "Hold your baby upright after feeding."
+signaler.mageRapperMyeVisningsNavn
+  NO: "Rapper mye"
+  EN: "Burps a lot"
+signaler.mageRapperMyeBeskrivelse
+  NO: "Babyen rapper ofte eller har synlig oppblåst mage."
+  EN: "Your baby burps often or has a visibly bloated tummy."
+signaler.mageRapperMyeKanBety1
+  NO: "Trenger å rape"
+  EN: "Needs to burp"
+signaler.mageRapperMyeKanBety2
+  NO: "Kolikk"
+  EN: "Colic"
+signaler.mageRapperMyeKanBety3
+  NO: "Mageubehag"
+  EN: "Tummy discomfort"
+signaler.mageRapperMyeTips
+  NO: "Klapp forsiktig på ryggen og hold oppreist."
+  EN: "Pat gently on the back and keep your baby upright."
+signaler.mageAnspentAnsiktVisningsNavn
+  NO: "Anspent ansikt"
+  EN: "Tense face"
+signaler.mageAnspentAnsiktBeskrivelse
+  NO: "Babyen grimaser og ser anspent ut."
+  EN: "Your baby grimaces and looks tense."
+signaler.mageAnspentAnsiktKanBety1
+  NO: "Smerte eller ubehag"
+  EN: "Pain or discomfort"
+signaler.mageAnspentAnsiktKanBety2
+  NO: "Magetrøbbel"
+  EN: "Tummy trouble"
+signaler.mageAnspentAnsiktTips
+  NO: "Kombiner med andre signaler for å tolke."
+  EN: "Combine with other signals to interpret."
+signaler.mageGraterVedMatingVisningsNavn
+  NO: "Gråter ved mating"
+  EN: "Cries during feeding"
+signaler.mageGraterVedMatingBeskrivelse
+  NO: "Babyen begynner å gråte under eller etter mating."
+  EN: "Your baby starts crying during or after feeding."
+signaler.mageGraterVedMatingKanBety1
+  NO: "Refluks"
+  EN: "Reflux"
+signaler.mageGraterVedMatingKanBety2
+  NO: "Luft"
+  EN: "Gas"
+signaler.mageGraterVedMatingKanBety3
+  NO: "Ubehag"
+  EN: "Discomfort"
+signaler.mageGraterVedMatingTips
+  NO: "Prøv å mate i mer oppreist stilling."
+  EN: "Try feeding in a more upright position."
+signaler.sultSugerPaHendeneVisningsNavn
+  NO: "Suger på hendene"
+  EN: "Sucks hands"
+signaler.sultSugerPaHendeneBeskrivelse
+  NO: "Babyen suger på egne hender eller fingre."
+  EN: "Your baby sucks on their hands or fingers."
+signaler.sultSugerPaHendeneKanBety1
+  NO: "Tidlig sultsignal"
+  EN: "Early hunger cue"
+signaler.sultSugerPaHendeneKanBety2
+  NO: "Vil ha mat snart"
+  EN: "Wants food soon"
+signaler.sultSugerPaHendeneTips
+  NO: "Mat nå – ikke vent til babyen gråter."
+  EN: "Feed now – do not wait until your baby cries."
+signaler.sultSmatterMedMunnenVisningsNavn
+  NO: "Smatter med munnen"
+  EN: "Smacks lips"
+signaler.sultSmatterMedMunnenBeskrivelse
+  NO: "Babyen smatter med munnen."
+  EN: "Your baby makes smacking sounds with the mouth."
+signaler.sultSmatterMedMunnenKanBety1
+  NO: "Sultent"
+  EN: "Hungry"
+signaler.sultSmatterMedMunnenKanBety2
+  NO: "Søker suging"
+  EN: "Seeking to suck"
+signaler.sultSmatterMedMunnenTips
+  NO: "Tidlig signal – ideelt tidspunkt å mate."
+  EN: "Early cue – an ideal moment to feed."
+signaler.sultSokerBrystEllerFlaskeVisningsNavn
+  NO: "Søker bryst eller flaske"
+  EN: "Looks for breast or bottle"
+signaler.sultSokerBrystEllerFlaskeBeskrivelse
+  NO: "Babyen vrir hodet og søker etter bryst eller flaske."
+  EN: "Your baby turns the head and searches for breast or bottle."
+signaler.sultSokerBrystEllerFlaskeKanBety1
+  NO: "Sultent"
+  EN: "Hungry"
+signaler.sultSokerBrystEllerFlaskeKanBety2
+  NO: "Rooting-refleks aktiv"
+  EN: "Rooting reflex is active"
+signaler.sultSokerBrystEllerFlaskeTips
+  NO: "Typisk tidlig sultsignal hos nyfødte."
+  EN: "A typical early hunger cue in newborns."
+signaler.sultRastlosOgUroligVisningsNavn
+  NO: "Rastløs og urolig"
+  EN: "Restless and unsettled"
+signaler.sultRastlosOgUroligBeskrivelse
+  NO: "Babyen beveger seg mye og virker rastløs."
+  EN: "Your baby moves a lot and seems restless."
+signaler.sultRastlosOgUroligKanBety1
+  NO: "Sent sultsignal"
+  EN: "Late hunger cue"
+signaler.sultRastlosOgUroligKanBety2
+  NO: "Snart gråt om ikke matet"
+  EN: "Crying may come soon if not fed"
+signaler.sultRastlosOgUroligTips
+  NO: "Mat snart – gråt er siste sultsignal."
+  EN: "Feed soon – crying is the last hunger cue."

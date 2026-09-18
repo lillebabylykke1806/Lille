@@ -4,7 +4,8 @@ import { Capacitor } from '@capacitor/core';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
-import { SPRÅK_NAVN, SPRÅK_FLAGG, Locale } from '../../lib/i18n/translations';
+import { SPRÅK_NAVN, SPRÅK_FLAGG, LOCALES } from '../../lib/i18n/translations';
+import { formatDate } from '../../lib/i18n/format';
 import { sisteVåkenTid } from '../../lib/søvnUtils';
 import {
   notificationsEnabled,
@@ -15,7 +16,6 @@ import { supabase } from '../../lib/supabase';
 import { hentProfilId } from '../../lib/profilId';
 import { PERSONVERN_URL, VILKAR_URL } from '../../lib/consent';
 
-const SPRÅK_KODER: Locale[] = ['no', 'en', 'sv', 'da', 'de'];
 const SUPABASE_URL = 'https://hicdsrqhgjdvjctxcucr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY2RzcnFoZ2pkdmpjdHhjdWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDMxNDEsImV4cCI6MjA5MzkxOTE0MX0.l8N5-LjFNakStf2ZF0-TyrD9Vg9ooFKihzh53L-NXNo';
 
@@ -33,18 +33,6 @@ type Props = {
   aktivtBarn?: any;
 };
 
-function formatDato(iso: string | null | undefined, locale: Locale): string {
-  if (!iso) return '';
-  try {
-    return new Date(iso).toLocaleDateString(
-      locale === 'en' ? 'en-GB' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'nb-NO',
-      { year: 'numeric', month: 'short', day: 'numeric' },
-    );
-  } catch {
-    return iso.slice(0, 10);
-  }
-}
-
 export default function Innstillinger({ onTilbake, bruker, aktivtBarn }: Props) {
   const { locale, setLocale, t } = useLanguage();
   const { målesystem, setMålesystem } = useMåleenhet();
@@ -55,6 +43,16 @@ export default function Innstillinger({ onTilbake, bruker, aktivtBarn }: Props) 
   const [visSlettBekreftelse, setVisSlettBekreftelse] = useState(false);
   const [sletterKonto, setSletterKonto] = useState(false);
   const [slettFeil, setSlettFeil] = useState('');
+  const [språkÅpen, setSpråkÅpen] = useState(false);
+
+  const formatSamtykkeDato = (iso: string | null | undefined) => {
+    if (!iso) return '';
+    try {
+      return formatDate(iso, locale, { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return iso.slice(0, 10);
+    }
+  };
 
   useEffect(() => {
     setVarslerPå(notificationsEnabled());
@@ -189,15 +187,67 @@ export default function Innstillinger({ onTilbake, bruker, aktivtBarn }: Props) 
         {/* Språk */}
         <div>
           <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, fontWeight: '600', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('innstillinger.språk')}</div>
-          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '16px' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {SPRÅK_KODER.map((code) => (
-                <button key={code} onClick={() => setLocale(code)} style={{ flex: 1, padding: '10px 4px', borderRadius: '12px', border: locale === code ? `2px solid ${farger.grønn}` : `1px solid ${farger.kremMørk}`, backgroundColor: locale === code ? farger.grønnLys : farger.bakgrunn, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ fontSize: '20px' }}>{SPRÅK_FLAGG[code]}</span>
-                  <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: locale === code ? farger.grønn : farger.tekstLys, fontWeight: locale === code ? '600' : '400' }}>{SPRÅK_NAVN[code]}</span>
-                </button>
-              ))}
-            </div>
+          <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '8px', position: 'relative' }}>
+            <button
+              type="button"
+              onClick={() => setSpråkÅpen((v) => !v)}
+              aria-expanded={språkÅpen}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 14px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontFamily: 'var(--font-inter)',
+              }}
+            >
+              <span style={{ fontSize: '22px', lineHeight: 1 }}>{SPRÅK_FLAGG[locale]}</span>
+              <span style={{ flex: 1, fontSize: '15px', fontWeight: 600, color: farger.tekst }}>{SPRÅK_NAVN[locale]}</span>
+              <span style={{ fontSize: '12px', color: farger.tekstLys }}>{språkÅpen ? '▴' : '▾'}</span>
+            </button>
+            {språkÅpen && (
+              <div
+                style={{
+                  marginTop: '4px',
+                  borderTop: `1px solid ${farger.kremMørk}`,
+                  maxHeight: '280px',
+                  overflowY: 'auto',
+                }}
+              >
+                {LOCALES.map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => {
+                      setLocale(code);
+                      setSpråkÅpen(false);
+                    }}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 14px',
+                      background: locale === code ? farger.grønnLys : 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontFamily: 'var(--font-inter)',
+                    }}
+                  >
+                    <span style={{ fontSize: '20px', lineHeight: 1 }}>{SPRÅK_FLAGG[code]}</span>
+                    <span style={{ flex: 1, fontSize: '14px', fontWeight: locale === code ? 600 : 400, color: locale === code ? farger.grønn : farger.tekst }}>
+                      {SPRÅK_NAVN[code]}
+                    </span>
+                    {locale === code && <span style={{ color: farger.grønn, fontSize: '14px' }}>✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -283,7 +333,7 @@ export default function Innstillinger({ onTilbake, bruker, aktivtBarn }: Props) 
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, marginBottom: '10px', lineHeight: 1.5 }}>
                   {samtykke?.vilkaar_godtatt_tid
                     ? t('settings.consent.vilkaarGodtatt', {
-                        dato: formatDato(samtykke.vilkaar_godtatt_tid, locale),
+                        dato: formatSamtykkeDato(samtykke.vilkaar_godtatt_tid),
                         versjon: samtykke.vilkaar_versjon || '—',
                       })
                     : `${t('consent.terms.link')}: ${t('settings.consent.ikkeDokumentert')}`}
@@ -291,7 +341,7 @@ export default function Innstillinger({ onTilbake, bruker, aktivtBarn }: Props) 
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, marginBottom: '14px', lineHeight: 1.5 }}>
                   {samtykke?.personvern_godtatt_tid
                     ? t('settings.consent.personvernGodtatt', {
-                        dato: formatDato(samtykke.personvern_godtatt_tid, locale),
+                        dato: formatSamtykkeDato(samtykke.personvern_godtatt_tid),
                         versjon: samtykke.personvern_versjon || '—',
                       })
                     : `${t('consent.privacy.link')}: ${t('settings.consent.ikkeDokumentert')}`}

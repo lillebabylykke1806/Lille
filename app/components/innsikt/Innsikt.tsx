@@ -4,15 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { søvnMinutterForDag } from '../../lib/søvnUtils';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
-import { Locale } from '../../lib/i18n/translations';
-
-const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
-  no: 'norsk',
-  en: 'English',
-  sv: 'svenska',
-  da: 'dansk',
-  de: 'Deutsch',
-};
+import { LOCALE_SPRÅKNAVN } from '../../lib/i18n/translations';
 
 const HjerteIkon = ({ farge = '#8B6340', størrelse = 24 }: { farge?: string; størrelse?: number }) => (
   <svg width={størrelse} height={størrelse} viewBox="0 0 24 24" fill="none">

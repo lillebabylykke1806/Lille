@@ -1,26 +1,8 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { toStripeLocale } from '../../lib/i18n/locales';
 
 export const dynamic = 'force-dynamic';
-
-/** Map app i18n locale → Stripe Checkout locale (`no` → `nb`). Unknown → `auto`. */
-function stripeCheckoutLocale(raw: unknown): 'auto' | 'nb' | 'en' | 'sv' | 'da' | 'de' {
-  const code = typeof raw === 'string' ? raw.trim().toLowerCase() : '';
-  switch (code) {
-    case 'no':
-      return 'nb';
-    case 'en':
-      return 'en';
-    case 'sv':
-      return 'sv';
-    case 'da':
-      return 'da';
-    case 'de':
-      return 'de';
-    default:
-      return 'auto';
-  }
-}
 
 /**
  * Creates Stripe Checkout for Lille Pro.
@@ -38,7 +20,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const email = typeof body.email === 'string' ? body.email.trim() : '';
     const userId = typeof body.userId === 'string' ? body.userId.trim() : '';
-    const locale = stripeCheckoutLocale(body.locale);
+    const locale = toStripeLocale(body.locale);
 
     const appUserMeta = userId ? { app_user_id: userId } : undefined;
 

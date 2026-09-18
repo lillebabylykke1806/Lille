@@ -3,7 +3,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
-import { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
+import { formatTime } from '../../lib/i18n/format';
+import { toBcp47 } from '../../lib/i18n/locales';
+import { LOCALE_SPRÅKNAVN, type OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; aktivtBarn?: any; };
 
@@ -19,14 +21,6 @@ type UroLogg = {
 };
 
 type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
-
-const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
-  no: 'norsk',
-  en: 'English',
-  sv: 'svenska',
-  da: 'dansk',
-  de: 'Deutsch',
-};
 
 const getTiltak = (t: TFn) => [
   { id: 'Babymassasje', label: t('kolikk.tiltakBabymassasje') },
@@ -68,7 +62,7 @@ export default function Kolikk({ bruker, aktivtBarn }: Props) {
   const [tiltakStatistikk, setTiltakStatistikk] = useState<{ tiltak: string; fungerte: number; total: number }[]>([]);
   const [signalStatistikk, setSignalStatistikk] = useState<{ signal: string; prosent: number }[]>([]);
 
-  const [nyTidspunkt, setNyTidspunkt] = useState(new Date().toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }));
+  const [nyTidspunkt, setNyTidspunkt] = useState(formatTime(new Date(), locale, { hour: '2-digit', minute: '2-digit' }));
   const [nySignaler, setNySignaler] = useState<string[]>([]);
   const [nyTiltak, setNyTiltak] = useState<string[]>([]);
   const [nyResultat, setNyResultat] = useState<'bra' | 'delvis' | 'ikke' | null>(null);
@@ -230,7 +224,10 @@ Data: ${JSON.stringify(logg.slice(0, 10))}`
 
   const formatDato = (dato: string) => {
     const d = new Date(dato);
-    return { dag: d.getDate(), mnd: d.toLocaleDateString('no-NO', { month: 'short' }).toUpperCase() };
+    return {
+      dag: d.getDate(),
+      mnd: new Intl.DateTimeFormat(toBcp47(locale), { month: 'short' }).format(d).toUpperCase(),
+    };
   };
 
   const medalje = (i: number) => i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';

@@ -3,8 +3,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatDateShort } from '../../lib/i18n/format';
 import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
-import { Locale, OversettelseNøkkel } from '../../lib/i18n/translations';
+import { LOCALE_SPRÅKNAVN, type OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; };
 
@@ -19,14 +20,6 @@ type PumpingRegistrering = {
 };
 
 type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
-
-const LOCALE_SPRÅKNAVN: Record<Locale, string> = {
-  no: 'norsk',
-  en: 'English',
-  sv: 'svenska',
-  da: 'dansk',
-  de: 'Deutsch',
-};
 
 const getPumpingTyper = (t: TFn) => [
   { id: 'dobbel', label: t('pumping.typeDobbel') },
@@ -138,10 +131,7 @@ Skriv 3-4 korte, varme og oppmuntrende innsikter. Start hver med ✦. Fokuser p�
     ? Math.round(pumpinger.reduce((sum, p) => sum + p.mengde, 0) / Math.max([...new Set(pumpinger.map(p => p.dato))].length, 1))
     : 0;
 
-  const formatDato = (dato: string) => {
-    const d = new Date(dato);
-    return `${d.getDate()}. ${d.toLocaleDateString(locale === 'no' ? 'no-NO' : locale === 'sv' ? 'sv-SE' : locale === 'da' ? 'da-DK' : locale === 'de' ? 'de-DE' : 'en-GB', { month: 'short' })}`;
-  };
+  const formatDato = (dato: string) => formatDateShort(dato, locale);
 
   const getDatoLabel = (dato: string) => {
     const erIDag = dato === dagensdato;

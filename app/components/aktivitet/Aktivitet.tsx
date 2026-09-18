@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
+import { formatTime, formatDate } from '../../lib/i18n/format';
 import { OversettelseNøkkel } from '../../lib/i18n/translations';
 
 type Props = { bruker: any; };
@@ -150,7 +151,7 @@ const AktivitetIkon = ({ type }: { type: string }) => {
 };
 
 export default function Aktivitet({ bruker }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const AKTIVITET_TYPER = getAktivitetTyper(t);
   const MILEPÆLER_FORSLAG = getMilepælerForslag(t);
   const [aktivFane, setAktivFane] = useState<'aktivitet' | 'milepæler'>('aktivitet');
@@ -224,7 +225,7 @@ Svar KUN med innsikten, ingen introduksjon.`
       varighet,
       notat,
       dato: dagensdato(),
-      tidspunkt: nå.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' }),
+      tidspunkt: formatTime(nå, locale, { hour: '2-digit', minute: '2-digit' }),
     });
     setNotat(''); setVarighet(15);
     setVisNy(false);
@@ -371,7 +372,7 @@ Svar KUN med innsikten, ingen introduksjon.`
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: '15px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '600' }}>{m.navn}</div>
                       <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>
-                        {new Date(m.dato).toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        {formatDate(m.dato, locale)}
                       </div>
                     </div>
                   </div>

@@ -1,0 +1,536 @@
+# Native-speaker review list (Lille i18n)
+
+Review these keys in **es, fr, it, nl, pl, fi, ja** before marketing launch.
+Source of truth for meaning: Norwegian (`no`). English (`en`) is a reference.
+
+Product names **Lille** / **Lille Pro** must stay unchanged.
+
+## Helseråd / medisinsk tone (84)
+
+- `kolikk.komIGangBeskrivelse`
+  - no: "Når du registrerer uroperioder, hjelper du oss å forstå {navn} bedre."
+- `kolikk.påVeiInnBeskrivelse`
+  - no: "Vi har registrert signaler som ofte kommer før uro hos {navn}."
+- `kolikk.stegNoterHvaDere`
+  - no: "Noter hva dere prøvde og hvordan det gikk"
+- `kolikk.undertittel`
+  - no: "Forstå mønstrene bak de vanskelige stundene"
+- `kolikk.varslingInfo`
+  - no: "Du kan varsling 45 min før uroen vanligvis starter. Dette kan du slå på senere."
+- `kolikk.velkommenBeskrivelse`
+  - no: "Vi hjelper deg å forstå uroen og hva som kan hjelpe {navn}. Jo mer du registrerer, desto bedre kan vi finne mønstre og gi deg innsikt."
+- `mat.allergiSpørsmål`
+  - no: "Viste babyen tegn på reaksjon etter måltidet?"
+- `mat.allergiValgfritt`
+  - no: "Allergireaksjon (valgfritt)"
+- `medisin.faneVaksiner`
+  - no: "💉 Vaksiner"
+- `medisin.frekvensAtFever`
+  - no: "Ved feber"
+- `medisin.lagreVaksine`
+  - no: "Lagre vaksine"
+- `medisin.leggTilVaksine`
+  - no: "+ Legg til vaksine"
+- `medisin.leggTilVaksineTittel`
+  - no: "Legg til vaksine"
+- `medisin.norskVaksinasjonsprogram`
+  - no: "Norsk vaksinasjonsprogram"
+- `medisin.påvirkerSøvnTekst`
+  - no: "Appen vil ta hensyn til dette i søvnanalysen"
+- `medisin.tittel`
+  - no: "Medisin & Vaksine"
+- `medisin.undertittel`
+  - no: "Hold oversikt over medisiner og vaksiner"
+- `medisin.vaksin12Mnd`
+  - no: "12 måneder vaksine"
+- `medisin.vaksin15Mnd`
+  - no: "15 måneder vaksine"
+- `medisin.vaksin3Mnd`
+  - no: "3 måneder vaksine"
+- `medisin.vaksin5Mnd`
+  - no: "5 måneder vaksine"
+- `medisin.vaksin6Uker`
+  - no: "6 uker vaksine"
+- `medisin.vaksinNavnPlaceholder`
+  - no: "F.eks. 3 måneder vaksine"
+- `medisin.vaksineoversikt`
+  - no: "Vaksineoversikt"
+- `onboarding.vaksine`
+  - no: "Vaksine"
+- `signaler.kategoriMageUndertittel`
+  - no: "Signaler knyttet til luft, mage eller uro."
+- `signaler.kategoriPauseUndertittel`
+  - no: "Tegn på overstimulering eller behov for ro."
+- `signaler.kategoriSovnUndertittel`
+  - no: "Signaler som vises når babyen begynner å bli trøtt."
+- `signaler.laerBabyensSprak`
+  - no: "Små signaler kan fortelle mye om hva babyen trenger 💛"
+- `signaler.mageAnspentAnsiktBeskrivelse`
+  - no: "Babyen grimaser og ser anspent ut."
+- `signaler.mageAnspentAnsiktTips`
+  - no: "Kombiner med andre signaler for å tolke."
+- `signaler.mageGraterVedMatingBeskrivelse`
+  - no: "Babyen begynner å gråte under eller etter mating."
+- `signaler.mageGraterVedMatingTips`
+  - no: "Prøv å mate i mer oppreist stilling."
+- `signaler.mageKrummerRyggenBeskrivelse`
+  - no: "Babyen krummer ryggen og virker anspent."
+- `signaler.mageKrummerRyggenTips`
+  - no: "Hold babyen oppreist etter mating."
+- `signaler.mageRapperMyeBeskrivelse`
+  - no: "Babyen rapper ofte eller har synlig oppblåst mage."
+- `signaler.mageRapperMyeTips`
+  - no: "Klapp forsiktig på ryggen og hold oppreist."
+- `signaler.mageTrekkerBenaOppBeskrivelse`
+  - no: "Babyen trekker bena opp mot magen."
+- `signaler.mageTrekkerBenaOppTips`
+  - no: "Prøv sykkelbevegelser med bena eller magemassasje."
+- `signaler.pauseBuerRyggenBakoverBeskrivelse`
+  - no: "Babyen buer ryggen bakover."
+- `signaler.pauseBuerRyggenBakoverTips`
+  - no: "Sjekk om det er luft i magen."
+- `signaler.pauseKnytterNeveneBeskrivelse`
+  - no: "Babyen knytter hendene hardt."
+- `signaler.pauseKnytterNeveneTips`
+  - no: "Ta babyen opp og gi ro før situasjonen eskalerer."
+- `signaler.pauseUnngarOyekontaktBeskrivelse`
+  - no: "Babyen ser bort og unngår å møte blikket ditt."
+- `signaler.pauseUnngarOyekontaktTips`
+  - no: "Gi babyen litt tid uten press om kontakt."
+- `signaler.pauseUroligIKroppenBeskrivelse`
+  - no: "Babyen virker rastløs og urolig i kroppen."
+- `signaler.pauseUroligIKroppenTips`
+  - no: "Prøv å dempe lys og lyd i rommet."
+- `signaler.pauseVenderHodetBortBeskrivelse`
+  - no: "Babyen vender hodet bort fra deg eller fra stimuli."
+- `signaler.pauseVenderHodetBortTips`
+  - no: "Vent til babyen vender seg tilbake av seg selv."
+- `signaler.registrertGang`
+  - no: "Dette mønsteret går igjen i {antall} av {total} registrerte lurer."
+- `signaler.registrertGanger`
+  - no: "Dette mønsteret går igjen i {antall} av {total} registrerte lurer."
+- `signaler.sovnGjesperBeskrivelse`
+  - no: "Gjesping er et vanlig tegn på tretthet."
+- `signaler.sovnGjesperKanBety1`
+  - no: "Tidlig eller sent signal avhengig av kontekst"
+- `signaler.sovnGjesperKanBety2`
+  - no: "Kombinert med andre signaler = søvn nærmer seg"
+- `signaler.sovnGjesperTips`
+  - no: "Ett gjesp er ikke nok – se etter kombinasjoner."
+- `signaler.sovnGnirOyneneBeskrivelse`
+  - no: "Babyen gnir eller klør seg i øynene."
+- `signaler.sovnGnirOyneneTips`
+  - no: "Er dette første signal du ser, kan babyen allerede være overtrøtt."
+- `signaler.sovnMisterInteressenBeskrivelse`
+  - no: "Babyen mister interessen for det som skjer rundt."
+- `signaler.sovnMisterInteressenTips`
+  - no: "Reduser stimuli og gå til et roligere rom."
+- `signaler.sovnStirrerTomtBeskrivelse`
+  - no: "Babyen ser tomt ut i blikket og virker fjern."
+- `signaler.sovnStirrerTomtTips`
+  - no: "Begynn å roe ned miljøet når du ser dette."
+- `signaler.sovnTungeOyelokkBeskrivelse`
+  - no: "Øyelokkene blir tunge og halvveis lukkede."
+- `signaler.sovnTungeOyelokkTips`
+  - no: "Legg ned nå – babyen er klar."
+- `signaler.sovnVenderHodetBortBeskrivelse`
+  - no: "Babyen vender hodet bort fra deg eller stimuli."
+- `signaler.sovnVenderHodetBortTips`
+  - no: "Respekter signalet – ikke prøv å få kontakt igjen med én gang."
+- `signaler.sultRastlosOgUroligBeskrivelse`
+  - no: "Babyen beveger seg mye og virker rastløs."
+- `signaler.sultRastlosOgUroligTips`
+  - no: "Mat snart – gråt er siste sultsignal."
+- `signaler.sultSmatterMedMunnenBeskrivelse`
+  - no: "Babyen smatter med munnen."
+- `signaler.sultSmatterMedMunnenTips`
+  - no: "Tidlig signal – ideelt tidspunkt å mate."
+- `signaler.sultSokerBrystEllerFlaskeBeskrivelse`
+  - no: "Babyen vrir hodet og søker etter bryst eller flaske."
+- `signaler.sultSokerBrystEllerFlaskeTips`
+  - no: "Typisk tidlig sultsignal hos nyfødte."
+- `signaler.sultSugerPaHendeneBeskrivelse`
+  - no: "Babyen suger på egne hender eller fingre."
+- `signaler.sultSugerPaHendeneTips`
+  - no: "Mat nå – ikke vent til babyen gråter."
+- `signaler.tips`
+  - no: "💡 Tips"
+- `signaler.vissteDuTekst`
+  - no: "Et signal alene betyr sjelden noe. Det er ofte kombinasjonen av flere signaler som forteller hva babyen trenger."
+- `temp.feber`
+  - no: "Feber"
+- `temp.høyFeber`
+  - no: "Høy feber"
+- `temp.ingenMålingerBeskrivelse`
+  - no: "Registrer {navn}s temperatur for å følge utviklingen og få varsler om feber."
+- `temp.innsiktEnMåling`
+  - no: "Første måling i dag registrert kl. {tid}."
+- `temp.innsiktFlereMålinger`
+  - no: "{navn} har hatt {antall} målinger i dag. Siste: {temp}°C."
+- `temp.notatPlaceholder`
+  - no: "Hvordan ser babyen ut? Andre observasjoner?"
+- `temp.seMediasinSide`
+  - no: "Se medisin-siden for oversikt over medisiner og doser."
+- `temp.symptomFeber`
+  - no: "Feber"
+- `temp.undertittel`
+  - no: "Følg temperatur, sykdomsforløp\nog medisiner på ett sted."
+
+## AI-innsikter (90)
+
+- `aktivitet.aiAntall`
+  - no: "{antall} aktiviteter denne uken 🌿"
+- `aktivitet.aiMestPopulær`
+  - no: "Mest populære aktivitet: {aktivitet}"
+- `hjem.aiInnsiktRolig`
+  - no: "Baby virker rolig og mottakelig nå ✦"
+- `hjem.aiInnsiktSover`
+  - no: "Baby sover – bruk tiden til å hvile 🌙"
+- `hjem.aiInnsiktTrøtt`
+  - no: "Baby viser trøtthetstegn – kanskje start nedtrapping?"
+- `hjem.aiInnsiktUrolig`
+  - no: "Baby virker litt overstimulert i dag"
+- `hjem.aiTomTekst`
+  - no: "Registrer søvn og signaler noen dager, så begynner AI å oppdage mønstre."
+- `hjem.aiTomTittel`
+  - no: "Lille lærer av registreringene dine."
+- `hjem.analyserer`
+  - no: "Analyserer {navn}s mønstre..."
+- `innsikt.aiAnalysererKommunikasjon`
+  - no: "AI analyserer {navn}s unike kommunikasjon"
+- `innsikt.aiAnalysererMønstre`
+  - no: "AI analyserer {navn}s mønstre"
+- `innsikt.aiLærerFortsatt`
+  - no: "AI-en lærer fortsatt {navn}s mønstre – registrer gjerne flere"
+- `innsikt.aiObservasjon`
+  - no: "✦ AI-OBSERVASJON"
+- `innsikt.alder`
+  - no: "Alder"
+- `innsikt.amminger`
+  - no: "Amminger"
+- `innsikt.analyserData`
+  - no: "Se hva Lille har lært om {navn}"
+- `innsikt.analysererMønstre`
+  - no: "Analyserer {navn}s mønstre..."
+- `innsikt.avBehov`
+  - no: "av {timer}t behov"
+- `innsikt.babyensSpråk`
+  - no: "💛 Babyens språk"
+- `innsikt.basertPå7Dager`
+  - no: "Basert på de siste 7 dagene"
+- `innsikt.basertPåAlder`
+  - no: "Basert på {navn}s alder"
+- `innsikt.basertPåRegistreringer`
+  - no: "Basert på {antall} registreringer"
+- `innsikt.bleieskift`
+  - no: "Bleieskift"
+- `innsikt.dagensSøvnbehov`
+  - no: "Dagens søvnbehov"
+- `innsikt.denneUkenHarViLært`
+  - no: "💛 Denne uken har vi lært"
+- `innsikt.detteVilDuFåInnsiktI`
+  - no: "Dette vil du få innsikt i"
+- `innsikt.duHarIkkeRegistrertSignaler`
+  - no: "Du har ikke registrert noen signaler enda."
+- `innsikt.fåttNokSøvn`
+  - no: "{navn} har fått nok søvn i dag! 🌿"
+- `innsikt.førHanBlirTrøtt`
+  - no: "før han blir trøtt."
+- `innsikt.førsteSignalTilSøvn`
+  - no: "Første signal → søvn"
+- `innsikt.førsteSignalTilUro`
+  - no: "Første signal → uro"
+- `innsikt.gjennomsnitt`
+  - no: "Gjennomsnitt"
+- `innsikt.gjennomsnittMinutterFraSignal`
+  - no: "Gjennomsnitt {min} minutter fra første signal til søvn"
+- `innsikt.herVilDineSignalerVises`
+  - no: "Her vil dine registrerte signaler vises."
+- `innsikt.ingenDataEnnå`
+  - no: "Registrer søvn og amming noen dager, så vil Lille begynne å oppdage mønstre 🤍"
+- `innsikt.innsiktFane`
+  - no: "✨ Innsikt"
+- `innsikt.joMerViRegistrerer`
+  - no: "Jo mer vi registrerer, desto bedre innsikt får du."
+- `innsikt.kunneIkkeLasteInnsikter`
+  - no: "✨ Kunne ikke laste innsikter akkurat nå."
+- `innsikt.kunneIkkeLasteSpråk`
+  - no: "💛 Kunne ikke laste babyens språk akkurat nå."
+- `innsikt.lurerRegistrert`
+  - no: "{antall} lurer registrert"
+- `innsikt.måned`
+  - no: "mnd"
+- `innsikt.mønsterFørProsent`
+  - no: "Et mønster vi ser før {pst}% av lurene"
+- `innsikt.nyligRegistrerteSignaler`
+  - no: "Nylig registrerte signaler"
+- `innsikt.oppdaterAnalyse`
+  - no: "Oppdater analyse"
+- `innsikt.oppdaterInnsikter`
+  - no: "Oppdater innsikter"
+- `innsikt.overganger`
+  - no: "Overganger"
+- `innsikt.overgangerTekst`
+  - no: "Forstå overgangen fra rolig → trøtt → sover og mer."
+- `innsikt.overgangerViSerHos`
+  - no: "Overganger vi ser hos {navn}"
+- `innsikt.personligeInnsikter`
+  - no: "Personlige innsikter"
+- `innsikt.personligeMønstre`
+  - no: "Personlige mønstre"
+- `innsikt.personligeMønstreTekst`
+  - no: "AI finner mønstre som er unike for barnet ditt."
+- `innsikt.prosentAvDagsbehovetBraJobbet`
+  - no: "{pst}% av dagsbehovet – bra jobbet!"
+- `innsikt.prosentAvDagsbehovetSåLangt`
+  - no: "{pst}% av dagsbehovet så langt"
+- `innsikt.registrerFlereForSikrere`
+  - no: "Registrer flere signaler for sikrere innsikt"
+- `innsikt.registrerFørsteSignal`
+  - no: "Registrer første signal"
+- `innsikt.registrerSmåSignaler`
+  - no: "Registrer små signaler i hverdagen. Det kan være ansiktsuttrykk, lyder, bevegelser eller kroppsspråk."
+- `innsikt.registrertGanger`
+  - no: "Registrert {antall} ganger."
+- `innsikt.registrertI61Prosent`
+  - no: "Registrert i 61% av gangene."
+- `innsikt.registrertIProsentAvLurene`
+  - no: "Registrert i {pst}% av lurene."
+- `innsikt.roligTilFørsteSignal`
+  - no: "Rolig → første signal"
+- `innsikt.seAlle`
+  - no: "Se alle"
+- `innsikt.signalmønster`
+  - no: "{navn}s signalmønster"
+- `innsikt.signalrekkefølge`
+  - no: "Signalrekkefølge"
+- `innsikt.signalrekkefølgeTekst`
+  - no: "Oppdag rekkefølgen babyen din bruker før noe skjer."
+- `innsikt.siste7Dager`
+  - no: "siste 7 dager"
+- `innsikt.sisteRegistrerteSignaler`
+  - no: "Siste registrerte signaler"
+- `innsikt.slikKommerDuIGang`
+  - no: "Slik kommer du i gang"
+- `innsikt.sover`
+  - no: "Sover"
+- `innsikt.sovetIDag`
+  - no: "Sovet i dag"
+- `innsikt.stegTrykkPlus`
+  - no: "Trykk på + for å registrere et signal"
+- `innsikt.stegVelgHvaDuObserverte`
+  - no: "Velg hva du observerte"
+- `innsikt.stegViLærer`
+  - no: "Vi lærer og finner mønstre sammen"
+- `innsikt.søvnSiste7Dager`
+  - no: "Søvn siste 7 dager"
+- `innsikt.tittel`
+  - no: "Innsikt"
+- `innsikt.typiskVeiModSøvn`
+  - no: "Typisk vei mot søvn"
+- `innsikt.typiskVeiTilUro`
+  - no: "Typisk vei til uro"
+- `innsikt.vanligsteMønster`
+  - no: "Et av de vanligste mønstrene vi ser hos {navn}"
+- `innsikt.vanligsteSignaler`
+  - no: "Vanligste signaler"
+- `innsikt.vanligsteSignalerTekst`
+  - no: "Se hvilke signaler som brukes oftest av barnet ditt."
+- `innsikt.varighet`
+  - no: "Varighet"
+- `innsikt.velkommen`
+  - no: "Velkommen til Babyens språk!"
+- `innsikt.velkommenBeskrivelse`
+  - no: "Her lærer vi å forstå de små signalene som forteller oss hvordan {navn} har det."
+- `innsikt.viserOfteDisseSignalene`
+  - no: "{navn} viser ofte disse signalene før han/hun blir trøtt:"
+- `innsikt.viserOftest`
+  - no: "viser oftest"
+- `mat.analysererMatmønstre`
+  - no: "Analyserer matmønstre..."
+- `mat.personligeAiInnsikter`
+  - no: "Personlige AI-innsikter"
+- `pumping.aiInnsikt`
+  - no: "Innsikt fra AI"
+- `pumping.aiInnsiktHeader`
+  - no: "✦ AI-INNSIKT"
+- `pumping.aiInnsiktTekst`
+  - no: "AI finner mønstre og gir deg personlige anbefalinger."
+- `pumping.analysererPumpemønstre`
+  - no: "Analyserer pumpemønstre..."
+
+## Paywall (73)
+
+- `kode.alleredeBrukt`
+  - no: "Du har allerede brukt denne koden."
+- `kode.endrekode`
+  - no: "Bytt kode"
+- `kode.fortsett`
+  - no: "Fortsett"
+- `kode.gåTilLille`
+  - no: "Gå til Lille"
+- `kode.inaktivKode`
+  - no: "Denne koden er ikke lenger aktiv."
+- `kode.innloggetSom`
+  - no: "Logget inn som"
+- `kode.losInn`
+  - no: "Løs inn kode"
+- `kode.loserInn`
+  - no: "Du løser inn:"
+- `kode.loserInnLaster`
+  - no: "Løser inn…"
+- `kode.måVæreInnlogget`
+  - no: "Du må være innlogget for å løse inn koden."
+- `kode.noeGikkGalt`
+  - no: "Noe gikk galt — prøv igjen om litt."
+- `kode.oppbrukt`
+  - no: "Denne koden er allerede brukt opp."
+- `kode.placeholder`
+  - no: "F.eks. NATASHA20"
+- `kode.suksessStandard`
+  - no: "Du har nå tilgang. Åpne appen og logg inn med denne kontoen."
+- `kode.suksessTittel`
+  - no: "Koden er innløst!"
+- `kode.tittel`
+  - no: "Løs inn kode"
+- `kode.tomKode`
+  - no: "Skriv inn koden din for å fortsette."
+- `kode.ugyldigKode`
+  - no: "Vi fant ikke den koden. Sjekk stavemåten og prøv igjen."
+- `kode.undertittel`
+  - no: "Har du fått en rabatt- eller ambassadørkode? Skriv den inn her."
+- `paywall.administrerInfo`
+  - no: "Administrer abonnementet i App Store-innstillingene på enheten din."
+- `paywall.avbrytNårSomHelst`
+  - no: "Si opp når som helst før 7 dager – ingen betaling"
+- `paywall.beskrivelse`
+  - no: "Forstå babyens unike rytme med full tilgang til alle funksjoner."
+- `paywall.bestVerdi`
+  - no: "BEST VERDI"
+- `paywall.etterPrøve`
+  - no: "etter prøveperioden"
+- `paywall.faq1a`
+  - no: "Hvis du ikke sier opp, går abonnementet over til betalt plan til prisen du valgte. Sier du opp i tide, belastes du ikke."
+- `paywall.faq1q`
+  - no: "Hva skjer når prøveperioden er over?"
+- `paywall.faq2a`
+  - no: "Ja, etter prøveperioden — med mindre du sier opp før den er over."
+- `paywall.faq2q`
+  - no: "Blir jeg trukket automatisk?"
+- `paywall.faq3a`
+  - no: "Ja. Si opp i App Store-, Google Play- eller Stripe-innstillingene. Du beholder tilgang ut perioden du allerede har betalt/prøvd."
+- `paywall.faq3q`
+  - no: "Kan jeg avslutte når som helst?"
+- `paywall.faq4a`
+  - no: "Du kan logge søvn (lur og natt) gratis uten tidsbegrensning. Øvrige funksjoner krever Lille Pro."
+- `paywall.faq4q`
+  - no: "Hva får jeg gratis?"
+- `paywall.faqTittel`
+  - no: "Vanlige spørsmål"
+- `paywall.fordel1`
+  - no: "Søvnsporing og AI-innsikt"
+- `paywall.fordel2`
+  - no: "Mat, amming og signaler"
+- `paywall.fordel3`
+  - no: "Del med partner"
+- `paywall.gjenopprettKjøp`
+  - no: "Gjenopprett kjøp"
+- `paywall.gjenoppretter`
+  - no: "Gjenoppretter..."
+- `paywall.gjenopprettet`
+  - no: "Kjøp gjenopprettet!"
+- `paywall.gratisMerke`
+  - no: "Du kan også logge søvn gratis — uten kort"
+- `paywall.gratisPrøveTittel`
+  - no: "Start din 7-dagers gratis prøveperiode"
+- `paywall.ingentingÅGjenopprette`
+  - no: "Ingen tidligere kjøp funnet."
+- `paywall.kjøpFeilet`
+  - no: "Kjøpet feilet. Prøv igjen."
+- `paywall.kjøpFullført`
+  - no: "Abonnement aktivert!"
+- `paywall.klarPrisinfo`
+  - no: "7 dager gratis, deretter {pris}/mnd. Fornyes automatisk. Si opp når som helst i abonnementsinnstillingene."
+- `paywall.månedlig`
+  - no: "Månedlig abonnement"
+- `paywall.månedligPris`
+  - no: "Se pris"
+- `paywall.månedligUndertekst`
+  - no: "7 dagers gratis prøveperiode"
+- `paywall.perMåned`
+  - no: "/måned"
+- `paywall.personvernerklæring`
+  - no: "Personvernerklæring"
+- `paywall.perÅr`
+  - no: "/år"
+- `paywall.startGratisPrøve`
+  - no: "Start gratis prøveperiode"
+- `paywall.starterPrøve`
+  - no: "Starter..."
+- `paywall.tittel`
+  - no: "Lille Pro"
+- `paywall.vilkår`
+  - no: "Abonnementet fornyes automatisk. Du kan si opp når som helst i App Store-innstillingene."
+- `paywall.vilkårForBruk`
+  - no: "Vilkår for bruk"
+- `paywall.årlig`
+  - no: "Årlig abonnement"
+- `paywall.årligPris`
+  - no: "Se pris"
+- `paywall.årligUndertekst`
+  - no: "Spar sammenlignet med månedlig"
+- `pro.gjenopprettHint`
+  - no: "Vi får ikke bekreftet abonnementet ditt akkurat nå. Har du allerede betalt? Gjenopprett kjøp."
+- `pro.prøveTil`
+  - no: "Prøveperioden varer til {dato}"
+- `rc.gjenopprettKunIApp`
+  - no: "Gjenoppretting er kun tilgjengelig i appen"
+- `rc.ingenPakker`
+  - no: "Ingen abonnementspakker tilgjengelig"
+- `rc.ingenTidligere`
+  - no: "Ingen tidligere kjøp funnet"
+- `rc.kjøpFeilet`
+  - no: "Kjøpet feilet"
+- `rc.kunIApp`
+  - no: "Kjøp er kun tilgjengelig i appen"
+- `rc.kunneIkkeGjenopprette`
+  - no: "Kunne ikke gjenopprette kjøp"
+- `trialEnded.abonner`
+  - no: "Abonner på Lille Pro"
+- `trialEnded.fortsettGratis`
+  - no: "Fortsett med gratis søvnlogging"
+- `trialEnded.gratisSøvn`
+  - no: "Du kan fortsatt logge søvn gratis."
+- `trialEnded.oppsummering`
+  - no: "Du logget {lurer} lurer og {amming} amminger."
+- `trialEnded.oppsummeringTom`
+  - no: "Dataene dine er trygge — de er ikke slettet."
+- `trialEnded.tittel`
+  - no: "Prøveperioden er over"
+
+## Juridisk / samtykke (12)
+
+- `consent.marketing`
+  - no: "Jeg vil gjerne motta tips og nyheter på e-post (valgfritt)"
+- `consent.privacy.link`
+  - no: "personvernerklæringen"
+- `consent.required`
+  - no: "Du må godta vilkårene for å opprette konto"
+- `consent.terms`
+  - no: "Jeg godtar {terms} og {privacy}"
+- `consent.terms.link`
+  - no: "vilkår for bruk"
+- `paywall.personvernerklæring`
+  - no: "Personvernerklæring"
+- `paywall.vilkår`
+  - no: "Abonnementet fornyes automatisk. Du kan si opp når som helst i App Store-innstillingene."
+- `paywall.vilkårForBruk`
+  - no: "Vilkår for bruk"
+- `profil.personvern`
+  - no: "Personvern"
+- `settings.consent.personvernGodtatt`
+  - no: "Personvern godtatt {dato} (versjon {versjon})"
+- `settings.consent.vilkaarGodtatt`
+  - no: "Vilkår godtatt {dato} (versjon {versjon})"
+- `settings.consent.vilkaarLenke`
+  - no: "Les vilkår for bruk"
