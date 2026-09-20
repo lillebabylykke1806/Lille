@@ -33,21 +33,23 @@ type BleieValg = {
 
 type ValgAction = { type: 'toggle'; id: BleieValgId } | { type: 'reset' };
 
-const TOMT_VALG: BleieValg = { vat: false, avforing: false, dry: false };
+function tomtValg(): BleieValg {
+  return { vat: false, avforing: false, dry: false };
+}
 
 function valgReducer(state: BleieValg, action: ValgAction): BleieValg {
-  if (action.type === 'reset') return TOMT_VALG;
+  if (action.type === 'reset') return tomtValg();
   const id = action.id;
   if (id === 'dry') {
     const nextDry = !state.dry;
     return nextDry
       ? { vat: false, avforing: false, dry: true }
-      : { ...state, dry: false };
+      : { vat: false, avforing: false, dry: false };
   }
   return {
-    ...state,
+    vat: id === 'vat' ? !state.vat : state.vat,
+    avforing: id === 'avforing' ? !state.avforing : state.avforing,
     dry: false,
-    [id]: !state[id],
   };
 }
 
@@ -89,20 +91,13 @@ export default function Bleie({ bruker }: Props) {
   const BLEIE_TYPER = getBleieTyper(t);
   const [tidspunkt, setTidspunkt] = useState(() => formatTimeValue(new Date()));
   const [logg, setLogg] = useState<BleieLogg[]>([]);
-  const [valg, dispatchValg] = useReducer(valgReducer, TOMT_VALG);
+  const [valg, dispatchValg] = useReducer(valgReducer, undefined, tomtValg);
   const [notat, setNotat] = useState('');
   const [lagrer, setLagrer] = useState(false);
   const [visBekreftet, setVisBekreftet] = useState(false);
   const [feil, setFeil] = useState('');
 
   const harValg = valg.dry || valg.vat || valg.avforing;
-
-  const toggleType = (id: BleieValgId) => {
-    const next = valgReducer(valg, { type: 'toggle', id });
-    console.log('[bleie] click', id, 'prev=', valg, 'next=', next, 'file=app/components/bleie/Bleie.tsx');
-    setFeil('');
-    dispatchValg({ type: 'toggle', id });
-  };
 
   const lastLogg = useCallback(async () => {
     const { data } = await supabase
@@ -127,7 +122,6 @@ export default function Bleie({ bruker }: Props) {
       avforing: valg.dry ? false : valg.avforing,
     };
     const type = bleieTypeFromFlags(flags);
-    console.log('[bleie] save', { flags, type, valg, file: 'app/components/bleie/Bleie.tsx' });
     const { error } = await supabase.from('bleie').insert({
       profil_id: bruker?.id,
       dato: dagensdato(),
@@ -139,7 +133,6 @@ export default function Bleie({ bruker }: Props) {
     });
     setLagrer(false);
     if (error) {
-      console.error('[bleie] insert error', error);
       setFeil(error.message || t('bleie.lagre'));
       return;
     }
@@ -156,10 +149,7 @@ export default function Bleie({ bruker }: Props) {
   const sisteFlags = sisteBytte ? bleieFlagsFromRow(sisteBytte) : null;
 
   return (
-    <div
-      data-bleie-multiselect="app/components/bleie/Bleie.tsx"
-      style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '24px 24px 100px' }}
-    >
+    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '24px 24px 100px' }}>
       <div style={{ marginBottom: '24px', textAlign: 'center' }}>
         <div style={{ fontSize: '26px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '4px' }}>
           {t('bleie.tittel')}
@@ -168,22 +158,6 @@ export default function Bleie({ bruker }: Props) {
           {t('bleie.undertittel')}
         </div>
       </div>
-
-      <pre
-        data-bleie-debug
-        style={{
-          fontSize: 11,
-          fontFamily: 'monospace',
-          background: '#fff',
-          border: `1px solid ${farger.kremMørk}`,
-          borderRadius: 8,
-          padding: '8px 10px',
-          marginBottom: 12,
-          color: farger.tekst,
-        }}
-      >
-        {`file=app/components/bleie/Bleie.tsx\nvalg=${JSON.stringify(valg)}`}
-      </pre>
 
       {visBekreftet && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: farger.grønnLys, border: `1px solid ${farger.grønn}`, borderRadius: '20px', padding: '20px 32px', zIndex: 200, textAlign: 'center', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
@@ -232,8 +206,10 @@ export default function Bleie({ bruker }: Props) {
               <button
                 key={type.id}
                 type="button"
-                data-bleie-option={type.id}
-                onClick={() => toggleType(type.id)}
+                onClick={() => {
+                  setFeil('');
+                  dispatchValg({ type: 'toggle', id: type.id });
+                }}
                 aria-pressed={aktiv}
                 style={{
                   flex: 1,
@@ -247,12 +223,8 @@ export default function Bleie({ bruker }: Props) {
                   gap: '8px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  position: 'relative',
                 }}
               >
-                {aktiv && (
-                  <span style={{ position: 'absolute', top: 6, right: 8, fontSize: 12, color: farger.grønn, fontWeight: 700 }}>✓</span>
-                )}
                 <BleieIkon type={type.ikon} aktiv={aktiv} />
                 <div style={{ fontSize: '12px', fontFamily: 'var(--font-inter)', color: aktiv ? farger.grønn : farger.tekst, fontWeight: aktiv ? '600' : '400' }}>
                   {type.label}
