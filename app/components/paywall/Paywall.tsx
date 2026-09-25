@@ -83,12 +83,13 @@ export default function Paywall({ onSuccess, onClose, email, userId, onAuthentic
     return access.hasPro;
   };
 
+  /** Never open checkout/IAP if a logged-in user already has Pro. Guests skip this. */
   const handleStartTrial = async () => {
     setFeil('');
     setSuksess('');
     setLaster('kjøp');
     try {
-      if (await harAlleredeTilgang(email, userId)) {
+      if (userId && (await harAlleredeTilgang(email, userId))) {
         onSuccess();
         return;
       }
