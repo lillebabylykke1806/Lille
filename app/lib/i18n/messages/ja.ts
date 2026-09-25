@@ -292,6 +292,7 @@ const messages: Record<string, string> = {
   "paywall.administrerInfo": "サブスクリプションは、お使いの端末の App Store 設定から管理できます。",
   "paywall.gratisPrøveTittel": "7日間の無料トライアルを始める",
   "paywall.startGratisPrøve": "無料で始める",
+  "paywall.harAlleredeKonto": "すでにアカウントをお持ちですか？ログイン",
   "paywall.starterPrøve": "開始中...",
   "paywall.avbrytNårSomHelst": "7日以内に解約すれば料金はかかりません",
   "paywall.etterPrøve": "無料トライアル終了後",

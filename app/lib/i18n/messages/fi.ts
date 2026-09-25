@@ -292,6 +292,7 @@ const messages: Record<string, string> = {
   "paywall.administrerInfo": "Hallitse tilausta laitteesi App Store -asetuksissa.",
   "paywall.gratisPrøveTittel": "Aloita 7 päivän ilmainen kokeilu",
   "paywall.startGratisPrøve": "Aloita kokeilu",
+  "paywall.harAlleredeKonto": "Onko sinulla jo tili? Kirjaudu sisään",
   "paywall.starterPrøve": "Aloitetaan...",
   "paywall.avbrytNårSomHelst": "Peruuta ennen 7 päivää – ei maksua",
   "paywall.etterPrøve": "kokeilun jälkeen",

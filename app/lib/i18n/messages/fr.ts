@@ -292,6 +292,7 @@ const messages: Record<string, string> = {
   "paywall.administrerInfo": "Gérez votre abonnement dans les réglages de l'App Store sur votre appareil.",
   "paywall.gratisPrøveTittel": "Commencez votre essai gratuit de 7 jours",
   "paywall.startGratisPrøve": "Démarrer l'essai gratuit",
+  "paywall.harAlleredeKonto": "Vous avez déjà un compte ? Se connecter",
   "paywall.starterPrøve": "Démarrage...",
   "paywall.avbrytNårSomHelst": "Annulez avant 7 jours – aucun paiement",
   "paywall.etterPrøve": "après l'essai gratuit",

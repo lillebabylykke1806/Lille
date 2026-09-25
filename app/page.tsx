@@ -750,6 +750,50 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
             anvendAccess(access);
             if (isNyBruker) setVisOnboarding(true);
           }}
+          onAuthenticated={async (user) => {
+            // Existing account from paywall: enter app if Pro — never send to checkout.
+            setIsNyBruker(false);
+            localStorage.removeItem('lille_babybilde');
+            const lastKnown = readLastKnownPro(user.id);
+            if (lastKnown !== null) setHarAbonnement(lastKnown);
+            const access = await getSubscriptionAccess(user.email || '', user.id);
+            anvendAccess(access);
+            setBruker(user);
+            void sikreProfilerRad(user.id);
+            if (isNativeApp()) void syncRevenueCatUser(user.id, user.email);
+
+            if (access.hasPro) {
+              setVisPaywall(false);
+              setVisTrialEnded(false);
+              const { data: barn } = await supabase
+                .from('barn')
+                .select('*')
+                .eq('bruker_id', user.id)
+                .order('opprettet', { ascending: true })
+                .limit(1)
+                .maybeSingle();
+              if (barn) {
+                setAktivtBarn(barn);
+                await trengerOnboarding(user.id, true);
+              } else {
+                const { data: tilgang } = await supabase
+                  .from('barn_tilgang')
+                  .select('barn_id, barn(*)')
+                  .eq('bruker_id', user.id);
+                if (tilgang && tilgang.length > 0 && tilgang[0].barn) {
+                  setAktivtBarn(tilgang[0].barn);
+                } else {
+                  const trenger = await trengerOnboarding(user.id, false);
+                  if (trenger) {
+                    setIsNyBruker(true);
+                    setVisOnboarding(true);
+                  }
+                }
+              }
+              return;
+            }
+            // No Pro: stay on paywall as this user (props update via bruker).
+          }}
           onClose={lukkPaywallTilGratis}
         />
       )}

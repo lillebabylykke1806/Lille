@@ -11,6 +11,8 @@ import {
 } from '../../lib/revenuecat';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { OversettelseNøkkel } from '../../lib/i18n/translations';
+import { supabase } from '../../lib/supabase';
+import { getSubscriptionAccess } from '../../lib/abonnementAccess';
 
 const PAYWALL_GRØNN = '#3D6B4F';
 const PAYWALL_BAKGRUNN = '#F5F0EA';
@@ -28,6 +30,8 @@ type Props = {
   required?: boolean;
   email?: string | null;
   userId?: string | null;
+  /** Called after email/password login. Parent must update session and open app if Pro. */
+  onAuthenticated: (user: { id: string; email?: string | null }) => Promise<void>;
 };
 
 const FAQ: { q: OversettelseNøkkel; a: OversettelseNøkkel }[] = [
@@ -37,32 +41,46 @@ const FAQ: { q: OversettelseNøkkel; a: OversettelseNøkkel }[] = [
   { q: 'paywall.faq4q', a: 'paywall.faq4a' },
 ];
 
-export default function Paywall({ onSuccess, onClose, email, userId }: Props) {
+export default function Paywall({ onSuccess, onClose, email, userId, onAuthenticated }: Props) {
   const { t, locale } = useLanguage();
   const [priser, setPriser] = useState<{ monthly?: string; yearly?: string }>({});
   const [valgtPlan, setValgtPlan] = useState<Plan>('yearly');
-  const [laster, setLaster] = useState<'kjøp' | 'restore' | null>(null);
+  const [laster, setLaster] = useState<'kjøp' | 'restore' | 'login' | 'reset' | null>(null);
   const [feil, setFeil] = useState('');
   const [suksess, setSuksess] = useState('');
   const [åpenFaq, setÅpenFaq] = useState<number | null>(null);
+  const [visInnlogging, setVisInnlogging] = useState(false);
+  const [loginEpost, setLoginEpost] = useState(email || '');
+  const [loginPassord, setLoginPassord] = useState('');
+  const [resetMelding, setResetMelding] = useState('');
 
   useEffect(() => {
     if (isNativeApp()) getOfferingPrices().then(setPriser);
   }, []);
 
+  useEffect(() => {
+    if (email && !visInnlogging) setLoginEpost(email);
+  }, [email, visInnlogging]);
+
   const månedligPris = priser.monthly || FALLBACK_MÅNEDLIG;
   const årligPris = priser.yearly || FALLBACK_ÅRLIG;
   const prisEtterPrøve = valgtPlan === 'yearly' ? årligPris : månedligPris;
 
-  const startStripeCheckout = async () => {
+  const startStripeCheckout = async (checkoutEmail: string, checkoutUserId: string) => {
     const res = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email || '', userId: userId || '', locale }),
+      body: JSON.stringify({ email: checkoutEmail, userId: checkoutUserId, locale }),
     });
     const { url } = await res.json();
     if (url) window.location.href = url;
     else setFeil(t('paywall.kjøpFeilet'));
+  };
+
+  /** Never open checkout/IAP if the user already has Pro. */
+  const harAlleredeTilgang = async (checkEmail?: string | null, checkUserId?: string | null) => {
+    const access = await getSubscriptionAccess(checkEmail || '', checkUserId || undefined);
+    return access.hasPro;
   };
 
   const handleStartTrial = async () => {
@@ -70,8 +88,12 @@ export default function Paywall({ onSuccess, onClose, email, userId }: Props) {
     setSuksess('');
     setLaster('kjøp');
     try {
+      if (await harAlleredeTilgang(email, userId)) {
+        onSuccess();
+        return;
+      }
       if (!isNativeApp()) {
-        await startStripeCheckout();
+        await startStripeCheckout(email || '', userId || '');
         return;
       }
       const result = valgtPlan === 'yearly' ? await purchaseYearly() : await purchaseMonthly();
@@ -83,6 +105,64 @@ export default function Paywall({ onSuccess, onClose, email, userId }: Props) {
       }
     } catch {
       setFeil(t('paywall.kjøpFeilet'));
+    } finally {
+      setLaster(null);
+    }
+  };
+
+  const handleLoggInn = async () => {
+    if (laster) return;
+    setFeil('');
+    setResetMelding('');
+    setSuksess('');
+    setLaster('login');
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginEpost.trim(),
+        password: loginPassord,
+      });
+      if (error) {
+        const melding = error.message?.toLowerCase() ?? '';
+        const feilPassord =
+          error.code === 'invalid_credentials' ||
+          melding.includes('invalid login credentials') ||
+          melding.includes('invalid credentials');
+        setFeil(feilPassord ? t('innlogging.feilEpostPassord') : (error.message || t('innlogging.noeGikkGalt')));
+        return;
+      }
+      if (!data.user) {
+        setFeil(t('innlogging.noeGikkGalt'));
+        return;
+      }
+      await onAuthenticated(data.user);
+    } catch {
+      setFeil(t('innlogging.noeGikkGalt'));
+    } finally {
+      setLaster(null);
+    }
+  };
+
+  const handleGlemtPassord = async () => {
+    if (!loginEpost.trim()) {
+      setResetMelding('');
+      setFeil(t('innlogging.skrivEpostForReset'));
+      return;
+    }
+    setLaster('reset');
+    setFeil('');
+    setResetMelding('');
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(loginEpost.trim(), {
+        redirectTo: `${window.location.origin}/tilbakestill-passord`,
+      });
+      if (error) {
+        setFeil(error.message || t('innlogging.noeGikkGalt'));
+        return;
+      }
+      setResetMelding(t('innlogging.resetSendt'));
+    } catch (e) {
+      const melding = e instanceof Error ? e.message : '';
+      setFeil(melding || t('innlogging.noeGikkGalt'));
     } finally {
       setLaster(null);
     }
@@ -304,6 +384,153 @@ export default function Paywall({ onSuccess, onClose, email, userId }: Props) {
         >
           {laster === 'kjøp' ? t('paywall.starterPrøve') : t('paywall.startGratisPrøve')}
         </button>
+
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
+          {!visInnlogging ? (
+            <button
+              type="button"
+              onClick={() => {
+                setVisInnlogging(true);
+                setFeil('');
+                setResetMelding('');
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: '8px 4px',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: PAYWALL_GRØNN,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-inter), sans-serif',
+                textDecoration: 'underline',
+                textUnderlineOffset: 3,
+              }}
+            >
+              {t('paywall.harAlleredeKonto')}
+            </button>
+          ) : (
+            <div
+              style={{
+                backgroundColor: farger.hvit,
+                border: `1px solid ${farger.kremMørk}`,
+                borderRadius: 16,
+                padding: '16px',
+                textAlign: 'left',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  color: farger.tekst,
+                  marginBottom: 12,
+                  fontFamily: 'var(--font-plus-jakarta)',
+                }}
+              >
+                {t('innlogging.loggInn')}
+              </div>
+              <input
+                type="email"
+                value={loginEpost}
+                onChange={(e) => setLoginEpost(e.target.value)}
+                placeholder={t('innlogging.epostPlaceholder')}
+                autoComplete="email"
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  fontSize: '15px',
+                  border: `1px solid ${farger.kremMørk}`,
+                  borderRadius: 10,
+                  backgroundColor: farger.bakgrunn,
+                  color: farger.tekst,
+                  marginBottom: 10,
+                  outline: 'none',
+                  fontFamily: 'var(--font-inter), sans-serif',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <input
+                type="password"
+                value={loginPassord}
+                onChange={(e) => setLoginPassord(e.target.value)}
+                placeholder={t('innlogging.passordPlaceholder')}
+                autoComplete="current-password"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') void handleLoggInn();
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  fontSize: '15px',
+                  border: `1px solid ${farger.kremMørk}`,
+                  borderRadius: 10,
+                  backgroundColor: farger.bakgrunn,
+                  color: farger.tekst,
+                  marginBottom: 8,
+                  outline: 'none',
+                  fontFamily: 'var(--font-inter), sans-serif',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleGlemtPassord}
+                disabled={laster !== null}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  marginBottom: 12,
+                  padding: 0,
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '13px',
+                  color: farger.terrakotta,
+                  cursor: laster ? 'default' : 'pointer',
+                  fontFamily: 'var(--font-inter), sans-serif',
+                  textAlign: 'right',
+                  opacity: laster === 'reset' ? 0.7 : 1,
+                }}
+              >
+                {laster === 'reset' ? '…' : t('innlogging.glemtPassord')}
+              </button>
+              {resetMelding && (
+                <p
+                  style={{
+                    fontSize: '13px',
+                    color: PAYWALL_GRØNN,
+                    fontFamily: 'var(--font-inter), sans-serif',
+                    margin: '0 0 12px',
+                    textAlign: 'center',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {resetMelding}
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={handleLoggInn}
+                disabled={laster !== null}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  backgroundColor: PAYWALL_GRØNN,
+                  border: 'none',
+                  borderRadius: 12,
+                  fontSize: '15px',
+                  fontWeight: 700,
+                  color: '#FDFAF6',
+                  cursor: laster ? 'not-allowed' : 'pointer',
+                  opacity: laster && laster !== 'login' ? 0.6 : 1,
+                  fontFamily: 'var(--font-plus-jakarta), sans-serif',
+                }}
+              >
+                {laster === 'login' ? '…' : t('innlogging.loggInn')}
+              </button>
+            </div>
+          )}
+        </div>
 
         <p
           style={{

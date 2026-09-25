@@ -292,6 +292,7 @@ const messages: Record<string, string> = {
   "paywall.administrerInfo": "Zarządzaj subskrypcją w ustawieniach App Store na swoim urządzeniu.",
   "paywall.gratisPrøveTittel": "Zacznij 7 dni bezpłatnie",
   "paywall.startGratisPrøve": "Rozpocznij bezpłatny okres próbny",
+  "paywall.harAlleredeKonto": "Masz już konto? Zaloguj się",
   "paywall.starterPrøve": "Uruchamiam...",
   "paywall.avbrytNårSomHelst": "Anuluj przed upływem 7 dni – bez opłat",
   "paywall.etterPrøve": "po okresie próbnym",
