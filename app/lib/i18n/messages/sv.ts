@@ -298,7 +298,7 @@ const messages: Record<string, string> = {
   "paywall.etterPrøve": "efter provperioden",
   "paywall.perMåned": "/månad",
   "paywall.perÅr": "/år",
-  "paywall.klarPrisinfo": "7 dagar gratis, därefter {pris}/mån. Förnyas automatiskt. Avsluta när som helst i prenumerationsinställningarna.",
+  "paywall.klarPrisinfo": "7 dagar gratis, därefter {pris}{periode}. Förnyas automatiskt. Avsluta när som helst i prenumerationsinställningarna.",
   "paywall.gratisMerke": "Du kan också logga sömn gratis — utan kort",
   "paywall.faqTittel": "Vanliga frågor",
   "paywall.faq1q": "Vad händer när provperioden är över?",

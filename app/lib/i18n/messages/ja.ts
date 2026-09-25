@@ -298,7 +298,7 @@ const messages: Record<string, string> = {
   "paywall.etterPrøve": "無料トライアル終了後",
   "paywall.perMåned": "/月",
   "paywall.perÅr": "/年",
-  "paywall.klarPrisinfo": "7日間無料、その後は{pris}/月。自動更新されます。サブスクリプション設定からいつでも解約できます。",
+  "paywall.klarPrisinfo": "7日間無料、その後は{pris}{periode}。自動更新されます。サブスクリプション設定からいつでも解約できます。",
   "paywall.gratisMerke": "睡眠の記録は無料でも使えます — カード登録不要",
   "paywall.faqTittel": "よくある質問",
   "paywall.faq1q": "トライアルが終わるとどうなりますか？",

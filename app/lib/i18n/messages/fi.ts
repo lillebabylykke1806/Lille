@@ -298,7 +298,7 @@ const messages: Record<string, string> = {
   "paywall.etterPrøve": "kokeilun jälkeen",
   "paywall.perMåned": "/kk",
   "paywall.perÅr": "/vuosi",
-  "paywall.klarPrisinfo": "7 päivää ilmaiseksi, sitten {pris}/kk. Jatkuu automaattisesti. Peruuta milloin vain tilausasetuksissa.",
+  "paywall.klarPrisinfo": "7 päivää ilmaiseksi, sitten {pris}{periode}. Jatkuu automaattisesti. Peruuta milloin vain tilausasetuksissa.",
   "paywall.gratisMerke": "Voit kirjata unta myös ilmaiseksi — ilman korttia",
   "paywall.faqTittel": "UKK",
   "paywall.faq1q": "Mitä tapahtuu kokeilun jälkeen?",

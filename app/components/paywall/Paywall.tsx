@@ -543,7 +543,10 @@ export default function Paywall({ onSuccess, onClose, email, userId, onAuthentic
             fontWeight: 500,
           }}
         >
-          {t('paywall.klarPrisinfo', { pris: prisEtterPrøve })}
+          {t('paywall.klarPrisinfo', {
+            pris: prisEtterPrøve,
+            periode: valgtPlan === 'yearly' ? t('paywall.perÅr') : t('paywall.perMåned'),
+          })}
         </p>
 
         <p
