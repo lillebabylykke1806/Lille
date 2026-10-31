@@ -1,9 +1,10 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
 import { farger } from '../../lib/farger';
 import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { formatTime } from '../../lib/i18n/format';
+import { velgAmmingInnsikt } from '../../lib/ammingInnsikt';
 
 type Props = { bruker: any; };
 
@@ -17,6 +18,11 @@ type AmmingLogg = {
 };
 
 const dagensdato = () => new Date().toISOString().split('T')[0];
+const fjortenDagerSiden = () => {
+  const d = new Date();
+  d.setDate(d.getDate() - 14);
+  return d.toISOString().split('T')[0];
+};
 const motattBryst = (bryst: string) => bryst === 'venstre' ? 'høyre' : 'venstre';
 
 export default function Amming({ bruker }: Props) {
@@ -28,6 +34,7 @@ export default function Amming({ bruker }: Props) {
   const [sluttTidStr, setSluttTidStr] = useState('');
   const [sekunder, setSekunder] = useState(0);
   const [logg, setLogg] = useState<AmmingLogg[]>([]);
+  const [historikk, setHistorikk] = useState<AmmingLogg[]>([]);
   const [laster, setLaster] = useState(false);
   const [lasterLogg, setLasterLogg] = useState(true);
   const [visJusterStart, setVisJusterStart] = useState(false);
@@ -41,12 +48,15 @@ export default function Amming({ bruker }: Props) {
       .from('amming')
       .select('*')
       .eq('profil_id', bruker?.id)
-      .eq('dato', dagensdato())
+      .gte('dato', fjortenDagerSiden())
+      .order('dato', { ascending: false })
       .order('start', { ascending: false });
     if (data) {
-      setLogg(data);
-      if (data.length > 0 && !aktiv) {
-        setValgtBryst(motattBryst(data[0].bryst) as 'venstre' | 'høyre');
+      setHistorikk(data);
+      const iDag = data.filter(rad => rad.dato === dagensdato());
+      setLogg(iDag);
+      if (iDag.length > 0 && !aktiv) {
+        setValgtBryst(motattBryst(iDag[0].bryst) as 'venstre' | 'høyre');
       }
     }
     setLasterLogg(false);
@@ -170,6 +180,7 @@ export default function Amming({ bruker }: Props) {
   const brystFull = (bryst: string) => bryst === 'venstre' ? t('amming.venstre_bryst') : t('amming.høyre_bryst');
   const brystNavn = (bryst: string) => bryst === 'venstre' ? t('amming.venstre') : t('amming.høyre');
 
+  const innsikt = useMemo(() => velgAmmingInnsikt(historikk), [historikk]);
   const totalMinutter = logg.reduce((sum, l) => sum + (l.varighet || 0), 0);
   const sisteAmming = logg[0];
   const anbefalingBryst = logg.length > 0 ? motattBryst(logg[0].bryst) as 'venstre' | 'høyre' : 'høyre';
@@ -184,7 +195,7 @@ export default function Amming({ bruker }: Props) {
   );
 
   return (
-    <div style={{ backgroundColor: '#F8F3EE', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ backgroundColor: '#F8F3EE', minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes puls { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
@@ -246,7 +257,7 @@ export default function Amming({ bruker }: Props) {
                 </>
               ) : (
                 <>
-                <img src="/tateflaske.png" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px', mixBlendMode: 'multiply' }} />
+                <img src="/amming.png" alt="" style={{ width: '52px', height: '52px', objectFit: 'contain', marginBottom: '8px' }} />
                   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys }}>{t('amming.trykkForÅStarte')}</div>
                 </>
               )}
@@ -281,6 +292,15 @@ export default function Amming({ bruker }: Props) {
           </div>
         )}
 
+        <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '12px', overflowWrap: 'break-word' }}>
+          <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.grønn, fontWeight: '700', marginBottom: '10px' }}>
+            {t(innsikt.typeNøkkel)}
+          </div>
+          <div style={{ fontSize: '15px', fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.65, whiteSpace: 'normal' }}>
+            {t(innsikt.tekstNøkkel)}
+          </div>
+        </div>
+
         {/* Siste amming */}
         {sisteAmming && (
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '16px', padding: '14px 18px', marginBottom: '12px', animation: 'fadeOpp 0.5s ease' }}>
@@ -299,7 +319,7 @@ export default function Amming({ bruker }: Props) {
           </div>
         )}
 
-        {/* Innsikt */}
+        {/* I dag */}
         {logg.length > 0 && (
           <div style={{ backgroundColor: farger.terrakottaLys, borderRadius: '16px', padding: '16px 18px', marginBottom: '12px' }}>
             <div style={{ fontSize: '13px', fontFamily: 'var(--font-plus-jakarta)', color: farger.terrakotta, fontWeight: '700', marginBottom: '10px' }}>

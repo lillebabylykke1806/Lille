@@ -13,7 +13,9 @@
 
 html, body {
   width: 100%;
+  max-width: 100%;
   min-height: 100vh;
+  overflow-x: hidden !important;
   background-color: #F5EFE6;
   color: #3D2B1F;
   font-family: Georgia, serif;
@@ -22,6 +24,35 @@ html, body {
 
 body {
   padding-top: env(safe-area-inset-top);
+}
+
+/* iOS date/time/number controls have a large intrinsic min-width and
+   zoom the page when font-size is under 16px. That width then sticks
+   across in-app navigation. Keep them inside the phone viewport. */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="number"] {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+input[type="date"]::-webkit-datetime-edit,
+input[type="time"]::-webkit-datetime-edit {
+  min-width: 0;
+  max-width: 100%;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 h1, h2, h3 {
   font-family: var(--font-plus-jakarta), sans-serif;

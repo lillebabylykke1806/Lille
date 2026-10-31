@@ -19,6 +19,7 @@ type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | nu
 const getAlleSider = (t: TFn): Record<string, { label: string; bygget: boolean }> => ({
   sovn: { label: t('viftemeny.sovn'), bygget: true },
   amming: { label: t('viftemeny.amming'), bygget: true },
+  flaske: { label: t('viftemeny.flaske'), bygget: true },
   bleie: { label: t('viftemeny.bleie'), bygget: true },
   medisin: { label: t('viftemeny.medisin'), bygget: true },
   signaler: { label: t('viftemeny.signaler'), bygget: true },
@@ -32,8 +33,8 @@ const getAlleSider = (t: TFn): Record<string, { label: string; bygget: boolean }
 });
 
 const ANBEFALTE_ETTER_ALDER = (alder: number): string[] => {
-  if (alder < 3) return ['sovn', 'amming', 'bleie', 'signaler', 'medisin', 'notat'];
-  if (alder < 6) return ['sovn', 'amming', 'bleie', 'signaler', 'aktivitet', 'notat'];
+  if (alder < 3) return ['sovn', 'amming', 'flaske', 'bleie', 'signaler', 'notat'];
+  if (alder < 6) return ['sovn', 'amming', 'flaske', 'bleie', 'signaler', 'notat'];
   if (alder < 12) return ['sovn', 'mat', 'bleie', 'aktivitet', 'medisin', 'notat'];
   return ['sovn', 'mat', 'aktivitet', 'medisin', 'vekt', 'notat'];
 };
@@ -41,6 +42,7 @@ const ANBEFALTE_ETTER_ALDER = (alder: number): string[] => {
 const bgFarger: Record<string, string> = {
   sovn: '#E8E4F0',
   amming: '#FFE8D6',
+  flaske: '#FFE8D6',
   bleie: '#E8F0E8',
   medisin: '#E8F0E8',
   signaler: '#FFE8E8',
@@ -54,8 +56,11 @@ const bgFarger: Record<string, string> = {
 
 const IkonKomponent = ({ id }: { id: string }) => {
   const farge = farger.grønn;
-  if (id === 'amming' || id === 'pumping') return (
-    <img src="/tateflaske-mork.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />
+  if (id === 'flaske') return (
+    <img src="/tateflaske-mork.png" alt="" style={{ width: 42, height: 42, objectFit: 'contain' }} />
+  );
+  if (id === 'amming') return (
+    <img src="/amming.png" alt="" style={{ width: 42, height: 42, objectFit: 'contain' }} />
   );
   if (id === 'bleie') return (
     <img src="/bleie.png" style={{ width: 42, height: 42, objectFit: 'contain' }} />

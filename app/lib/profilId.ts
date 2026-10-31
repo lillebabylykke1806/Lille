@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { isLocale } from './i18n/locales';
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -47,30 +48,21 @@ export async function hentProfilId(
 
 /**
  * Ensure a row exists in public.profiler for this auth user.
- * Some flows never create one on signup; mat/other FKs or app features may need it.
+ * Locale must be on the same upsert as insert — welcome webhook fires on INSERT.
  */
-export async function sikreProfilerRad(profilId: string): Promise<boolean> {
+export async function sikreProfilerRad(profilId: string, locale?: string | null): Promise<boolean> {
   if (!erGyldigProfilId(profilId)) return false;
 
-  const { data: existing, error: selectError } = await supabase
-    .from('profiler')
-    .select('id')
-    .eq('id', profilId)
-    .maybeSingle();
-
-  if (selectError) {
-    console.warn('sikreProfilerRad select failed:', selectError.message);
-  }
-  if (existing?.id) return true;
+  const rad: { id: string; locale?: string } = { id: profilId };
+  if (isLocale(locale)) rad.locale = locale;
 
   const { error: upsertError } = await supabase
     .from('profiler')
-    .upsert({ id: profilId }, { onConflict: 'id' });
+    .upsert(rad, { onConflict: 'id' });
 
   if (upsertError) {
     console.error('sikreProfilerRad upsert failed:', upsertError.message, upsertError);
     return false;
   }
-  console.log('sikreProfilerRad: created profiler row for', profilId);
   return true;
 }

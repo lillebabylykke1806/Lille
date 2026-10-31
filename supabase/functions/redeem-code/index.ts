@@ -149,6 +149,35 @@ function stripeCheckoutLocale(
   }
 }
 
+async function hasBlockingStripeSubscription(email: string, userId: string): Promise<boolean> {
+  const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+  if (!stripeKey) return false;
+  const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+  const blocking = new Set(['trialing', 'active', 'past_due']);
+
+  try {
+    const found = await stripe.subscriptions.search({
+      query: `metadata["app_user_id"]:"${userId}"`,
+      limit: 10,
+    });
+    if (found.data.some((s) => blocking.has(s.status))) return true;
+  } catch (err) {
+    console.warn('Stripe search by app_user_id failed', err);
+  }
+
+  if (!email) return false;
+  const customers = await stripe.customers.list({ email, limit: 10 });
+  for (const customer of customers.data) {
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customer.id,
+      status: 'all',
+      limit: 20,
+    });
+    if (subscriptions.data.some((s) => blocking.has(s.status))) return true;
+  }
+  return false;
+}
+
 async function createDiscountCheckout(
   email: string,
   userId: string,
@@ -308,6 +337,11 @@ Deno.serve(async (req) => {
       if (dc.type === 'customer_discount') {
         if (!dc.stripe_promo_code_id) {
           throw new Error('This discount code is missing Stripe configuration');
+        }
+
+        const already = await hasBlockingStripeSubscription(email, userId);
+        if (already) {
+          return jsonResponse({ error: 'already_subscribed' }, 409);
         }
 
         const checkoutUrl = await createDiscountCheckout(

@@ -198,7 +198,7 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
       }
 
       console.log('[Mat] ensuring profiler row…');
-      const profilerOk = await sikreProfilerRad(profilId);
+      const profilerOk = await sikreProfilerRad(profilId, locale);
       console.log('[Mat] profiler row ok?', profilerOk);
       if (!profilerOk) {
         console.error('[Mat] SAVE aborted: could not ensure profiler row for', profilId);
@@ -316,7 +316,7 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
   );
 
   return (
-    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', padding: '24px 24px 120px' }}>
+    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'hidden', padding: '24px 24px 120px' }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } } @keyframes fadeOpp { 0%{opacity:0;transform:translateY(8px)} 100%{opacity:1;transform:translateY(0)} }`}</style>
 
       {/* Header */}
@@ -335,7 +335,7 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
           {/* Hero */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '24px', padding: '24px', marginBottom: '16px', display: 'flex', gap: '16px', alignItems: 'center' }}>
             <div style={{ fontSize: '72px', flexShrink: 0 }}>🐻</div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '8px' }}>
                 {t('mat.velkommenTittel')}
               </div>
@@ -432,7 +432,7 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
           {/* Dagens observasjon */}
           <div style={{ backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: '20px', padding: '20px', marginBottom: '16px', display: 'flex', gap: '16px', alignItems: 'center' }}>
             <div style={{ fontSize: '56px', flexShrink: 0 }}>🍑</div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: '#F4A853', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>{t('mat.dagsObservasjon')}</div>
               <div style={{ fontSize: '18px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', lineHeight: 1.3, marginBottom: '8px' }}>
                 {t('mat.harPrøvd', { navn: babyNavn, antall: unikeMatvarer.length })}
@@ -603,7 +603,7 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
       {/* ─── REGISTRERINGSSKJEMA ─── */}
       {visSkjema && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 500, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => { console.log('[Mat] backdrop clicked — closing form'); setVisSkjema(false); }}>
-          <div onClick={e => e.stopPropagation()} onPointerDown={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))', maxHeight: '90vh', overflowY: 'auto', position: 'relative', zIndex: 501, boxShadow: '0 -8px 32px rgba(0,0,0,0.18)' }}>
+          <div onClick={e => e.stopPropagation()} onPointerDown={e => e.stopPropagation()} style={{ backgroundColor: farger.hvit, width: '100%', maxWidth: '430px', minWidth: 0, borderRadius: '24px 24px 0 0', padding: '24px', paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))', maxHeight: '90vh', overflowX: 'hidden', overflowY: 'auto', position: 'relative', zIndex: 501, boxShadow: '0 -8px 32px rgba(0,0,0,0.18)', boxSizing: 'border-box' }}>
             <div style={{ width: '36px', height: '4px', backgroundColor: farger.kremMørk, borderRadius: '2px', margin: '0 auto 20px' }} />
             <div style={{ fontSize: '20px', fontFamily: 'var(--font-plus-jakarta)', color: farger.tekst, fontWeight: '700', marginBottom: '20px' }}>{t('mat.nyttMåltid')}</div>
 
@@ -614,17 +614,17 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
                 value={matvare}
                 onChange={e => setMatvare(e.target.value)}
                 placeholder={t('mat.matvarePlaceholder')}
-                style={{ width: '100%', padding: '12px 14px', fontSize: '14px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
+                style={{ width: '100%', maxWidth: '100%', padding: '12px 14px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }}
               />
             </div>
 
             <div style={{ marginBottom: '16px' }}>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.nyMatvare')}</div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => setErNyMatvare(true)} style={{ flex: 1, padding: '12px', backgroundColor: erNyMatvare === true ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${erNyMatvare === true ? farger.grønn : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: erNyMatvare === true ? farger.grønn : farger.tekst, fontWeight: erNyMatvare === true ? '600' : '400' }}>
+              <div style={{ display: 'flex', gap: '8px', minWidth: 0 }}>
+                <button onClick={() => setErNyMatvare(true)} style={{ flex: 1, minWidth: 0, padding: '12px', backgroundColor: erNyMatvare === true ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${erNyMatvare === true ? farger.grønn : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: erNyMatvare === true ? farger.grønn : farger.tekst, fontWeight: erNyMatvare === true ? '600' : '400' }}>
                   {t('mat.ja')}
                 </button>
-                <button onClick={() => setErNyMatvare(false)} style={{ flex: 1, padding: '12px', backgroundColor: erNyMatvare === false ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${erNyMatvare === false ? farger.grønn : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: erNyMatvare === false ? farger.grønn : farger.tekst, fontWeight: erNyMatvare === false ? '600' : '400' }}>
+                <button onClick={() => setErNyMatvare(false)} style={{ flex: 1, minWidth: 0, padding: '12px', backgroundColor: erNyMatvare === false ? farger.grønnLys : farger.bakgrunn, border: `1.5px solid ${erNyMatvare === false ? farger.grønn : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: erNyMatvare === false ? farger.grønn : farger.tekst, fontWeight: erNyMatvare === false ? '600' : '400' }}>
                   {t('mat.nei')}
                 </button>
               </div>
@@ -639,11 +639,11 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
             {/* Kategori */}
             <div style={{ marginBottom: '16px' }}>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.kategori')}</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', minWidth: 0 }}>
                 {KATEGORIER.map(kat => (
-                  <button key={kat.id} onClick={() => setKategori(kat.id)} style={{ padding: '10px 8px', backgroundColor: kategori === kat.id ? kat.farge : farger.bakgrunn, border: `1.5px solid ${kategori === kat.id ? kat.border : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <button key={kat.id} onClick={() => setKategori(kat.id)} style={{ minWidth: 0, padding: '10px 8px', backgroundColor: kategori === kat.id ? kat.farge : farger.bakgrunn, border: `1.5px solid ${kategori === kat.id ? kat.border : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                     <span style={{ fontSize: '20px' }}>{kat.ikon}</span>
-                    <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: kategori === kat.id ? kat.tekstFarge : farger.tekst, fontWeight: kategori === kat.id ? '700' : '400' }}>{kat.label}</span>
+                    <span style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: kategori === kat.id ? kat.tekstFarge : farger.tekst, fontWeight: kategori === kat.id ? '700' : '400', textAlign: 'center', overflowWrap: 'anywhere' }}>{kat.label}</span>
                   </button>
                 ))}
               </div>
@@ -665,9 +665,9 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
             {/* Mengde */}
             <div style={{ marginBottom: '16px' }}>
               <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.mengdeSpist')}</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', minWidth: 0 }}>
                 {MENGDER.map(m => (
-                  <button key={m.id} onClick={() => setMengde(m.id)} style={{ padding: '12px', backgroundColor: mengde === m.id ? '#FFF8EC' : farger.bakgrunn, border: `1.5px solid ${mengde === m.id ? '#F4D9A0' : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: mengde === m.id ? '#8B6340' : farger.tekst, fontWeight: mengde === m.id ? '600' : '400' }}>
+                  <button key={m.id} onClick={() => setMengde(m.id)} style={{ minWidth: 0, padding: '12px', backgroundColor: mengde === m.id ? '#FFF8EC' : farger.bakgrunn, border: `1.5px solid ${mengde === m.id ? '#F4D9A0' : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-inter)', color: mengde === m.id ? '#8B6340' : farger.tekst, fontWeight: mengde === m.id ? '600' : '400', overflowWrap: 'anywhere' }}>
                     {m.label}
                   </button>
                 ))}
@@ -678,26 +678,26 @@ Skriv 2-3 korte innsikter. Bruk babyens navn. Start hver med ✨. Vær konkret m
 <div style={{ marginBottom: '16px' }}>
   <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '4px' }}>{t('mat.allergiValgfritt')}</div>
   <div style={{ fontSize: '11px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '8px' }}>{t('mat.allergiSpørsmål')}</div>
-  <div style={{ display: 'flex', gap: '8px' }}>
+  <div style={{ display: 'flex', gap: '8px', minWidth: 0 }}>
     {ALLERGI_STATUS.map(a => (
       <button key={a.id} onClick={() => setAllergiStatus(allergiStatus === a.id ? '' : a.id)}
-        style={{ flex: 1, padding: '12px 8px', backgroundColor: allergiStatus === a.id ? a.bg : farger.bakgrunn, border: `1.5px solid ${allergiStatus === a.id ? a.farge : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+        style={{ flex: 1, minWidth: 0, padding: '12px 8px', backgroundColor: allergiStatus === a.id ? a.bg : farger.bakgrunn, border: `1.5px solid ${allergiStatus === a.id ? a.farge : farger.kremMørk}`, borderRadius: '12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
         <span style={{ fontSize: '18px' }}>{a.ikon}</span>
-        <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: allergiStatus === a.id ? a.farge : farger.tekstLys, fontWeight: allergiStatus === a.id ? '600' : '400', textAlign: 'center', lineHeight: 1.3 }}>{a.label}</span>
+        <span style={{ fontSize: '10px', fontFamily: 'var(--font-inter)', color: allergiStatus === a.id ? a.farge : farger.tekstLys, fontWeight: allergiStatus === a.id ? '600' : '400', textAlign: 'center', lineHeight: 1.3, overflowWrap: 'anywhere' }}>{a.label}</span>
       </button>
     ))}
   </div>
 </div>
 
             {/* Dato og tid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
-              <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.dato')}</div>
-                <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+                <input type="date" value={dato} onChange={e => setDato(e.target.value)} style={{ width: '100%', maxWidth: '100%', minWidth: 0, padding: '10px 8px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekst, fontWeight: '600', marginBottom: '8px' }}>{t('mat.tidspunkt')}</div>
-                <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', padding: '10px 12px', fontSize: '13px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
+                <input type="time" value={klokkeslett} onChange={e => setKlokkeslett(e.target.value)} style={{ width: '100%', maxWidth: '100%', minWidth: 0, padding: '10px 8px', fontSize: '16px', border: `1px solid ${farger.kremMørk}`, borderRadius: '12px', backgroundColor: farger.bakgrunn, color: farger.tekst, outline: 'none', fontFamily: 'var(--font-inter)', boxSizing: 'border-box' }} />
               </div>
             </div>
 

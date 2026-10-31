@@ -1,5 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../supabase';
+import { sikreProfilerRad } from '../profilId';
 import { Locale, isLocale } from './locales';
 import { getMessage, type OversettelseNøkkel } from './messages';
 
@@ -38,6 +40,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setLocaleState(detekterSpråk());
   }, []);
+
+  useEffect(() => {
+    const synk = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) await sikreProfilerRad(session.user.id, locale);
+    };
+    void synk();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.id) void sikreProfilerRad(session.user.id, locale);
+    });
+    return () => subscription.unsubscribe();
+  }, [locale]);
 
   const setLocale = (nyttSpråk: Locale) => {
     setLocaleState(nyttSpråk);

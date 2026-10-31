@@ -18,6 +18,7 @@ import Signaler from './components/signaler/Signaler';
 import Kolikk from './components/kolikk/Kolikk';
 import Mat from './components/mat/Mat';
 import Pumping from './components/pumping/Pumping';
+import Flaske from './components/flaske/Flaske';
 import Temperatur from './components/temperatur/Temperatur';
 import Paywall from './components/paywall/Paywall';
 import TrialEnded from './components/abonnement/TrialEnded';
@@ -153,7 +154,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
   /** Keep the user logged in in free mode; optionally show dismissible paywall. */
   const håndterManglendeAbonnement = async (user: { id: string; email?: string | null }) => {
     setBruker(user);
-    void sikreProfilerRad(user.id);
+    void sikreProfilerRad(user.id, locale);
     setHarAbonnement(false);
     setProPeriod(null);
     setProExpiresAt(null);
@@ -225,7 +226,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         }
       
         setBruker(session.user);
-        void sikreProfilerRad(session.user.id);
+        void sikreProfilerRad(session.user.id, locale);
         if (isNativeApp()) void syncRevenueCatUser(session.user.id, session.user.email);
       
         if (!partnerHarAktivTilgang) {
@@ -343,7 +344,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
     const access = await getSubscriptionAccess(user.email || '', user.id);
     anvendAccess(access);
     setBruker(user);
-    void sikreProfilerRad(user.id);
+    void sikreProfilerRad(user.id, locale);
     if (isNativeApp()) void syncRevenueCatUser(user.id, user.email);
 
     if (access.hasPro) {
@@ -451,8 +452,8 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         openPaywall,
       }}
     >
-    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative' }}>
-      <div style={{ overflowY: 'auto', height: '100vh', paddingBottom: '90px' }}>
+    <div style={{ backgroundColor: farger.bakgrunn, minHeight: '100vh', width: '100%', maxWidth: '430px', margin: '0 auto', fontFamily: 'var(--font-plus-jakarta), sans-serif', position: 'relative', overflowX: 'hidden' }}>
+      <div style={{ overflowX: 'hidden', overflowY: 'auto', height: '100vh', width: '100%', paddingBottom: '90px' }}>
       {needsRestore && !hasPro && (
         <div style={{ margin: '12px 24px 0', padding: '14px 16px', backgroundColor: farger.hvit, border: `1px solid ${farger.kremMørk}`, borderRadius: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
           <p style={{ margin: 0, fontSize: 13, fontFamily: 'var(--font-inter)', color: farger.tekst, lineHeight: 1.5 }}>
@@ -487,6 +488,7 @@ const [åpneMorgen, setÅpneMorgen] = useState(false);
         {aktivSide === 'mat' && hasPro && <Mat bruker={bruker} aktivtBarn={aktivtBarn} />}
         {aktivSide === 'profil' && <Profil bruker={bruker} onLoggUt={loggUt} aktivtBarn={aktivtBarn} onByttBarn={setAktivtBarn} onVisPaywall={openPaywall} />}
         {aktivSide === 'pumping' && hasPro && <Pumping bruker={bruker} />}
+        {aktivSide === 'flaske' && hasPro && <Flaske bruker={bruker} />}
         {aktivSide === 'temperatur' && hasPro && <Temperatur bruker={bruker} aktivtBarn={aktivtBarn} onNavigate={(s) => navigerTil(s)} />}
       </div>
 

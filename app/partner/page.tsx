@@ -12,7 +12,7 @@ import { lagreSamtykkeVedRegistrering } from '../lib/consent';
 import { ConsentCheckboxes } from '../components/consent/ConsentCheckboxes';
 
 function PartnerInnhold() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const searchParams = useSearchParams();
   const kode = searchParams.get('kode');
   const [status, setStatus] = useState<'laster' | 'loggInn' | 'ferdig' | 'feil'>('laster');
@@ -59,7 +59,7 @@ function PartnerInnhold() {
         }
         bruker_id = data.user?.id || '';
         if (bruker_id) {
-          await lagreSamtykkeVedRegistrering(bruker_id, markedsforing, epost);
+          await lagreSamtykkeVedRegistrering(bruker_id, markedsforing, epost, locale);
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email: epost, password: passord });

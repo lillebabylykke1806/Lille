@@ -111,7 +111,11 @@ export default function Innstillinger({ onTilbake, bruker, aktivtBarn }: Props) 
     setOppdatererMarkedsforing(true);
     const { error } = await supabase
       .from('profiler')
-      .update({ markedsforing_samtykke: ny })
+      .update({
+        markedsforing_samtykke: ny,
+        markedsforing_samtykke_at: new Date().toISOString(),
+        markedsforing_samtykke_kilde: 'settings',
+      })
       .eq('id', bruker.id);
     if (!error) {
       setSamtykke((prev) => prev ? { ...prev, markedsforing_samtykke: ny } : {

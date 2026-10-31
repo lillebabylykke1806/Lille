@@ -6,7 +6,29 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "pinterest:run": "npx --yes tsx scripts/pinterest/run.ts",
+    "pinterest:index": "npx --yes tsx scripts/pinterest/run.ts --reindex",
+    "pinterest:image": "npx --yes tsx scripts/pinterest/generatePinImage.ts",
+    "pinterest:image:all": "npx --yes tsx scripts/pinterest/generatePinImage.ts --all-review",
+    "pinterest:image:fodebag-review": "npx --yes tsx scripts/pinterest/generateHospitalBagVariants.ts",
+    "pinterest:image:fodebag-a2": "npx --yes tsx scripts/pinterest/generateImprovedChecklist.ts",
+    "pinterest:image:adaptive-test": "npx --yes tsx scripts/pinterest/generateAdaptiveLayoutTests.ts",
+    "pinterest:photos:hospital-bag": "npx --yes tsx scripts/pinterest/searchHospitalBagPhotos.ts",
+    "pinterest:image:fodebag-a3": "npx --yes tsx scripts/pinterest/generateHospitalBagA3.ts",
+    "pinterest:image:fodebag-a4": "npx --yes tsx scripts/pinterest/generateHospitalBagA4.ts",
+    "pinterest:image:fodebag-a5": "npx --yes tsx scripts/pinterest/generateHospitalBagA5.ts",
+    "pinterest:image:fodebag-standard": "npx --yes tsx scripts/pinterest/generateHospitalBagVisualStandard.ts",
+    "pinterest:image:fodebag-ai": "npx --yes tsx scripts/pinterest/generateHospitalBagAiEditorial.ts",
+    "pinterest:image:topic-tests": "npx --yes tsx scripts/pinterest/generateLifestyleTopicPins.ts",
+    "pinterest:image:weekly-dry-run": "npx --yes tsx scripts/pinterest/generateWeeklyDryRun.ts",
+    "pinterest:medical-review": "npx --yes tsx scripts/pinterest/medicalReview/runMedicalReview.ts",
+    "pinterest:medical-test": "npx --yes tsx --test scripts/pinterest/medicalReview/medicalSafety.test.ts",
+    "pinterest:content-mix-report": "npx --yes tsx scripts/pinterest/writeContentMixEvidenceReport.ts",
+    "pinterest:launch-dry-run": "npx --yes tsx scripts/pinterest/launchFirstPin.ts",
+    "pinterest:launch-publish": "npx --yes tsx scripts/pinterest/launchFirstPin.ts --publish",
+    "pinterest:list-boards": "npx --yes tsx scripts/pinterest/listBoards.ts",
+    "pinterest:oauth-test": "npx --yes tsx --test app/lib/pinterest/oauth.test.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.4",
@@ -28,6 +50,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.14.0",
+    "sharp": "^0.35.5",
     "stripe": "^22.1.1"
   },
   "devDependencies": {

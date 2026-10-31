@@ -37,6 +37,8 @@ function mapRedeemError(error: string | undefined, t: (k: OversettelseNøkkel) =
     case 'code_missing':
     case 'You need to be logged in to redeem this code.':
       return t('kode.måVæreInnlogget');
+    case 'already_subscribed':
+      return t('paywall.alleredeAbonnement');
     default:
       return t('kode.noeGikkGalt');
   }
@@ -117,7 +119,7 @@ function KodeInnhold() {
           return;
         }
         if (data.user) {
-          await lagreSamtykkeVedRegistrering(data.user.id, markedsforing, epost);
+          await lagreSamtykkeVedRegistrering(data.user.id, markedsforing, epost, locale);
           setBruker(data.user);
         }
         return;

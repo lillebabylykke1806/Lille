@@ -13,6 +13,9 @@ import { useLanguage } from '../../lib/i18n/LanguageContext';
 import { OversettelseNøkkel } from '../../lib/i18n/translations';
 import { supabase } from '../../lib/supabase';
 import { getSubscriptionAccess } from '../../lib/abonnementAccess';
+import { erAlleredeRegistrert } from '../../lib/authSignup';
+import { lagreSamtykkeVedRegistrering } from '../../lib/consent';
+import { ConsentCheckboxes } from '../consent/ConsentCheckboxes';
 
 const PAYWALL_GRØNN = '#3D6B4F';
 const PAYWALL_BAKGRUNN = '#F5F0EA';
@@ -50,9 +53,12 @@ export default function Paywall({ onSuccess, onClose, email, userId, onAuthentic
   const [suksess, setSuksess] = useState('');
   const [åpenFaq, setÅpenFaq] = useState<number | null>(null);
   const [visInnlogging, setVisInnlogging] = useState(false);
+  const [visOpprettKonto, setVisOpprettKonto] = useState(false);
   const [loginEpost, setLoginEpost] = useState(email || '');
   const [loginPassord, setLoginPassord] = useState('');
   const [resetMelding, setResetMelding] = useState('');
+  const [godtarVilkår, setGodtarVilkår] = useState(false);
+  const [markedsforing, setMarkedsforing] = useState(false);
 
   useEffect(() => {
     if (isNativeApp()) getOfferingPrices().then(setPriser);
@@ -66,14 +72,32 @@ export default function Paywall({ onSuccess, onClose, email, userId, onAuthentic
   const årligPris = priser.yearly || FALLBACK_ÅRLIG;
   const prisEtterPrøve = valgtPlan === 'yearly' ? årligPris : månedligPris;
 
-  const startStripeCheckout = async (checkoutEmail: string, checkoutUserId: string) => {
+  const startStripeCheckout = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      setVisOpprettKonto(true);
+      setFeil(t('paywall.måOppretteKonto'));
+      return;
+    }
     const res = await fetch('/api/create-checkout-session', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: checkoutEmail, userId: checkoutUserId, locale }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ locale }),
     });
-    const { url } = await res.json();
-    if (url) window.location.href = url;
+    const payload = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
+    if (res.status === 409 || payload.error === 'already_subscribed') {
+      setFeil(t('paywall.alleredeAbonnement'));
+      return;
+    }
+    if (res.status === 401 || payload.error === 'not_logged_in') {
+      setVisOpprettKonto(true);
+      setFeil(t('paywall.måOppretteKonto'));
+      return;
+    }
+    if (payload.url) window.location.href = payload.url;
     else setFeil(t('paywall.kjøpFeilet'));
   };
 
@@ -83,18 +107,23 @@ export default function Paywall({ onSuccess, onClose, email, userId, onAuthentic
     return access.hasPro;
   };
 
-  /** Never open checkout/IAP if a logged-in user already has Pro. Guests skip this. */
   const handleStartTrial = async () => {
     setFeil('');
     setSuksess('');
     setLaster('kjøp');
     try {
-      if (userId && (await harAlleredeTilgang(email, userId))) {
-        onSuccess();
+      if (!userId) {
+        setVisOpprettKonto(true);
+        setVisInnlogging(false);
+        setFeil(t('paywall.måOppretteKonto'));
+        return;
+      }
+      if (await harAlleredeTilgang(email, userId)) {
+        setFeil(t('paywall.alleredeAbonnement'));
         return;
       }
       if (!isNativeApp()) {
-        await startStripeCheckout(email || '', userId || '');
+        await startStripeCheckout();
         return;
       }
       const result = valgtPlan === 'yearly' ? await purchaseYearly() : await purchaseMonthly();
@@ -106,6 +135,52 @@ export default function Paywall({ onSuccess, onClose, email, userId, onAuthentic
       }
     } catch {
       setFeil(t('paywall.kjøpFeilet'));
+    } finally {
+      setLaster(null);
+    }
+  };
+
+  const handleOpprettKonto = async () => {
+    if (laster) return;
+    setFeil('');
+    setSuksess('');
+    if (!godtarVilkår) {
+      setFeil(t('consent.required'));
+      return;
+    }
+    setLaster('login');
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: loginEpost.trim(),
+        password: loginPassord,
+      });
+      if (erAlleredeRegistrert(error, data?.user)) {
+        setVisOpprettKonto(false);
+        setVisInnlogging(true);
+        setFeil(t('innlogging.alleredeKontoTekst'));
+        return;
+      }
+      if (error) {
+        setFeil(error.message || t('innlogging.noeGikkGalt'));
+        return;
+      }
+      if (!data.user) {
+        setFeil(t('innlogging.noeGikkGalt'));
+        return;
+      }
+      await lagreSamtykkeVedRegistrering(data.user.id, markedsforing, loginEpost.trim(), locale);
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        setFeil(t('innlogging.resetSendt'));
+        return;
+      }
+      await onAuthenticated(data.user);
+      if (!isNativeApp()) {
+        setLaster('kjøp');
+        await startStripeCheckout();
+      }
+    } catch {
+      setFeil(t('innlogging.noeGikkGalt'));
     } finally {
       setLaster(null);
     }
@@ -366,32 +441,156 @@ export default function Paywall({ onSuccess, onClose, email, userId, onAuthentic
           </p>
         )}
 
-        <button
-          onClick={handleStartTrial}
-          disabled={laster !== null}
-          style={{
-            width: '100%',
-            padding: '18px',
-            backgroundColor: PAYWALL_GRØNN,
-            color: '#FDFAF6',
-            border: 'none',
-            borderRadius: 16,
-            fontSize: '16px',
-            fontWeight: 700,
-            cursor: laster ? 'not-allowed' : 'pointer',
-            opacity: laster && laster !== 'kjøp' ? 0.6 : 1,
-            fontFamily: 'var(--font-plus-jakarta), sans-serif',
-          }}
-        >
-          {laster === 'kjøp' ? t('paywall.starterPrøve') : t('paywall.startGratisPrøve')}
-        </button>
+        {!visOpprettKonto && (
+          <button
+            onClick={handleStartTrial}
+            disabled={laster !== null}
+            style={{
+              width: '100%',
+              padding: '18px',
+              backgroundColor: PAYWALL_GRØNN,
+              color: '#FDFAF6',
+              border: 'none',
+              borderRadius: 16,
+              fontSize: '16px',
+              fontWeight: 700,
+              cursor: laster ? 'not-allowed' : 'pointer',
+              opacity: laster && laster !== 'kjøp' ? 0.6 : 1,
+              fontFamily: 'var(--font-plus-jakarta), sans-serif',
+            }}
+          >
+            {laster === 'kjøp' ? t('paywall.starterPrøve') : t('paywall.startGratisPrøve')}
+          </button>
+        )}
 
         <div style={{ marginTop: 16, textAlign: 'center' }}>
-          {!visInnlogging ? (
+          {visOpprettKonto ? (
+            <div
+              style={{
+                backgroundColor: farger.hvit,
+                border: `1px solid ${farger.kremMørk}`,
+                borderRadius: 16,
+                padding: '16px',
+                textAlign: 'left',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  color: farger.tekst,
+                  marginBottom: 8,
+                  fontFamily: 'var(--font-plus-jakarta)',
+                }}
+              >
+                {t('innlogging.opprettKonto')}
+              </div>
+              <p
+                style={{
+                  fontSize: '13px',
+                  color: farger.tekstLys,
+                  fontFamily: 'var(--font-inter)',
+                  margin: '0 0 12px',
+                  lineHeight: 1.5,
+                }}
+              >
+                {t('paywall.måOppretteKonto')}
+              </p>
+              <input
+                type="email"
+                value={loginEpost}
+                onChange={(e) => setLoginEpost(e.target.value)}
+                placeholder={t('innlogging.epostPlaceholder')}
+                autoComplete="email"
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  fontSize: '15px',
+                  border: `1px solid ${farger.kremMørk}`,
+                  borderRadius: 10,
+                  backgroundColor: farger.bakgrunn,
+                  color: farger.tekst,
+                  marginBottom: 10,
+                  outline: 'none',
+                  fontFamily: 'var(--font-inter), sans-serif',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <input
+                type="password"
+                value={loginPassord}
+                onChange={(e) => setLoginPassord(e.target.value)}
+                placeholder={t('innlogging.passordPlaceholder')}
+                autoComplete="new-password"
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  fontSize: '15px',
+                  border: `1px solid ${farger.kremMørk}`,
+                  borderRadius: 10,
+                  backgroundColor: farger.bakgrunn,
+                  color: farger.tekst,
+                  marginBottom: 12,
+                  outline: 'none',
+                  fontFamily: 'var(--font-inter), sans-serif',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <ConsentCheckboxes
+                godtarVilkår={godtarVilkår}
+                markedsforing={markedsforing}
+                onGodtarVilkår={setGodtarVilkår}
+                onMarkedsforing={setMarkedsforing}
+              />
+              <button
+                type="button"
+                onClick={() => void handleOpprettKonto()}
+                disabled={laster !== null}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  backgroundColor: PAYWALL_GRØNN,
+                  border: 'none',
+                  borderRadius: 12,
+                  fontSize: '15px',
+                  fontWeight: 700,
+                  color: '#FDFAF6',
+                  cursor: laster ? 'not-allowed' : 'pointer',
+                  fontFamily: 'var(--font-plus-jakarta), sans-serif',
+                }}
+              >
+                {laster === 'login' || laster === 'kjøp' ? '…' : t('innlogging.opprettOgFortsett')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setVisOpprettKonto(false);
+                  setVisInnlogging(true);
+                  setFeil('');
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  marginTop: 10,
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: PAYWALL_GRØNN,
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-inter)',
+                  textDecoration: 'underline',
+                }}
+              >
+                {t('paywall.harAlleredeKonto')}
+              </button>
+            </div>
+          ) : !visInnlogging ? (
             <button
               type="button"
               onClick={() => {
                 setVisInnlogging(true);
+                setVisOpprettKonto(false);
                 setFeil('');
                 setResetMelding('');
               }}

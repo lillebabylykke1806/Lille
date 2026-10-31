@@ -12,6 +12,7 @@ import { lærtVåkenvinduMinutter, sisteVåkenTid, erBabySovendeEtter, harSovnet
 import { usePro } from '../abonnement/ProContext';
 import { LockedContent } from '../abonnement/LockedContent';
 import { bleieFlagsFromRow, bleieTypeLabel } from '../../lib/bleie';
+import { useMåleenhet } from '../../lib/i18n/MåleenhetContext';
 
 type Props = {
   bruker: any;
@@ -71,9 +72,14 @@ const IkonKomponent = ({ type }: { type: string }) => {
       </svg>
     </div>
   );
+  if (type === 'flaske') return (
+    <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/tateflaske-mork.png" alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+    </div>
+  );
   if (type === 'amming') return (
     <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#F2E4D8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <img src="/tateflaske.png" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+      <img src="/amming.png" alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
     </div>
   );
   if (type === 'nattOppvåkning') return (
@@ -246,6 +252,7 @@ Svar kun med innsikten på ${språkNavn}, ingen introduksjon.`
 export default function Hjemskjerm({ bruker, aktivtBarn, onNavigate, onByttBarn }: Props) {
   const { locale, t } = useLanguage();
   const { hasPro } = usePro();
+  const { formaterVæske } = useMåleenhet();
   const [babyNavn, setBabyNavn] = useState('');
   const [babyTilstand, setBabyTilstand] = useState('rolig');
   const [tilstandOverstyrt, setTilstandOverstyrt] = useState(false);
@@ -383,13 +390,14 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     fjortenDagerSiden.setDate(fjortenDagerSiden.getDate() - 14);
     const fraDato = fjortenDagerSiden.toISOString().split('T')[0];
 
-    const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes, uroRes] = await Promise.all([
+    const [lurRes, ammingRes, bleieRes, milepælRes, matRes, pumpingRes, flaskeRes, uroRes] = await Promise.all([
       supabase.from('lurer').select('*').eq('profil_id', profilId).gte('dato', fraDato).order('start', { ascending: false }),
       supabase.from('amming').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('start', { ascending: false }),
       supabase.from('bleie').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('tidspunkt', { ascending: false }),
       supabase.from('milepæler').select('*').eq('profil_id', profilId).eq('dato', dagensdato),
       supabase.from('mat').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
       supabase.from('pumping').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
+      supabase.from('flaske').select('*').eq('profil_id', profilId).eq('dato', dagensdato).order('klokkeslett', { ascending: false }),
       supabase.from('uro_logg').select('tidspunkt').eq('profil_id', profilId).order('dato', { ascending: false }).limit(15),
     ]);
 
@@ -436,6 +444,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     }));
 
     const ammingItems = (ammingRes.data || []).map((a: any) => ({
+      id: a.id,
       tid: a.start,
       slutt: a.slutt || null,
       tekst: t('hendelse.amming'),
@@ -478,7 +487,16 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       varighet: p.varighet ? `${p.varighet} min` : null,
     }));
 
-    const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems, ...matItems, ...pumpingItems].sort((a, b) => {
+    const flaskeItems = (flaskeRes.data || []).map((f: any) => ({
+      id: f.id,
+      tid: (f.klokkeslett || '').slice(0, 5),
+      slutt: null,
+      tekst: t('hendelse.flaske'),
+      type: 'flaske',
+      varighet: formaterVæske(f.mengde_ml),
+    }));
+
+    const alle = [...lurItems, ...ammingItems, ...bleieItems, ...milepælItems, ...matItems, ...pumpingItems, ...flaskeItems].sort((a, b) => {
       if (!a.tid || !b.tid) return 0;
       return b.tid.localeCompare(a.tid);
     });
@@ -498,7 +516,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       uroLogg: uroRes.data || [],
       locale,
     });
-  }, [aktivtBarn, bruker, t, locale, babyNavn]);
+  }, [aktivtBarn, bruker, t, locale, babyNavn, formaterVæske]);
 
   useEffect(() => {
     const lagretType = localStorage.getItem('lille_sovtype');
@@ -586,7 +604,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
     },
     {
       label: t('hjem.amming'), side: 'amming',
-      svg: <img src="/tateflaske-mork.png" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
+      svg: <img src="/amming.png" alt="" style={{ width: 48, height: 48, objectFit: 'contain' }} />,
     },
     {
       label: t('hjem.uroRo'), side: 'kolikk',
@@ -960,7 +978,7 @@ Svar KUN med observasjonen, ingen introduksjon, ingen emoji.`
       <div style={{ fontSize: '13px', fontFamily: 'var(--font-inter)', color: farger.tekstLys, marginBottom: '24px' }}>{slettHendelse.tid}{slettHendelse.slutt ? ` – ${slettHendelse.slutt}` : ''}</div>
       <button onClick={async () => {
         if (!slettHendelse.id) return;
-        const tabell = slettHendelse.type === 'amming' ? 'amming' : slettHendelse.type === 'bleie' ? 'bleie' : slettHendelse.type === 'mat' ? 'mat' : slettHendelse.type === 'pumping' ? 'pumping' : 'lurer';
+        const tabell = slettHendelse.type === 'amming' ? 'amming' : slettHendelse.type === 'bleie' ? 'bleie' : slettHendelse.type === 'mat' ? 'mat' : slettHendelse.type === 'pumping' ? 'pumping' : slettHendelse.type === 'flaske' ? 'flaske' : 'lurer';
         await supabase.from(tabell).delete().eq('id', slettHendelse.id);
         setSlettHendelse(null);
         lastDagensFlyt();

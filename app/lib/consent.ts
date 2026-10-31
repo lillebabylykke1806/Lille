@@ -9,8 +9,9 @@ export async function lagreSamtykkeVedRegistrering(
   userId: string,
   markedsforing: boolean,
   email?: string | null,
+  locale?: string | null,
 ): Promise<void> {
-  await sikreProfilerRad(userId);
+  await sikreProfilerRad(userId, locale);
   const now = new Date().toISOString();
 
   const { error } = await supabase
@@ -21,6 +22,8 @@ export async function lagreSamtykkeVedRegistrering(
       personvern_godtatt_tid: now,
       personvern_versjon: CONSENT_VERSION,
       markedsforing_samtykke: markedsforing,
+      markedsforing_samtykke_at: now,
+      markedsforing_samtykke_kilde: 'registration',
     })
     .eq('id', userId);
 

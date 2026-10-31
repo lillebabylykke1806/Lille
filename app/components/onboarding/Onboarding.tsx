@@ -13,8 +13,8 @@ type Props = {
 type TFn = (nøkkel: OversettelseNøkkel, variabler?: Record<string, string | number>) => string;
 
 const hentAnbefalte = (alder: number) => {
-  if (alder < 1) return ['amming', 'sovn', 'bleie', 'signaler', 'notat', 'medisin'];
-  if (alder < 4) return ['sovn', 'amming', 'bleie', 'signaler', 'aktivitet', 'notat'];
+  if (alder < 1) return ['amming', 'flaske', 'sovn', 'bleie', 'signaler', 'notat'];
+  if (alder < 4) return ['sovn', 'amming', 'flaske', 'bleie', 'signaler', 'notat'];
   if (alder < 8) return ['sovn', 'mat', 'bleie', 'aktivitet', 'signaler', 'notat'];
   if (alder < 12) return ['sovn', 'mat', 'bleie', 'aktivitet', 'medisin', 'notat'];
   return ['sovn', 'mat', 'aktivitet', 'medisin', 'vekt', 'notat'];
@@ -22,6 +22,7 @@ const hentAnbefalte = (alder: number) => {
 
 const getAlleFavoritter = (t: TFn) => [
   { id: 'amming', label: t('onboarding.amming') },
+  { id: 'flaske', label: t('onboarding.flaske') },
   { id: 'sovn', label: t('onboarding.sovn') },
   { id: 'medisin', label: t('onboarding.medisin') },
   { id: 'bleie', label: t('onboarding.bleie') },
@@ -38,9 +39,19 @@ const IkonKomponent = ({ id, valgt }: { id: string; valgt: boolean }) => {
   const farge = valgt ? farger.grønn : '#8A7060';
   const bgFarge = valgt ? `${farger.grønn}18` : farger.kremMørk;
 
-  if (id === 'amming' || id === 'pumping') return (
+  if (id === 'flaske') return (
     <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <img src="/tateflaske.png" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+      <img src="/tateflaske-mork.png" alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+    </div>
+  );
+  if (id === 'amming') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/amming.png" alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+    </div>
+  );
+  if (id === 'pumping') return (
+    <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: bgFarge, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <img src="/pumping.png" alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} />
     </div>
   );
   if (id === 'bleie') return (

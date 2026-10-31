@@ -55,7 +55,15 @@ export function ConsentCheckboxes({
           privacyLabel={t('consent.privacy.link')}
         />,
       )}
-      {rad(markedsforing, onMarkedsforing, t('consent.marketing'))}
+      {rad(
+        markedsforing,
+        onMarkedsforing,
+        <ConsentLabel
+          template={t('consent.marketing')}
+          termsLabel={t('consent.terms.link')}
+          privacyLabel={t('consent.privacy.link')}
+        />,
+      )}
     </div>
   );
 }
