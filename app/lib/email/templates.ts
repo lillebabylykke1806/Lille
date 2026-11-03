@@ -22,6 +22,12 @@ export const CANCELLATION_REASON_BUTTONS = {
   ],
 } as const;
 
+export type Reason = (typeof CANCELLATION_REASON_BUTTONS.en)[number]['id'];
+
+export function isReason(value: string): value is Reason {
+  return CANCELLATION_REASON_BUTTONS.en.some((r) => r.id === value);
+}
+
 function htmlMal(opts: {
   lang: EpostSpråk;
   hilsen: string;

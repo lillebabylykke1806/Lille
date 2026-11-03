@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { isBlockingStripeStatus } from '../../../lib/stripe/blockingSubscriptions';
 import { klassifiserStripeHendelse, statusFraStripeType } from '../../../lib/stripe/lifecycle';
-import { customerIdOf, invoiceSubscriptionId, stripePeriodEndIso, stripePeriodEndUnix } from '../../../lib/stripe/period';
+import { customerIdOf, invoiceSubscriptionId, isActiveStripeCustomer, stripePeriodEndIso, stripePeriodEndUnix } from '../../../lib/stripe/period';
 import { harBruktTilbake30 } from '../../../lib/stripe/tilbake30';
 import { epostLenke, signerStay, signerUnsub } from '../../../lib/email/hmac';
 import { hentEpostSpråk, sendMarkedsforing } from '../../../lib/email/send';
@@ -25,8 +25,9 @@ export async function POST(req: Request) {
   }
 
   const stripe = new Stripe(stripeKey, {
-    // Match the live webhook snapshot in Stripe Dashboard.
-    apiVersion: '2026-03-25.dahlia' as Stripe.LatestApiVersion,
+    // Live webhook snapshot. Stripe's TypeScript types only list the SDK's latest version.
+    // @ts-expect-error snapshot 2026-03-25.dahlia is older than the SDK default
+    apiVersion: '2026-03-25.dahlia',
   });
   const signature = req.headers.get('stripe-signature');
   if (!signature) {
@@ -301,7 +302,7 @@ async function finnStripeBruker(
   const customerId = sub ? customerIdOf(sub) : customerIdOf(invoice || { customer: null });
   if (!customerId) return null;
   const customer = await stripe.customers.retrieve(customerId);
-  if ('deleted' in customer && customer.deleted) return null;
+  if (!isActiveStripeCustomer(customer)) return null;
   const metaId = customer.metadata?.app_user_id;
   if (metaId) {
     const { data } = await admin.auth.admin.getUserById(metaId);

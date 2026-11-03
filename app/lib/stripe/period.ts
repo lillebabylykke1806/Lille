@@ -21,6 +21,12 @@ export function customerIdOf(obj: { customer?: string | { id?: string } | null }
   return c?.id || null;
 }
 
+export function isActiveStripeCustomer(
+  customer: Stripe.Customer | Stripe.DeletedCustomer,
+): customer is Stripe.Customer {
+  return !customer.deleted;
+}
+
 function idFrom(value: unknown): string | null {
   if (typeof value === 'string' && value.startsWith('sub_')) return value;
   if (value && typeof value === 'object' && 'id' in value) {

@@ -1,5 +1,6 @@
 import type Stripe from 'stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { isActiveStripeCustomer } from './period';
 
 export function tilbake30PromoId(): string | null {
   return process.env.STRIPE_TILBAKE30_PROMO_ID?.trim() || null;
@@ -42,8 +43,8 @@ async function hentTilbake30Ids(stripe: Stripe): Promise<{
 } | null> {
   const promoId = tilbake30PromoId();
   if (!promoId) return null;
-  const promo = await stripe.promotionCodes.retrieve(promoId, { expand: ['coupon'] });
-  const coupon = promo.coupon;
+  const promo = await stripe.promotionCodes.retrieve(promoId, { expand: ['promotion.coupon'] });
+  const coupon = promo.promotion?.coupon;
   return {
     promoId,
     couponId: couponIdOf(coupon),
@@ -66,7 +67,7 @@ async function harStripeTilbake30(
   if (!opts.customerId) return false;
 
   const customer = await stripe.customers.retrieve(opts.customerId, { expand: ['discount'] });
-  if ('deleted' in customer && customer.deleted) return false;
+  if (!isActiveStripeCustomer(customer)) return false;
   if (rabattMatcherTilbake30(customer.discount, ids)) return true;
 
   const subs = await stripe.subscriptions.list({

@@ -1,11 +1,9 @@
-import { CANCELLATION_REASON_BUTTONS } from '../../lib/email/templates';
+import { CANCELLATION_REASON_BUTTONS, isReason } from '../../lib/email/templates';
 import { lesEpostToken, lesEpostTokenSignatur } from '../../lib/email/hmac';
 import { epostSpråkForBruker } from '../../lib/email/locale';
 import { EpostKnapp, EpostSkall } from '../EpostSkall';
 
 export const dynamic = 'force-dynamic';
-
-const REASONS = new Set(CANCELLATION_REASON_BUTTONS.en.map((r) => r.id));
 
 export default async function TilbakemeldingPage({
   searchParams,
@@ -16,7 +14,7 @@ export default async function TilbakemeldingPage({
   const forSpråk = lesEpostTokenSignatur(t, 'feedback');
   const token = lesEpostToken(t, 'feedback');
   const språk = await epostSpråkForBruker(forSpråk?.u);
-  const reason = token?.r && REASONS.has(token.r) ? token.r : 'other';
+  const reason = token?.r && isReason(token.r) ? token.r : 'other';
 
   const labels = CANCELLATION_REASON_BUTTONS[språk];
   const valgt = labels.find((r) => r.id === reason)?.label ?? reason;

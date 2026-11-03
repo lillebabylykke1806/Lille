@@ -7,7 +7,7 @@ import { after, before, describe, it } from 'node:test';
 import { epostRedirect, lesEpostToken, lesEpostTokenSignatur, signerEpostToken, signerFeedback } from './hmac';
 import { kanSendeTestEpost, parseTestEmailAllowlist } from './send';
 import { velgEpostSpråk } from './locale';
-import { CANCELLATION_REASON_BUTTONS, kanselleringMal, winbackMal } from './templates';
+import { CANCELLATION_REASON_BUTTONS, isReason, kanselleringMal, winbackMal } from './templates';
 import { klassifiserStripeHendelse } from '../stripe/lifecycle';
 import { invoiceSubscriptionId } from '../stripe/period';
 import { rabattMatcherTilbake30 } from '../stripe/tilbake30';
@@ -85,6 +85,13 @@ describe('HMAC e-postlenker', () => {
   it('keeps iOS feedback reasons in the token helper', () => {
     const raw = signerFeedback('user-1', 'too_expensive');
     assert.equal(lesEpostToken(raw, 'feedback')?.r, 'too_expensive');
+  });
+});
+
+describe('isReason', () => {
+  it('narrows known cancellation reasons', () => {
+    assert.equal(isReason('too_expensive'), true);
+    assert.equal(isReason('not_a_reason'), false);
   });
 });
 
