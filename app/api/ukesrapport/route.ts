@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 import { formatDate } from '../../lib/i18n/format';
+import { hentOppsigelseUke, oppsigelseRapportHtml } from '../../lib/email/ukesrapportOppsigelse';
 
 export const dynamic = 'force-dynamic';
 
@@ -101,6 +102,13 @@ export async function GET(req: Request) {
     const aktive7d = aktiveProfilIder7d.size;
     const minstEnHendelse7d = aktiveProfilIder7d.size;
 
+    const oppsigelse = await hentOppsigelseUke(supabaseAdmin, {
+      since: siste7dager,
+      allowlistRaw: process.env.TEST_EMAIL_ALLOWLIST,
+      brukere: users.map((u) => ({ id: u.id, email: u.email })),
+    });
+    const oppsigelseHtml = oppsigelseRapportHtml(oppsigelse);
+
     const html = `
       <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
         <h2 style="color: #2D5C45;">📊 Lille – Ukesrapport</h2>
@@ -126,6 +134,9 @@ export async function GET(req: Request) {
           <li>Brukere med minst én hendelse siste 7 dager: <strong>${minstEnHendelse7d}</strong></li>
         </ul>
 
+        <h3 style="color: #3F3A37; margin-top: 24px;">Oppsigelser og tilbakevinning (siste 7 dager)</h3>
+        ${oppsigelseHtml}
+
         <p style="color: #A8B5A2; font-size: 12px; margin-top: 32px;">Automatisk generert rapport fra Lille 🌿</p>
       </div>
     `;
@@ -147,6 +158,7 @@ export async function GET(req: Request) {
       aktive24t,
       aktive7d,
       minstEnHendelse7d,
+      oppsigelse,
     });
   } catch (err: any) {
     console.error(err);

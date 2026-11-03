@@ -15,6 +15,7 @@ import { appleTilbake30Lenke } from '../ios/appleOffer';
 import { erMånedsabonnement } from '../ios/plan';
 import { rcErLive, rcEventHarTilbake30, rcHendelseFraPayload } from '../ios/rcEvent';
 import { iosÅrsaksknapper } from '../ios/retention';
+import { erTestHendelse, oppsigelseRapportHtml, tomOppsigelseUke, årsakNavn } from './ukesrapportOppsigelse';
 
 describe('TEST_EMAIL_ALLOWLIST', () => {
   it('sends to anyone in live, and only listed addresses in test', () => {
@@ -329,5 +330,63 @@ describe('rabattMatcherTilbake30', () => {
       ),
       false,
     );
+  });
+});
+
+describe('ukesrapport oppsigelser', () => {
+  it('excludes Stripe test mode and App Store sandbox', () => {
+    assert.equal(erTestHendelse({ livemode: false }), true);
+    assert.equal(erTestHendelse({ livemode: true }), false);
+    assert.equal(erTestHendelse({ event: { environment: 'SANDBOX' } }), true);
+    assert.equal(erTestHendelse({ environment: 'PRODUCTION' }), false);
+  });
+
+  it('uses Norwegian reason names including Stripe portal codes', () => {
+    assert.equal(årsakNavn('unused'), 'Brukte den ikke nok');
+    assert.equal(årsakNavn('too_expensive'), 'For dyrt');
+    assert.equal(årsakNavn('missing_features'), 'Savnet funksjoner');
+    assert.equal(årsakNavn('technical'), 'Tekniske problemer');
+    assert.equal(årsakNavn('other'), 'Annet');
+    assert.equal(årsakNavn('customer_service'), 'Kundeservice');
+    assert.equal(årsakNavn('low_quality'), 'Lav kvalitet');
+    assert.equal(årsakNavn('switched_service'), 'Byttet tjeneste');
+    assert.equal(årsakNavn('too_complex'), 'For komplisert');
+  });
+
+  it('renders the empty-week line', () => {
+    const html = oppsigelseRapportHtml({
+      stripe: 0,
+      appStore: 0,
+      andre: 0,
+      årsaker: [],
+      kommentarer: [],
+      bliLikevel: 0,
+      winback: 0,
+      appleInnløst: 0,
+      kanselleringsmailer: 0,
+      winbackMailer: 0,
+    });
+    assert.equal(tomOppsigelseUke({
+      stripe: 0, appStore: 0, andre: 0, årsaker: [], kommentarer: [],
+      bliLikevel: 0, winback: 0, appleInnløst: 0, kanselleringsmailer: 0, winbackMailer: 0,
+    }), true);
+    assert.match(html, /Ingen oppsigelser denne uken/);
+  });
+
+  it('lists comments without adding identity', () => {
+    const html = oppsigelseRapportHtml({
+      stripe: 1,
+      appStore: 0,
+      andre: 0,
+      årsaker: [{ kode: 'too_expensive', navn: 'For dyrt', antall: 1 }],
+      kommentarer: ['Ble for dyrt med to barn'],
+      bliLikevel: 0,
+      winback: 0,
+      appleInnløst: 0,
+      kanselleringsmailer: 1,
+      winbackMailer: 0,
+    });
+    assert.match(html, /Ble for dyrt med to barn/);
+    assert.equal(/@|e-post|navn/i.test(html), false);
   });
 });
