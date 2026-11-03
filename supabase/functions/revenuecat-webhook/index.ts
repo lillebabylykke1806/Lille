@@ -135,7 +135,11 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Could not store event' }, 500);
   }
 
-  if (type !== 'TEST' && STATUS_TYPER.has(type) && userId) {
+  const store = typeof event.store === 'string' ? event.store : null;
+  const stripeFraRevenueCat = store?.toUpperCase() === 'STRIPE';
+
+  // Stripe-abonnementer eies av stripe-webhook: lagre hendelsen, ikke status/e-post.
+  if (!stripeFraRevenueCat && type !== 'TEST' && STATUS_TYPER.has(type) && userId) {
     const mapped = statusFraType(type);
     if (mapped) {
       const period = typeof event.period_type === 'string' ? event.period_type : '';
@@ -143,7 +147,7 @@ Deno.serve(async (req) => {
         {
           user_id: userId,
           status: mapped.status,
-          store: typeof event.store === 'string' ? event.store : null,
+          store,
           product_id: typeof event.product_id === 'string' ? event.product_id : null,
           is_trial: period.toUpperCase() === 'TRIAL',
           will_renew: mapped.will_renew,

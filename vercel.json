@@ -3,6 +3,10 @@
     {
       "path": "/api/ukesrapport",
       "schedule": "0 7 * * 1"
+    },
+    {
+      "path": "/api/winback",
+      "schedule": "0 8 * * *"
     }
   ]
 }

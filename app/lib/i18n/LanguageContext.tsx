@@ -36,12 +36,15 @@ const detekterSpråk = (): Locale => {
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>('en');
+  const [språkKlar, setSpråkKlar] = useState(false);
 
   useEffect(() => {
     setLocaleState(detekterSpråk());
+    setSpråkKlar(true);
   }, []);
 
   useEffect(() => {
+    if (!språkKlar) return;
     const synk = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.id) await sikreProfilerRad(session.user.id, locale);
@@ -51,7 +54,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       if (session?.user?.id) void sikreProfilerRad(session.user.id, locale);
     });
     return () => subscription.unsubscribe();
-  }, [locale]);
+  }, [locale, språkKlar]);
 
   const setLocale = (nyttSpråk: Locale) => {
     setLocaleState(nyttSpråk);
