@@ -137,6 +137,37 @@ Deno.serve(async (req) => {
 
   const store = typeof event.store === 'string' ? event.store : null;
   const stripeFraRevenueCat = store?.toUpperCase() === 'STRIPE';
+  const appStore = store?.toUpperCase() === 'APP_STORE';
+
+  const offerCode =
+    typeof event.offer_code === 'string' ? event.offer_code.trim() : '';
+  const appleOffer = (Deno.env.get('APPLE_OFFER_CODE') ?? '').trim();
+  if (userId && appStore && offerCode && appleOffer && offerCode.toLowerCase() === appleOffer.toLowerCase()) {
+    const { error: offerError } = await admin.from('retention_offers').insert({
+      user_id: userId,
+      offer_type: 'apple',
+    });
+    if (offerError && offerError.code !== '23505') {
+      console.error('retention_offers apple insert failed', offerError.message);
+    }
+  }
+
+  if (appStore && userId) {
+    const appUrl = (Deno.env.get('APP_URL') || Deno.env.get('NEXT_PUBLIC_APP_URL') || 'https://www.lilleapp.no').replace(/\/$/, '');
+    const mailSecret = Deno.env.get('CRON_SECRET') || secret;
+    try {
+      await fetch(`${appUrl}/api/ios-retention`, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${mailSecret}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ payload, userId }),
+      });
+    } catch (err) {
+      console.error('ios-retention notify failed', err);
+    }
+  }
 
   // Stripe-abonnementer eies av stripe-webhook: lagre hendelsen, ikke status/e-post.
   if (!stripeFraRevenueCat && type !== 'TEST' && STATUS_TYPER.has(type) && userId) {

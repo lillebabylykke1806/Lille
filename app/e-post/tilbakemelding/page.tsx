@@ -1,7 +1,7 @@
 import { CANCELLATION_REASON_BUTTONS, isReason } from '../../lib/email/templates';
 import { lesEpostToken, lesEpostTokenSignatur } from '../../lib/email/hmac';
 import { epostSpråkForBruker } from '../../lib/email/locale';
-import { EpostKnapp, EpostSkall } from '../EpostSkall';
+import { EpostKnapp, EpostSkall, UgyldigEpostLenke } from '../EpostSkall';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,14 +24,12 @@ export default async function TilbakemeldingPage({
       ? {
           title: 'Hvorfor sluttet du?',
           ok: 'Tusen takk. Jeg leser hver tilbakemelding.',
-          ugyldig: 'Denne lenken er ugyldig eller utløpt.',
           kommentar: 'Vil du legge til noe? (valgfritt)',
           knapp: 'Send',
         }
       : {
           title: 'Why did you leave?',
           ok: 'Thank you. I read every piece of feedback.',
-          ugyldig: 'This link is invalid or has expired.',
           kommentar: 'Anything to add? (optional)',
           knapp: 'Send',
         };
@@ -44,11 +42,7 @@ export default async function TilbakemeldingPage({
     );
   }
   if (!token || !t) {
-    return (
-      <EpostSkall title={copy.title} lang={språk}>
-        <p style={{ margin: 0 }}>{copy.ugyldig}</p>
-      </EpostSkall>
-    );
+    return <UgyldigEpostLenke title="Hvorfor sluttet du? / Why did you leave?" />;
   }
 
   return (

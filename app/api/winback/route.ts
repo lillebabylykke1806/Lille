@@ -5,6 +5,7 @@ import { hentEpostSpråk, sendMarkedsforing } from '../../lib/email/send';
 import { epostLenke, signerUnsub, signerWinback } from '../../lib/email/hmac';
 import { winbackMal } from '../../lib/email/templates';
 import { harBruktTilbake30 } from '../../lib/stripe/tilbake30';
+import { kjørIosWinbackCron } from '../../lib/ios/retention';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,10 +17,25 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const stripeKey = process.env.STRIPE_SECRET_KEY?.trim();
-  if (!stripeKey) return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
-  const stripe = new Stripe(stripeKey);
   const admin = supabaseAdmin();
+  const stripeResult = await kjørStripeWinback(admin);
+  const iosResult = await kjørIosWinbackCron(admin);
+
+  return NextResponse.json({
+    ok: true,
+    sent: stripeResult.sent + iosResult.sent,
+    skipped: stripeResult.skipped + iosResult.skipped,
+    stripe: stripeResult,
+    ios: iosResult,
+  });
+}
+
+async function kjørStripeWinback(
+  admin: ReturnType<typeof supabaseAdmin>,
+): Promise<{ sent: number; skipped: number; error?: string }> {
+  const stripeKey = process.env.STRIPE_SECRET_KEY?.trim();
+  if (!stripeKey) return { sent: 0, skipped: 0, error: 'stripe_not_configured' };
+  const stripe = new Stripe(stripeKey);
 
   const now = Date.now();
   const eightDays = new Date(now - 8 * 24 * 60 * 60 * 1000).toISOString();
@@ -36,7 +52,7 @@ export async function GET(req: Request) {
 
   if (error) {
     console.error('winback query failed', error.message);
-    return NextResponse.json({ error: 'query_failed' }, { status: 500 });
+    return { sent: 0, skipped: 0, error: 'query_failed' };
   }
 
   const seen = new Set<string>();
@@ -117,5 +133,5 @@ export async function GET(req: Request) {
     else skipped += 1;
   }
 
-  return NextResponse.json({ ok: true, sent, skipped });
+  return { sent, skipped };
 }

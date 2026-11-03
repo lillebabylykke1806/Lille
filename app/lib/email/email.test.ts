@@ -7,10 +7,14 @@ import { after, before, describe, it } from 'node:test';
 import { epostRedirect, lesEpostToken, lesEpostTokenSignatur, signerEpostToken, signerFeedback } from './hmac';
 import { kanSendeTestEpost, parseTestEmailAllowlist } from './send';
 import { velgEpostSpråk } from './locale';
-import { CANCELLATION_REASON_BUTTONS, isReason, kanselleringMal, winbackMal } from './templates';
+import { CANCELLATION_REASON_BUTTONS, iosKanselleringMal, iosWinbackMal, isReason, kanselleringMal, winbackMal } from './templates';
 import { klassifiserStripeHendelse } from '../stripe/lifecycle';
 import { invoiceSubscriptionId } from '../stripe/period';
 import { rabattMatcherTilbake30 } from '../stripe/tilbake30';
+import { appleTilbake30Lenke } from '../ios/appleOffer';
+import { erMånedsabonnement } from '../ios/plan';
+import { rcErLive, rcEventHarTilbake30, rcHendelseFraPayload } from '../ios/rcEvent';
+import { iosÅrsaksknapper } from '../ios/retention';
 
 describe('TEST_EMAIL_ALLOWLIST', () => {
   it('sends to anyone in live, and only listed addresses in test', () => {
@@ -168,6 +172,87 @@ describe('winback mal', () => {
     });
     assert.equal(/prøveperiode|trial/i.test(mal.html + mal.text), false);
     assert.match(mal.html, /30 %/);
+  });
+});
+
+describe('iOS retention helpers', () => {
+  const prevApp = process.env.APPLE_APP_ID;
+  const prevCode = process.env.APPLE_OFFER_CODE;
+  const prevSecret = process.env.EMAIL_LINK_SECRET;
+  before(() => {
+    process.env.APPLE_APP_ID = '6780271912';
+    process.env.APPLE_OFFER_CODE = 'TILBAKE30';
+    process.env.EMAIL_LINK_SECRET = 'test-email-link-secret';
+  });
+  after(() => {
+    process.env.APPLE_APP_ID = prevApp;
+    process.env.APPLE_OFFER_CODE = prevCode;
+    process.env.EMAIL_LINK_SECRET = prevSecret;
+  });
+
+  it('builds the redeem URL from env', () => {
+    assert.equal(
+      appleTilbake30Lenke(),
+      'https://apps.apple.com/redeem?ctx=offercodes&id=6780271912&code=TILBAKE30',
+    );
+  });
+
+  it('detects monthly vs yearly products', () => {
+    assert.equal(erMånedsabonnement({ productId: 'lille_monthly' }), true);
+    assert.equal(erMånedsabonnement({ productId: 'lille_yearly' }), false);
+    assert.equal(erMånedsabonnement({ productId: 'lille_annual' }), false);
+  });
+
+  it('reads offer_code and sandbox environment from RevenueCat payloads', () => {
+    const payload = {
+      event: {
+        type: 'RENEWAL',
+        store: 'APP_STORE',
+        environment: 'SANDBOX',
+        offer_code: 'TILBAKE30',
+        product_id: 'lille_monthly',
+      },
+    };
+    assert.equal(rcEventHarTilbake30(payload), true);
+    assert.equal(rcErLive(rcHendelseFraPayload(payload)!), false);
+    assert.equal(rcEventHarTilbake30({ event: { offer_code: 'OTHER' } }), false);
+  });
+
+  it('includes reason buttons and Apple offer, never Stripe or /kode', () => {
+    const apple = appleTilbake30Lenke()!;
+    const mal = iosKanselleringMal('no', {
+      stayHref: apple,
+      unsubHref: 'https://www.lilleapp.no/e-post/avmelding?t=y',
+      årsaksknapper: iosÅrsaksknapper('user-1', 'no'),
+    });
+    for (const knapp of CANCELLATION_REASON_BUTTONS.no) {
+      assert.equal(mal.html.includes(knapp.label), true);
+    }
+    assert.match(mal.html, /Bli likevel – 30 % på neste måned/);
+    assert.match(mal.html, /App Store åpnes med rabatten ferdig utfylt/);
+    assert.equal(mal.html.includes(apple), true);
+    assert.equal(/stripe|\/kode|checkout|create-checkout/i.test(mal.html + mal.text), false);
+  });
+
+  it('omits the offer for yearly cancellation', () => {
+    const mal = iosKanselleringMal('no', {
+      stayHref: null,
+      unsubHref: 'https://www.lilleapp.no/e-post/avmelding?t=y',
+      årsaksknapper: iosÅrsaksknapper('user-1', 'no'),
+    });
+    assert.equal(mal.html.includes('Bli likevel'), false);
+    assert.equal(mal.html.includes('apps.apple.com/redeem'), false);
+    assert.equal(mal.html.includes(CANCELLATION_REASON_BUTTONS.no[0].label), true);
+  });
+
+  it('winback uses only the Apple link', () => {
+    const apple = appleTilbake30Lenke()!;
+    const mal = iosWinbackMal('no', {
+      comebackHref: apple,
+      unsubHref: 'https://www.lilleapp.no/e-post/avmelding?t=y',
+    });
+    assert.equal(mal.html.includes(apple), true);
+    assert.equal(/\/e-post\/kom-tilbake|stripe|\/kode/i.test(mal.html + mal.text), false);
   });
 });
 

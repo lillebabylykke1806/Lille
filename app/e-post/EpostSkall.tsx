@@ -51,6 +51,15 @@ export function EpostSkall(props: {
   );
 }
 
+export function UgyldigEpostLenke(props: { title: string }) {
+  return (
+    <EpostSkall title={props.title} lang="no">
+      <p style={{ margin: '0 0 12px' }}>Denne lenken er ugyldig eller utløpt.</p>
+      <p style={{ margin: 0 }}>This link is invalid or has expired.</p>
+    </EpostSkall>
+  );
+}
+
 export function EpostKnapp(props: { label: string; disabled?: boolean }) {
   return (
     <button

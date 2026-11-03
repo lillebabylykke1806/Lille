@@ -1,6 +1,6 @@
 import { lesEpostToken, lesEpostTokenSignatur } from '../../lib/email/hmac';
 import { epostSpråkForBruker } from '../../lib/email/locale';
-import { EpostKnapp, EpostSkall } from '../EpostSkall';
+import { EpostKnapp, EpostSkall, UgyldigEpostLenke } from '../EpostSkall';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +20,6 @@ export default async function KomTilbakePage({
           title: 'Velkommen tilbake',
           tekst: 'Trykk for å fortsette til sikker betaling med 30 % rabatt på første måned. Ingen prøveperiode. Ingenting skjer før du bekrefter.',
           knapp: 'Kom tilbake – 30 % på første måned',
-          ugyldig: 'Denne lenken kan ikke brukes lenger.',
           brukt: 'Denne rabatten er allerede brukt. Du kan fortsatt abonnere på vanlig vis i appen.',
           aktiv: 'Du har allerede et aktivt Lille-abonnement.',
         }
@@ -28,7 +27,6 @@ export default async function KomTilbakePage({
           title: 'Welcome back',
           tekst: 'Tap to continue to secure checkout with 30% off your first month. No trial. Nothing happens until you confirm.',
           knapp: 'Come back – 30% off your first month',
-          ugyldig: 'This link can no longer be used.',
           brukt: 'This discount has already been used. You can still subscribe in the app.',
           aktiv: 'You already have an active Lille subscription.',
         };
@@ -48,11 +46,7 @@ export default async function KomTilbakePage({
     );
   }
   if (status === 'invalid' || !token || !t) {
-    return (
-      <EpostSkall title={copy.title} lang={språk}>
-        <p style={{ margin: 0 }}>{copy.ugyldig}</p>
-      </EpostSkall>
-    );
+    return <UgyldigEpostLenke title="Velkommen tilbake / Welcome back" />;
   }
 
   return (

@@ -1,6 +1,7 @@
 import type Stripe from 'stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isActiveStripeCustomer } from './period';
+import { harRegistrertTilbake30 } from '../retention/tilbake30Brukt';
 
 export function tilbake30PromoId(): string | null {
   return process.env.STRIPE_TILBAKE30_PROMO_ID?.trim() || null;
@@ -106,12 +107,7 @@ export async function harBruktTilbake30(opts: {
   subscription?: Stripe.Subscription | null;
   email?: string | null;
 }): Promise<boolean> {
-  const { data } = await opts.admin
-    .from('retention_offers')
-    .select('user_id')
-    .eq('user_id', opts.userId)
-    .maybeSingle();
-  if (data?.user_id) return true;
+  if (await harRegistrertTilbake30(opts.admin, opts.userId)) return true;
   const customerId =
     opts.customerId || (await finnStripeKundeId(opts.stripe, opts.userId, opts.email));
   return harStripeTilbake30(opts.stripe, {
